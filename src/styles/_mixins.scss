@@ -1,0 +1,102 @@
+@use 'sass:map';
+
+$media-breakpoints: (
+  xsmall: 480px,
+  small: 600px,
+  tablet: 868px,
+  medium: 1024px,
+  xmedium: 1280px,
+  large: 1400px,
+  xlarge: 1920px,
+  xlarge2k: 2048px,
+  xlarge4k: 4096px,
+);
+
+@mixin respond-to ($media) {
+  $breakpoint: map.get($media-breakpoints, $media);
+
+  @if $breakpoint {
+    @media (max-width: ($breakpoint - 1)) {
+      @content;
+    }
+  }
+
+  @else {
+    @media (max-width: ($media - 1)) {
+      @content;
+    }
+  }
+}
+
+@mixin text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin field-text {
+  font-size: var(--field-text-font-size);
+  line-height: var(--field-text-line-height);
+  -webkit-text-fill-color: var(--field-text-font-size);
+  color: var(--field-text);
+  transition: color var(--field-transition-duration) ease;
+  font-weight: 400;
+}
+
+@mixin field-label {
+  font-size: var(--field-label-font-size);
+  line-height: var(--field-label-line-height);
+  color: var(--field-label);
+  transition: var(--field-transition-duration) ease;
+  margin-bottom: toRem(8);
+}
+
+@mixin field-border {
+  border: toRem(1) solid var(--field-border);
+  border-radius: toRem(14);
+}
+
+@mixin field-placeholder {
+  @include field-text;
+
+  color: var(--field-placeholder);
+  -webkit-text-fill-color: var(--field-placeholder);
+  fill: var(--field-placeholder);
+  transition: color var(--field-transition-duration) ease;
+  transition-property: opacity, color;
+}
+
+@mixin field-error {
+  overflow: hidden;
+  color: var(--field-error);
+  font-size: toRem(12);
+  letter-spacing: toRem(0.4);
+  line-height: 1.3;
+  transition: var(--field-transition-duration) ease;
+  transition-property: opacity, color, font-size, transform;
+  margin-top: toRem(4);
+  padding-left: var(--field-padding-left);
+}
+
+@mixin scrollbar {
+  &::-webkit-scrollbar {
+    width: toRem(12);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--secondary-main);
+    border: toRem(4) solid rgba(var(--black-rgb), 0);
+    background-clip: padding-box;
+    border-radius: toRem(100);
+  }
+}
+
+@mixin page-msg {
+  max-width: toRem(420);
+  width: 100%;
+  margin: auto;
+}

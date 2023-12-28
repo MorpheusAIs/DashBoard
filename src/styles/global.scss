@@ -1,0 +1,150 @@
+/* stylelint-disable declaration-no-important */
+/* stylelint-disable unit-disallowed-list */
+html {
+  font-family: var(--app-font-family);
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  min-height: vh(100);
+  display: flex;
+  flex-direction: column;
+}
+
+/* stylelint-disable-next-line */
+body, #app {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--background-primary-main);
+  color: var(--text-primary-main);
+}
+
+input,
+select,
+textarea {
+  background: var(--background-primary-main);
+  color: var(--text-primary-main);
+  font-family: var(--app-font-family);
+  font-size: toRem(16);
+  font-weight: 400;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+body,
+span,
+p,
+a {
+  font-size: toRem(16);
+}
+
+button {
+  border: none;
+  width: auto;
+  overflow: visible;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  font-family: var(--app-font-family);
+  font-size: toRem(16);
+  color: var(--text-primary-main);
+  line-height: 1.5;
+  font-weight: 600;
+  outline: 0;
+  margin: 0;
+  padding: 0;
+
+  /* Corrects font smoothing for webkit */
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+
+  /* Corrects inability to style clickable `input` types in iOS */
+  -webkit-appearance: none;
+
+  /* Remove excess padding and border in Firefox 4+ */
+  &::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+}
+
+body,
+p,
+li,
+ul {
+  list-style-type: none;
+  color: var(--text-primary-main);
+}
+
+p {
+  line-height: 2;
+
+  @include respond-to(tablet) { line-height: 1.6; }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: var(--text-primary-main);
+  font-family: var(--app-font-family);
+  line-height: 1;
+}
+
+h1 {
+  font-size: toRem(24);
+}
+
+h2 {
+  font-size: toRem(24);
+}
+
+h3 {
+  font-size: toRem(18);
+}
+
+h4 {
+  font-size: toRem(16);
+}
+
+h5 {
+  font-size: toRem(14);
+}
+
+a {
+  font-size: toRem(16);
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--primary-main);
+  text-decoration: none;
+  outline: none;
+
+  &:hover,
+  &:focus,
+  &:active {
+    text-decoration: none;
+  }
+}
+
+.fade-enter-active {
+  animation: fade-in 0.25s;
+}
+
+.fade-leave-active {
+  animation: fade-in 0.25s reverse;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

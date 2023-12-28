@@ -1,0 +1,121 @@
+default:
+  image:
+    name: "tokend/werf:0.0.15"
+    entrypoint: [""]
+  services:
+    - name: docker:20-dind
+      alias: docker
+      # in our experience although you'd assume this would be sufficient, this did
+      # nothing to prevent connection errors without `DOCKER_TLS_CERTDIR` being set
+      # to an empty string, and I would call that beyond mildly infuriating.
+      command: ["--tls=false"]
+  tags:
+    - "tokend"
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  #DOMAIN: dapppad.com
+  GITHUB_REF: $CI_COMMIT_SHA
+  DH_IMAGE_NAME: $CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME
+  SERVICE: $CI_PROJECT_NAME
+  REGISTRY: registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME
+  IMAGE_NAME: $REGISTRY:$CI_COMMIT_SHA
+  IMAGE_NAME_TAG: $REGISTRY:$CI_COMMIT_TAG
+  WERF_LOG_COLOR_MODE: "on"
+  WERF_IMAGES_REPO: $CI_REGISTRY_IMAGE
+  WERF_BUILDAH_MODE: auto
+  WERF_ENABLE_PROCESS_EXTERMINATOR: 1
+
+
+.before_script_template: &before_script_templ
+  before_script:
+    - werf version
+    - docker version
+    - echo $CI_REGISTRY
+    - echo $CI_REGISTRY_USER
+    - echo $CI_REGISTRY_PASSWORD
+    - echo $WERF_IMAGES_REPO
+
+stages:
+  - build-and-publish
+  - lint-and-test
+  #- publish
+  #- deploy
+  - cleanup
+
+Build:
+  stage: build-and-publish
+  <<: *before_script_templ
+  script:
+    - . $(werf ci-env gitlab --as-file)
+    - werf export web --tag $IMAGE_NAME
+  except: [schedules]
+  interruptible: true
+
+Build Tag:
+  stage: build-and-publish
+  only:
+    - tags
+  <<: *before_script_templ
+  script:
+    - . $(werf ci-env gitlab --as-file)
+    - werf export web --tag $IMAGE_NAME_TAG
+  except: [schedules]
+  interruptible: true
+
+Lint and Test:
+  stage: lint-and-test
+  only:
+    - merge_requests
+  services:
+    - docker:18-dind
+  image:
+    name: "registry.gitlab.com/tokend/devops/docker-containers:front16-914ecbd7e2465bc9570bf60322f3951eee7989c9"
+    entrypoint: [""]
+  script:
+    - yarn install
+    #- yarn test
+    - yarn lint
+  except: [schedules]
+  interruptible: true
+
+# Deploy to Staging:
+#   services:
+#       - docker:18-dind
+#   image: dtzar/helm-kubectl:latest
+#   tags:
+#     - tokend-deploy
+#   stage: deploy
+#   script:
+#     - mkdir ~/.kube/
+#     - echo ${k8sconfig} | base64 -d > config
+#     - mv config ~/.kube/
+#     - helm upgrade -i "webclient" ".helm" --set global.IngressDomain=stage.${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_SHA}" --create-namespace --namespace $CI_PROJECT_NAME-stage
+#   interruptible: true
+
+# Deploy to Production:
+#   services:
+#       - docker:18-dind
+#   image: dtzar/helm-kubectl:latest
+#   tags:
+#     - tokend-deploy
+#   stage: deploy
+#   script:
+#     - mkdir ~/.kube/
+#     - echo ${k8sconfig} | base64 -d > config
+#     - mv config ~/.kube/
+#     - helm upgrade -i "webclient" ".helm" --set global.IngressDomain=${DOMAIN} --set "image.repository=${REGISTRY}" --set "image.tag=${CI_COMMIT_TAG}" --create-namespace --namespace $CI_PROJECT_NAME-prod
+#   when: manual
+#   interruptible: true
+
+Cleanup:
+  stage: cleanup
+  <<: *before_script_templ
+  script:
+    - type werf && source $(werf ci-env gitlab --as-file)
+    - docker login -u nobody -p ${WERF_IMAGES_CLEANUP_PASSWORD} ${WERF_IMAGES_REPO}
+    - werf cleanup
+  only: [schedules]
+  interruptible: true

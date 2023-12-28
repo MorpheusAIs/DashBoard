@@ -1,0 +1,133 @@
+@import 'app-colors';
+
+:root,
+:before,
+:after {
+  --vh: 1vh;
+
+  --white: #{$white};
+  --white-rgb: #{$white-rgb};
+  --black: #{$black};
+  --black-rgb: #{$black-rgb};
+
+  --background-primary-light: #{$background-primary-light};
+  --background-primary-main: #{$background-primary-main};
+  --background-primary-dark: #{$background-primary-dark};
+
+  --background-secondary-light: #{$background-secondary-light};
+  --background-secondary-main: #{$background-secondary-main};
+  --background-secondary-dark: #{$background-secondary-dark};
+
+  /* status colors */
+  --success-light: #{$success-light};
+  --success-main: #{$success-main};
+  --success-dark: #{$success-dark};
+
+  --error-light: #{$error-light};
+  --error-main: #{$error-main};
+  --error-dark: #{$error-dark};
+
+  --warning-light: #{$warning-light};
+  --warning-main: #{$warning-main};
+  --warning-dark: #{$warning-dark};
+
+  --info-light: #{$info-light};
+  --info-main: #{$info-main};
+  --info-dark: #{$info-dark};
+
+  /* brand colors */
+  --primary-light: #{$primary-light};
+  --primary-main: #{$primary-main};
+  --primary-dark: #{$primary-dark};
+  --primary-light-rgb: #{$primary-light-rgb};
+  --primary-main-rgb: #{$primary-main-rgb};
+  --primary-dark-rgb: #{$primary-dark-rgb};
+
+  --secondary-light: #{$secondary-light};
+  --secondary-main: #{$secondary-main};
+  --secondary-dark: #{$secondary-dark};
+
+  /* typography colors */
+  --text-primary-light: #{$text-primary-light};
+  --text-primary-main: #{$text-primary-main};
+  --text-primary-dark: #{$text-primary-dark};
+
+  --text-secondary-light: #{$text-secondary-light};
+  --text-secondary-main: #{$text-secondary-main};
+  --text-secondary-dark: #{$text-secondary-dark};
+
+  --text-primary-invert-light: #{$text-primary-invert-light};
+  --text-primary-invert-main: #{$text-primary-invert-main};
+  --text-primary-invert-dark: #{$text-primary-invert-dark};
+
+  --text-secondary-invert-light: #{$text-secondary-invert-light};
+  --text-secondary-invert-main: #{$text-secondary-invert-main};
+  --text-secondary-invert-dark: #{$text-secondary-invert-dark};
+
+  /* border colors */
+  --border-primary-light: #{$border-primary-light};
+  --border-primary-main: #{$border-primary-main};
+  --border-primary-dark: #{$border-primary-dark};
+
+  --border-secondary-light: #{$border-secondary-light};
+  --border-secondary-main: #{$border-secondary-main};
+  --border-secondary-dark: #{$border-secondary-dark};
+
+  /* App variables */
+  --app-txt: #{$text-primary-main};
+  --app-font-family: 'Roboto', 'Arial', sans-serif;
+  --app-padding-right: #{toRem(64)};
+  --app-padding-left: #{toRem(64)};
+
+  @include respond-to(xmedium) {
+    --app-padding-right: #{toRem(32)};
+    --app-padding-left: #{toRem(32)};
+  }
+
+  @include respond-to(small) {
+    --app-padding-right: #{toRem(12)};
+    --app-padding-left: #{toRem(12)};
+  }
+
+  /* --------------------------------------- */
+
+  /* Field variables */
+
+  /* --------------------------------------- */
+  --field-bg-primary: var(--background-primary-main);
+  --field-bg-secondary: var(--background-secondary-light);
+
+  /* label */
+  --field-label: var(--text-primary-light);
+  --field-label-hover: var(--text-primary-light);
+  --field-label-focus: var(--primary-main);
+  --field-label-font-size: #{toRem(16)};
+  --field-label-line-height: 1.5;
+
+  /* text */
+  --field-text: var(--text-primary-light);
+  --field-text-font-size: #{toRem(16)};
+  --field-text-line-height: 1.5;
+  --field-placeholder: #{rgba($text-primary-main, 0.35)};
+
+  /* border */
+  --field-border: var(--border-primary-light);
+  --field-border-hover: var(--border-primary-light);
+  --field-border-focus: var(--primary-main);
+
+  /* transition duration */
+  --field-transition-duration: 0.2s;
+
+  /* paddings */
+  --field-padding-top: #{toRem(14)};
+  --field-padding-right: #{toRem(16)};
+  --field-padding-bottom: #{toRem(18)};
+  --field-padding-left: #{toRem(14)};
+  --field-padding:
+    var(--field-padding-top)
+    var(--field-padding-right)
+    var(--field-padding-bottom)
+    var(--field-padding-left);
+
+  --field-error: var(--error-main);
+}

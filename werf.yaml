@@ -1,0 +1,38 @@
+configVersion: 1
+project: "web-client"
+---
+image: builder
+from: registry.gitlab.com/tokend/devops/docker-containers:front16-914ecbd7e2465bc9570bf60322f3951eee7989c9
+git:
+  - add: /
+    to: /app
+    stageDependencies:
+      install:
+        - package.json
+        - yarn.lock
+      setup:
+        - "**/*"
+shell:
+  install:
+    - cd /app
+    #- yarn autoclean --init
+    #- yarn autoclean --force
+    - yarn install
+  setup:
+    - cd /app
+    - yarn build
+    #- sh -c '[ -d /app/dist/files ] && echo "$FILE exist." || mkdir -p /app/dist/files'
+    #- sh -c '[ -d /app/files ] && echo "$FILE exist." || mkdir -p /app/files'
+    #- sh -c '[ -z "`ls /app/files`" ] && echo "Empty" || cp -r /app/files/* /app/dist/files'
+
+---
+image: web
+from: nginx:alpine
+git:
+  - add: /nginx.conf
+    to: /etc/nginx/nginx.conf
+import:
+  - image: builder
+    add: /app/dist
+    to: /usr/share/nginx/html
+    after: setup
