@@ -1,103 +1,98 @@
 <template>
   <div :class="selectFieldClasses">
     <div ref="selectElement" class="select-field__select-wrp">
+      <label
+        v-if="label"
+        class="select-field__label"
+        :for="`select-field--${uid}`"
+      >
+        {{ label }}
+      </label>
       <div class="select-field__select-head-wrp">
         <button
           type="button"
           class="select-field__select-head"
-          @click="toggleDropdown"
+          :id="`select-field--${uid}`"
+          :disabled="isDisabled || isReadonly"
+          @blur="emit('blur')"
+          @click="toggleDropMenu"
         >
           <template v-if="$slots.head && !!modelValue">
             <slot
               name="head"
               :select-field="{
                 select,
-                isOpen: isDropdownOpen,
-                close: closeDropdown,
-                open: openDropdown,
-                toggle: toggleDropdown,
+                isOpen: isDropMenuOpen,
+                close: closeDropMenu,
+                open: openDropMenu,
+                toggle: toggleDropMenu,
               }"
             />
           </template>
           <template v-else>
             <template v-if="modelValue">
-              {{ modelValue }}
+              {{ valueOptions[modelIndex].title }}
             </template>
-            <template v-else-if="!label && placeholder">
+            <template v-else-if="placeholder">
               <span class="select-field__placeholder">
                 {{ props.placeholder }}
               </span>
             </template>
           </template>
           <icon
-            :class="[
-              'select-field__select-head-indicator',
-              {
-                'select-field__select-head-indicator--open': isDropdownOpen,
-              },
-            ]"
-            :name="$icons.arrowDown"
+            class="select-field__select-head-indicator"
+            :name="$icons.chevronDown"
           />
         </button>
-        <label
-          v-if="label"
-          class="select-field__label"
-          :for="`select-field--${uid}`"
-        >
-          {{ label }}
-        </label>
+        <transition name="select-field__select-drop-menu">
+          <div v-if="isDropMenuOpen" class="select-field__select-drop-menu">
+            <template v-if="$slots.default">
+              <slot
+                :select-field="{
+                  select,
+                  isOpen: isDropMenuOpen,
+                  close: closeDropMenu,
+                  open: openDropMenu,
+                  toggle: toggleDropMenu,
+                }"
+              />
+            </template>
+            <template v-else-if="valueOptions?.length">
+              <button
+                v-for="(option, idx) in valueOptions"
+                :key="`${idx}-${option.value}`"
+                :disabled="isDisabled || isReadonly"
+                class="select-field__select-dropdown-item"
+                @click="select(option.value)"
+              >
+                {{ option.title }}
+              </button>
+            </template>
+          </div>
+        </transition>
       </div>
-      <transition name="select-field__select-dropdown">
-        <div v-if="isDropdownOpen" class="select-field__select-dropdown">
-          <template v-if="$slots.default">
-            <slot
-              :select-field="{
-                select,
-                isOpen: isDropdownOpen,
-                close: closeDropdown,
-                open: openDropdown,
-                toggle: toggleDropdown,
-              }"
-            />
-          </template>
-          <template v-else-if="valueOptions?.length">
-            <button
-              :class="[
-                'select-field__select-dropdown-item',
-                {
-                  'select-field__select-dropdown-item--active':
-                    modelValue === option,
-                },
-              ]"
-              type="button"
-              v-for="(option, idx) in valueOptions"
-              :key="`[${idx}] ${option}`"
-              @click="select(option)"
-            >
-              {{ option }}
-            </button>
-          </template>
-        </div>
-      </transition>
     </div>
     <transition
       name="select-field__err-msg-transition"
       @enter="setHeightCSSVar"
       @before-leave="setHeightCSSVar"
     >
-      <span v-if="errorMessage" class="select-field__err-msg">
-        {{ errorMessage }}
-      </span>
-      <span v-else-if="note" class="select-field__note">
-        {{ note }}
-      </span>
+      <div v-if="errorMessage || note" class="select-field__msg-wrp">
+        <icon class="select-field__msg-icon" :name="$icons.exclamationCircle" />
+        <span v-if="errorMessage" class="select-field__err-msg">
+          {{ errorMessage }}
+        </span>
+        <span v-else-if="note" class="select-field__note">
+          {{ note }}
+        </span>
+      </div>
     </transition>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Icon } from '@/common'
-
+import { FieldOption } from '@/types'
 import { onClickOutside } from '@vueuse/core'
 import { computed, onMounted, ref, useAttrs, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
@@ -105,38 +100,44 @@ import { v4 as uuidv4 } from 'uuid'
 
 const props = withDefaults(
   defineProps<{
-    scheme?: 'primary'
-    modelValue: string | number
-    valueOptions?: string[] | number[]
+    modelValue: FieldOption['value']
+    valueOptions?: FieldOption[]
     label?: string
     placeholder?: string
     errorMessage?: string
     note?: string
+    scheme?: 'primary'
+    modification?: 'dropdown' | 'dropup'
   }>(),
   {
-    scheme: 'primary',
     valueOptions: () => [],
     type: 'text',
     label: '',
     placeholder: ' ',
     errorMessage: '',
     note: '',
+    scheme: 'primary',
+    modification: 'dropdown',
   },
 )
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: number | string): void
+  (e: 'blur'): void
 }>()
 
 const attrs = useAttrs()
 
-const selectElement = ref<HTMLDivElement>()
+const selectElement = ref<HTMLDivElement | null>(null)
 
-const isDropdownOpen = ref(false)
+const isDropMenuOpen = ref(false)
+const modelIndex = computed(() =>
+  props.valueOptions.findIndex(item => item.value === props.modelValue),
+)
 const uid = uuidv4()
 
 onBeforeRouteUpdate(() => {
-  closeDropdown()
+  closeDropMenu()
 })
 
 const isDisabled = computed(() =>
@@ -147,16 +148,18 @@ const isReadonly = computed(() =>
   ['', 'readonly', true].includes(attrs.readonly as string | boolean),
 )
 
-const isLabelActive = computed(() => isDropdownOpen.value || !!props.modelValue)
+const isLabelActive = computed(() => isDropMenuOpen.value || !!props.modelValue)
 
 const selectFieldClasses = computed(() => ({
   'select-field': true,
   'select-field--error': props.errorMessage,
-  'select-field--open': isDropdownOpen.value,
+  'select-field--filled': props.modelValue,
+  'select-field--open': isDropMenuOpen.value,
   'select-field--disabled': isDisabled.value,
   'select-field--readonly': isReadonly.value,
   'select-field--label-active': isLabelActive.value,
   [`select-field--${props.scheme}`]: true,
+  [`select-field--${props.modification}`]: true,
 }))
 
 const setHeightCSSVar = (element: Element) => {
@@ -166,31 +169,31 @@ const setHeightCSSVar = (element: Element) => {
   )
 }
 
-const toggleDropdown = () => {
-  isDropdownOpen.value ? closeDropdown() : openDropdown()
+const toggleDropMenu = () => {
+  isDropMenuOpen.value ? closeDropMenu() : openDropMenu()
 }
 
-const openDropdown = () => {
+const openDropMenu = () => {
   if (isDisabled.value || isReadonly.value) return
 
-  isDropdownOpen.value = true
+  isDropMenuOpen.value = true
 }
 
-const closeDropdown = () => {
-  isDropdownOpen.value = false
+const closeDropMenu = () => {
+  isDropMenuOpen.value = false
 }
 
 const select = (value: string | number) => {
   if (isDisabled.value || isReadonly.value) return
 
   emit('update:modelValue', value)
-  closeDropdown()
+  closeDropMenu()
 }
 
 onMounted(() => {
   if (selectElement.value) {
     onClickOutside(selectElement, () => {
-      closeDropdown()
+      closeDropMenu()
     })
   }
 })
@@ -198,7 +201,7 @@ onMounted(() => {
 watch(
   () => props.modelValue,
   () => {
-    closeDropdown()
+    closeDropMenu()
   },
 )
 </script>
@@ -212,48 +215,10 @@ $z-local-index: 2;
   position: relative;
   width: 100%;
   flex: 1;
-
-  &--disabled,
-  &--readonly {
-    opacity: 0.5;
-    pointer-events: none;
-  }
 }
 
 .select-field__label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
-  position: absolute;
-  padding: toRem(4);
-  top: 50%;
-  left: var(--field-padding-left);
-  transform: translateY(-50%);
-  color: var(--field-label);
-  font-size: toRem(16);
-  font-weight: 400;
-  line-height: 1.3;
-  background: var(--field-bg-primary);
-
   @include field-label;
-
-  transition-property: all;
-
-  .select-field--error & {
-    color: var(--field-error);
-  }
-
-  .select-field--label-active & {
-    top: 0;
-    font-size: toRem(12);
-    line-height: 1.3;
-    font-weight: 700;
-  }
-
-  .select-field--open & {
-    color: var(--primary-main);
-  }
 }
 
 .select-field__select-wrp {
@@ -265,144 +230,132 @@ $z-local-index: 2;
 .select-field__select-head-wrp {
   position: relative;
   width: 100%;
-  height: 100%;
 }
 
 .select-field__select-head {
-  background: var(--field-bg-primary);
-  padding: var(--field-padding);
-  padding-right: calc(var(--field-padding-right) + #{toRem(24)});
-  text-align: left;
+  $border-width: toRem(1);
+  $padding-vertical: toRem(7);
+  $line-height: toRem(34);
+
+  font-family: var(--app-font-family-main);
+  font-size: toRem(22);
+  font-weight: 700;
+  line-height: $line-height;
+  letter-spacing: 0;
+  text-align: right;
+  color: var(--field-text);
+  border: $border-width solid transparent;
+  padding: $padding-vertical toRem(28) $padding-vertical toRem(16);
   width: 100%;
-  height: 100%;
+  min-height: calc($line-height + $padding-vertical * 2 + $border-width * 2);
+  transition: var(--field-transition-duration) var(--field-transition-timing);
 
-  $field-text-height: calc(
-    var(--field-text-font-size) * var(--field-text-line-height)
-  );
-
-  min-height: calc(
-    $field-text-height + var(--field-padding-top) + var(--field-padding-bottom)
-  );
-
-  @include field-text;
-
-  transition-property: all;
-
-  & + .select-field__focus-indicator {
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    &:after {
-      content: '';
-      position: absolute;
-      bottom: toRem(-2);
-      left: 50%;
-      transform: translateX(-50%);
-      height: toRem(2);
-      width: 0;
-      background: var(--primary-main);
-      transition: width calc(var(--field-transition-duration) + 0.3s);
-
-      .select-field--error & {
-        background: var(--field-error);
-      }
-    }
+  &:disabled {
+    background: var(--field-bg-primary-disabled);
+    color: var(--field-text-readonly);
   }
 
-  .select-field--primary & {
-    @include field-border;
-  }
-
-  .select-field--error.select-field--primary & {
-    box-shadow: inset 0 0 0 toRem(50) var(--field-bg-primary),
-      0 0 0 toRem(1) var(--field-error);
-    border-color: var(--field-error);
-  }
-
-  .select-field--open.select-field--primary & {
-    box-shadow: inset 0 0 0 toRem(50) var(--field-bg-primary),
-      0 0 0 toRem(2) var(--primary-main);
-    border-color: var(--primary-main);
+  .select-field--error & {
+    border-color: var(--field-border-error);
   }
 }
 
 .select-field__placeholder {
   font: inherit;
-  opacity: 0.25;
-
-  @include field-placeholder;
 }
 
 .select-field__select-head-indicator {
   pointer-events: none;
   position: absolute;
   top: 50%;
-  right: var(--field-padding-right);
+  right: 0;
   transform: translateY(-50%);
-  width: toRem(18);
-  height: toRem(18);
-  color: var(--field-text);
-  transition: var(--field-transition-duration) ease-in-out;
+  width: toRem(24);
+  height: toRem(24);
+  transition: var(--field-transition-duration) var(--field-transition-timing);
+  color: inherit;
 
-  &--open {
+  .select-field--dropup:not(.select-field--open) &,
+  .select-field--dropdown.select-field--open & {
     transform: translateY(-50%) rotate(180deg);
   }
 }
 
-.select-field__select-dropdown {
+.select-field__select-drop-menu {
   display: flex;
   flex-direction: column;
   position: absolute;
   overflow: hidden auto;
-  top: 110%;
   right: 0;
   width: 100%;
   max-height: 500%;
   z-index: $z-local-index;
-  background: var(--white);
-  box-shadow: 0 toRem(1) toRem(2) rgba(var(--black-rgb), 0.3),
-    0 toRem(2) toRem(6) toRem(2) rgba(var(--black-rgb), 0.15);
-  border-radius: toRem(14);
+  background: var(--field-bg-primary);
+  box-shadow: 0 toRem(4) toRem(16) rgba(#a0a0a0, 0.25);
+
+  .select-field--dropdown & {
+    top: 100%;
+  }
+
+  .select-field--dropup & {
+    bottom: 100%;
+  }
 }
 
-.select-field__select-dropdown-enter-active {
-  animation: dropdown var(--field-transition-duration);
+.select-field__select-drop-menu-enter-active {
+  animation: drop-menu var(--field-transition-duration)
+    var(--transition-timing-default);
 }
 
-.select-field__select-dropdown-leave-active {
-  animation: dropdown var(--field-transition-duration) 0.1s reverse;
+.select-field__select-drop-menu-leave-active {
+  animation: drop-menu var(--field-transition-duration)
+    var(--transition-timing-default) reverse;
 }
 
-@keyframes dropdown {
+@keyframes drop-menu {
   from {
     opacity: 0;
-    transform: translateY(20%);
-    max-height: 0;
+    transform: scale(0.8);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
-    max-height: 500%;
   }
 }
 
 .select-field__select-dropdown-item {
-  text-align: left;
+  $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
+
+  font-family: var(--app-font-family-main);
+  font-size: toRem(22);
+  font-weight: 500;
+  line-height: toRem(34);
+  letter-spacing: 0;
+  text-align: end;
   width: 100%;
-  padding: toRem(16);
+  padding: toRem(8) toRem(16);
+  color: var(--field-text);
+  background: var(--background-secondary-main);
+  transition: var(--field-transition-duration) var(--field-transition-timing);
 
-  &:hover {
-    background: var(--background-secondary-main);
+  &:not([disabled]):hover {
+    background: var(--primary-main);
+    color: var(--text-primary-dark);
+    box-shadow: $shadow-hover;
   }
 
-  &--active {
-    background: var(--background-primary-main);
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
+}
+
+.select-field__msg-wrp {
+  @include field-msg-wrp;
+}
+
+.select-field__msg-icon {
+  @include field-msg-icon;
 }
 
 .select-field__err-msg,
@@ -415,11 +368,13 @@ $z-local-index: 2;
 }
 
 .select-field__err-msg-transition-enter-active {
-  animation: fade-down var(--field-transition-duration);
+  animation: fade-down var(--field-transition-duration)
+    var(--field-transition-timing);
 }
 
 .select-field__err-msg-transition-leave-active {
-  animation: fade-down var(--field-transition-duration) reverse;
+  animation: fade-down var(--field-transition-duration)
+    var(--field-transition-timing) reverse;
 }
 
 @keyframes fade-down {

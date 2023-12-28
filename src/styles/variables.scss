@@ -35,6 +35,16 @@
   --info-main: #{$info-main};
   --info-dark: #{$info-dark};
 
+  --disable-primary-main: #{$disable-primary-main};
+  --disable-primary-dark: #{$disable-primary-dark};
+
+  --disable-secondary-main: #{$disable-secondary-main};
+  --disable-secondary-dark: #{$disable-secondary-dark};
+
+  --disable-tertiary-light: #{$disable-tertiary-light};
+  --disable-tertiary-main: #{$disable-tertiary-main};
+  --disable-tertiary-dark: #{$disable-tertiary-dark};
+
   /* brand colors */
   --primary-light: #{$primary-light};
   --primary-main: #{$primary-main};
@@ -75,7 +85,7 @@
 
   /* App variables */
   --app-txt: #{$text-primary-main};
-  --app-font-family: 'Roboto', 'Arial', sans-serif;
+  --app-font-family: 'Inter', 'Arial', sans-serif;
   --app-padding-right: #{toRem(64)};
   --app-padding-left: #{toRem(64)};
 
@@ -94,40 +104,63 @@
   /* Field variables */
 
   /* --------------------------------------- */
-  --field-bg-primary: var(--background-primary-main);
-  --field-bg-secondary: var(--background-secondary-light);
+  --field-bg-primary: var(--background-secondary-main);
+  --field-bg-primary-disabled: var(--disable-tertiary-dark);
 
   /* label */
-  --field-label: var(--text-primary-light);
-  --field-label-hover: var(--text-primary-light);
-  --field-label-focus: var(--primary-main);
+  --field-label-font-family: var(--app-font-family-main);
   --field-label-font-size: #{toRem(16)};
-  --field-label-line-height: 1.5;
+  --field-label-font-weight: 400;
+  --field-label-line-height: #{toRem(24)};
+  --field-label-letter-spacing: 0;
+  --field-label: var(--text-secondary-main);
+  --field-label-margin-bottom: #{toRem(6)};
 
   /* text */
-  --field-text: var(--text-primary-light);
-  --field-text-font-size: #{toRem(16)};
-  --field-text-line-height: 1.5;
-  --field-placeholder: #{rgba($text-primary-main, 0.35)};
+  --field-text-font-family: var(--app-font-family-main);
+  --field-text-font-size: #{toRem(18)};
+  --field-text-font-weight: 400;
+  --field-text-line-height: #{toRem(24)};
+  --field-text-letter-spacing: 0;
+  --field-text: var(--text-secondary-main);
+  --field-text-readonly: var(--disable-tertiary-light);
+  --field-placeholder: var(--text-secondary-main);
+  --field-placeholder-readonly: var(--disable-secondary-main);
+
+  /* error */
+  --field-error-font-family: var(--app-font-family-main);
+  --field-error-font-size: #{toRem(16)};
+  --field-error-font-weight: 400;
+  --field-error-line-height: #{toRem(24)};
+  --field-error-letter-spacing: 0;
+  --field-error: var(--text-secondary-main);
+  --field-error-icon: var(--error-main);
+  --field-error-padding-top: #{toRem(10)};
 
   /* border */
-  --field-border: var(--border-primary-light);
+  --field-border: var(--border-primary-main);
   --field-border-hover: var(--border-primary-light);
   --field-border-focus: var(--primary-main);
+  --field-border-disabled: var(--disable-tertiary-main);
+  --field-border-error: var(--error-main);
 
-  /* transition duration */
-  --field-transition-duration: 0.2s;
+  /* transition */
+  --field-transition-duration: var(--transition-duration-fast);
+  --field-transition-timing: var(--transition-timing-default);
 
   /* paddings */
-  --field-padding-top: #{toRem(14)};
-  --field-padding-right: #{toRem(16)};
+  --field-padding-top: #{toRem(18)};
+  --field-padding-right: #{toRem(20)};
   --field-padding-bottom: #{toRem(18)};
-  --field-padding-left: #{toRem(14)};
+  --field-padding-left: #{toRem(20)};
   --field-padding:
     var(--field-padding-top)
     var(--field-padding-right)
     var(--field-padding-bottom)
     var(--field-padding-left);
 
-  --field-error: var(--error-main);
+  /* transition */
+  --transition-duration-fast: 0.2s;
+  --transition-duration-medium: 0.5s;
+  --transition-timing-default: cubic-bezier(0.08,0.52,0.52,1);
 }

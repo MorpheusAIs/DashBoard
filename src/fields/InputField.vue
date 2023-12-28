@@ -1,5 +1,8 @@
 <template>
   <div class="input-field" :class="inputClasses">
+    <label v-if="label" :for="`input-field--${uid}`" class="input-field__label">
+      {{ label }}
+    </label>
     <div class="input-field__input-wrp">
       <div
         v-if="$slots.nodeLeft"
@@ -11,26 +14,20 @@
       <input
         ref="inputEl"
         class="input-field__input"
+        spellcheck="false"
         :id="`input-field--${uid}`"
         v-bind="$attrs"
         v-on="listeners"
         :value="modelValue"
-        :placeholder="!label ? placeholder : ' '"
+        :placeholder="placeholder"
         :tabindex="isDisabled || isReadonly ? -1 : ($attrs.tabindex as number)"
         :type="inputType"
         :min="min"
         :max="max"
         :disabled="isDisabled || isReadonly"
       />
-      <label
-        v-if="label"
-        :for="`input-field--${uid}`"
-        class="input-field__label"
-      >
-        {{ label }}
-      </label>
       <div
-        v-if="$slots.nodeRight || isPasswordType || props.errorMessage"
+        v-if="$slots.nodeRight || isPasswordType"
         ref="nodeRightWrp"
         class="input-field__node-right-wrp"
       >
@@ -45,11 +42,6 @@
             :name="isPasswordShown ? ICON_NAMES.eye : ICON_NAMES.eyeOff"
           />
         </button>
-        <icon
-          v-else-if="props.errorMessage"
-          class="input-field__error-icon"
-          :name="ICON_NAMES.exclamationCircle"
-        />
       </div>
     </div>
     <transition
@@ -57,12 +49,15 @@
       @enter="setHeightCSSVar"
       @before-leave="setHeightCSSVar"
     >
-      <span v-if="errorMessage" class="input-field__err-msg">
-        {{ errorMessage }}
-      </span>
-      <span v-else-if="note" class="input-field__note-msg">
-        {{ note }}
-      </span>
+      <div v-if="errorMessage || note" class="input-field__msg-wrp">
+        <icon class="input-field__msg-icon" :name="$icons.exclamationCircle" />
+        <span v-if="errorMessage" class="input-field__err-msg">
+          {{ errorMessage }}
+        </span>
+        <span v-else-if="note" class="input-field__note-msg">
+          {{ note }}
+        </span>
+      </div>
     </transition>
   </div>
 </template>
@@ -89,7 +84,7 @@ const props = withDefaults(
     scheme: 'primary',
     type: 'text',
     label: '',
-    placeholder: ' ',
+    placeholder: '',
     errorMessage: '',
     note: '',
   },
@@ -142,18 +137,16 @@ const listeners = computed(() => ({
   },
 }))
 
-const inputClasses = computed(() =>
-  [
-    ...(slots.nodeLeft ? ['input-field--node-left'] : []),
-    ...(slots.nodeRight || isPasswordType.value || props.errorMessage
-      ? ['input-field--node-right']
-      : []),
-    ...(isDisabled.value ? ['input-field--disabled'] : []),
-    ...(isReadonly.value ? ['input-field--readonly'] : []),
-    ...(props.errorMessage ? ['input-field--error'] : []),
-    `input-field--${props.scheme}`,
-  ].join(' '),
-)
+const inputClasses = computed(() => [
+  ...(slots.nodeLeft ? ['input-field--node-left'] : []),
+  ...(slots.nodeRight || isPasswordType.value || props.errorMessage
+    ? ['input-field--node-right']
+    : []),
+  ...(isDisabled.value ? ['input-field--disabled'] : []),
+  ...(isReadonly.value ? ['input-field--readonly'] : []),
+  ...(props.errorMessage ? ['input-field--error'] : []),
+  `input-field--${props.scheme}`,
+])
 
 const inputType = computed(() => {
   if (isPasswordType.value) {
@@ -223,64 +216,10 @@ $z-index-side-nodes: 1;
   position: relative;
   width: 100%;
   flex: 1;
-
-  &--disabled,
-  &--readonly {
-    opacity: 0.5;
-  }
 }
 
 .input-field__label {
-  pointer-events: none;
-  position: absolute;
-  padding: toRem(4);
-  top: 0;
-  left: var(--field-padding-left);
-  font-size: toRem(12);
-  line-height: 1.3;
-  font-weight: 700;
-  background: var(--field-bg-primary);
-  transform: translateY(-50%);
-
   @include field-label;
-
-  .input-field__input:not(:placeholder-shown) ~ & {
-    top: 0;
-    color: var(--field-text);
-    border-color: var(--field-border-hover);
-  }
-
-  .input-field__input:not(:focus):placeholder-shown ~ & {
-    top: 50%;
-
-    @include field-label;
-
-    .input-field--node-left & {
-      left: calc(var(--field-padding-left) * 3);
-    }
-  }
-
-  .input-field--error .input-field__input:not(:focus):placeholder-shown ~ & {
-    color: var(--field-error);
-  }
-
-  /* stylelint-disable-next-line */
-  .input-field__input:not([disabled]):focus ~ & {
-    color: var(--field-label-focus);
-    font-weight: 700;
-  }
-
-  .input-field__input:not(:focus):placeholder-shown:-webkit-autofill ~ & {
-    top: 50%;
-    color: var(--field-label);
-    font-size: toRem(16);
-    font-weight: 400;
-    line-height: 1.3;
-
-    .input-field--node-left & {
-      left: calc(var(--field-padding-left) * 3);
-    }
-  }
 }
 
 .input-field__input-wrp {
@@ -293,15 +232,14 @@ $z-index-side-nodes: 1;
   padding: var(--field-padding);
   background: var(--field-bg-primary);
   box-shadow: inset 0 0 0 toRem(50) var(--field-bg-primary);
-  border: none;
+  transition: var(--field-transition-duration) var(--field-transition-timing);
+  transition-property: color, box-shadow, border-color, background-color;
 
-  @include field-text;
-
-  .input-field--primary & {
-    @include field-border;
+  &:disabled,
+  &:read-only {
+    border-color: var(--field-border-disabled);
+    background: var(--field-bg-primary-disabled);
   }
-
-  transition-property: all;
 
   &::-webkit-input-placeholder {
     @include field-placeholder;
@@ -323,6 +261,31 @@ $z-index-side-nodes: 1;
     @include field-placeholder;
   }
 
+  .input-field--node-left & {
+    padding-left: calc(var(--field-padding-left) * 3);
+  }
+
+  .input-field--node-right & {
+    padding-right: calc(var(--field-padding-right) * 3);
+  }
+
+  .input-field--error & {
+    border-color: var(--field-border-error);
+  }
+
+  .input-field__input-wrp:hover &:not([disabled]) {
+    border-color: var(--field-border-hover);
+  }
+
+  .input-field__input-wrp:focus-within &:not([disabled]) {
+    box-sizing: border-box;
+    border-color: var(--field-border-focus);
+  }
+
+  .input-field--error &:not([disabled]):not(:focus):hover {
+    border-color: var(--field-border-error);
+  }
+
   // Hide number arrows
   &[type='number'] {
     -moz-appearance: textfield;
@@ -335,34 +298,9 @@ $z-index-side-nodes: 1;
     }
   }
 
-  .input-field--node-left & {
-    padding-left: calc(var(--field-padding-left) * 3);
-  }
+  @include field-border;
 
-  .input-field--node-right & {
-    padding-right: calc(var(--field-padding-right) * 3);
-  }
-
-  .input-field--error.input-field--primary & {
-    border-color: var(--field-error);
-    box-shadow: inset 0 0 0 toRem(50) var(--field-bg-primary),
-      0 0 0 toRem(1) var(--field-error);
-  }
-
-  &:not([disabled]):focus {
-    .input-field--primary & {
-      box-sizing: border-box;
-      box-shadow: inset 0 0 0 toRem(50) var(--field-bg-primary),
-        0 0 0 toRem(1) var(--field-border-focus);
-      border-color: var(--field-border-focus);
-    }
-  }
-
-  &:not([disabled]):not(:focus):hover {
-    .input-field--primary & {
-      border-color: var(--field-border-hover);
-    }
-  }
+  @include field-text;
 }
 
 .input-field__node-left-wrp {
@@ -383,6 +321,7 @@ $z-index-side-nodes: 1;
   transform: translateY(-50%);
   color: inherit;
   z-index: $z-index-side-nodes;
+  padding-right: toRem(12);
 }
 
 .input-field__password-icon {
@@ -390,15 +329,17 @@ $z-index-side-nodes: 1;
   max-height: toRem(24);
 }
 
-.input-field__error-icon {
-  max-width: toRem(24);
-  max-height: toRem(24);
-  color: var(--field-error);
-}
-
 .input-field__icon {
   width: toRem(18);
   height: toRem(18);
+}
+
+.input-field__msg-wrp {
+  @include field-msg-wrp;
+}
+
+.input-field__msg-icon {
+  @include field-msg-icon;
 }
 
 .input-field__err-msg,
