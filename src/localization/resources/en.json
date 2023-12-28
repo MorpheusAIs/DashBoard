@@ -1,0 +1,38 @@
+{
+  "validations": {
+    "field-error_required": "Please fill out this field",
+    "field-error_email": "Field must be a valid email"
+  },
+  "errors": {
+    "default": "Something went wrong"
+  },
+  "notification": {
+    "default-title-success": "Success",
+    "default-title-error": "Error",
+    "default-title-warning": "Warning",
+    "default-title-info": "Info",
+    "default-title-default": "Just a message",
+    "default-message-success": "Action successful",
+    "default-message-error": "Something went wrong",
+    "default-message-warning": "Something you are doing is not recommended",
+    "default-message-info": "Something is happening. Just want you to know that",
+    "default-message-default": "Just a message"
+  },
+  "login-form": {
+    "login-lbl": "Login",
+    "password-lbl": "Password",
+    "login-success-msg": "Access granted",
+    "submit-btn": "Submit"
+  },
+  "ui-kit-page": {
+    "button": "Button",
+    "some-placeholder": "placeholder",
+    "some-label": "label",
+    "some-error-message": "error-message",
+    "modal-btn": "Open modal",
+    "accordion-btn": "Toggle Accordion",
+    "collapse-text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "loading-error-msg": "Oops, something went wrong",
+    "no-data-msg": "Empty data, please add new"
+  }
+}
