@@ -3,6 +3,9 @@ on:
     branches:
       - "add-ci"
 
+permissions:
+  packages: write
+  
 jobs:
   converge:
     name: Converge
