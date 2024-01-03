@@ -2,7 +2,7 @@ configVersion: 1
 project: "web-client"
 ---
 image: builder
-from: registry.gitlab.com/tokend/devops/docker-containers:front16-914ecbd7e2465bc9570bf60322f3951eee7989c9
+from: node:18-alpine
 git:
   - add: /
     to: /app
@@ -10,20 +10,19 @@ git:
       install:
         - package.json
         - yarn.lock
-      setup:
+      setup: 
         - "**/*"
-shell:
-  install:
+shell: 
+  beforeInstall:
+    - apk --no-cache --update --virtual build-dependencies add python3 make g++
+  install: 
     - cd /app
     #- yarn autoclean --init
     #- yarn autoclean --force
     - yarn install
-  setup:
+  setup: 
     - cd /app
     - yarn build
-    #- sh -c '[ -d /app/dist/files ] && echo "$FILE exist." || mkdir -p /app/dist/files'
-    #- sh -c '[ -d /app/files ] && echo "$FILE exist." || mkdir -p /app/files'
-    #- sh -c '[ -z "`ls /app/files`" ] && echo "Empty" || cp -r /app/files/* /app/dist/files'
 
 ---
 image: web
