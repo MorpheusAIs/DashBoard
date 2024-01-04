@@ -86,18 +86,8 @@
   /* App variables */
   --app-txt: #{$text-primary-main};
   --app-font-family: 'Inter', 'Arial', sans-serif;
-  --app-padding-right: #{toRem(64)};
-  --app-padding-left: #{toRem(64)};
-
-  @include respond-to(xmedium) {
-    --app-padding-right: #{toRem(32)};
-    --app-padding-left: #{toRem(32)};
-  }
-
-  @include respond-to(small) {
-    --app-padding-right: #{toRem(12)};
-    --app-padding-left: #{toRem(12)};
-  }
+  --app-padding-right: #{toRem(100)};
+  --app-padding-left: #{toRem(100)};
 
   /* --------------------------------------- */
 
@@ -108,7 +98,7 @@
   --field-bg-primary-disabled: var(--disable-tertiary-dark);
 
   /* label */
-  --field-label-font-family: var(--app-font-family-main);
+  --field-label-font-family: var(--app-font-family);
   --field-label-font-size: #{toRem(16)};
   --field-label-font-weight: 400;
   --field-label-line-height: #{toRem(24)};
@@ -117,7 +107,7 @@
   --field-label-margin-bottom: #{toRem(6)};
 
   /* text */
-  --field-text-font-family: var(--app-font-family-main);
+  --field-text-font-family: var(--app-font-family);
   --field-text-font-size: #{toRem(18)};
   --field-text-font-weight: 400;
   --field-text-line-height: #{toRem(24)};
@@ -128,7 +118,7 @@
   --field-placeholder-readonly: var(--disable-secondary-main);
 
   /* error */
-  --field-error-font-family: var(--app-font-family-main);
+  --field-error-font-family: var(--app-font-family);
   --field-error-font-size: #{toRem(16)};
   --field-error-font-weight: 400;
   --field-error-line-height: #{toRem(24)};

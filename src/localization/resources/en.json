@@ -1,4 +1,9 @@
 {
+  "app-navbar": {
+    "token-contract-link": "Token Contract",
+    "chat-app-link": "Chat App",
+    "connect-wallet-btn": "Connect wallet"
+  },
   "validations": {
     "field-error_required": "Please fill out this field",
     "field-error_email": "Field must be a valid email"

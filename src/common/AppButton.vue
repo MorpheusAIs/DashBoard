@@ -68,7 +68,14 @@ const props = withDefaults(
     text?: string
     scheme?: 'filled' | 'flat' | 'link' | 'none'
     modification?: 'border-circle' | 'border-rounded' | 'border-square'
-    color?: 'primary' | 'success' | 'error' | 'warning' | 'info' | 'none'
+    color?:
+      | 'primary'
+      | 'secondary'
+      | 'success'
+      | 'error'
+      | 'warning'
+      | 'info'
+      | 'none'
     size?: 'large' | 'medium' | 'small' | 'x-small' | 'none'
     route?: LocationAsRelativeRaw
     href?: string
@@ -196,17 +203,7 @@ $button-transition: var(--transition-duration-fast)
     --app-button-flat-bg: none;
     --app-button-flat-bg-hover: none;
     --app-button-flat-bg-focused: none;
-    --app-button-flat-bg-active: var(--background-secondary-main);
-
-    --app-button-flat-text: var(--primary-main);
-    --app-button-flat-text-hover: var(--primary-main);
-    --app-button-flat-text-focused: var(--primary-main);
-    --app-button-flat-text-active: var(--primary-main);
-
-    --app-button-flat-border: #{toRem(1)} solid var(--secondary-light);
-    --app-button-flat-border-hover: var(--app-button-flat-border);
-    --app-button-flat-border-focused: var(--app-button-flat-border);
-    --app-button-flat-border-active: var(--app-button-flat-border);
+    --app-button-flat-bg-active: none;
 
     --app-button-bg: var(--app-button-flat-bg);
     --app-button-bg-hover: var(--app-button-flat-bg-hover);
@@ -286,6 +283,16 @@ $button-transition: var(--transition-duration-fast)
     --app-button-filled-border-active: #{toRem(2)} solid var(--primary-main);
     --app-button-filled-border-disabled: #{toRem(2)} solid transparent;
 
+    --app-button-flat-text: var(--primary-main);
+    --app-button-flat-text-hover: var(--primary-main);
+    --app-button-flat-text-focused: var(--primary-main);
+    --app-button-flat-text-active: var(--primary-main);
+
+    --app-button-flat-border: #{toRem(1)} solid var(--secondary-light);
+    --app-button-flat-border-hover: var(--app-button-flat-border);
+    --app-button-flat-border-focused: var(--app-button-flat-border);
+    --app-button-flat-border-active: var(--app-button-flat-border);
+
     --app-button-link-text: var(--primary-main);
     --app-button-link-text-hover: var(--primary-main);
     --app-button-link-text-focused: var(--primary-main);
@@ -330,6 +337,16 @@ $button-transition: var(--transition-duration-fast)
     --app-button-filled-border-focused: #{toRem(1)} solid var(--primary-main);
     --app-button-filled-border-active: #{toRem(1)} solid var(--primary-main);
     --app-button-filled-border-disabled: #{toRem(1)} solid transparent;
+
+    --app-button-flat-text: rgba(255, 255, 255, 0.8);
+    --app-button-flat-text-hover: var(--primary-main);
+    --app-button-flat-text-focused: var(--primary-main);
+    --app-button-flat-text-active: var(--primary-main);
+
+    --app-button-flat-border: #{toRem(1)} solid #494949;
+    --app-button-flat-border-hover: #{toRem(1)} solid var(--primary-main);
+    --app-button-flat-border-focused: var(--app-button-flat-border-hover);
+    --app-button-flat-border-active: var(--app-button-flat-border-hover);
 
     &.app-button--scheme-filled {
       &:not([disabled]):focus,
@@ -453,6 +470,7 @@ $button-transition: var(--transition-duration-fast)
     --app-button-link-text-focused: var(--primary-main);
     --app-button-link-text-active: var(--primary-main);
     --app-button-link-text-disabled: var(--disable-secondary-main);
+    --app-button-icon: var(--primary-main);
 
     --app-button-link-underline: transparent;
     --app-button-link-underline-hover: var(--primary-main);
@@ -490,16 +508,14 @@ $button-transition: var(--transition-duration-fast)
   &--medium {
     --button-icon-size: #{toRem(24)};
 
-    font-family: var(--app-font-family);
-    font-size: toRem(16);
-    font-weight: 500;
-    line-height: toRem(24);
-    letter-spacing: 0;
     gap: toRem(8);
     height: toRem(48);
 
     &:not(.app-button--scheme-link) {
-      padding: toRem(10) toRem(40);
+      padding: toRem(10) toRem(26);
+      min-width: toRem(170);
+
+      @include body-4-medium;
     }
 
     &.app-button--icon-only {
@@ -509,6 +525,8 @@ $button-transition: var(--transition-duration-fast)
       width: calc(var(--button-icon-size) + #{toRem(12)});
       height: calc(var(--button-icon-size) + #{toRem(12)});
     }
+
+    @include body-4-regular;
   }
 
   &--small {
@@ -533,6 +551,7 @@ $button-transition: var(--transition-duration-fast)
 
 .app-button .app-button__icon-left,
 .app-button .app-button__icon-right {
+  color: var(--app-button-icon);
   height: var(--button-icon-size);
   width: var(--button-icon-size);
 }

@@ -237,7 +237,7 @@ $z-local-index: 2;
   $padding-vertical: toRem(7);
   $line-height: toRem(34);
 
-  font-family: var(--app-font-family-main);
+  font-family: var(--app-font-family);
   font-size: toRem(22);
   font-weight: 700;
   line-height: $line-height;
@@ -326,7 +326,7 @@ $z-local-index: 2;
 .select-field__select-dropdown-item {
   $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
 
-  font-family: var(--app-font-family-main);
+  font-family: var(--app-font-family);
   font-size: toRem(22);
   font-weight: 500;
   line-height: toRem(34);

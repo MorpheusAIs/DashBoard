@@ -121,3 +121,163 @@ $media-breakpoints: (
   width: 100%;
   margin: auto;
 }
+
+@mixin h1 {
+  font-family: var(--app-font-family);
+  font-size: toRem(54);
+  font-weight: 700;
+  line-height: toRem(82);
+  letter-spacing: 0;
+}
+
+@mixin h2 {
+  font-family: var(--app-font-family);
+  font-size: toRem(32);
+  font-weight: 700;
+  line-height: toRem(46);
+  letter-spacing: 0;
+}
+
+@mixin h3 {
+  font-family: var(--app-font-family);
+  font-size: toRem(28);
+  font-weight: 700;
+  line-height: toRem(40);
+  letter-spacing: 0;
+}
+
+@mixin h4 {
+  font-family: var(--app-font-family);
+  font-size: toRem(24);
+  font-weight: 600;
+  line-height: toRem(34);
+  letter-spacing: 0;
+}
+
+@mixin body-1-semi-bold {
+  font-family: var(--app-font-family);
+  font-size: toRem(22);
+  font-weight: 600;
+  line-height: toRem(32);
+  letter-spacing: 0;
+}
+
+@mixin body-1-regular {
+  font-family: var(--app-font-family);
+  font-size: toRem(22);
+  font-weight: 400;
+  line-height: toRem(32);
+  letter-spacing: 0;
+}
+
+@mixin body-2-semi-bold {
+  font-family: var(--app-font-family);
+  font-size: toRem(20);
+  font-weight: 600;
+  line-height: toRem(30);
+  letter-spacing: 0;
+}
+
+@mixin body-2-regular {
+  font-family: var(--app-font-family);
+  font-size: toRem(20);
+  font-weight: 400;
+  line-height: toRem(30);
+  letter-spacing: 0;
+}
+
+@mixin body-3-semi-bold {
+  font-family: var(--app-font-family);
+  font-size: toRem(18);
+  font-weight: 600;
+  line-height: toRem(26);
+  letter-spacing: 0;
+}
+
+@mixin body-3-medium {
+  font-family: var(--app-font-family);
+  font-size: toRem(18);
+  font-weight: 500;
+  line-height: toRem(26);
+  letter-spacing: 0;
+}
+
+@mixin body-3-regular {
+  font-family: var(--app-font-family);
+  font-size: toRem(18);
+  font-weight: 400;
+  line-height: toRem(26);
+  letter-spacing: 0;
+}
+
+@mixin body-4-semi-bold {
+  font-family: var(--app-font-family);
+  font-size: toRem(16);
+  font-weight: 600;
+  line-height: toRem(22);
+  letter-spacing: 0;
+}
+
+@mixin body-4-medium {
+  font-family: var(--app-font-family);
+  font-size: toRem(16);
+  font-weight: 500;
+  line-height: toRem(22);
+  letter-spacing: 0;
+}
+
+@mixin body-4-regular {
+  font-family: var(--app-font-family);
+  font-size: toRem(16);
+  font-weight: 400;
+  line-height: toRem(22);
+  letter-spacing: 0;
+}
+
+@mixin body-5-semi-bold {
+  font-family: var(--app-font-family);
+  font-size: toRem(14);
+  font-weight: 600;
+  line-height: toRem(20);
+  letter-spacing: 0;
+}
+
+@mixin body-5-medium {
+  font-family: var(--app-font-family);
+  font-size: toRem(14);
+  font-weight: 500;
+  line-height: toRem(20);
+  letter-spacing: 0;
+}
+
+@mixin body-5-regular {
+  font-family: var(--app-font-family);
+  font-size: toRem(14);
+  font-weight: 400;
+  line-height: toRem(20);
+  letter-spacing: 0;
+}
+
+@mixin body-6-semi-bold {
+  font-family: var(--app-font-family);
+  font-size: toRem(12);
+  font-weight: 600;
+  line-height: toRem(16);
+  letter-spacing: 0;
+}
+
+@mixin body-6-medium {
+  font-family: var(--app-font-family);
+  font-size: toRem(12);
+  font-weight: 500;
+  line-height: toRem(16);
+  letter-spacing: 0;
+}
+
+@mixin body-6-regular {
+  font-family: var(--app-font-family);
+  font-size: toRem(12);
+  font-weight: 400;
+  line-height: toRem(16);
+  letter-spacing: 0;
+}

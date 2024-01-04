@@ -53,17 +53,13 @@ init()
 
 <style lang="scss" scoped>
 .app__container {
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: toRem(85) 1fr max-content;
+  display: flex;
+  flex-direction: column;
   flex: 1;
-
-  @include respond-to(small) {
-    grid-template-rows: max-content 1fr max-content;
-  }
 }
 
 .app__main {
+  flex: 1;
   padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
 }
 
