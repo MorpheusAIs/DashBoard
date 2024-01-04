@@ -39,7 +39,9 @@ body,
 span,
 p,
 a {
-  font-size: toRem(16);
+  color: var(--text-secondary-light);
+
+  @include body-3-regular;
 }
 
 button {
@@ -68,16 +70,10 @@ button {
   }
 }
 
-body,
-p,
 li,
 ul {
   list-style-type: none;
-  color: var(--text-primary-main);
-}
-
-p {
-  @include body-3-regular;
+  color: var(--text-secondary-light);
 }
 
 h1,
@@ -85,36 +81,28 @@ h2,
 h3,
 h4,
 h5 {
-  color: var(--text-primary-main);
+  color: var(--text-secondary-light);
   font-family: var(--app-font-family);
   line-height: 1;
 }
 
 h1 {
-  font-size: toRem(24);
+  @include h1;
 }
 
 h2 {
-  font-size: toRem(24);
+  @include h2;
 }
 
 h3 {
-  font-size: toRem(18);
+  @include h3;
 }
 
 h4 {
-  font-size: toRem(16);
-}
-
-h5 {
-  font-size: toRem(14);
+  @include h4;
 }
 
 a {
-  font-size: toRem(16);
-  line-height: 1.25;
-  font-weight: 600;
-  color: var(--primary-main);
   text-decoration: none;
   outline: none;
 

@@ -4,6 +4,10 @@
     "chat-app-link": "Chat App",
     "connect-wallet-btn": "Connect wallet"
   },
+  "info-bar": {
+    "status--public": "Open",
+    "status--private": "Private"
+  },
   "validations": {
     "field-error_required": "Please fill out this field",
     "field-error_email": "Field must be a valid email"
