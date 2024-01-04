@@ -7,6 +7,7 @@ export { default as ErrorMessage } from '@/common/ErrorMessage.vue'
 export { default as Loader } from '@/common/Loader.vue'
 export { default as AppLogo } from '@/common/AppLogo.vue'
 export { default as AppNavbar } from '@/common/AppNavbar.vue'
+export { default as AppTabs } from './AppTabs.vue'
 export { default as Modal } from '@/common/Modal.vue'
 
 export * from './modals'

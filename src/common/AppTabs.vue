@@ -1,14 +1,11 @@
 <template>
   <div class="app-tabs">
-    <app-button
+    <component
       v-for="tab in tabs"
       :key="tab.id"
+      :is="tab.route ? 'router-link' : 'button'"
       :text="tab.title"
-      :icon-left="$icons.cube"
-      :route="tab.route"
-      color="secondary"
-      scheme="none"
-      modification="none"
+      :to="tab.route"
       class="app-tabs__btn"
       :class="{ 'app-tabs__btn--active': modelValue?.id === tab.id }"
       @click="updateTab(tab)"
@@ -17,8 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton } from '#components'
-import { Tab } from '@/types'
+import { type Tab } from '@/types'
 
 defineProps<{
   modelValue?: Tab
@@ -36,43 +32,38 @@ const updateTab = (tab: Tab) => {
 
 <style lang="scss" scoped>
 .app-tabs {
-  display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  border-radius: var(--border-radius-main) var(--border-radius-main) 0 0;
-  background: var(--background-primary-light);
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  grid-gap: toRem(24);
+}
 
-  .app-tabs__btn {
-    grid-auto-flow: row;
-    justify-items: center;
-    padding: toRem(16) toRem(32);
-    transition: none;
-    --app-button-bg-focused: var(--primary-main);
-    --app-button-bg-active: var(--primary-main);
-    --app-button-text-hover: var(--primary-main);
-    --app-button-text-focused: var(--text-primary-invert-main);
-    --app-button-text-active: var(--text-primary-invert-main);
+.app-tabs__btn {
+  $color: rgba(255, 255, 255, 0.8);
 
-    &.router-link-active,
-    &--active {
-      --app-button-bg: var(--primary-main);
-      --app-button-bg-hover: var(--primary-main);
-      --app-button-bg-focused: var(--primary-main);
-      --app-button-bg-active: var(--primary-main);
-      --app-button-text: var(--text-primary-invert-main);
-      --app-button-text-hover: var(--text-primary-invert-main);
-      --app-button-text-focused: var(--text-primary-invert-main);
-      --app-button-text-active: var(--text-primary-invert-main);
-    }
+  padding: toRem(16) toRem(24);
+  text-align: center;
+  border: toRem(1) solid #494949;
+  color: $color;
+  transition: var(--transition-duration-fast) var(--transition-timing-default);
 
-    @include respond-to(medium) {
-      width: 100%;
+  &.router-link-active,
+  &--active {
+    border-color: var(--primary-main);
+    color: var(--primary-main);
 
-      // stylelint-disable-next-line selector-pseudo-class-no-unknown
-      :deep(.icon) {
-        display: none;
-      }
+    @include body-2-semi-bold;
+  }
+
+  &:not(.router-link-active):not(.app-tabs__btn--active) {
+    &:not([disabled]):hover,
+    &:not([disabled]):focus,
+    &:not([disabled]):active {
+      border-color: var(--primary-main);
+      color: var(--primary-main);
     }
   }
+
+  @include body-2-regular;
 }
 </style>
