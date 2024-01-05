@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - "add-ci"
+      - "dev"
 
 permissions:
   packages: write
