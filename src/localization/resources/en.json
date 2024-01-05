@@ -4,6 +4,47 @@
     "chat-app-link": "Chat App",
     "connect-wallet-btn": "Connect wallet"
   },
+  "home-page": {
+    "community-tab": "Community",
+    "coders-tab": "Coders",
+    "compute-tab": "Compute",
+    "capital-tab": "Capital",
+    "community-view": {
+      "info-bar": {
+        "title": "Community",
+        "subtitle": "Group 1",
+        "description": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
+      },
+      "total-invested-title": "Total Invested",
+      "daily-reward-title": "Current daily reward",
+      "started-at-title": "Started at",
+      "withdraw-at-title": "Withdraw is locked until",
+      "claim-at-title": "Claim is locked until",
+      "withdraw-at-note": "Note: Withdraw is locked until",
+      "claim-at-note": "Note: Claim is locked until",
+      "deposit-btn": "Deposit stETH",
+      "external-link": "How to receive stETH?",
+      "withdraw-btn": "Withdraw stETH",
+      "user-invested-title": "You invested",
+      "available-to-claim-title": "Available to claim",
+      "claim-btn": "Claim MOR",
+      "dashboard-description": "The reward will be claim automatically on withdrawal. Your share in the group will decrease, the award percentage will be reduced accordingly."
+    },
+    "coders-view": {
+      "info-bar": {
+        "title": "Coders",
+        "subtitle": "Group 2",
+        "description": "People who provide the intelligence to use the frontends, capital and compute."
+      },
+      "daily-reward-title": "Current daily reward",
+      "started-at-title": "Started at",
+      "claim-at-title": "Claim is locked until",
+      "claim-at-note": "Note: Claim is locked until",
+      "total-earning-title": "Lifetime earning",
+      "available-to-claim-title": "Available to claim",
+      "claim-btn": "Claim"
+    }
+  },
   "info-bar": {
     "status--public": "Open",
     "status--private": "Private"
