@@ -128,6 +128,10 @@ $media-breakpoints: (
   font-weight: 700;
   line-height: toRem(82);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include h2;
+  }
 }
 
 @mixin h2 {
@@ -176,6 +180,10 @@ $media-breakpoints: (
   font-weight: 600;
   line-height: toRem(30);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-4-semi-bold;
+  }
 }
 
 @mixin body-2-regular {
@@ -184,6 +192,10 @@ $media-breakpoints: (
   font-weight: 400;
   line-height: toRem(30);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-4-regular;
+  }
 }
 
 @mixin body-3-semi-bold {
@@ -192,6 +204,10 @@ $media-breakpoints: (
   font-weight: 600;
   line-height: toRem(26);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-5-semi-bold;
+  }
 }
 
 @mixin body-3-medium {
@@ -200,6 +216,10 @@ $media-breakpoints: (
   font-weight: 500;
   line-height: toRem(26);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-5-medium;
+  }
 }
 
 @mixin body-3-regular {
@@ -208,6 +228,10 @@ $media-breakpoints: (
   font-weight: 400;
   line-height: toRem(26);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-5-regular;
+  }
 }
 
 @mixin body-4-semi-bold {
@@ -216,6 +240,10 @@ $media-breakpoints: (
   font-weight: 600;
   line-height: toRem(22);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-5-semi-bold;
+  }
 }
 
 @mixin body-4-medium {
@@ -224,6 +252,10 @@ $media-breakpoints: (
   font-weight: 500;
   line-height: toRem(22);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-5-medium;
+  }
 }
 
 @mixin body-4-regular {
@@ -232,6 +264,10 @@ $media-breakpoints: (
   font-weight: 400;
   line-height: toRem(22);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-5-regular;
+  }
 }
 
 @mixin body-5-semi-bold {

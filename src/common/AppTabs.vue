@@ -33,9 +33,15 @@ const updateTab = (tab: Tab) => {
 <style lang="scss" scoped>
 .app-tabs {
   display: grid;
-  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-columns: 1fr;
   grid-auto-flow: column;
   grid-gap: toRem(24);
+
+  @include respond-to(medium) {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: row;
+    grid-gap: toRem(12);
+  }
 }
 
 .app-tabs__btn {
@@ -67,5 +73,9 @@ const updateTab = (tab: Tab) => {
   }
 
   @include body-2-regular;
+
+  @include respond-to(medium) {
+    padding: toRem(12) toRem(16);
+  }
 }
 </style>

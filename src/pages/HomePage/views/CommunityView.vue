@@ -8,8 +8,12 @@
       :items="mockBarItems"
     >
       <div class="community-view__bar-buttons-wrp">
-        <app-button :text="$t('home-page.community-view.deposit-btn')" />
         <app-button
+          class="community-view__bar-button"
+          :text="$t('home-page.community-view.deposit-btn')"
+        />
+        <app-button
+          class="community-view__bar-button"
           scheme="link"
           color="none"
           :text="$t('home-page.community-view.external-link')"
@@ -89,12 +93,29 @@ const mockDashboardItems: InfoDashboardType.Item[] = [
   align-items: center;
   justify-content: space-between;
   gap: toRem(16);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+    gap: toRem(8);
+  }
+}
+
+.community-view__bar-button {
+  &:first-child {
+    @include respond-to(medium) {
+      width: 100%;
+    }
+  }
 }
 
 .community-view__dashboard-buttons-wrp {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(12);
+  }
 }
 
 .community-view .community-view__dashboard-button {

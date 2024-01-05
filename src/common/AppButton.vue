@@ -512,10 +512,14 @@ $button-transition: var(--transition-duration-fast)
     height: toRem(48);
 
     &:not(.app-button--scheme-link) {
-      padding: toRem(10) toRem(26);
+      padding: toRem(10) toRem(14);
       min-width: toRem(170);
 
       @include body-4-medium;
+
+      @include respond-to(medium) {
+        min-width: toRem(140);
+      }
     }
 
     &.app-button--icon-only {

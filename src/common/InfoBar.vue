@@ -53,6 +53,11 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: toRem(16);
+
+  @include respond-to(medium) {
+    margin-bottom: toRem(8);
+    gap: toRem(8);
+  }
 }
 
 .info-bar__subtitle {
@@ -74,10 +79,18 @@ defineProps<{
   &--private {
     background: linear-gradient(90deg, #e08c5c 0%, #ffbe72 100%);
   }
+
+  @include respond-to(medium) {
+    padding: toRem(2) toRem(14);
+  }
 }
 
 .info-bar__description {
   margin-top: toRem(24);
+
+  @include respond-to(medium) {
+    margin-top: toRem(16);
+  }
 }
 
 .info-bar__items {
@@ -91,6 +104,22 @@ defineProps<{
     padding-bottom: toRem(16);
     border-bottom: toRem(2) solid #494949;
   }
+
+  @include respond-to(medium) {
+    margin-top: toRem(16);
+    grid-gap: toRem(10);
+  }
+}
+
+.info-bar__item {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  grid-gap: toRem(24);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(16);
+  }
 }
 
 .info-bar__item-title-wrp {
@@ -100,11 +129,8 @@ defineProps<{
   grid-gap: toRem(4);
 }
 
-.info-bar__item {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: center;
-  grid-gap: toRem(24);
+.info-bar__item-title {
+  @include body-4-regular;
 }
 
 .info-bar__item-note {
@@ -113,10 +139,6 @@ defineProps<{
   color: $color;
   height: toRem(20);
   width: toRem(20);
-}
-
-.info-bar__item-title {
-  @include body-4-regular;
 }
 
 .info-bar__item-value {
@@ -129,5 +151,9 @@ defineProps<{
 
 .info-bar__slot-wrp {
   margin-top: toRem(30);
+
+  @include respond-to(medium) {
+    margin-top: toRem(32);
+  }
 }
 </style>

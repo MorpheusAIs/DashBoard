@@ -49,6 +49,10 @@ defineProps<{
       rgba(38, 57, 57, 0.5)
     )
     padding-box;
+
+  @include respond-to(medium) {
+    padding: toRem(20) toRem(16) toRem(22);
+  }
 }
 
 .info-dashboard__progress-bar {
@@ -57,6 +61,11 @@ defineProps<{
   border: toRem(12) solid;
   border-radius: 50%;
   background: linear-gradient(158.09deg, #ffffff 14.34%, #fbc969 83.65%);
+
+  @include respond-to(medium) {
+    height: toRem(126);
+    width: toRem(126);
+  }
 }
 
 .info-dashboard__items {
@@ -71,6 +80,10 @@ defineProps<{
   grid-template-columns: max-content 1fr;
   align-items: center;
   grid-gap: toRem(24);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(16);
+  }
 }
 
 .info-dashboard__item-title-wrp {
@@ -78,11 +91,20 @@ defineProps<{
   grid-auto-flow: column;
   align-items: center;
   grid-gap: toRem(8);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(4);
+  }
 }
 
 .info-dashboard__item-icon {
   height: toRem(24);
   width: toRem(24);
+
+  @include respond-to(medium) {
+    height: toRem(20);
+    width: toRem(20);
+  }
 }
 
 .info-dashboard__item-title {
@@ -98,10 +120,18 @@ defineProps<{
 }
 
 .info-dashboard__slot-wrp {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: toRem(24);
 
   .info-dashboard__items + & {
     margin-top: toRem(28);
+
+    @include respond-to(medium) {
+      margin-top: toRem(24);
+    }
   }
 }
 </style>

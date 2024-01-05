@@ -57,5 +57,9 @@ const mockDashboardItems: InfoDashboardType.Item[] = [
 <style lang="scss" scoped>
 .coders-view .coders-view__dashboard-btn {
   min-width: toRem(184);
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
 }
 </style>

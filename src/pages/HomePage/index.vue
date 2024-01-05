@@ -63,6 +63,14 @@ const tabs: Tab[] = [
     height: toRem(1400);
     width: toRem(1400);
     background: radial-gradient(#215244, transparent 60%);
+
+    @include respond-to(medium) {
+      margin: 0 auto;
+      bottom: toRem(-1700);
+      left: unset;
+      height: toRem(2600);
+      width: toRem(2600);
+    }
   }
 
   &:after {
@@ -77,6 +85,14 @@ const tabs: Tab[] = [
     height: toRem(1400);
     width: toRem(1400);
     background: radial-gradient(#215244, transparent 60%);
+
+    @include respond-to(medium) {
+      display: none;
+    }
+  }
+
+  @include respond-to(medium) {
+    padding: toRem(24) toRem(16);
   }
 }
 
@@ -90,5 +106,11 @@ const tabs: Tab[] = [
   display: grid;
   grid-template-columns: 1fr toRem(420);
   grid-gap: toRem(68);
+
+  @include respond-to(medium) {
+    margin-top: toRem(30);
+    grid-template-columns: 1fr;
+    grid-gap: toRem(28);
+  }
 }
 </style>
