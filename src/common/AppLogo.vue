@@ -37,5 +37,10 @@ const onClick = () => {
   .app-logo__link:active & {
     color: var(--primary-main);
   }
+
+  @include respond-to(medium) {
+    height: toRem(24);
+    width: toRem(56);
+  }
 }
 </style>

@@ -109,6 +109,7 @@ const mockDashboardItems: InfoDashboardType.Item[] = [
 }
 
 .community-view__dashboard-buttons-wrp {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16);

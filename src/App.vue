@@ -1,16 +1,17 @@
 <template>
   <div v-if="isAppInitialized" class="app__container">
-    <app-navbar class="app__navbar" />
+    <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
+    <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition || 'fade'" mode="out-in">
-        <component class="app__main" :is="Component" />
+        <component :is="Component" />
       </transition>
     </router-view>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppNavbar } from '@/common'
+import { AppNavbar, AppNavbarMobile } from '@/common'
 
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
@@ -58,26 +59,19 @@ init()
   flex: 1;
 }
 
-.app__main {
-  flex: 1;
-  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
-}
-
-.fade-enter-active {
-  animation: fade-in 0.25s;
-}
-
-.fade-leave-active {
-  animation: fade-in 0.25s reverse;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
+.app .app__navbar {
+  &--desktop {
+    @include respond-to(medium) {
+      display: none;
+    }
   }
 
-  100% {
-    opacity: 1;
+  &--mobile {
+    display: none;
+
+    @include respond-to(medium) {
+      display: flex;
+    }
   }
 }
 </style>

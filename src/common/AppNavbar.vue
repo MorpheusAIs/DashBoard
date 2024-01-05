@@ -1,7 +1,7 @@
 <template>
   <div class="app-navbar">
     <app-logo />
-    <div class="app-navbar__links-wrp">
+    <nav class="app-navbar__nav">
       <app-button
         v-for="(link, idx) in links"
         :key="idx"
@@ -12,33 +12,18 @@
         color="none"
         class="app-navbar__link"
       />
-    </div>
-    <app-button
-      color="secondary"
-      :text="$t('app-navbar.connect-wallet-btn')"
-      :route="{ name: $routes.uiKit }"
-    />
+    </nav>
+    <app-button color="secondary" :text="$t('app-navbar.connect-wallet-btn')" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppLogo } from '@/common'
-import { useContext } from '@/composables'
-import { ROUTE_NAMES } from '@/enums'
+import { useContext, useNavLinks } from '@/composables'
 import AppButton from './AppButton.vue'
+import AppLogo from './AppLogo.vue'
 
 const { $t } = useContext()
-
-const links = [
-  {
-    text: $t('app-navbar.token-contract-link'),
-    route: { name: ROUTE_NAMES.app },
-  },
-  {
-    text: $t('app-navbar.chat-app-link'),
-    href: '',
-  },
-]
+const { links } = useNavLinks()
 </script>
 
 <style lang="scss" scoped>
@@ -58,7 +43,7 @@ $z-index: 1000;
   border-bottom: toRem(1) solid #444449;
 }
 
-.app-navbar__links-wrp {
+.app-navbar__nav {
   display: flex;
   gap: toRem(48);
 }

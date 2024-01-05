@@ -49,7 +49,7 @@ const tabs: Tab[] = [
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: toRem(70);
+  padding: toRem(70) var(--app-padding-right) toRem(80) var(--app-padding-left);
 
   &:before {
     $z-index: -1;
@@ -92,7 +92,8 @@ const tabs: Tab[] = [
   }
 
   @include respond-to(medium) {
-    padding: toRem(24) toRem(16);
+    padding: toRem(24) var(--app-padding-right) toRem(14)
+      var(--app-padding-left);
   }
 }
 

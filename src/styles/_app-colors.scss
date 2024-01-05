@@ -3,6 +3,7 @@ $white-rgb: hexToRGB($white);
 $black: #000000;
 $black-rgb: hexToRGB($black);
 
+/* background colors */
 $background-primary-light: #ffffff;
 $background-primary-main: #fbfcff;
 $background-primary-dark: #f5f6ff;
@@ -12,7 +13,6 @@ $background-secondary-main: #313a36;
 $background-secondary-dark: #cad4f5;
 
 /* status colors */
-
 $success-light: #edfff2;
 $success-main: #5cc56e;
 $success-dark: #278337;
@@ -40,7 +40,6 @@ $disable-tertiary-main: #454447;
 $disable-tertiary-dark: #292e2c;
 
 /* brand colors */
-
 $primary-light: #e2ecfc;
 $primary-main: #03ff85;
 $primary-dark: #1cac77;
@@ -54,7 +53,6 @@ $secondary-main: #8d91a5;
 $secondary-dark: #5b6271;
 
 /* typography colors */
-
 $text-primary-light: #575761;
 $text-primary-main: #2d3441;
 $text-primary-dark: #000000;
@@ -72,7 +70,6 @@ $text-secondary-invert-main: rgba(#fffbfe, 0.5);
 $text-secondary-invert-dark: rgba(#fffbfe, 0.5);
 
 /* border colors */
-
 $border-primary-light: #fdf9ff;
 $border-primary-main: #908e93;
 $border-primary-dark: #45484f;
@@ -80,3 +77,6 @@ $border-primary-dark: #45484f;
 $border-secondary-light: #e0e0ec;
 $border-secondary-main: #c4c4d0;
 $border-secondary-dark: #a9abb4;
+
+/* backdrop colors */
+$backdrop-modal: rgba(#000000, 0.5);

@@ -9,6 +9,7 @@ export { default as InfoDashboard } from './InfoDashboard.vue'
 export { default as Loader } from '@/common/Loader.vue'
 export { default as AppLogo } from '@/common/AppLogo.vue'
 export { default as AppNavbar } from '@/common/AppNavbar.vue'
+export { default as AppNavbarMobile } from './AppNavbarMobile.vue'
 export { default as AppTabs } from './AppTabs.vue'
 export { default as Modal } from '@/common/Modal.vue'
 
