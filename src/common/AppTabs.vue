@@ -41,8 +41,10 @@ const updateTab = (tab: Tab) => {
 .app-tabs__btn {
   $color: rgba(255, 255, 255, 0.8);
 
+  display: grid;
+  align-items: center;
+  justify-items: center;
   padding: toRem(16) toRem(24);
-  text-align: center;
   border: toRem(1) solid #494949;
   color: $color;
   transition: var(--transition-duration-fast) var(--transition-timing-default);
