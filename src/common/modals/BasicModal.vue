@@ -17,7 +17,7 @@
             <icon class="basic-modal__close-btn-icon" :name="$icons.x" />
           </button>
         </div>
-        <slot />
+        <slot :modal="{ close: modal.close }" />
       </div>
     </template>
   </modal>
@@ -49,7 +49,7 @@ const emit = defineEmits<{
 <style lang="scss">
 .basic-modal__pane {
   padding: toRem(40) toRem(38) toRem(28);
-  max-width: toRem(584);
+  width: toRem(584);
   border: toRem(1) solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(180deg, #7c7c7d 0%, #cacaca 100%);
@@ -58,7 +58,7 @@ const emit = defineEmits<{
 
   @include respond-to(medium) {
     padding: toRem(36) toRem(20) toRem(24);
-    max-width: toRem(344);
+    width: toRem(344);
   }
 }
 
