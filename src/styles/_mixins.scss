@@ -148,6 +148,10 @@ $media-breakpoints: (
   font-weight: 700;
   line-height: toRem(40);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include h4;
+  }
 }
 
 @mixin h4 {
@@ -172,6 +176,10 @@ $media-breakpoints: (
   font-weight: 400;
   line-height: toRem(32);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    @include body-3-regular;
+  }
 }
 
 @mixin body-2-semi-bold {
