@@ -1,16 +1,23 @@
 <template>
   <div class="info-dashboard">
     <div class="info-dashboard__progress-bar" />
-    <ul v-if="items?.length" class="info-dashboard__items">
-      <li v-for="(item, idx) in items" :key="idx" class="info-dashboard__item">
-        <div class="info-dashboard__item-title-wrp">
-          <icon class="info-dashboard__item-icon" :name="item.iconName" />
-          <h5 class="info-dashboard__item-title">
-            {{ item.title }}
+    <ul v-if="indicators?.length" class="info-dashboard__indicators">
+      <li
+        v-for="(indicator, idx) in indicators"
+        :key="idx"
+        class="info-dashboard__indicator"
+      >
+        <div class="info-dashboard__indicator-title-wrp">
+          <icon
+            class="info-dashboard__indicator-icon"
+            :name="indicator.iconName"
+          />
+          <h5 class="info-dashboard__indicator-title">
+            {{ indicator.title }}
           </h5>
         </div>
-        <p class="info-dashboard__item-value">
-          {{ item.value }}
+        <p class="info-dashboard__indicator-value">
+          {{ indicator.value }}
         </p>
       </li>
     </ul>
@@ -25,7 +32,7 @@ import { Icon } from '@/common'
 import { type InfoDashboardType } from '@/types'
 
 defineProps<{
-  items?: InfoDashboardType.Item[]
+  indicators?: InfoDashboardType.Indicator[]
 }>()
 </script>
 
@@ -68,14 +75,14 @@ defineProps<{
   }
 }
 
-.info-dashboard__items {
+.info-dashboard__indicators {
   margin-top: toRem(24);
   width: 100%;
   display: grid;
   grid-gap: toRem(8);
 }
 
-.info-dashboard__item {
+.info-dashboard__indicator {
   display: grid;
   grid-template-columns: max-content 1fr;
   align-items: center;
@@ -86,7 +93,7 @@ defineProps<{
   }
 }
 
-.info-dashboard__item-title-wrp {
+.info-dashboard__indicator-title-wrp {
   display: grid;
   grid-auto-flow: column;
   align-items: center;
@@ -97,7 +104,7 @@ defineProps<{
   }
 }
 
-.info-dashboard__item-icon {
+.info-dashboard__indicator-icon {
   height: toRem(24);
   width: toRem(24);
 
@@ -107,11 +114,11 @@ defineProps<{
   }
 }
 
-.info-dashboard__item-title {
+.info-dashboard__indicator-title {
   @include body-3-regular;
 }
 
-.info-dashboard__item-value {
+.info-dashboard__indicator-value {
   text-align: right;
 
   @include body-3-semi-bold;
@@ -126,7 +133,7 @@ defineProps<{
   align-items: center;
   margin-top: toRem(24);
 
-  .info-dashboard__items + & {
+  .info-dashboard__indicators + & {
     margin-top: toRem(28);
 
     @include respond-to(medium) {

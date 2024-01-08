@@ -5,9 +5,9 @@
       :title="$t('home-page.coders-view.info-bar.title')"
       :subtitle="$t('home-page.coders-view.info-bar.subtitle')"
       :description="$t('home-page.coders-view.info-bar.description')"
-      :items="mockBarItems"
+      :indicators="mockBarIndicators"
     />
-    <info-dashboard :items="mockDashboardItems">
+    <info-dashboard :indicators="mockDashboardIndicators">
       <app-button
         class="coders-view__dashboard-btn"
         :text="$t('home-page.coders-view.claim-btn')"
@@ -24,7 +24,7 @@ import type { InfoBarType, InfoDashboardType } from '@/types'
 
 const { $t } = useContext()
 
-const mockBarItems: InfoBarType.Item[] = [
+const mockBarIndicators: InfoBarType.Indicator[] = [
   {
     title: $t('home-page.coders-view.daily-reward-title'),
     value: '100 MOR',
@@ -40,7 +40,7 @@ const mockBarItems: InfoBarType.Item[] = [
   },
 ]
 
-const mockDashboardItems: InfoDashboardType.Item[] = [
+const mockDashboardIndicators: InfoDashboardType.Indicator[] = [
   {
     iconName: ICON_NAMES.arbitrum,
     title: $t('home-page.coders-view.total-earning-title'),

@@ -5,7 +5,7 @@
       :title="$t('home-page.community-view.info-bar.title')"
       :subtitle="$t('home-page.community-view.info-bar.subtitle')"
       :description="$t('home-page.community-view.info-bar.description')"
-      :items="mockBarItems"
+      :indicators="mockBarIndicators"
     >
       <div class="community-view__bar-buttons-wrp">
         <app-button
@@ -21,7 +21,7 @@
         />
       </div>
     </info-bar>
-    <info-dashboard :items="mockDashboardItems">
+    <info-dashboard :indicators="mockDashboardIndicators">
       <div class="community-view__dashboard-buttons-wrp">
         <app-button
           class="community-view__dashboard-button"
@@ -48,7 +48,7 @@ import type { InfoBarType, InfoDashboardType } from '@/types'
 
 const { $t } = useContext()
 
-const mockBarItems: InfoBarType.Item[] = [
+const mockBarIndicators: InfoBarType.Indicator[] = [
   {
     title: $t('home-page.community-view.total-invested-title'),
     value: '1 000.67 stETH',
@@ -73,7 +73,7 @@ const mockBarItems: InfoBarType.Item[] = [
   },
 ]
 
-const mockDashboardItems: InfoDashboardType.Item[] = [
+const mockDashboardIndicators: InfoDashboardType.Indicator[] = [
   {
     iconName: ICON_NAMES.ethereum,
     title: $t('home-page.community-view.user-invested-title'),

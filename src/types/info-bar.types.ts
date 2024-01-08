@@ -1,4 +1,4 @@
-export type Item = {
+export type Indicator = {
   title: string
   value: string
   note?: string

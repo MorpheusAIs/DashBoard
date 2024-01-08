@@ -12,20 +12,24 @@
     <p class="info-bar__description">
       {{ description }}
     </p>
-    <ul v-if="items.length" class="info-bar__items">
-      <li v-for="(item, idx) in items" :key="idx" class="info-bar__item">
-        <div class="info-bar__item-title-wrp">
-          <h5 class="info-bar__item-title">
-            {{ item.title }}
+    <ul v-if="indicators.length" class="info-bar__indicators">
+      <li
+        v-for="(indicator, idx) in indicators"
+        :key="idx"
+        class="info-bar__indicator"
+      >
+        <div class="info-bar__indicator-title-wrp">
+          <h5 class="info-bar__indicator-title">
+            {{ indicator.title }}
           </h5>
           <icon
-            v-if="item.note"
-            class="info-bar__item-note"
+            v-if="indicator.note"
+            class="info-bar__indicator-note"
             :name="$icons.exclamationCircle"
           />
         </div>
-        <p class="info-bar__item-value">
-          {{ item.value }}
+        <p class="info-bar__indicator-value">
+          {{ indicator.value }}
         </p>
       </li>
     </ul>
@@ -44,7 +48,7 @@ defineProps<{
   status: 'public' | 'private'
   title: string
   description: string
-  items: InfoBarType.Item[]
+  indicators: InfoBarType.Indicator[]
 }>()
 </script>
 
@@ -93,7 +97,7 @@ defineProps<{
   }
 }
 
-.info-bar__items {
+.info-bar__indicators {
   margin-top: toRem(24);
   display: grid;
   grid-gap: toRem(8);
@@ -111,7 +115,7 @@ defineProps<{
   }
 }
 
-.info-bar__item {
+.info-bar__indicator {
   display: grid;
   grid-template-columns: max-content 1fr;
   align-items: center;
@@ -122,18 +126,18 @@ defineProps<{
   }
 }
 
-.info-bar__item-title-wrp {
+.info-bar__indicator-title-wrp {
   display: grid;
   grid-auto-flow: column;
   align-items: center;
   grid-gap: toRem(4);
 }
 
-.info-bar__item-title {
+.info-bar__indicator-title {
   @include body-4-regular;
 }
 
-.info-bar__item-note {
+.info-bar__indicator-note {
   $color: #cccccc;
 
   color: $color;
@@ -141,7 +145,7 @@ defineProps<{
   width: toRem(20);
 }
 
-.info-bar__item-value {
+.info-bar__indicator-value {
   text-align: right;
 
   @include body-3-semi-bold;
