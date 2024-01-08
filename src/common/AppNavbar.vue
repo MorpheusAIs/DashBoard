@@ -1,60 +1,59 @@
 <template>
   <div class="app-navbar">
-    <app-logo class="app-navbar__logo" />
-
-    <app-button
-      class="app-navbar__link"
-      :scheme="'flat'"
-      :text="$routes.uiKit"
-      :route="{ name: $routes.uiKit }"
-    />
-
-    <app-button
-      class="app-navbar__link"
-      :scheme="'flat'"
-      :text="$routes.complexForm"
-      :route="{ name: $routes.complexForm }"
-    />
+    <app-logo />
+    <nav class="app-navbar__nav">
+      <app-button
+        v-for="(link, idx) in links"
+        :key="idx"
+        :text="link.text"
+        :href="link.href"
+        :route="link.route"
+        scheme="link"
+        color="none"
+        class="app-navbar__link"
+      />
+    </nav>
+    <app-button color="secondary" :text="$t('app-navbar.connect-wallet-btn')" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppLogo } from '@/common'
-import AppButton from '@/common/AppButton.vue'
+import { useContext, useNavLinks } from '@/composables'
+import AppButton from './AppButton.vue'
+import AppLogo from './AppLogo.vue'
+
+const { $t } = useContext()
+const { links } = useNavLinks()
 </script>
 
 <style lang="scss" scoped>
+$z-index: 1000;
+
 .app-navbar {
+  position: fixed;
+  z-index: $z-index;
+  top: 0;
+  height: var(--app-navbar-height);
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: toRem(24);
-  padding: toRem(24) var(--app-padding-right) toRem(24) var(--app-padding-left);
-  background: var(--background-primary-main);
-  border-bottom: var(--border-primary-main);
-
-  @include respond-to(tablet) {
-    flex-wrap: wrap;
-  }
+  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
+  background: #010201;
+  border-bottom: toRem(1) solid #444449;
 }
 
-.app-navbar__logo {
-  margin-right: auto;
-
-  @include respond-to(xsmall) {
-    width: 100%;
-    margin-bottom: toRem(24);
-  }
+.app-navbar__nav {
+  display: flex;
+  gap: toRem(48);
 }
 
-.app-navbar__link {
-  opacity: 0.25;
-
-  &:first-child {
-    margin-left: auto;
-  }
+.app-navbar .app-navbar__link {
+  @include body-3-regular;
 
   &.router-link-active {
-    opacity: 1;
+    @include body-3-semi-bold;
   }
 }
 </style>

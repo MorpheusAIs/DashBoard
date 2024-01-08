@@ -1,28 +1,46 @@
 <template>
   <div class="app-logo">
-    <img
-      class="app-logo__img"
-      src="/branding/logo.svg"
-      :alt="$config.APP_NAME"
-    />
-    <router-link class="app-logo__link" :to="{ name: $routes.uiKit }" />
+    <router-link
+      class="app-logo__link"
+      :to="{ name: $routes.app }"
+      @click="onClick"
+    >
+      <svg class="app-logo__img">
+        <use href="/branding/logo.svg#logo" />
+      </svg>
+    </router-link>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ROUTE_NAMES } from '@/enums'
+import { useRoute } from '@/router'
+
+const route = useRoute()
+
+const onClick = () => {
+  if (route.name === ROUTE_NAMES.appCommunity) window.location.reload()
+}
+</script>
 
 <style lang="scss" scoped>
-.app-logo {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+.app-logo__img {
+  display: block;
+  height: toRem(40);
+  width: toRem(90);
+  color: var(--text-secondary-light);
+  transition: color var(--transition-duration-fast)
+    var(--transition-timing-default);
 
-.app-logo__link {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
+  .app-logo__link:hover &,
+  .app-logo__link:focus &,
+  .app-logo__link:active & {
+    color: var(--primary-main);
+  }
+
+  @include respond-to(medium) {
+    height: toRem(24);
+    width: toRem(56);
+  }
 }
 </style>

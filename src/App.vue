@@ -1,16 +1,19 @@
 <template>
   <div v-if="isAppInitialized" class="app__container">
-    <app-navbar class="app__navbar" />
-    <router-view v-slot="{ Component, route }">
-      <transition :name="route.meta.transition || 'fade'" mode="out-in">
-        <component class="app__main" :is="Component" />
-      </transition>
-    </router-view>
+    <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
+    <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
+    <div class="app__page-wrp">
+      <router-view v-slot="{ Component, route }">
+        <transition :name="route.meta.transition || 'fade'" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppNavbar } from '@/common'
+import { AppNavbar, AppNavbarMobile } from '@/common'
 
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
@@ -53,35 +56,31 @@ init()
 
 <style lang="scss" scoped>
 .app__container {
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: toRem(85) 1fr max-content;
+  display: flex;
+  flex-direction: column;
   flex: 1;
+}
 
-  @include respond-to(small) {
-    grid-template-rows: max-content 1fr max-content;
+.app .app__navbar {
+  &--desktop {
+    @include respond-to(medium) {
+      display: none;
+    }
+  }
+
+  &--mobile {
+    display: none;
+
+    @include respond-to(medium) {
+      display: flex;
+    }
   }
 }
 
-.app__main {
-  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
-}
-
-.fade-enter-active {
-  animation: fade-in 0.25s;
-}
-
-.fade-leave-active {
-  animation: fade-in 0.25s reverse;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+.app__page-wrp {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--app-navbar-height);
 }
 </style>

@@ -474,16 +474,7 @@
         </div>
       </basic-modal>
       <div class="ui-kit-page__icons">
-        <icon :name="$icons.academicCap" />
-        <icon :name="$icons.adjustments" />
-        <icon :name="$icons.annotation" />
-        <icon :name="$icons.archive" />
-        <icon :name="$icons.arrowCircleDown" />
-        <icon :name="$icons.arrowCircleLeft" />
-        <icon :name="$icons.arrowCircleRight" />
-        <icon :name="$icons.arrowCircleUp" />
-        <icon :name="$icons.arrowDown" />
-        <icon :name="$icons.arrowLeft" />
+        <icon v-for="icon in $icons" :key="icon" :name="icon" />
       </div>
     </section>
   </div>

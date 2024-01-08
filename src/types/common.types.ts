@@ -1,4 +1,5 @@
 import type { ICON_NAMES } from '@/enums'
+import { RouteLocationRaw } from 'vue-router'
 
 export type CommonNotificationTypes =
   | 'success'
@@ -18,4 +19,10 @@ export type NotificationPayload = string | NotificationObjectPayload
 export type FieldOption = {
   value: string | number
   title: string
+}
+
+export type Tab = {
+  title: string
+  id: string
+  route?: RouteLocationRaw
 }
