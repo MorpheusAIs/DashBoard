@@ -30,10 +30,11 @@ const { links } = useNavLinks()
 $z-index: 1000;
 
 .app-navbar {
-  position: sticky;
-  top: 0;
+  position: fixed;
   z-index: $z-index;
-  height: toRem(88);
+  top: 0;
+  height: var(--app-navbar-height);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;

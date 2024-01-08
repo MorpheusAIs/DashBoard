@@ -2,11 +2,13 @@
   <div v-if="isAppInitialized" class="app__container">
     <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
     <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
-    <router-view v-slot="{ Component, route }">
-      <transition :name="route.meta.transition || 'fade'" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
+    <div class="app__page-wrp">
+      <router-view v-slot="{ Component, route }">
+        <transition :name="route.meta.transition || 'fade'" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </div>
   </div>
 </template>
 
@@ -73,5 +75,12 @@ init()
       display: flex;
     }
   }
+}
+
+.app__page-wrp {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--app-navbar-height);
 }
 </style>

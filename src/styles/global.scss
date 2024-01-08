@@ -116,7 +116,7 @@ a {
 
 main {
   flex: 1;
-  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
+  padding: var(--app-padding);
 }
 
 .fade-enter-active {

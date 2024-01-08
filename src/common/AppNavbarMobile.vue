@@ -14,12 +14,7 @@
       </transition>
     </button>
     <transition name="fade" appear>
-      <div
-        v-if="isExtShown"
-        ref="backdropElement"
-        class="app-navbar-mobile__ext-wrp"
-        @click="onBackdropClick"
-      >
+      <div v-if="isExtShown" class="app-navbar-mobile__ext-wrp">
         <transition name="slide" appear>
           <div class="app-navbar-mobile__ext">
             <nav class="app-navbar-mobile__nav">
@@ -42,6 +37,11 @@
             />
           </div>
         </transition>
+        <button
+          class="app-navbar-mobile__ext-backdrop"
+          tabindex="-1"
+          @click="closeExt"
+        />
       </div>
     </transition>
   </div>
@@ -58,28 +58,22 @@ const { $t } = useContext()
 const { links } = useNavLinks()
 
 const isExtShown = ref(false)
-const backdropElement = ref<HTMLDivElement | null>(null)
 
 const closeExt = () => {
   isExtShown.value = false
-}
-
-const onBackdropClick = (event: Event) => {
-  if (!backdropElement.value) throw new Error('backdropElement unavailable')
-  if ((event.target as HTMLDivElement) === backdropElement.value) closeExt()
 }
 </script>
 
 <style scoped lang="scss">
 $background: #010201;
-$height: toRem(56);
 $z-index: 1000;
 
 .app-navbar-mobile {
-  position: sticky;
-  top: 0;
+  position: fixed;
   z-index: $z-index;
-  height: toRem(56);
+  top: 0;
+  height: var(--app-navbar-height);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -105,7 +99,7 @@ $z-index: 1000;
 .app-navbar-mobile__ext-wrp {
   position: fixed;
   overflow: hidden;
-  inset: $height 0 0;
+  inset: var(--app-navbar-height) 0 0;
   background: var(--backdrop-modal);
   width: 100%;
 }
@@ -146,6 +140,15 @@ $z-index: 1000;
 .app-navbar-mobile .app-navbar-mobile__connect-wallet-btn {
   margin: toRem(76) auto 0;
   min-width: toRem(202);
+}
+
+.app-navbar-mobile__ext-backdrop {
+  $z-index: -1;
+
+  position: absolute;
+  cursor: default;
+  z-index: $z-index;
+  inset: 0;
 }
 
 .slide-enter-active {

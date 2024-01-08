@@ -89,8 +89,16 @@
   /* App variables */
   --app-txt: #{$text-primary-main};
   --app-font-family: 'Inter', 'Arial', sans-serif;
+  --app-navbar-height: #{toRem(88)};
+  --app-padding-top: #{toRem(70)};
   --app-padding-right: #{toRem(100)};
+  --app-padding-bottom: #{toRem(80)};
   --app-padding-left: #{toRem(100)};
+  --app-padding:
+    var(--app-padding-top)
+    var(--app-padding-right)
+    var(--app-padding-bottom)
+    var(--app-padding-left);
 
   @include respond-to(xmedium) {
     --app-padding-right: #{toRem(64)};
@@ -98,7 +106,10 @@
   }
 
   @include respond-to(medium) {
+    --app-navbar-height: #{toRem(56)};
+    --app-padding-top: #{toRem(24)};
     --app-padding-right: #{toRem(16)};
+    --app-padding-bottom: #{toRem(14)};
     --app-padding-left: #{toRem(16)};
   }
 
