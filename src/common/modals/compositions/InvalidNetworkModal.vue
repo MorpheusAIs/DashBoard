@@ -83,12 +83,15 @@ const testNetworks: Network[] = [
 </script>
 
 <style lang="scss" scoped>
+$board-gap-px: 10;
+$network-wrp-gap-px: 8;
+
 .invalid-network-modal__board {
   margin-top: toRem(40);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: toRem(10);
+  gap: toRem($board-gap-px);
   border: toRem(1) solid var(--border-primary-main);
   background: var(--background-secondary-main);
   padding: toRem(16);
@@ -102,7 +105,7 @@ const testNetworks: Network[] = [
 .invalid-network-modal__network-wrp {
   display: flex;
   align-items: center;
-  gap: toRem(8);
+  gap: toRem($network-wrp-gap-px);
 
   @include body-3-medium;
 }
@@ -123,6 +126,7 @@ const testNetworks: Network[] = [
 
 .invalid-network-modal__board-plus {
   color: var(--primary-main);
+  margin-left: toRem($board-gap-px - $network-wrp-gap-px);
 
   .invalid-network-modal__network-wrp:last-child & {
     display: none;
