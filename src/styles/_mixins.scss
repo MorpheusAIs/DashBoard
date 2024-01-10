@@ -163,6 +163,12 @@ $media-breakpoints: (
   font-weight: 600;
   line-height: toRem(34);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    font-size: toRem(20);
+    line-height: toRem(30);
+
+  }
 }
 
 @mixin body-1-semi-bold {

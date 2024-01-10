@@ -12,6 +12,7 @@ export { default as AppNavbar } from '@/common/AppNavbar.vue'
 export { default as AppNavbarMobile } from './AppNavbarMobile.vue'
 export { default as AppTabs } from './AppTabs.vue'
 export { default as Modal } from '@/common/Modal.vue'
+export { default as ProgressBar } from './ProgressBar.vue'
 
 export * from './modals'
 export * from './loaders'
