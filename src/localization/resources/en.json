@@ -61,8 +61,20 @@
     "switch-btn": "Switch network"
   },
   "validations": {
+    "field-error_numeric": "Field must be numeric",
     "field-error_required": "Please fill out this field",
     "field-error_email": "Field must be a valid email"
+  },
+  "withdraw-form": {
+    "amount-placeholder": "Enter stETH amount",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Withdraw"
+  },
+  "withdraw-modal": {
+    "title": "Withdraw funds",
+    "subtitle": "Lorem ipsum dolor sit amet consectetur. Habitasse sed dignissim in laoreet quam ipsum nisl. In viverra quam urna in amet erat et.",
+    "available-to-claim-title": "Will be claimed",
+    "available-to-withdraw-title": "Available to withdraw"
   },
   "errors": {
     "default": "Something went wrong"

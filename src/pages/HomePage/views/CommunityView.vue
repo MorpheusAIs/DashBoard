@@ -27,6 +27,7 @@
           class="community-view__dashboard-button"
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
+          @click="isWithdrawModalShown = true"
         />
         <app-button
           class="community-view__dashboard-button"
@@ -36,17 +37,21 @@
       <p class="community-view__dashboard-description">
         {{ $t('home-page.community-view.dashboard-description') }}
       </p>
+      <withdraw-modal v-model:is-shown="isWithdrawModalShown" />
     </info-dashboard>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppButton, InfoBar, InfoDashboard } from '@/common'
+import { AppButton, InfoBar, InfoDashboard, WithdrawModal } from '@/common'
 import { useContext } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import type { InfoBarType, InfoDashboardType } from '@/types'
+import { ref } from 'vue'
 
 const { $t } = useContext()
+
+const isWithdrawModalShown = ref(false)
 
 const mockBarIndicators: InfoBarType.Indicator[] = [
   {

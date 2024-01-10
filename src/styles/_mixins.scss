@@ -130,7 +130,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include h2;
+    font-size: toRem(32);
+    line-height: toRem(46);
   }
 }
 
@@ -150,7 +151,9 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include h4;
+    font-size: toRem(24);
+    font-weight: 600;
+    line-height: toRem(34);
   }
 }
 
@@ -168,6 +171,11 @@ $media-breakpoints: (
   font-weight: 600;
   line-height: toRem(32);
   letter-spacing: 0;
+
+  @include respond-to(medium) {
+    font-size: toRem(18);
+    line-height: toRem(26);
+  }
 }
 
 @mixin body-1-regular {
@@ -178,7 +186,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-3-regular;
+    font-size: toRem(18);
+    line-height: toRem(26);
   }
 }
 
@@ -190,7 +199,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-4-semi-bold;
+    font-size: toRem(16);
+    line-height: toRem(22);
   }
 }
 
@@ -202,7 +212,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-4-regular;
+    font-size: toRem(16);
+    line-height: toRem(22);
   }
 }
 
@@ -214,7 +225,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-5-semi-bold;
+    font-size: toRem(14);
+    line-height: toRem(20);
   }
 }
 
@@ -226,7 +238,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-5-medium;
+    font-size: toRem(14);
+    line-height: toRem(20);
   }
 }
 
@@ -238,7 +251,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-5-regular;
+    font-size: toRem(14);
+    line-height: toRem(20);
   }
 }
 
@@ -250,7 +264,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-5-semi-bold;
+    font-size: toRem(14);
+    line-height: toRem(20);
   }
 }
 
@@ -262,7 +277,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-5-medium;
+    font-size: toRem(14);
+    line-height: toRem(20);
   }
 }
 
@@ -274,7 +290,8 @@ $media-breakpoints: (
   letter-spacing: 0;
 
   @include respond-to(medium) {
-    @include body-5-regular;
+    font-size: toRem(14);
+    line-height: toRem(20);
   }
 }
 
