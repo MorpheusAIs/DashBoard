@@ -16,8 +16,8 @@ export type NotificationObjectPayload = {
 
 export type NotificationPayload = string | NotificationObjectPayload
 
-export type FieldOption = {
-  value: string | number
+export type FieldOption<T = unknown> = {
+  value: T
   title: string
 }
 

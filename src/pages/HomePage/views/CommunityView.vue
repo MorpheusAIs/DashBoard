@@ -11,6 +11,7 @@
         <app-button
           class="community-view__bar-button"
           :text="$t('home-page.community-view.deposit-btn')"
+          @click="isDepositModalShown = true"
         />
         <app-button
           class="community-view__bar-button"
@@ -20,6 +21,7 @@
           :icon-right="$icons.externalLink"
         />
       </div>
+      <deposit-modal v-model:is-shown="isDepositModalShown" />
     </info-bar>
     <info-dashboard :indicators="mockDashboardIndicators">
       <div class="community-view__dashboard-buttons-wrp">
@@ -48,6 +50,7 @@
 import {
   AppButton,
   ClaimModal,
+  DepositModal,
   InfoBar,
   InfoDashboard,
   WithdrawModal,
@@ -60,6 +63,7 @@ import { ref } from 'vue'
 const { $t } = useContext()
 
 const isClaimModalShown = ref(false)
+const isDepositModalShown = ref(false)
 const isWithdrawModalShown = ref(false)
 
 const mockBarIndicators: InfoBarType.Indicator[] = [

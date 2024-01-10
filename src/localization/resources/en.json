@@ -11,6 +11,16 @@
     "close-btn": "Cancel",
     "claim-btn": "Claim"
   },
+  "deposit-form": {
+    "available-label": "Available to deposit",
+    "amount-placeholder": "Enter {currency} amount",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Deposit"
+  },
+  "deposit-modal": {
+    "title": "Deposit",
+    "subtitle": "Lorem ipsum dolor sit amet consectetur. Habitasse sed dignissim in laoreet quam ipsum nisl. In viverra quam urna in amet erat et."
+  },
   "home-page": {
     "community-tab": "Community",
     "coders-tab": "Coders",
