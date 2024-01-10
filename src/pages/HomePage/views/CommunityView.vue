@@ -17,6 +17,9 @@
           class="community-view__bar-button"
           scheme="link"
           color="none"
+          href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
+          target="_blank"
+          rel="noopener noreferrer"
           :text="$t('home-page.community-view.external-link')"
           :icon-right="$icons.externalLink"
         />

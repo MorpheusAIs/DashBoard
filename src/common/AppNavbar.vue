@@ -8,12 +8,17 @@
         :text="link.text"
         :href="link.href"
         :route="link.route"
+        :target="link.href ? '_blank' : undefined"
+        :rel="link.href ? 'noopener noreferrer' : undefined"
         scheme="link"
         color="none"
         class="app-navbar__link"
       />
     </nav>
-    <app-button color="secondary" :text="$t('app-navbar.connect-wallet-btn')" />
+    <connect-wallet-button
+      color="secondary"
+      :text="$t('app-navbar.connect-wallet-btn')"
+    />
   </div>
 </template>
 
@@ -21,6 +26,7 @@
 import { useContext, useNavLinks } from '@/composables'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
+import ConnectWalletButton from './ConnectWalletButton.vue'
 
 const { $t } = useContext()
 const { links } = useNavLinks()

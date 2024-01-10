@@ -63,11 +63,6 @@ const { $t } = useContext()
 
 const mockIndicators: Indicator[] = [
   {
-    iconName: ICON_NAMES.arbitrum,
-    title: $t('withdraw-modal.available-to-claim-title'),
-    value: '36.748 MOR',
-  },
-  {
     iconName: ICON_NAMES.ethereum,
     title: $t('withdraw-modal.available-to-withdraw-title'),
     value: '111 stETH',
@@ -80,6 +75,10 @@ const mockIndicators: Indicator[] = [
   margin-top: toRem(24);
   display: grid;
   grid-gap: toRem(16);
+
+  @include respond-to(medium) {
+    margin-top: toRem(20);
+  }
 }
 
 .withdraw-modal__indicator {

@@ -24,13 +24,15 @@
                 :text="link.text"
                 :href="link.href"
                 :route="link.route"
+                :target="link.href ? '_blank' : undefined"
+                :rel="link.href ? 'noopener noreferrer' : undefined"
                 scheme="link"
                 color="none"
                 class="app-navbar-mobile__link"
                 @click="closeExt"
               />
             </nav>
-            <app-button
+            <connect-wallet-button
               class="app-navbar-mobile__connect-wallet-btn"
               color="secondary"
               :text="$t('app-navbar.connect-wallet-btn')"
@@ -51,6 +53,7 @@
 import { useContext, useNavLinks } from '@/composables'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
+import ConnectWalletButton from './ConnectWalletButton.vue'
 import Icon from './Icon.vue'
 import { ref } from 'vue'
 

@@ -1,6 +1,7 @@
 export { default as Icon } from '@/common/Icon.vue'
 export { default as AppButton } from '@/common/AppButton.vue'
 export { default as Collapse } from '@/common/Collapse.vue'
+export { default as ConnectWalletButton } from './ConnectWalletButton.vue'
 export { default as Accordion } from '@/common/Accordion.vue'
 export { default as NoDataMessage } from '@/common/NoDataMessage.vue'
 export { default as ErrorMessage } from '@/common/ErrorMessage.vue'

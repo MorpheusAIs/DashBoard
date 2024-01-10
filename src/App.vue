@@ -19,14 +19,17 @@
 <script lang="ts" setup>
 import { AppNavbar, AppNavbarMobile, InvalidNetworkModal } from '@/common'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useNotifications } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { NotificationPayload } from '@/types'
 
+const web3ProvidersStore = useWeb3ProvidersStore()
+
 const isAppInitialized = ref(false)
-const isShownInvalidNetworkModal = ref(true)
+const isShownInvalidNetworkModal = ref(false)
 
 const { showToast } = useNotifications()
 
@@ -57,6 +60,13 @@ const initNotifications = () => {
 }
 
 init()
+
+watch(
+  () => web3ProvidersStore.isConnectedProvider,
+  () => {
+    isShownInvalidNetworkModal.value = true
+  },
+)
 </script>
 
 <style lang="scss" scoped>

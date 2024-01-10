@@ -6,7 +6,7 @@
   },
   "claim-modal": {
     "title": "Claim rewards",
-    "subtitle": "You are about to Claim Rewards. Please check the information below and confirm action. Your current reward - {reward}",
+    "subtitle": "You are about to Claim Rewards. Your current reward - {reward}",
     "reward": "{amount} MOR.",
     "close-btn": "Cancel",
     "claim-btn": "Claim"
@@ -19,7 +19,7 @@
   },
   "deposit-modal": {
     "title": "Deposit",
-    "subtitle": "Lorem ipsum dolor sit amet consectetur. Habitasse sed dignissim in laoreet quam ipsum nisl. In viverra quam urna in amet erat et."
+    "subtitle": "Your funds will be redirected to the platform. Enter the desired amount, in case of the first transaction, you will need to authorize the transfer of funds."
   },
   "home-page": {
     "community-tab": "Community",
@@ -92,7 +92,7 @@
   },
   "withdraw-modal": {
     "title": "Withdraw funds",
-    "subtitle": "Lorem ipsum dolor sit amet consectetur. Habitasse sed dignissim in laoreet quam ipsum nisl. In viverra quam urna in amet erat et.",
+    "subtitle": "Specify the amount to be withdrawn. The funds will be sent to your wallet.",
     "available-to-claim-title": "Will be claimed",
     "available-to-withdraw-title": "Available to withdraw"
   },
