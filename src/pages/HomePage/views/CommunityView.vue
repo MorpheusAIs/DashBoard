@@ -11,6 +11,7 @@
         <app-button
           class="community-view__bar-button"
           :text="$t('home-page.community-view.deposit-btn')"
+          @click="isDepositModalShown = true"
         />
         <app-button
           class="community-view__bar-button"
@@ -20,6 +21,7 @@
           :icon-right="$icons.externalLink"
         />
       </div>
+      <deposit-modal v-model:is-shown="isDepositModalShown" />
     </info-bar>
     <info-dashboard :indicators="mockDashboardIndicators">
       <div class="community-view__dashboard-buttons-wrp">
@@ -27,26 +29,42 @@
           class="community-view__dashboard-button"
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
+          @click="isWithdrawModalShown = true"
         />
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
+          @click="isClaimModalShown = true"
         />
       </div>
       <p class="community-view__dashboard-description">
         {{ $t('home-page.community-view.dashboard-description') }}
       </p>
+      <withdraw-modal v-model:is-shown="isWithdrawModalShown" />
+      <claim-modal v-model:is-shown="isClaimModalShown" amount="12 647.574" />
     </info-dashboard>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppButton, InfoBar, InfoDashboard } from '@/common'
+import {
+  AppButton,
+  ClaimModal,
+  DepositModal,
+  InfoBar,
+  InfoDashboard,
+  WithdrawModal,
+} from '@/common'
 import { useContext } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import type { InfoBarType, InfoDashboardType } from '@/types'
+import { ref } from 'vue'
 
 const { $t } = useContext()
+
+const isClaimModalShown = ref(false)
+const isDepositModalShown = ref(false)
+const isWithdrawModalShown = ref(false)
 
 const mockBarIndicators: InfoBarType.Indicator[] = [
   {

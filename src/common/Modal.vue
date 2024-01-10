@@ -1,6 +1,6 @@
 <template>
   <teleport to="#modal">
-    <transition name="modal">
+    <transition name="fade">
       <div v-show="isShown" class="modal" v-bind="$attrs">
         <div class="modal__pane" ref="modalPane">
           <slot :modal="{ close: closeModal }" :key="String(isShown)" />
@@ -47,7 +47,7 @@ const closeModal = () => {
 </script>
 
 <style lang="scss" scoped>
-$z-index-local: 100;
+$z-index: 1000;
 
 .modal {
   --max-width: #{toRem(600)};
@@ -61,7 +61,7 @@ $z-index-local: 100;
   width: 100vw;
   height: vh(100);
   background: rgba(var(--black-rgb), 0.5);
-  z-index: $z-index-local;
+  z-index: $z-index;
 }
 
 .modal__pane {
@@ -71,17 +71,5 @@ $z-index-local: 100;
   position: relative;
   height: auto;
   max-width: var(--max-width);
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: 0.25s ease;
-  transition-property: opacity, transform;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(1.1);
 }
 </style>

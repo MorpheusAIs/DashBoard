@@ -4,6 +4,23 @@
     "chat-app-link": "Chat App",
     "connect-wallet-btn": "Connect wallet"
   },
+  "claim-modal": {
+    "title": "Claim rewards",
+    "subtitle": "You are about to Claim Rewards. Please check the information below and confirm action. Your current reward - {reward}",
+    "reward": "{amount} MOR.",
+    "close-btn": "Cancel",
+    "claim-btn": "Claim"
+  },
+  "deposit-form": {
+    "available-label": "Available to deposit",
+    "amount-placeholder": "Enter {currency} amount",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Deposit"
+  },
+  "deposit-modal": {
+    "title": "Deposit",
+    "subtitle": "Lorem ipsum dolor sit amet consectetur. Habitasse sed dignissim in laoreet quam ipsum nisl. In viverra quam urna in amet erat et."
+  },
   "home-page": {
     "community-tab": "Community",
     "coders-tab": "Coders",
@@ -49,9 +66,32 @@
     "status--public": "Open",
     "status--private": "Private"
   },
+  "invalid-network-modal": {
+    "title": "Invalid network",
+    "subtitle": "Your wallet is connected to the unsupported chain. Please, switch to another network:",
+    "network-title": {
+      "ethereum": "Ethereum",
+      "arbitrum": "Arbitrum",
+      "goerli": "Goerli testnet",
+      "arbitrum-testnet": "Arbitrum testnet"
+    },
+    "switch-btn": "Switch network"
+  },
   "validations": {
+    "field-error_numeric": "Field must be numeric",
     "field-error_required": "Please fill out this field",
     "field-error_email": "Field must be a valid email"
+  },
+  "withdraw-form": {
+    "amount-placeholder": "Enter stETH amount",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Withdraw"
+  },
+  "withdraw-modal": {
+    "title": "Withdraw funds",
+    "subtitle": "Lorem ipsum dolor sit amet consectetur. Habitasse sed dignissim in laoreet quam ipsum nisl. In viverra quam urna in amet erat et.",
+    "available-to-claim-title": "Will be claimed",
+    "available-to-withdraw-title": "Available to withdraw"
   },
   "errors": {
     "default": "Something went wrong"

@@ -134,12 +134,17 @@
   --field-text-font-family: var(--app-font-family);
   --field-text-font-size: #{toRem(18)};
   --field-text-font-weight: 400;
-  --field-text-line-height: #{toRem(24)};
+  --field-text-line-height: #{toRem(26)};
   --field-text-letter-spacing: 0;
   --field-text: var(--text-secondary-main);
   --field-text-readonly: var(--disable-tertiary-light);
   --field-placeholder: var(--text-secondary-main);
   --field-placeholder-readonly: var(--disable-secondary-main);
+
+  @include respond-to(medium) {
+    --field-text-font-size: #{toRem(14)};
+    --field-text-line-height: #{toRem(20)};
+  }
 
   /* error */
   --field-error-font-family: var(--app-font-family);

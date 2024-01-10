@@ -1,18 +1,14 @@
 <template>
   <div :class="selectFieldClasses">
     <div ref="selectElement" class="select-field__select-wrp">
-      <label
-        v-if="label"
-        class="select-field__label"
-        :for="`select-field--${uid}`"
-      >
+      <label v-if="label" class="select-field__label" :for="uid">
         {{ label }}
       </label>
       <div class="select-field__select-head-wrp">
         <button
           type="button"
           class="select-field__select-head"
-          :id="`select-field--${uid}`"
+          :id="uid"
           :disabled="isDisabled || isReadonly"
           @blur="emit('blur')"
           @click="toggleDropMenu"
@@ -31,11 +27,11 @@
           </template>
           <template v-else>
             <template v-if="modelValue">
-              {{ valueOptions[modelIndex].title }}
+              {{ modelValue.title }}
             </template>
             <template v-else-if="placeholder">
               <span class="select-field__placeholder">
-                {{ props.placeholder }}
+                {{ placeholder }}
               </span>
             </template>
           </template>
@@ -63,7 +59,7 @@
                 :key="`${idx}-${option.value}`"
                 :disabled="isDisabled || isReadonly"
                 class="select-field__select-dropdown-item"
-                @click="select(option.value)"
+                @click="select(option)"
               >
                 {{ option.title }}
               </button>
@@ -100,7 +96,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const props = withDefaults(
   defineProps<{
-    modelValue: FieldOption['value']
+    modelValue: FieldOption
     valueOptions?: FieldOption[]
     label?: string
     placeholder?: string
@@ -108,6 +104,7 @@ const props = withDefaults(
     note?: string
     scheme?: 'primary'
     modification?: 'dropdown' | 'dropup'
+    uid?: string
   }>(),
   {
     valueOptions: () => [],
@@ -118,11 +115,12 @@ const props = withDefaults(
     note: '',
     scheme: 'primary',
     modification: 'dropdown',
+    uid: `select-field--${uuidv4()}`,
   },
 )
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: number | string): void
+  (e: 'update:modelValue', value: typeof props.modelValue): void
   (e: 'blur'): void
 }>()
 
@@ -131,10 +129,6 @@ const attrs = useAttrs()
 const selectElement = ref<HTMLDivElement | null>(null)
 
 const isDropMenuOpen = ref(false)
-const modelIndex = computed(() =>
-  props.valueOptions.findIndex(item => item.value === props.modelValue),
-)
-const uid = uuidv4()
 
 onBeforeRouteUpdate(() => {
   closeDropMenu()
@@ -148,8 +142,6 @@ const isReadonly = computed(() =>
   ['', 'readonly', true].includes(attrs.readonly as string | boolean),
 )
 
-const isLabelActive = computed(() => isDropMenuOpen.value || !!props.modelValue)
-
 const selectFieldClasses = computed(() => ({
   'select-field': true,
   'select-field--error': props.errorMessage,
@@ -157,7 +149,6 @@ const selectFieldClasses = computed(() => ({
   'select-field--open': isDropMenuOpen.value,
   'select-field--disabled': isDisabled.value,
   'select-field--readonly': isReadonly.value,
-  'select-field--label-active': isLabelActive.value,
   [`select-field--${props.scheme}`]: true,
   [`select-field--${props.modification}`]: true,
 }))
@@ -183,7 +174,7 @@ const closeDropMenu = () => {
   isDropMenuOpen.value = false
 }
 
-const select = (value: string | number) => {
+const select = (value: typeof props.modelValue) => {
   if (isDisabled.value || isReadonly.value) return
 
   emit('update:modelValue', value)
@@ -213,7 +204,6 @@ $z-local-index: 2;
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 100%;
   flex: 1;
 }
 
@@ -233,21 +223,11 @@ $z-local-index: 2;
 }
 
 .select-field__select-head {
-  $border-width: toRem(1);
-  $padding-vertical: toRem(7);
-  $line-height: toRem(34);
-
-  font-family: var(--app-font-family);
-  font-size: toRem(22);
-  font-weight: 700;
-  line-height: $line-height;
-  letter-spacing: 0;
   text-align: right;
   color: var(--field-text);
-  border: $border-width solid transparent;
-  padding: $padding-vertical toRem(28) $padding-vertical toRem(16);
+  padding-right: toRem(28);
   width: 100%;
-  min-height: calc($line-height + $padding-vertical * 2 + $border-width * 2);
+  min-height: toRem(48);
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
   &:disabled {
@@ -257,6 +237,12 @@ $z-local-index: 2;
 
   .select-field--error & {
     border-color: var(--field-border-error);
+  }
+
+  @include body-1-semi-bold;
+
+  @include respond-to(medium) {
+    min-height: toRem(26);
   }
 }
 
@@ -286,19 +272,20 @@ $z-local-index: 2;
   flex-direction: column;
   position: absolute;
   overflow: hidden auto;
-  right: 0;
+  left: 0;
   width: 100%;
+  min-width: max-content;
   max-height: 500%;
   z-index: $z-local-index;
   background: var(--field-bg-primary);
   box-shadow: 0 toRem(4) toRem(16) rgba(#a0a0a0, 0.25);
 
   .select-field--dropdown & {
-    top: 100%;
+    top: 137.5%;
   }
 
   .select-field--dropup & {
-    bottom: 100%;
+    bottom: 137.5%;
   }
 }
 
@@ -326,12 +313,7 @@ $z-local-index: 2;
 .select-field__select-dropdown-item {
   $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
 
-  font-family: var(--app-font-family);
-  font-size: toRem(22);
-  font-weight: 500;
-  line-height: toRem(34);
-  letter-spacing: 0;
-  text-align: end;
+  text-align: right;
   width: 100%;
   padding: toRem(8) toRem(16);
   color: var(--field-text);
@@ -348,6 +330,8 @@ $z-local-index: 2;
   &:not([disabled]):active {
     box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
+
+  @include body-1-regular;
 }
 
 .select-field__msg-wrp {

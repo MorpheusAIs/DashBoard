@@ -9,11 +9,15 @@
         </transition>
       </router-view>
     </div>
+    <invalid-network-modal
+      v-model:is-shown="isShownInvalidNetworkModal"
+      is-close-by-click-outside
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppNavbar, AppNavbarMobile } from '@/common'
+import { AppNavbar, AppNavbarMobile, InvalidNetworkModal } from '@/common'
 
 import { ref } from 'vue'
 import { useNotifications } from '@/composables'
@@ -22,6 +26,7 @@ import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { NotificationPayload } from '@/types'
 
 const isAppInitialized = ref(false)
+const isShownInvalidNetworkModal = ref(true)
 
 const { showToast } = useNotifications()
 
