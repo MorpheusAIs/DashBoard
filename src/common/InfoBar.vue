@@ -24,6 +24,7 @@
           </h5>
           <icon
             v-if="indicator.note"
+            v-tooltip="indicator.note"
             class="info-bar__indicator-note"
             :name="$icons.exclamationCircle"
           />
@@ -137,12 +138,18 @@ defineProps<{
   @include body-4-regular;
 }
 
-.info-bar__indicator-note {
+.info-bar .info-bar__indicator-note {
   $color: #cccccc;
 
   color: $color;
   height: toRem(20);
   width: toRem(20);
+  pointer-events: unset;
+  transition: var(--transition-duration-fast) var(--transition-timing-default);
+
+  &:hover {
+    color: var(--text-secondary-light);
+  }
 }
 
 .info-bar__indicator-value {

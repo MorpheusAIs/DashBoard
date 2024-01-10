@@ -37,8 +37,8 @@
 </template>
 
 <script lang="ts" setup>
-import BasicModal from '../BasicModal.vue'
 import { AppButton } from '@/common'
+import BasicModal from '../BasicModal.vue'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -62,6 +62,8 @@ withDefaults(
 }
 
 .claim-modal__reward {
+  white-space: nowrap;
+
   @include body-1-semi-bold;
 }
 

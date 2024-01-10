@@ -11,7 +11,7 @@ export const useNavLinks = () => {
     },
     {
       text: $t('app-navbar.chat-app-link'),
-      href: '',
+      href: 'https://mor.org/',
     },
   ]
 
