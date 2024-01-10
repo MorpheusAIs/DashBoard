@@ -4,6 +4,13 @@
     "chat-app-link": "Chat App",
     "connect-wallet-btn": "Connect wallet"
   },
+  "claim-modal": {
+    "title": "Claim rewards",
+    "subtitle": "You are about to Claim Rewards. Please check the information below and confirm action. Your current reward - {reward}",
+    "reward": "{amount} MOR.",
+    "close-btn": "Cancel",
+    "claim-btn": "Claim"
+  },
   "home-page": {
     "community-tab": "Community",
     "coders-tab": "Coders",

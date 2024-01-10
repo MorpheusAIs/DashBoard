@@ -10,7 +10,10 @@
           <h3 v-if="title" class="basic-modal__title">
             {{ title }}
           </h3>
-          <p v-if="subtitle" class="basic-modal__subtitle">
+          <div v-if="$slots.subtitle" class="basic-modal__subtitle-slot-wrp">
+            <slot name="subtitle" />
+          </div>
+          <p v-else-if="subtitle" class="basic-modal__subtitle">
             {{ subtitle }}
           </p>
           <button class="basic-modal__close-btn" @click="modal.close">
@@ -75,6 +78,7 @@ const emit = defineEmits<{
   text-align: center;
 }
 
+.basic-modal__subtitle-slot-wrp,
 .basic-modal__subtitle {
   margin-top: toRem(32);
   text-align: center;

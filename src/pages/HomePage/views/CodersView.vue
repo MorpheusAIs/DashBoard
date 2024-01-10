@@ -11,18 +11,23 @@
       <app-button
         class="coders-view__dashboard-btn"
         :text="$t('home-page.coders-view.claim-btn')"
+        @click="isClaimModalShown = true"
       />
+      <claim-modal v-model:is-shown="isClaimModalShown" amount="12 647.574" />
     </info-dashboard>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppButton, InfoBar, InfoDashboard } from '@/common'
+import { AppButton, ClaimModal, InfoBar, InfoDashboard } from '@/common'
 import { useContext } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import type { InfoBarType, InfoDashboardType } from '@/types'
+import { ref } from 'vue'
 
 const { $t } = useContext()
+
+const isClaimModalShown = ref(false)
 
 const mockBarIndicators: InfoBarType.Indicator[] = [
   {

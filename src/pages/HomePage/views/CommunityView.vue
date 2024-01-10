@@ -32,18 +32,26 @@
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
+          @click="isClaimModalShown = true"
         />
       </div>
       <p class="community-view__dashboard-description">
         {{ $t('home-page.community-view.dashboard-description') }}
       </p>
       <withdraw-modal v-model:is-shown="isWithdrawModalShown" />
+      <claim-modal v-model:is-shown="isClaimModalShown" amount="12 647.574" />
     </info-dashboard>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { AppButton, InfoBar, InfoDashboard, WithdrawModal } from '@/common'
+import {
+  AppButton,
+  ClaimModal,
+  InfoBar,
+  InfoDashboard,
+  WithdrawModal,
+} from '@/common'
 import { useContext } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import type { InfoBarType, InfoDashboardType } from '@/types'
@@ -51,6 +59,7 @@ import { ref } from 'vue'
 
 const { $t } = useContext()
 
+const isClaimModalShown = ref(false)
 const isWithdrawModalShown = ref(false)
 
 const mockBarIndicators: InfoBarType.Indicator[] = [
