@@ -33,8 +33,8 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@/common'
 import { type InfoDashboardType } from '@/types'
+import Icon from './Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 
 defineProps<{
