@@ -62,6 +62,9 @@
       "claim-btn": "Claim MOR"
     }
   },
+  "info-dashboard": {
+    "progress-bar-title": "Your share"
+  },
   "info-bar": {
     "status--public": "Open",
     "status--private": "Private"

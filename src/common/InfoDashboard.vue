@@ -1,6 +1,11 @@
 <template>
   <div class="info-dashboard">
-    <div class="info-dashboard__progress-bar" />
+    <progress-bar
+      class="info-dashboard__progress-bar"
+      :title="$t('info-dashboard.progress-bar-title')"
+      :progress="56.5"
+      :total="100"
+    />
     <ul v-if="indicators?.length" class="info-dashboard__indicators">
       <li
         v-for="(indicator, idx) in indicators"
@@ -30,6 +35,7 @@
 <script lang="ts" setup>
 import { Icon } from '@/common'
 import { type InfoDashboardType } from '@/types'
+import ProgressBar from './ProgressBar.vue'
 
 defineProps<{
   indicators?: InfoDashboardType.Indicator[]
@@ -65,9 +71,6 @@ defineProps<{
 .info-dashboard__progress-bar {
   height: toRem(156);
   width: toRem(156);
-  border: toRem(12) solid;
-  border-radius: 50%;
-  background: linear-gradient(158.09deg, #ffffff 14.34%, #fbc969 83.65%);
 
   @include respond-to(medium) {
     height: toRem(126);
