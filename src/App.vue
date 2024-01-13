@@ -26,23 +26,22 @@ import { config } from '@config'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { NotificationPayload } from '@/types'
 
-const web3ProvidersStore = useWeb3ProvidersStore()
-
 const isAppInitialized = ref(false)
 const isShownInvalidNetworkModal = ref(false)
 
 const { showToast } = useNotifications()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
-const init = async () => {
-  try {
-    document.title = config.APP_NAME
-
-    initNotifications()
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-  isAppInitialized.value = true
-}
+watch(
+  [
+    () => web3ProvidersStore.isValidChain,
+    () => web3ProvidersStore.provider.isConnected,
+    () => isAppInitialized.value,
+  ],
+  ([isValidChain, isConnected]) => {
+    if (isConnected && !isValidChain) isShownInvalidNetworkModal.value = true
+  },
+)
 
 const initNotifications = () => {
   bus.on(BUS_EVENTS.success, payload =>
@@ -59,14 +58,19 @@ const initNotifications = () => {
   )
 }
 
-init()
+const init = async () => {
+  try {
+    document.title = config.APP_NAME
 
-watch(
-  () => web3ProvidersStore.isConnectedProvider,
-  () => {
-    isShownInvalidNetworkModal.value = true
-  },
-)
+    initNotifications()
+    await web3ProvidersStore.init()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+  isAppInitialized.value = true
+}
+
+init()
 </script>
 
 <style lang="scss" scoped>

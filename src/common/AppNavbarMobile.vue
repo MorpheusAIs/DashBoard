@@ -33,9 +33,14 @@
               />
             </nav>
             <connect-wallet-button
+              v-if="!web3ProvidersStore.provider.isConnected"
               class="app-navbar-mobile__connect-wallet-btn"
               color="secondary"
               :text="$t('app-navbar.connect-wallet-btn')"
+            />
+            <wallet-dashboard
+              v-else
+              class="app-navbar-mobile__wallet-dashboard"
             />
           </div>
         </transition>
@@ -51,14 +56,17 @@
 
 <script setup lang="ts">
 import { useContext, useNavLinks } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
 import Icon from './Icon.vue'
+import WalletDashboard from './WalletDashboard.vue'
 import { ref } from 'vue'
 
 const { $t } = useContext()
 const { links } = useNavLinks()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isExtShown = ref(false)
 
@@ -140,6 +148,7 @@ $z-index: 1000;
   }
 }
 
+.app-navbar-mobile .app-navbar-mobile__wallet-dashboard,
 .app-navbar-mobile .app-navbar-mobile__connect-wallet-btn {
   margin: toRem(76) auto 0;
   min-width: toRem(202);

@@ -15,21 +15,28 @@
         class="app-navbar__link"
       />
     </nav>
-    <connect-wallet-button
-      color="secondary"
-      :text="$t('app-navbar.connect-wallet-btn')"
-    />
+    <transition name="fade" mode="out-in">
+      <connect-wallet-button
+        v-if="!web3ProvidersStore.provider.isConnected"
+        color="secondary"
+        :text="$t('app-navbar.connect-wallet-btn')"
+      />
+      <wallet-dashboard v-else />
+    </transition>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useContext, useNavLinks } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
+import WalletDashboard from '@/common/WalletDashboard.vue'
 
 const { $t } = useContext()
 const { links } = useNavLinks()
+const web3ProvidersStore = useWeb3ProvidersStore()
 </script>
 
 <style lang="scss" scoped>
