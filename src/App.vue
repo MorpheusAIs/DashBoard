@@ -39,7 +39,7 @@ watch(
     () => isAppInitialized.value,
   ],
   ([isValidChain, isConnected]) => {
-    if (isConnected && !isValidChain) isShownInvalidNetworkModal.value = true
+    if (isConnected) isShownInvalidNetworkModal.value = !isValidChain
   },
 )
 

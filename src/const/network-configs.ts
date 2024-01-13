@@ -20,8 +20,8 @@ export const ARBITRUM_GOERLI_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
     chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumGoerli)),
     chainName: 'Arbitrum Goerli (Testnet)',
     nativeCurrency: {
-      name: 'Goerli ETH',
-      symbol: 'Goerli ETH',
+      name: 'ETH',
+      symbol: 'ETH',
       decimals: 18,
     },
     rpcUrls: ['https://goerli-rollup.arbitrum.io/rpc'],
