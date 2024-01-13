@@ -21,7 +21,10 @@
         color="secondary"
         :text="$t('app-navbar.connect-wallet-btn')"
       />
-      <wallet-dashboard v-else />
+      <div v-else class="app-navbar__wallet-info-wrp">
+        <wallet-balances />
+        <wallet-dashboard />
+      </div>
     </transition>
   </div>
 </template>
@@ -32,7 +35,8 @@ import { useWeb3ProvidersStore } from '@/store'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
-import WalletDashboard from '@/common/WalletDashboard.vue'
+import WalletBalances from './WalletBalances.vue'
+import WalletDashboard from './WalletDashboard.vue'
 
 const { $t } = useContext()
 const { links } = useNavLinks()
@@ -68,5 +72,11 @@ $z-index: 1000;
   &.router-link-active {
     @include body-3-semi-bold;
   }
+}
+
+.app-navbar__wallet-info-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(20);
 }
 </style>

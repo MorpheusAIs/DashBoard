@@ -38,10 +38,10 @@
               color="secondary"
               :text="$t('app-navbar.connect-wallet-btn')"
             />
-            <wallet-dashboard
-              v-else
-              class="app-navbar-mobile__wallet-dashboard"
-            />
+            <div v-else class="app-navbar-mobile__wallet-info-wrp">
+              <wallet-dashboard />
+              <wallet-balances />
+            </div>
           </div>
         </transition>
         <button
@@ -61,6 +61,7 @@ import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
 import Icon from './Icon.vue'
+import WalletBalances from './WalletBalances.vue'
 import WalletDashboard from './WalletDashboard.vue'
 import { ref } from 'vue'
 
@@ -148,10 +149,16 @@ $z-index: 1000;
   }
 }
 
-.app-navbar-mobile .app-navbar-mobile__wallet-dashboard,
 .app-navbar-mobile .app-navbar-mobile__connect-wallet-btn {
   margin: toRem(76) auto 0;
   min-width: toRem(202);
+}
+
+.app-navbar-mobile__wallet-info-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(20);
+  margin: toRem(76) auto 0;
 }
 
 .app-navbar-mobile__ext-backdrop {

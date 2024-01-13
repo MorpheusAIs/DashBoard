@@ -38,11 +38,21 @@ onMounted(setJazzicon)
   gap: toRem(12);
   background: var(--background-secondary-main);
   padding: toRem(10) 0;
-  min-width: toRem(170);
+  width: toRem(170);
+
+  @include respond-to(medium) {
+    width: toRem(160);
+  }
 }
 
 .wallet-dashboard__address {
-  @include body-3-regular;
+  @include respond-to(medium) {
+    font-family: var(--app-font-family);
+    font-size: toRem(18);
+    font-weight: 400;
+    line-height: toRem(26);
+    letter-spacing: 0;
+  }
 }
 
 .wallet-dashboard__jazzicon-wrp {
