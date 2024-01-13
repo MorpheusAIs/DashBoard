@@ -18,6 +18,7 @@
     <transition name="fade" mode="out-in">
       <connect-wallet-button
         v-if="!web3ProvidersStore.provider.isConnected"
+        class="app-navbar__connect-wallet-btn"
         color="secondary"
         :text="$t('app-navbar.connect-wallet-btn')"
       />
@@ -52,10 +53,10 @@ $z-index: 1000;
   top: 0;
   height: var(--app-navbar-height);
   width: 100%;
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: space-between;
-  gap: toRem(24);
+  grid-template-columns: 1fr max-content 1fr;
+  grid-gap: toRem(24);
   padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
   background: #010201;
   border-bottom: toRem(1) solid #444449;
@@ -74,9 +75,14 @@ $z-index: 1000;
   }
 }
 
+.app-navbar .app-navbar__connect-wallet-btn {
+  justify-self: right;
+}
+
 .app-navbar__wallet-info-wrp {
   display: flex;
   align-items: center;
+  justify-self: right;
   gap: toRem(20);
 }
 </style>

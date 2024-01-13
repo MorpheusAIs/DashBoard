@@ -76,13 +76,19 @@ const currentBalance = ref<Balance>(mockBalances[0])
 .wallet-balances {
   height: toRem(48);
   background: var(--background-secondary-main);
-
-  :deep(.select-field__select-head-wrp) {
-    width: toRem(160);
-  }
+  width: toRem(160);
 
   :deep(.select-field__select-head-indicator) {
     right: toRem(10);
+  }
+
+  :deep(.select-field__select-drop-menu) {
+    top: 120%;
+
+    @include respond-to(small) {
+      left: unset;
+      right: 0;
+    }
   }
 }
 

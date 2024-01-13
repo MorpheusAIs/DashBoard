@@ -32,16 +32,18 @@
                 @click="closeExt"
               />
             </nav>
-            <connect-wallet-button
-              v-if="!web3ProvidersStore.provider.isConnected"
-              class="app-navbar-mobile__connect-wallet-btn"
-              color="secondary"
-              :text="$t('app-navbar.connect-wallet-btn')"
-            />
-            <div v-else class="app-navbar-mobile__wallet-info-wrp">
-              <wallet-dashboard />
-              <wallet-balances />
-            </div>
+            <transition name="fade" mode="out-in">
+              <connect-wallet-button
+                v-if="!web3ProvidersStore.provider.isConnected"
+                class="app-navbar-mobile__connect-wallet-btn"
+                color="secondary"
+                :text="$t('app-navbar.connect-wallet-btn')"
+              />
+              <div v-else class="app-navbar-mobile__wallet-info-wrp">
+                <wallet-dashboard />
+                <wallet-balances />
+              </div>
+            </transition>
           </div>
         </transition>
         <button
