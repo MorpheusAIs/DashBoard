@@ -1,4 +1,5 @@
 export * from './use-context'
+export * from './use-contract'
 export * from './use-form'
 export * from './use-form-validation'
 export * from './use-nav-links'
