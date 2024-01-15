@@ -37,6 +37,17 @@ export default defineConfig(({ mode }) => {
         }
       : {}),
     publicDir: 'static',
+
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            w3p: ['@distributedlab/w3p']
+          },
+        },
+      },
+    },
+
     plugins: [
       vue(),
 
@@ -79,6 +90,7 @@ export default defineConfig(({ mode }) => {
         '@': `${root}/`,
         '@config': `${root}/config.ts`,
         '@static': `${root}/../static`,
+        'near-api-js': 'near-api-js/dist/near-api-js.min.js',
       },
     },
     /**
