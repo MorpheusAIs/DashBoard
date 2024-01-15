@@ -26,13 +26,17 @@
     <app-button
       class="invalid-network-modal__btn"
       :text="$t('invalid-network-modal.switch-btn')"
+      :disabled="web3ProvidersStore.provider.isChainSelecting"
+      @click="switchNetwork"
     />
   </basic-modal>
 </template>
 
 <script lang="ts" setup>
 import { useContext } from '@/composables'
-import { ICON_NAMES } from '@/enums'
+import { ETHEREUM_CHAINS, ICON_NAMES } from '@/enums'
+import { ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
 import AppButton from '../../AppButton.vue'
 import BasicModal from '../BasicModal.vue'
@@ -58,6 +62,7 @@ const props = withDefaults(
 )
 
 const { $t } = useContext()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const mainNetworks: Network[] = [
   {
@@ -80,6 +85,18 @@ const testNetworks: Network[] = [
     title: $t('invalid-network-modal.network-title.arbitrum-testnet'),
   },
 ]
+
+const switchNetwork = async () => {
+  try {
+    await web3ProvidersStore.provider.selectChain(
+      !config.IS_TESTNET
+        ? ETHEREUM_CHAINS.arbitrum
+        : ETHEREUM_CHAINS.arbitrumGoerli,
+    )
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
 </script>
 
 <style lang="scss" scoped>

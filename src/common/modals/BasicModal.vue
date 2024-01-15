@@ -1,5 +1,6 @@
 <template>
   <modal
+    class="basic-modal"
     :is-shown="isShown"
     :is-close-by-click-outside="isCloseByClickOutside"
     @update:is-shown="emit('update:is-shown', $event)"

@@ -63,7 +63,9 @@
     }
   },
   "info-dashboard": {
-    "progress-bar-title": "Your share"
+    "progress-bar-title": "Your share",
+    "connection-msg": "Your personal investments and rewards will be displayed here after connecting your MetaMask wallet",
+    "connect-wallet-btn": "Connect Wallet"
   },
   "info-bar": {
     "status--public": "Open",

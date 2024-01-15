@@ -26,7 +26,7 @@
             />
           </template>
           <template v-else>
-            <template v-if="modelValue">
+            <template v-if="modelValue?.title">
               {{ modelValue.title }}
             </template>
             <template v-else-if="placeholder">
@@ -96,7 +96,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 const props = withDefaults(
   defineProps<{
-    modelValue: FieldOption
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    modelValue: FieldOption | any
     valueOptions?: FieldOption[]
     label?: string
     placeholder?: string
