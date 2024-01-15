@@ -6,6 +6,11 @@ import mapKeys from 'lodash/mapKeys'
 export const config = {
   API_URL: import.meta.env.VITE_API_URL,
   APP_NAME: import.meta.env.VITE_APP_NAME,
+  ERC1967_PROXY_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_ERC1967_PROXY_CONTRACT_ADDRESS,
+  STETH_MOCK_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_STETH_MOCK_CONTRACT_ADDRESS,
+  MOR_CONTRACT_ADDRESS: import.meta.env.VITE_APP_MOR_CONTRACT_ADDRESS,
   IS_TESTNET: import.meta.env.VITE_APP_IS_TESTNET === 'true',
   LOG_LEVEL: 'trace' as LogLevelDesc,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_BUILD_VERSION,
