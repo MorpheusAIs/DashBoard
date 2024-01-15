@@ -153,7 +153,7 @@ export const useProvider = (): IUseProvider => {
 
       // onChainChanged provider event needs time for execute
       await sleep(1000)
-      // it's needs for case if user has added chain, but hasn't switched
+      // it's being used in case if user has added chain, but hasn't switched
       if (_providerReactiveState.chainId !== chainId)
         throw new errors.ProviderUserRejectedRequest()
     } finally {
