@@ -15,22 +15,22 @@ export const ARBITRUM_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
     blockExplorerUrls: ['https://arbiscan.io/'],
   })
 
-export const ARBITRUM_GOERLI_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
+export const ARBITRUM_SEPOLIA_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
   Object.freeze({
-    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumGoerli)),
-    chainName: 'Arbitrum Goerli (Testnet)',
+    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumSepolia)),
+    chainName: 'Arbitrum Sepolia (Testnet)',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: ['https://goerli-rollup.arbitrum.io/rpc'],
-    blockExplorerUrls: ['https://goerli.arbiscan.io'],
+    rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   })
 
 export const CHAINS_NETWORK_CONFIGS_MAP: Readonly<
   Record<Web3ProviderType.ChainId, Web3ProviderType.Chain>
 > = Object.freeze({
   [ETHEREUM_CHAINS.arbitrum]: ARBITRUM_NETWORK_CONFIG,
-  [ETHEREUM_CHAINS.arbitrumGoerli]: ARBITRUM_GOERLI_NETWORK_CONFIG,
+  [ETHEREUM_CHAINS.arbitrumSepolia]: ARBITRUM_SEPOLIA_NETWORK_CONFIG,
 })

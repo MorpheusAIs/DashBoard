@@ -15,7 +15,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       String(state.provider.chainId) ===
       (!config.IS_TESTNET
         ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumGoerli),
+        : ETHEREUM_CHAINS.arbitrumSepolia),
     address: state => state.provider.selectedAddress,
   },
 

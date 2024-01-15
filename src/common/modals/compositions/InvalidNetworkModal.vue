@@ -91,7 +91,7 @@ const switchNetwork = async () => {
     await web3ProvidersStore.provider.selectChain(
       !config.IS_TESTNET
         ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumGoerli,
+        : ETHEREUM_CHAINS.arbitrumSepolia,
     )
   } catch (error) {
     ErrorHandler.process(error)
