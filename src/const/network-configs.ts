@@ -1,4 +1,4 @@
-import { ETHEREUM_CHAINS } from '@/enums'
+import { ETHEREUM_CHAINS, ETHEREUM_RPC_URLS } from '@/enums'
 import { type Web3ProviderType } from '@/types'
 import { utils } from 'ethers'
 
@@ -11,7 +11,7 @@ export const ARBITRUM_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+    rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
     blockExplorerUrls: ['https://arbiscan.io/'],
   })
 
@@ -24,7 +24,7 @@ export const ARBITRUM_SEPOLIA_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+    rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
     blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   })
 

@@ -1,4 +1,4 @@
-import { SUPPORTED_PROVIDERS } from '@/enums'
+import { type ETHEREUM_RPC_URLS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { factories } from '@/types'
 import { providers } from 'ethers'
@@ -19,30 +19,29 @@ export interface IUseContract<
   K extends ContractFactoryKey = ContractFactoryKey,
 > {
   provider: ComputedRef<providers.Web3Provider | providers.JsonRpcProvider>
-  signer: ComputedRef<providers.JsonRpcSigner | null>
+  signer: ComputedRef<providers.JsonRpcSigner>
 
   contractInterface: ComputedRef<ContractInterface<K>>
 
-  contractWithProvider: ComputedRef<Contract<K> | null>
-  contractWithSigner: ComputedRef<Contract<K> | null>
+  contractWithProvider: ComputedRef<Contract<K>>
+  contractWithSigner: ComputedRef<Contract<K>>
 }
 
 export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
   contractFactoryKey: K,
   contractAddress: Ref<string> | string,
+  rpcUrl?: ETHEREUM_RPC_URLS,
 ): IUseContract<K> {
   type I = IUseContract<K>
 
   const web3ProvidersStore = useWeb3ProvidersStore()
-  const storedProvider = computed(() => web3ProvidersStore.provider)
 
   const provider: I['provider'] = computed(() =>
-    storedProvider.value.selectedProvider !== SUPPORTED_PROVIDERS.Fallback
-      ? new providers.Web3Provider(
-          storedProvider.value.rawProvider as providers.ExternalProvider,
-        )
-      : (storedProvider.value
-          .rawProvider as unknown as providers.JsonRpcProvider),
+    rpcUrl
+      ? new providers.JsonRpcProvider(rpcUrl)
+      : new providers.Web3Provider(
+          web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
+        ),
   )
 
   const signer: I['signer'] = computed(() => provider.value.getSigner())
@@ -55,7 +54,6 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
 
   const contractWithProvider: I['contractWithProvider'] = computed(() => {
     const unrefContractAddress = unref(contractAddress)
-    if (!provider.value || !unrefContractAddress) return null
     return _factoryClass.value.connect(
       unrefContractAddress,
       provider.value,
@@ -64,7 +62,6 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
 
   const contractWithSigner: I['contractWithSigner'] = computed(() => {
     const unrefContractAddress = unref(contractAddress)
-    if (!signer.value || !unrefContractAddress) return null
     return _factoryClass.value.connect(
       unrefContractAddress,
       signer.value,
