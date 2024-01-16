@@ -69,7 +69,8 @@
   },
   "info-bar": {
     "status--public": "Open",
-    "status--private": "Private"
+    "status--private": "Private",
+    "loading": "Loading..."
   },
   "invalid-network-modal": {
     "title": "Invalid network",

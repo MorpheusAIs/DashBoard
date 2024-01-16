@@ -1,5 +1,5 @@
 <template>
-  <div class="info-bar">
+  <div class="info-bar" :class="{ 'info-bar--loading': isLoading }">
     <div class="info-bar__subtitle-wrp">
       <p class="info-bar__subtitle">
         {{ subtitle }}
@@ -30,7 +30,7 @@
           />
         </div>
         <p class="info-bar__indicator-value">
-          {{ indicator.value }}
+          {{ isLoading ? $t('info-bar.loading') : indicator.value }}
         </p>
       </li>
     </ul>
@@ -50,6 +50,7 @@ defineProps<{
   title: string
   description: string
   indicators: InfoBarType.Indicator[]
+  isLoading?: boolean
 }>()
 </script>
 
@@ -155,6 +156,11 @@ defineProps<{
 .info-bar__indicator-value {
   text-align: right;
 
+  .info-bar--loading & {
+    animation: var(--transition-duration-medium)
+      var(--transition-timing-default) infinite alternate twinkle;
+  }
+
   @include body-3-semi-bold;
 
   @include text-ellipsis;
@@ -165,6 +171,12 @@ defineProps<{
 
   @include respond-to(medium) {
     margin-top: toRem(32);
+  }
+}
+
+@keyframes twinkle {
+  to {
+    opacity: 0;
   }
 }
 </style>
