@@ -5,7 +5,8 @@
       :title="$t('home-page.community-view.info-bar.title')"
       :subtitle="$t('home-page.community-view.info-bar.subtitle')"
       :description="$t('home-page.community-view.info-bar.description')"
-      :indicators="mockBarIndicators"
+      :indicators="barIndicators"
+      :is-loading="isInitializing"
     >
       <div class="community-view__bar-buttons-wrp">
         <app-button
@@ -58,41 +59,78 @@ import {
   InfoDashboard,
   WithdrawModal,
 } from '@/common'
-import { useContext } from '@/composables'
-import { ICON_NAMES } from '@/enums'
-import type { InfoBarType, InfoDashboardType } from '@/types'
-import { ref } from 'vue'
+import { useContext, useContract } from '@/composables'
+import { DEFAULT_TIME_FORMAT } from '@/const'
+import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
+import { ErrorHandler } from '@/helpers'
+import type {
+  BigNumber,
+  Erc1967ProxyType,
+  InfoBarType,
+  InfoDashboardType,
+} from '@/types'
+import { formatEther, Time } from '@/utils'
+import { config } from '@config'
+import { computed, onMounted, ref } from 'vue'
+
+const POOL_ID = 0
 
 const { $t } = useContext()
+const { contractWithProvider: erc1967Proxy } = useContract(
+  'ERC1967Proxy__factory',
+  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+  !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+)
+
+const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
+const dailyReward = ref<BigNumber | null>(null)
 
 const isClaimModalShown = ref(false)
 const isDepositModalShown = ref(false)
 const isWithdrawModalShown = ref(false)
 
-const mockBarIndicators: InfoBarType.Indicator[] = [
+const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
     title: $t('home-page.community-view.total-invested-title'),
-    value: '1 000.67 stETH',
+    value: poolData.value
+      ? `${formatEther(poolData.value.totalDeposited)} stETH`
+      : '',
   },
   {
     title: $t('home-page.community-view.daily-reward-title'),
-    value: '100 MOR',
+    value: dailyReward.value ? `${formatEther(dailyReward.value)} MOR` : '',
   },
   {
     title: $t('home-page.community-view.started-at-title'),
-    value: '15 Sep 2023 at 13:42',
+    value: poolData.value
+      ? new Time(poolData.value.payoutStart.toNumber() * 1000).format(
+          DEFAULT_TIME_FORMAT,
+        )
+      : '',
   },
   {
     title: $t('home-page.community-view.withdraw-at-title'),
-    value: '1 Jan 2024 at 05:12',
+    value: poolData.value
+      ? new Time(
+          (poolData.value.payoutStart.toNumber() +
+            poolData.value.withdrawLockPeriod.toNumber()) *
+            1000,
+        ).format(DEFAULT_TIME_FORMAT)
+      : '',
     note: $t('home-page.community-view.withdraw-at-note'),
   },
   {
     title: $t('home-page.community-view.claim-at-title'),
-    value: '1 Jan 2024 at 03:12',
+    value: poolData.value
+      ? new Time(
+          (poolData.value.payoutStart.toNumber() +
+            poolData.value.claimLockPeriod.toNumber()) *
+            1000,
+        ).format(DEFAULT_TIME_FORMAT)
+      : '',
     note: $t('home-page.community-view.claim-at-note'),
   },
-]
+])
 
 const mockDashboardIndicators: InfoDashboardType.Indicator[] = [
   {
@@ -106,6 +144,55 @@ const mockDashboardIndicators: InfoDashboardType.Indicator[] = [
     value: '20 MOR',
   },
 ]
+
+const isInitializing = ref(false)
+const init = async () => {
+  isInitializing.value = true
+
+  try {
+    const poolDataResponses = await Promise.all([
+      erc1967Proxy.value.poolsData(POOL_ID),
+      erc1967Proxy.value.pools(POOL_ID),
+    ])
+
+    poolData.value = {
+      claimLockPeriod: poolDataResponses[1].claimLockPeriod,
+      decreaseInterval: poolDataResponses[1].decreaseInterval,
+      initialReward: poolDataResponses[1].initialReward,
+      isPublic: poolDataResponses[1].isPublic,
+      lastUpdate: poolDataResponses[0].lastUpdate,
+      minimalStake: poolDataResponses[1].minimalStake,
+      rate: poolDataResponses[0].rate,
+      payoutStart: poolDataResponses[1].payoutStart,
+      rewardDecrease: poolDataResponses[1].rewardDecrease,
+      totalDeposited: poolDataResponses[0].totalDeposited,
+      withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
+      withdrawLockPeriodAfterStake:
+        poolDataResponses[1].withdrawLockPeriodAfterStake,
+    }
+
+    const currentTimestamp = new Time().timestamp
+    const decreaseIntervalTimestamp = poolData.value.decreaseInterval.toNumber()
+
+    const startTimestamp =
+      currentTimestamp - (currentTimestamp % decreaseIntervalTimestamp)
+    const endTimestamp = startTimestamp + decreaseIntervalTimestamp
+
+    dailyReward.value = await erc1967Proxy.value.getPeriodReward(
+      POOL_ID,
+      startTimestamp,
+      endTimestamp,
+    )
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isInitializing.value = false
+}
+
+onMounted(() => {
+  init()
+})
 </script>
 
 <style lang="scss" scoped>
