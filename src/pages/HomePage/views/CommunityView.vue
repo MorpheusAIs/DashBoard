@@ -8,24 +8,28 @@
       :indicators="barIndicators"
       :is-loading="isInitializing"
     >
-      <div class="community-view__bar-buttons-wrp">
-        <app-button
-          class="community-view__bar-button"
-          :text="$t('home-page.community-view.deposit-btn')"
-          @click="isDepositModalShown = true"
-        />
-        <app-button
-          class="community-view__bar-button"
-          scheme="link"
-          color="none"
-          href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
-          target="_blank"
-          rel="noopener noreferrer"
-          :text="$t('home-page.community-view.external-link')"
-          :icon-right="$icons.externalLink"
-        />
-      </div>
-      <deposit-modal v-model:is-shown="isDepositModalShown" />
+      <transition name="fade">
+        <div v-if="web3ProvidersStore.provider.isConnected">
+          <div class="community-view__bar-buttons-wrp">
+            <app-button
+              class="community-view__bar-button"
+              :text="$t('home-page.community-view.deposit-btn')"
+              @click="isDepositModalShown = true"
+            />
+            <app-button
+              class="community-view__bar-button"
+              scheme="link"
+              color="none"
+              href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
+              target="_blank"
+              rel="noopener noreferrer"
+              :text="$t('home-page.community-view.external-link')"
+              :icon-right="$icons.externalLink"
+            />
+          </div>
+          <deposit-modal v-model:is-shown="isDepositModalShown" />
+        </div>
+      </transition>
     </info-bar>
     <info-dashboard :indicators="mockDashboardIndicators">
       <div class="community-view__dashboard-buttons-wrp">
@@ -63,6 +67,7 @@ import { useContext, useContract } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
 import type {
   BigNumber,
   Erc1967ProxyType,
@@ -76,11 +81,14 @@ import { computed, onMounted, ref } from 'vue'
 const POOL_ID = 0
 
 const { $t } = useContext()
+
 const { contractWithProvider: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
   !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
+
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
 const dailyReward = ref<BigNumber | null>(null)
