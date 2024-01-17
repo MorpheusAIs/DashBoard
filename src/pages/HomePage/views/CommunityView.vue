@@ -153,44 +153,53 @@ const mockDashboardIndicators: InfoDashboardType.Indicator[] = [
   },
 ]
 
+const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
+  const poolDataResponses = await Promise.all([
+    erc1967Proxy.value.poolsData(POOL_ID),
+    erc1967Proxy.value.pools(POOL_ID),
+  ])
+
+  return {
+    claimLockPeriod: poolDataResponses[1].claimLockPeriod,
+    decreaseInterval: poolDataResponses[1].decreaseInterval,
+    initialReward: poolDataResponses[1].initialReward,
+    isPublic: poolDataResponses[1].isPublic,
+    lastUpdate: poolDataResponses[0].lastUpdate,
+    minimalStake: poolDataResponses[1].minimalStake,
+    rate: poolDataResponses[0].rate,
+    payoutStart: poolDataResponses[1].payoutStart,
+    rewardDecrease: poolDataResponses[1].rewardDecrease,
+    totalDeposited: poolDataResponses[0].totalDeposited,
+    withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
+    withdrawLockPeriodAfterStake:
+      poolDataResponses[1].withdrawLockPeriodAfterStake,
+  }
+}
+
+const fetchDailyReward = async (): Promise<BigNumber> => {
+  if (!poolData.value) throw new Error('poolData unavailable')
+
+  const currentTimestamp = new Time().timestamp
+  const decreaseIntervalTimestamp = poolData.value.decreaseInterval.toNumber()
+
+  const startTimestamp =
+    currentTimestamp - (currentTimestamp % decreaseIntervalTimestamp)
+  const endTimestamp = startTimestamp + decreaseIntervalTimestamp
+
+  return erc1967Proxy.value.getPeriodReward(
+    POOL_ID,
+    startTimestamp,
+    endTimestamp,
+  )
+}
+
 const isInitializing = ref(false)
 const init = async () => {
   isInitializing.value = true
 
   try {
-    const poolDataResponses = await Promise.all([
-      erc1967Proxy.value.poolsData(POOL_ID),
-      erc1967Proxy.value.pools(POOL_ID),
-    ])
-
-    poolData.value = {
-      claimLockPeriod: poolDataResponses[1].claimLockPeriod,
-      decreaseInterval: poolDataResponses[1].decreaseInterval,
-      initialReward: poolDataResponses[1].initialReward,
-      isPublic: poolDataResponses[1].isPublic,
-      lastUpdate: poolDataResponses[0].lastUpdate,
-      minimalStake: poolDataResponses[1].minimalStake,
-      rate: poolDataResponses[0].rate,
-      payoutStart: poolDataResponses[1].payoutStart,
-      rewardDecrease: poolDataResponses[1].rewardDecrease,
-      totalDeposited: poolDataResponses[0].totalDeposited,
-      withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
-      withdrawLockPeriodAfterStake:
-        poolDataResponses[1].withdrawLockPeriodAfterStake,
-    }
-
-    const currentTimestamp = new Time().timestamp
-    const decreaseIntervalTimestamp = poolData.value.decreaseInterval.toNumber()
-
-    const startTimestamp =
-      currentTimestamp - (currentTimestamp % decreaseIntervalTimestamp)
-    const endTimestamp = startTimestamp + decreaseIntervalTimestamp
-
-    dailyReward.value = await erc1967Proxy.value.getPeriodReward(
-      POOL_ID,
-      startTimestamp,
-      endTimestamp,
-    )
+    poolData.value = await fetchPoolData()
+    dailyReward.value = await fetchDailyReward()
   } catch (error) {
     ErrorHandler.process(error)
   }
