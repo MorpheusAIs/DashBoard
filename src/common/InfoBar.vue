@@ -44,14 +44,17 @@
 import { Icon } from '@/common'
 import { type InfoBarType } from '@/types'
 
-defineProps<{
-  subtitle: string
-  status: 'public' | 'private'
-  title: string
-  description: string
-  indicators: InfoBarType.Indicator[]
-  isLoading?: boolean
-}>()
+withDefaults(
+  defineProps<{
+    subtitle: string
+    status: 'public' | 'private'
+    title: string
+    description: string
+    indicators: InfoBarType.Indicator[]
+    isLoading?: boolean
+  }>(),
+  { isLoading: false },
+)
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="info-dashboard">
+  <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div
         v-if="web3ProvidersStore.provider.isConnected"
@@ -27,7 +27,7 @@
               </h5>
             </div>
             <p class="info-dashboard__indicator-value">
-              {{ indicator.value }}
+              {{ isLoading ? $t('info-dashboard.loading') : indicator.value }}
             </p>
           </li>
         </ul>
@@ -60,9 +60,16 @@ import ConnectWalletButton from './ConnectWalletButton.vue'
 import Icon from './Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 
-defineProps<{
-  indicators?: InfoDashboardType.Indicator[]
-}>()
+withDefaults(
+  defineProps<{
+    indicators?: InfoDashboardType.Indicator[]
+    isLoading?: boolean
+  }>(),
+  {
+    indicators: () => [],
+    isLoading: false,
+  },
+)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 </script>
@@ -152,6 +159,11 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 .info-dashboard__indicator-value {
   text-align: right;
 
+  .info-dashboard--loading & {
+    animation: var(--transition-duration-medium)
+      var(--transition-timing-default) infinite alternate twinkle;
+  }
+
   @include body-3-semi-bold;
 
   @include text-ellipsis;
@@ -194,6 +206,12 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
   @include respond-to(medium) {
     min-width: toRem(162);
+  }
+}
+
+@keyframes twinkle {
+  to {
+    opacity: 0;
   }
 }
 </style>
