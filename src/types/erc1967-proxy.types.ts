@@ -14,3 +14,10 @@ export type PoolData = {
   withdrawLockPeriod: BigNumber
   withdrawLockPeriodAfterStake: BigNumber
 }
+
+export type UserData = {
+  lastStake: BigNumber
+  deposited: BigNumber
+  rate: BigNumber
+  pendingRewards: BigNumber
+}

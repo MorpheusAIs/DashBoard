@@ -31,7 +31,11 @@
         </div>
       </transition>
     </info-bar>
-    <info-dashboard :indicators="mockDashboardIndicators">
+    <info-dashboard
+      :progress="dashboardProgress"
+      :indicators="dashboardIndicators"
+      :is-loading="isInitializing || isUserDataUpdating"
+    >
       <div class="community-view__dashboard-buttons-wrp">
         <app-button
           class="community-view__dashboard-button"
@@ -69,14 +73,14 @@ import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import type {
-  BigNumber,
   Erc1967ProxyType,
   InfoBarType,
   InfoDashboardType,
+  ProgressBarType,
 } from '@/types'
-import { formatEther, Time } from '@/utils'
+import { BigNumber, formatEther, Time } from '@/utils'
 import { config } from '@config'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 const POOL_ID = 0
 
@@ -92,6 +96,8 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
 const dailyReward = ref<BigNumber | null>(null)
+const userData = ref<Erc1967ProxyType.UserData | null>(null)
+const currentUserReward = ref<BigNumber | null>(null)
 
 const isClaimModalShown = ref(false)
 const isDepositModalShown = ref(false)
@@ -140,18 +146,27 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
 ])
 
-const mockDashboardIndicators: InfoDashboardType.Indicator[] = [
+const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
   {
     iconName: ICON_NAMES.ethereum,
     title: $t('home-page.community-view.user-invested-title'),
-    value: '13 stETH',
+    value: userData.value
+      ? `${formatEther(userData.value.deposited)} stETH`
+      : '',
   },
   {
     iconName: ICON_NAMES.arbitrum,
     title: $t('home-page.community-view.available-to-claim-title'),
-    value: '20 MOR',
+    value: currentUserReward.value
+      ? `${formatEther(currentUserReward.value)} MOR`
+      : '',
   },
-]
+])
+
+const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
+  value: userData.value?.deposited || BigNumber.from('0'),
+  total: poolData.value?.totalDeposited || BigNumber.from('1'),
+}))
 
 const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
   const poolDataResponses = await Promise.all([
@@ -193,6 +208,63 @@ const fetchDailyReward = async (): Promise<BigNumber> => {
   )
 }
 
+const fetchUserData = async (): Promise<Erc1967ProxyType.UserData> => {
+  if (!web3ProvidersStore.provider.selectedAddress)
+    throw new Error('user address unavailable')
+
+  const response = await erc1967Proxy.value.usersData(
+    web3ProvidersStore.provider.selectedAddress,
+    POOL_ID,
+  )
+
+  return {
+    lastStake: response.lastStake,
+    deposited: response.deposited,
+    rate: response.rate,
+    pendingRewards: response.pendingRewards,
+  }
+}
+
+const fetchCurrentUserReward = async (): Promise<BigNumber> => {
+  if (!web3ProvidersStore.provider.selectedAddress)
+    throw new Error('user address unavailable')
+
+  return erc1967Proxy.value.getCurrentUserReward(
+    POOL_ID,
+    web3ProvidersStore.provider.selectedAddress,
+  )
+}
+
+const isUserDataUpdating = ref(false)
+const updateUserData = async (): Promise<void> => {
+  isUserDataUpdating.value = true
+
+  try {
+    const [userDataResponse, currentUserRewardResponse] = await Promise.all([
+      fetchUserData(),
+      fetchCurrentUserReward(),
+    ])
+
+    userData.value = userDataResponse
+    currentUserReward.value = currentUserRewardResponse
+  } finally {
+    isUserDataUpdating.value = false
+  }
+}
+
+watch(
+  () => web3ProvidersStore.provider.selectedAddress,
+  async newAddress => {
+    if (newAddress) {
+      try {
+        await updateUserData()
+      } catch (error) {
+        ErrorHandler.process(error)
+      }
+    }
+  },
+)
+
 const isInitializing = ref(false)
 const init = async () => {
   isInitializing.value = true
@@ -200,6 +272,8 @@ const init = async () => {
   try {
     poolData.value = await fetchPoolData()
     dailyReward.value = await fetchDailyReward()
+
+    if (web3ProvidersStore.provider.selectedAddress) await updateUserData()
   } catch (error) {
     ErrorHandler.process(error)
   }

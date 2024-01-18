@@ -57,7 +57,6 @@
       "started-at-title": "Started at",
       "claim-at-title": "Claim is locked until",
       "claim-at-note": "Note: Claim is locked until",
-      "total-earning-title": "Lifetime earning",
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR"
     }
@@ -83,6 +82,9 @@
       "arbitrum-testnet": "Arbitrum testnet"
     },
     "switch-btn": "Switch network"
+  },
+  "progress-bar": {
+    "loading": "Loading..."
   },
   "validations": {
     "field-error_numeric": "Field must be numeric",

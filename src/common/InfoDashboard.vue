@@ -8,8 +8,8 @@
         <progress-bar
           class="info-dashboard__progress-bar"
           :title="$t('info-dashboard.progress-bar-title')"
-          :progress="56.5"
-          :total="100"
+          :progress="progress"
+          :is-loading="isLoading"
         />
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
@@ -54,14 +54,15 @@
 </template>
 
 <script lang="ts" setup>
-import { type InfoDashboardType } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
+import type { InfoDashboardType, ProgressBarType } from '@/types'
 import ConnectWalletButton from './ConnectWalletButton.vue'
 import Icon from './Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 
 withDefaults(
   defineProps<{
+    progress: ProgressBarType.Progress
     indicators?: InfoDashboardType.Indicator[]
     isLoading?: boolean
   }>(),
