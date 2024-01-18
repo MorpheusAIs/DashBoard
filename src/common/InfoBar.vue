@@ -89,6 +89,12 @@ withDefaults(
     background: linear-gradient(90deg, #e08c5c 0%, #ffbe72 100%);
   }
 
+  .info-bar--loading & {
+    width: toRem(80);
+
+    @include skeleton;
+  }
+
   @include respond-to(medium) {
     padding: toRem(2) toRem(14);
   }

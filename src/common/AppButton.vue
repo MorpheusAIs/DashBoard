@@ -81,6 +81,7 @@ const props = withDefaults(
     href?: string
     iconLeft?: ICON_NAMES
     iconRight?: ICON_NAMES
+    isLoading?: boolean
   }>(),
   {
     text: '',
@@ -92,6 +93,7 @@ const props = withDefaults(
     href: '',
     iconLeft: undefined,
     iconRight: undefined,
+    isLoading: false,
   },
 )
 
@@ -113,6 +115,7 @@ const buttonClasses = computed(() =>
     ...((props.iconLeft || props.iconRight) && !props.text && !slots.default
       ? ['app-button--icon-only']
       : []),
+    ...(props.isLoading ? ['app-button--loading'] : []),
   ].join(' '),
 )
 
@@ -172,6 +175,24 @@ $button-transition: var(--transition-duration-fast)
     background: var(--app-button-bg-active);
     color: var(--app-button-text-active);
     border: var(--app-button-border-active);
+  }
+
+  &--loading {
+    $z-index: 1;
+
+    &:before {
+      z-index: $z-index;
+    }
+
+    @include skeleton;
+
+    &.app-button--scheme-link {
+      height: max-content;
+    }
+
+    &:not(.app-button--scheme-link) {
+      border-radius: 0;
+    }
   }
 
   &--scheme-filled {

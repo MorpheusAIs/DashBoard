@@ -124,8 +124,11 @@ $media-breakpoints: (
 
 @mixin skeleton {
   position: relative;
-  border-radius: toRem(20);
   overflow: hidden;
+  border-radius: toRem(20);
+  border: none;
+  background: none;
+  pointer-events: none;
 
   &:before {
     content: '';

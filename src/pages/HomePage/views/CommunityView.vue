@@ -1,7 +1,7 @@
 <template>
   <div class="community-view">
     <info-bar
-      status="public"
+      :status="poolData?.isPublic ? 'public' : 'private'"
       :title="$t('home-page.community-view.info-bar.title')"
       :subtitle="$t('home-page.community-view.info-bar.subtitle')"
       :description="$t('home-page.community-view.info-bar.description')"
@@ -14,6 +14,7 @@
             <app-button
               class="community-view__bar-button"
               :text="$t('home-page.community-view.deposit-btn')"
+              :is-loading="isInitializing"
               @click="isDepositModalShown = true"
             />
             <app-button
@@ -25,6 +26,7 @@
               rel="noopener noreferrer"
               :text="$t('home-page.community-view.external-link')"
               :icon-right="$icons.externalLink"
+              :is-loading="isInitializing"
             />
           </div>
           <deposit-modal v-model:is-shown="isDepositModalShown" />
@@ -41,11 +43,13 @@
           class="community-view__dashboard-button"
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
+          :is-loading="isInitializing || isUserDataUpdating"
           @click="isWithdrawModalShown = true"
         />
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
+          :is-loading="isInitializing || isUserDataUpdating"
           @click="isClaimModalShown = true"
         />
       </div>

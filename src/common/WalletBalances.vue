@@ -148,6 +148,8 @@ watch(() => web3ProvidersStore.provider.selectedAddress, init)
     }
 
     @include skeleton;
+
+    border-radius: 0;
   }
 
   :deep(.select-field__select-head-indicator) {

@@ -1,7 +1,7 @@
 <template>
   <div class="coders-view">
     <info-bar
-      status="private"
+      :status="poolData?.isPublic ? 'public' : 'private'"
       :title="$t('home-page.coders-view.info-bar.title')"
       :subtitle="$t('home-page.coders-view.info-bar.subtitle')"
       :description="$t('home-page.coders-view.info-bar.description')"
@@ -16,6 +16,7 @@
       <app-button
         class="coders-view__dashboard-btn"
         :text="$t('home-page.coders-view.claim-btn')"
+        :is-loading="isInitializing || isUserDataUpdating"
         @click="isClaimModalShown = true"
       />
       <claim-modal v-model:is-shown="isClaimModalShown" amount="12 647.574" />
