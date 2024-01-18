@@ -138,6 +138,17 @@ const web3ProvidersStore = useWeb3ProvidersStore()
   align-items: center;
   grid-gap: toRem(8);
 
+  .info-dashboard--loading & {
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
+  }
+
   @include respond-to(medium) {
     grid-gap: toRem(4);
   }
@@ -158,11 +169,17 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 }
 
 .info-dashboard__indicator-value {
-  text-align: right;
+  justify-self: end;
 
   .info-dashboard--loading & {
-    animation: var(--transition-duration-medium)
-      var(--transition-timing-default) infinite alternate twinkle;
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
   }
 
   @include body-3-semi-bold;
@@ -207,12 +224,6 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
   @include respond-to(medium) {
     min-width: toRem(162);
-  }
-}
-
-@keyframes twinkle {
-  to {
-    opacity: 0;
   }
 }
 </style>

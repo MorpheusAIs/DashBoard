@@ -64,13 +64,11 @@
   "info-dashboard": {
     "progress-bar-title": "Your share",
     "connection-msg": "Your personal investments and rewards will be displayed here after connecting your MetaMask wallet",
-    "connect-wallet-btn": "Connect Wallet",
-    "loading": "Loading..."
+    "connect-wallet-btn": "Connect Wallet"
   },
   "info-bar": {
     "status--public": "Open",
-    "status--private": "Private",
-    "loading": "Loading..."
+    "status--private": "Private"
   },
   "invalid-network-modal": {
     "title": "Invalid network",
@@ -82,9 +80,6 @@
       "arbitrum-testnet": "Arbitrum testnet"
     },
     "switch-btn": "Switch network"
-  },
-  "progress-bar": {
-    "loading": "Loading..."
   },
   "validations": {
     "field-error_numeric": "Field must be numeric",

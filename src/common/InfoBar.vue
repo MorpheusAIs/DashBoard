@@ -136,6 +136,17 @@ withDefaults(
   grid-auto-flow: column;
   align-items: center;
   grid-gap: toRem(4);
+
+  .info-bar--loading & {
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
+  }
 }
 
 .info-bar__indicator-title {
@@ -157,11 +168,17 @@ withDefaults(
 }
 
 .info-bar__indicator-value {
-  text-align: right;
+  justify-self: end;
 
   .info-bar--loading & {
-    animation: var(--transition-duration-medium)
-      var(--transition-timing-default) infinite alternate twinkle;
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
   }
 
   @include body-3-semi-bold;
@@ -174,12 +191,6 @@ withDefaults(
 
   @include respond-to(medium) {
     margin-top: toRem(32);
-  }
-}
-
-@keyframes twinkle {
-  to {
-    opacity: 0;
   }
 }
 </style>

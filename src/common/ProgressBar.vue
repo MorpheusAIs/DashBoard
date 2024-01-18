@@ -5,9 +5,9 @@
     :style="{ '--progress': `${progressPercent}%` }"
   >
     <p class="progress-bar__title">
-      {{ isLoading ? $t('progress-bar.loading') : title }}
+      {{ title }}
     </p>
-    <h4 v-if="!isLoading">
+    <h4 class="progress-bar__percent">
       {{ `${progressPercent}%` }}
     </h4>
   </div>
@@ -76,9 +76,12 @@ $z-index: 1;
     }
   }
 
-  &--loading:before {
-    background: conic-gradient(#ffffff, #fbc969 20%, #313a36 20%);
-    animation: 2s ease-in-out infinite rotate;
+  &--loading {
+    gap: toRem(8);
+
+    @include skeleton;
+
+    border-radius: 50%;
   }
 }
 
@@ -86,11 +89,24 @@ $z-index: 1;
   text-align: center;
 
   .progress-bar--loading & {
-    animation: var(--transition-duration-medium)
-      var(--transition-timing-default) infinite alternate twinkle;
+    @include skeleton;
   }
 
   @include body-3-regular;
+}
+
+.progress-bar__percent {
+  .progress-bar--loading & {
+    height: toRem(34);
+    width: 100%;
+    max-width: 50%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(30);
+    }
+  }
 }
 
 @keyframes rotate {
@@ -100,12 +116,6 @@ $z-index: 1;
 
   to {
     transform: rotate(325deg);
-  }
-}
-
-@keyframes twinkle {
-  to {
-    opacity: 0;
   }
 }
 </style>

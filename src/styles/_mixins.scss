@@ -122,6 +122,23 @@ $media-breakpoints: (
   margin: auto;
 }
 
+@mixin skeleton {
+  position: relative;
+  border-radius: toRem(20);
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: block;
+    background: linear-gradient(110deg, #313A36 8%, #626966 18%, #313A36 32%);
+    background-size: 200% 100%;
+    border-radius: inherit;
+    animation: 1.5s shine linear infinite;
+  }
+}
+
 @mixin h1 {
   font-family: var(--app-font-family);
   font-size: toRem(54);
@@ -348,3 +365,10 @@ $media-breakpoints: (
   line-height: toRem(16);
   letter-spacing: 0;
 }
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
