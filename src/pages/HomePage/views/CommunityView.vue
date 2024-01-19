@@ -300,7 +300,7 @@ const init = async () => {
   isInitializing.value = false
 }
 
-const onUpdateUserDeposit = async (): Promise<void> => {
+const onChangePoolUserData = async (): Promise<void> => {
   try {
     await updateUserData()
   } catch (error) {
@@ -310,11 +310,11 @@ const onUpdateUserDeposit = async (): Promise<void> => {
 
 onMounted(() => {
   init()
-  bus.on(BUS_EVENTS.updatedUserDeposit, onUpdateUserDeposit)
+  bus.on(BUS_EVENTS.changedPoolUserData, onChangePoolUserData)
 })
 
 onBeforeUnmount(() => {
-  bus.off(BUS_EVENTS.updatedUserDeposit, onUpdateUserDeposit)
+  bus.off(BUS_EVENTS.changedPoolUserData, onChangePoolUserData)
 })
 </script>
 

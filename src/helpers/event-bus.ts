@@ -5,8 +5,8 @@ export enum BUS_EVENTS {
   warning = 'warning',
   success = 'success',
   info = 'info',
-  updatedUserAllowance = 'updated-user-allowance',
-  updatedUserDeposit = 'updated-user-deposit',
+  changedUserBalance = 'changed-user-balance',
+  changedPoolUserData = 'changed-pool-user-data',
 }
 
 export type DefaultBusEventMap = {
@@ -14,8 +14,8 @@ export type DefaultBusEventMap = {
   [BUS_EVENTS.error]: unknown
   [BUS_EVENTS.warning]: unknown
   [BUS_EVENTS.info]: unknown
-  [BUS_EVENTS.updatedUserAllowance]: unknown
-  [BUS_EVENTS.updatedUserDeposit]: unknown
+  [BUS_EVENTS.changedUserBalance]: unknown
+  [BUS_EVENTS.changedPoolUserData]: unknown
 }
 
 export const bus = new EventEmitter<DefaultBusEventMap>()

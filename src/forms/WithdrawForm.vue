@@ -86,8 +86,7 @@ const submit = async (): Promise<void> => {
     await tx.wait()
 
     bus.emit(BUS_EVENTS.success)
-    bus.emit(BUS_EVENTS.updatedUserAllowance)
-    bus.emit(BUS_EVENTS.updatedUserDeposit)
+    bus.emit(BUS_EVENTS.changedPoolUserData)
     emit('cancel')
   } catch (error) {
     ErrorHandler.process(error)
