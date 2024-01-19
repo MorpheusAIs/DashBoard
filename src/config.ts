@@ -22,7 +22,7 @@ function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
   [k: string]: string | boolean | undefined
 } {
   return mapKeys(
-    pickBy(env, (v, k) => k.startsWith('VITE_')),
-    (v, k) => k.replace(/^VITE_/, ''),
+    pickBy(env, (v, k) => k.startsWith('VITE_APP_')),
+    (v, k) => k.replace(/^VITE_APP_/, ''),
   )
 }
