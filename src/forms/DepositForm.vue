@@ -95,14 +95,14 @@ const { contractWithSigner: erc1967Proxy } = useContract(
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
 )
 
-const { contractWithProvider: stEthMockWithProvider } = useContract(
-  'StETHMock__factory',
+const { contractWithProvider: stEthWithProvider } = useContract(
+  'ERC20__factory',
   config.STETH_MOCK_CONTRACT_ADDRESS,
   !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
 
-const { contractWithSigner: stEthMockWithSigner } = useContract(
-  'StETHMock__factory',
+const { contractWithSigner: stEthWithSigner } = useContract(
+  'ERC20__factory',
   config.STETH_MOCK_CONTRACT_ADDRESS,
 )
 
@@ -159,7 +159,7 @@ const fetchAllowanceByCurrency = async (
   let contract
   switch (currency) {
     case 'stEth':
-      contract = stEthMockWithProvider.value
+      contract = stEthWithProvider.value
       break
     default:
       throw new Error('unknown currency')
@@ -175,7 +175,7 @@ const approveByCurrency = async (currency: AVAILABLE_CURRENCIES) => {
   let contract
   switch (currency) {
     case 'stEth':
-      contract = stEthMockWithSigner.value
+      contract = stEthWithSigner.value
       break
     default:
       throw new Error('unknown currency')

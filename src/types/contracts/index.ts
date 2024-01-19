@@ -2,9 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ERC1967Proxy } from "./ERC1967Proxy";
-export type { MOR } from "./MOR";
-export type { StETHMock } from "./StETHMock";
+export type { ERC20 } from "./ERC20";
 export * as factories from "./factories";
 export { ERC1967Proxy__factory } from "./factories/ERC1967Proxy__factory";
-export { MOR__factory } from "./factories/MOR__factory";
-export { StETHMock__factory } from "./factories/StETHMock__factory";
+export { ERC20__factory } from "./factories/ERC20__factory";

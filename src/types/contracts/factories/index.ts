@@ -2,5 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ERC1967Proxy__factory } from "./ERC1967Proxy__factory";
-export { MOR__factory } from "./MOR__factory";
-export { StETHMock__factory } from "./StETHMock__factory";
+export { ERC20__factory } from "./ERC20__factory";

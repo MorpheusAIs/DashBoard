@@ -62,14 +62,14 @@ type Balance = {
   tokenIconName: ICON_NAMES
 }
 
-const { contractWithProvider: stEthMock } = useContract(
-  'StETHMock__factory',
+const { contractWithProvider: stEth } = useContract(
+  'ERC20__factory',
   config.STETH_MOCK_CONTRACT_ADDRESS,
   !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
 
 const { contractWithProvider: mor } = useContract(
-  'MOR__factory',
+  'ERC20__factory',
   config.MOR_CONTRACT_ADDRESS,
   !config.IS_TESTNET
     ? ETHEREUM_RPC_URLS.arbitrum
@@ -106,7 +106,7 @@ const updateBalances = async (): Promise<void> => {
     const address = web3ProvidersStore.provider.selectedAddress
 
     const [stEthValue, morValue] = await Promise.all([
-      stEthMock.value.balanceOf(address),
+      stEth.value.balanceOf(address),
       mor.value.balanceOf(address),
     ])
 
