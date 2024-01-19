@@ -70,7 +70,7 @@ import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { BigNumber, formatEther, parseUnits } from '@/utils'
-import { ether, required } from '@/validators'
+import { ether, maxEther, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
@@ -137,7 +137,11 @@ const form = reactive({
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
     available: { required },
-    amount: { required, ether },
+    amount: {
+      required,
+      ether,
+      maxEther: maxEther(form.available.value.amount),
+    },
   })
 
 const submitBtnText = computed<string>(() => {

@@ -13,13 +13,23 @@ const withI18nMessage = createI18nMessage({ t, messagePath })
 
 export const required = <ValidationRule>withI18nMessage(_required)
 
-export const ether = <ValidationRule>withI18nMessage({
-  $validator: value => {
+export const ether = <ValidationRule>withI18nMessage(value => {
+  try {
+    parseUnits(value, 'ether')
+    return true
+  } catch (error) {
+    return false
+  }
+})
+
+export const maxEther = (max: string): ValidationRule =>
+  withI18nMessage(value => {
     try {
-      parseUnits(value, 'ether')
-      return true
+      const parsedValue = parseUnits(value, 'ether')
+      const parsedMax = parseUnits(max, 'ether')
+
+      return parsedValue.lte(parsedMax)
     } catch (error) {
       return false
     }
-  },
-})
+  })
