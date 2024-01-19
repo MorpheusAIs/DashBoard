@@ -1,13 +1,18 @@
 <template>
   <basic-modal
-    v-bind="props"
     class="deposit-modal"
+    :is-shown="isShown"
+    :is-close-by-click-outside="isCloseByClickOutside"
     :title="$t('deposit-modal.title')"
     :subtitle="$t('deposit-modal.subtitle')"
     @update:is-shown="emit('update:is-shown', $event)"
   >
     <template #default="{ modal }">
-      <deposit-form class="deposit-modal__form" @cancel="modal.close" />
+      <deposit-form
+        class="deposit-modal__form"
+        :pool-id="poolId"
+        @cancel="modal.close"
+      />
     </template>
   </basic-modal>
 </template>
@@ -20,9 +25,10 @@ const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     isShown: boolean
+    poolId: number
     isCloseByClickOutside?: boolean
   }>(),
   {

@@ -130,11 +130,13 @@ const init = async (): Promise<void> => {
 
 onMounted(() => {
   init()
-  bus.on(BUS_EVENTS.updateBalances, init)
+  bus.on(BUS_EVENTS.updatedUserAllowance, init)
+  bus.on(BUS_EVENTS.updatedUserDeposit, init)
 })
 
 onBeforeUnmount(() => {
-  bus.off(BUS_EVENTS.updateBalances, init)
+  bus.on(BUS_EVENTS.updatedUserAllowance, init)
+  bus.off(BUS_EVENTS.updatedUserDeposit, init)
 })
 
 watch(() => web3ProvidersStore.provider.selectedAddress, init)

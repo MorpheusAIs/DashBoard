@@ -79,6 +79,7 @@ const props = withDefaults(
     type?: 'text' | 'number' | 'password'
     errorMessage?: string
     note?: string
+    isLoading?: boolean
   }>(),
   {
     scheme: 'primary',
@@ -87,6 +88,7 @@ const props = withDefaults(
     placeholder: '',
     errorMessage: '',
     note: '',
+    isLoading: false,
   },
 )
 
@@ -145,6 +147,7 @@ const inputClasses = computed(() => [
   ...(isDisabled.value ? ['input-field--disabled'] : []),
   ...(isReadonly.value ? ['input-field--readonly'] : []),
   ...(props.errorMessage ? ['input-field--error'] : []),
+  ...(props.isLoading ? ['input-field--loading'] : []),
   `input-field--${props.scheme}`,
 ])
 
@@ -216,6 +219,18 @@ $z-index-side-nodes: 1;
   position: relative;
   width: 100%;
   flex: 1;
+
+  &--loading {
+    &:before {
+      $z-index: 2;
+
+      z-index: $z-index;
+    }
+
+    @include skeleton;
+
+    border-radius: 0;
+  }
 }
 
 .input-field__label {
@@ -237,6 +252,7 @@ $z-index-side-nodes: 1;
 
   &:disabled,
   &:read-only {
+    cursor: not-allowed;
     border-color: var(--field-border-disabled);
     background: var(--field-bg-primary-disabled);
   }

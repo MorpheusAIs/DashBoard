@@ -247,7 +247,7 @@ $z-local-index: 2;
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
   &:disabled {
-    background: var(--field-bg-primary-disabled);
+    cursor: not-allowed;
     color: var(--field-text-readonly);
   }
 

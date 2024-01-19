@@ -9,4 +9,6 @@ const formatEther: typeof utils.formatEther = (...params) => {
   return Number(Number(sliced).toFixed(4)).toString()
 }
 
-export { formatEther, Time, BigNumber }
+const { parseUnits } = utils
+
+export { formatEther, parseUnits, Time, BigNumber }

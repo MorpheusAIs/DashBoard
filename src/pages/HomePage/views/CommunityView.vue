@@ -29,7 +29,10 @@
               :is-loading="isInitializing"
             />
           </div>
-          <deposit-modal v-model:is-shown="isDepositModalShown" />
+          <deposit-modal
+            v-model:is-shown="isDepositModalShown"
+            :pool-id="POOL_ID"
+          />
         </div>
       </transition>
     </info-bar>
@@ -74,7 +77,7 @@ import {
 import { useContext, useContract } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
-import { ErrorHandler } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import type {
   Erc1967ProxyType,
@@ -84,7 +87,7 @@ import type {
 } from '@/types'
 import { BigNumber, formatEther, Time } from '@/utils'
 import { config } from '@config'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const POOL_ID = 0
 
@@ -285,8 +288,21 @@ const init = async () => {
   isInitializing.value = false
 }
 
+const onUpdateUserDeposit = async (): Promise<void> => {
+  try {
+    await updateUserData()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
 onMounted(() => {
   init()
+  bus.on(BUS_EVENTS.updatedUserDeposit, onUpdateUserDeposit)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.updatedUserDeposit, onUpdateUserDeposit)
 })
 </script>
 

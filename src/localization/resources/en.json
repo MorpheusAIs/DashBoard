@@ -15,7 +15,10 @@
     "available-label": "Available to deposit",
     "amount-placeholder": "Enter {currency} amount",
     "cancel-btn": "Cancel",
-    "submit-btn": "Deposit"
+    "submit-btn": {
+      "deposit": "Deposit",
+      "approve": "Approve"
+    }
   },
   "deposit-modal": {
     "title": "Deposit",
@@ -82,7 +85,7 @@
     "switch-btn": "Switch network"
   },
   "validations": {
-    "field-error_numeric": "Field must be numeric",
+    "field-error_ether": "Field must be amount of ether",
     "field-error_required": "Please fill out this field",
     "field-error_email": "Field must be a valid email"
   },

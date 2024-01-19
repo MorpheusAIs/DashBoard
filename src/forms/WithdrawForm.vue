@@ -36,7 +36,7 @@
 import { AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
 import { InputField } from '@/fields'
-import { required, numeric } from '@/validators'
+import { required, ether } from '@/validators'
 import { reactive } from 'vue'
 
 const mockMacAmount = '111'
@@ -51,7 +51,7 @@ const form = reactive({
 
 const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
   form,
-  { amount: { required, numeric } },
+  { amount: { required, ether } },
 )
 
 const submit = () => {
