@@ -52,7 +52,7 @@
       <app-button
         class="deposit-form__btn"
         :text="submitBtnText"
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || !isFieldsValid"
         :is-loading="isInitializing"
         @click="submit"
       />
