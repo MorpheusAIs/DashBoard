@@ -9,10 +9,7 @@
         </transition>
       </router-view>
     </div>
-    <invalid-network-modal
-      v-model:is-shown="isShownInvalidNetworkModal"
-      is-close-by-click-outside
-    />
+    <invalid-network-modal v-model:is-shown="isShownInvalidNetworkModal" />
   </div>
 </template>
 
