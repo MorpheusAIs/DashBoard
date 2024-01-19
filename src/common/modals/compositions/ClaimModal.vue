@@ -30,6 +30,7 @@
         <app-button
           class="claim-modal__btn"
           :text="$t('claim-modal.claim-btn')"
+          :disabled="isClaiming"
           @click="claim"
         />
       </div>
@@ -42,8 +43,10 @@ import { AppButton } from '@/common'
 import { useContract } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
+import { parseUnits } from '@/utils'
 import { config } from '@config'
 import BasicModal from '../BasicModal.vue'
+import { ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -68,11 +71,17 @@ const { contractWithSigner: erc1967Proxy } = useContract(
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
+const isClaiming = ref(false)
 const claim = async (): Promise<void> => {
+  isClaiming.value = true
+
   try {
     const tx = await erc1967Proxy.value.claim(
       props.poolId,
       web3ProvidersStore.provider.selectedAddress,
+      {
+        value: parseUnits('0.02', 'ether'),
+      },
     )
 
     await tx.wait()
@@ -83,6 +92,8 @@ const claim = async (): Promise<void> => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+
+  isClaiming.value = false
 }
 </script>
 
