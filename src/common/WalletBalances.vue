@@ -64,7 +64,7 @@ type Balance = {
 
 const { contractWithProvider: stEth } = useContract(
   'ERC20__factory',
-  config.STETH_MOCK_CONTRACT_ADDRESS,
+  config.STETH_CONTRACT_ADDRESS,
   !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
 
