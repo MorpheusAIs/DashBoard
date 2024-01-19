@@ -146,7 +146,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 
 const submitBtnText = computed<string>(() => {
   if (isFieldsValid.value) {
-    const amountInDecimals = parseUnits(form.amount, 18)
+    const amountInDecimals = parseUnits(form.amount, 'ether')
     const allowance = allowances[form.available.value.currency]
 
     if (allowance && amountInDecimals.gt(allowance)) {
@@ -194,13 +194,15 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    const amountInDecimals = parseUnits(form.amount, 18)
+    const amountInDecimals = parseUnits(form.amount, 'ether')
     const allowance = allowances[form.available.value.currency]
 
     if (allowance && amountInDecimals.gt(allowance)) {
       const tx = await approveByCurrency(form.available.value.currency)
       await tx.wait()
-      await fetchAllowanceByCurrency(form.available.value.currency)
+
+      allowances[form.available.value.currency] =
+        await fetchAllowanceByCurrency(form.available.value.currency)
 
       bus.emit(BUS_EVENTS.success)
       bus.emit(BUS_EVENTS.updatedUserAllowance)

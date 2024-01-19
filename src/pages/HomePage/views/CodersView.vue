@@ -17,9 +17,15 @@
         class="coders-view__dashboard-btn"
         :text="$t('home-page.coders-view.claim-btn')"
         :is-loading="isInitializing || isUserDataUpdating"
+        :disabled="!currentUserReward || currentUserReward.isZero()"
         @click="isClaimModalShown = true"
       />
-      <claim-modal v-model:is-shown="isClaimModalShown" amount="12 647.574" />
+      <claim-modal
+        v-if="currentUserReward"
+        v-model:is-shown="isClaimModalShown"
+        :amount="formatEther(currentUserReward)"
+        :pool-id="POOL_ID"
+      />
     </info-dashboard>
   </div>
 </template>

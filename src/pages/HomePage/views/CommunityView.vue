@@ -47,20 +47,32 @@
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
           :is-loading="isInitializing || isUserDataUpdating"
+          :disabled="!userData?.deposited || userData.deposited.isZero()"
           @click="isWithdrawModalShown = true"
         />
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
           :is-loading="isInitializing || isUserDataUpdating"
+          :disabled="!currentUserReward || currentUserReward.isZero()"
           @click="isClaimModalShown = true"
         />
       </div>
       <p class="community-view__dashboard-description">
         {{ $t('home-page.community-view.dashboard-description') }}
       </p>
-      <withdraw-modal v-model:is-shown="isWithdrawModalShown" />
-      <claim-modal v-model:is-shown="isClaimModalShown" amount="12 647.574" />
+      <withdraw-modal
+        v-if="userData?.deposited"
+        v-model:is-shown="isWithdrawModalShown"
+        :pool-id="POOL_ID"
+        :available-amount="userData.deposited"
+      />
+      <claim-modal
+        v-if="currentUserReward"
+        v-model:is-shown="isClaimModalShown"
+        :amount="formatEther(currentUserReward)"
+        :pool-id="POOL_ID"
+      />
     </info-dashboard>
   </div>
 </template>
