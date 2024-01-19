@@ -153,7 +153,10 @@ $button-transition: var(--transition-duration-fast)
     cursor: not-allowed;
     background: var(--app-button-bg-disabled);
     color: var(--app-button-text-disabled);
-    border: var(--app-button-border-disabled);
+
+    &:not(.app-button--loading) {
+      border: var(--app-button-border-disabled);
+    }
   }
 
   &:not([disabled]):hover {
