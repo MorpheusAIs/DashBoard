@@ -5,6 +5,7 @@
       class="withdraw-form__input-field"
       :placeholder="$t('withdraw-form.amount-placeholder')"
       :error-message="getFieldErrorMessage('amount')"
+      :disabled="isSubmitting"
       @blur="touchField('amount')"
     >
       <template #nodeRight>
@@ -12,7 +13,8 @@
           class="withdraw-form__input-field-btn"
           scheme="link"
           text="max"
-          @click="form.amount = mockMacAmount"
+          :disabled="isSubmitting"
+          @click="form.amount = availableEther"
         />
       </template>
     </input-field>
@@ -26,6 +28,7 @@
       <app-button
         class="withdraw-form__btn"
         :text="$t('withdraw-form.submit-btn')"
+        :disabled="isSubmitting || !isFieldsValid"
         @click="submit"
       />
     </div>
@@ -34,28 +37,63 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
+import { useContract, useFormValidation } from '@/composables'
 import { InputField } from '@/fields'
-import { required, ether } from '@/validators'
-import { reactive } from 'vue'
-
-const mockMacAmount = '111'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { BigNumber, formatEther, parseUnits } from '@/utils'
+import { ether, maxEther, required } from '@/validators'
+import { config } from '@config'
+import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
 }>()
 
+const props = defineProps<{
+  poolId: number
+  availableAmount: BigNumber
+}>()
+
+const { contractWithSigner: erc1967Proxy } = useContract(
+  'ERC1967Proxy__factory',
+  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+)
+
 const form = reactive({
   amount: '' as string,
 })
 
-const { getFieldErrorMessage, touchField, isFormValid } = useFormValidation(
-  form,
-  { amount: { required, ether } },
+const availableEther = computed<string>(() =>
+  formatEther(props.availableAmount),
 )
 
-const submit = () => {
-  if (isFormValid()) return
+const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
+  useFormValidation(form, {
+    amount: { required, ether, maxEther: maxEther(availableEther.value) },
+  })
+
+const isSubmitting = ref(false)
+const submit = async (): Promise<void> => {
+  if (!isFormValid()) return
+  isSubmitting.value = true
+
+  try {
+    const tx = await erc1967Proxy.value.withdraw(
+      props.poolId,
+      parseUnits(form.amount, 'ether'),
+    )
+
+    await tx.wait()
+
+    bus.emit(BUS_EVENTS.success)
+    bus.emit(BUS_EVENTS.updatedUserAllowance)
+    bus.emit(BUS_EVENTS.updatedUserDeposit)
+    emit('cancel')
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isSubmitting.value = false
 }
 </script>
 
