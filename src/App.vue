@@ -57,7 +57,7 @@ const initNotifications = () => {
 
 const init = async () => {
   try {
-    document.title = config.APP_NAME
+    document.title = config.NAME
 
     initNotifications()
     await web3ProvidersStore.init()

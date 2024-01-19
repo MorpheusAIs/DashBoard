@@ -5,7 +5,7 @@ import mapKeys from 'lodash/mapKeys'
 
 export const config = {
   API_URL: import.meta.env.VITE_API_URL,
-  APP_NAME: import.meta.env.VITE_APP_NAME,
+  NAME: import.meta.env.VITE_APP_NAME,
   ERC1967_PROXY_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ERC1967_PROXY_CONTRACT_ADDRESS,
   STETH_CONTRACT_ADDRESS: import.meta.env.VITE_APP_STETH_CONTRACT_ADDRESS,
