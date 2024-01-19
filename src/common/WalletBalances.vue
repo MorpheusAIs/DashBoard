@@ -2,7 +2,7 @@
   <select-field
     v-model="selectedBalance"
     class="wallet-balances"
-    :class="{ 'wallet-balances--loading': isBalancesUpdating }"
+    :is-loading="isBalancesUpdating"
   >
     <template v-if="selectedBalance" #head>
       <div
@@ -49,11 +49,11 @@
 import { useContract } from '@/composables'
 import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
 import { SelectField } from '@/fields'
-import { ErrorHandler } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
 import { config } from '@config'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Icon from './Icon.vue'
 
 type Balance = {
@@ -71,7 +71,9 @@ const { contractWithProvider: stEthMock } = useContract(
 const { contractWithProvider: mor } = useContract(
   'MOR__factory',
   config.MOR_CONTRACT_ADDRESS,
-  !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+  !config.IS_TESTNET
+    ? ETHEREUM_RPC_URLS.arbitrum
+    : ETHEREUM_RPC_URLS.arbitrumSepolia,
 )
 
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -128,6 +130,11 @@ const init = async (): Promise<void> => {
 
 onMounted(() => {
   init()
+  bus.on(BUS_EVENTS.updateBalances, init)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.updateBalances, init)
 })
 
 watch(() => web3ProvidersStore.provider.selectedAddress, init)
@@ -139,18 +146,6 @@ watch(() => web3ProvidersStore.provider.selectedAddress, init)
   height: toRem(48);
   background: var(--background-secondary-main);
   width: toRem(160);
-
-  &--loading {
-    &:before {
-      $z-index: 1;
-
-      z-index: $z-index;
-    }
-
-    @include skeleton;
-
-    border-radius: 0;
-  }
 
   :deep(.select-field__select-head-indicator) {
     right: toRem(10);

@@ -6,20 +6,24 @@ import { defineStore } from 'pinia'
 
 const STORE_NAME = 'web3-providers-store'
 
-type BalanceKey = 'stEth' | 'mor'
+enum BALANCE_CURRENCIES {
+  stEth = 'stEth',
+  mor = 'mor',
+}
 
 export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
   state: () => ({
     provider: useProvider(),
-    balances: {} as Record<BalanceKey, BigNumber>,
+    balances: {
+      [BALANCE_CURRENCIES.stEth]: null,
+      [BALANCE_CURRENCIES.mor]: null,
+    } as Record<BALANCE_CURRENCIES, BigNumber | null>,
   }),
 
   getters: {
     isValidChain: state =>
       String(state.provider.chainId) ===
-      (!config.IS_TESTNET
-        ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumSepolia),
+      (!config.IS_TESTNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia),
     address: state => state.provider.selectedAddress,
   },
 
