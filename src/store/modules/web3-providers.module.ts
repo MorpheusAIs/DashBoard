@@ -23,7 +23,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
   getters: {
     isValidChain: state =>
       String(state.provider.chainId) ===
-      (!config.IS_TESTNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia),
+      (config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia),
     address: state => state.provider.selectedAddress,
   },
 

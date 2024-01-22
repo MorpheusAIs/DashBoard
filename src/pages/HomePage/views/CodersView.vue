@@ -55,7 +55,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const { contractWithProvider: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
-  !config.IS_TESTNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
 
 const poolData = ref<Erc1967ProxyType.PoolData | null>(null)

@@ -20,7 +20,7 @@ interface ImportMetaEnv {
   VITE_APP_ERC1967_PROXY_CONTRACT_ADDRESS: string
   VITE_APP_STETH_CONTRACT_ADDRESS: string
   VITE_APP_MOR_CONTRACT_ADDRESS: string
-  VITE_APP_IS_TESTNET: string
+  VITE_APP_IS_MAINNET: string
 }
 
 declare global {

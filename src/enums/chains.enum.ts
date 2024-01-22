@@ -6,7 +6,7 @@ export enum ETHEREUM_CHAINS {
 }
 
 export enum ETHEREUM_RPC_URLS {
-  ethereum = 'https://mainnet.infura.io/v3/',
+  ethereum = 'https://ethereum.publicnode.com',
   sepolia = 'https://rpc.sepolia.org/',
   arbitrum = 'https://arb1.arbitrum.io/rpc',
   arbitrumSepolia = 'https://sepolia-rollup.arbitrum.io/rpc',

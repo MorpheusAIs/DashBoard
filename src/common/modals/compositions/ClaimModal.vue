@@ -80,6 +80,7 @@ const claim = async (): Promise<void> => {
       props.poolId,
       web3ProvidersStore.provider.selectedAddress,
       {
+        // TODO: estimate by LayerZero
         value: parseUnits('0.02', 'ether'),
       },
     )
