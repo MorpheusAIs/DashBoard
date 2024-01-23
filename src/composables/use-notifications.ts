@@ -6,8 +6,6 @@ import { TYPE, useToast } from 'vue-toastification'
 import { DefaultToast } from '@/common'
 import { CommonNotificationTypes, NotificationObjectPayload } from '@/types'
 
-const MINUTE = 60 * 1000
-
 export const useNotifications = () => {
   const toast = useToast()
 
@@ -81,7 +79,7 @@ export const useNotifications = () => {
           warning: TYPE.WARNING,
         }[messageType],
         toastClassName: 'default-toast',
-        timeout: MINUTE / 2,
+        timeout: 5000,
         closeOnClick: false,
       },
     )
