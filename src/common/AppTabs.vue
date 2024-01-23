@@ -57,6 +57,7 @@ const updateTab = (tab: Tab) => {
   padding: toRem(16) toRem(24);
   border: toRem(1) solid #494949;
   color: $color;
+  cursor: pointer;
   transition: var(--transition-duration-fast) var(--transition-timing-default);
 
   &.router-link-active,

@@ -2,7 +2,9 @@
   <main class="home-page">
     <div class="home-page__content-wrp">
       <app-tabs :tabs="tabs" />
-      <router-view class="home-page__view" />
+      <router-view v-slot="{ Component }" class="home-page__view">
+        <keep-alive><component :is="Component" /></keep-alive>
+      </router-view>
     </div>
   </main>
 </template>
