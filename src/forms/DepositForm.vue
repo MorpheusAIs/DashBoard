@@ -199,6 +199,8 @@ const submit = async (): Promise<void> => {
 
     if (allowance && amountInDecimals.gt(allowance)) {
       const tx = await approveByCurrency(form.available.value.currency)
+      bus.emit(BUS_EVENTS.success)
+
       await tx.wait()
 
       allowances[form.available.value.currency] =
@@ -213,7 +215,7 @@ const submit = async (): Promise<void> => {
     await tx.wait()
 
     bus.emit(BUS_EVENTS.success)
-    bus.emit(BUS_EVENTS.changedPoolUserData)
+    bus.emit(BUS_EVENTS.changedPoolData)
     emit('cancel')
   } catch (error) {
     ErrorHandler.process(error)

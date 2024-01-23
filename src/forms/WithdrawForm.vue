@@ -82,11 +82,12 @@ const submit = async (): Promise<void> => {
       props.poolId,
       parseUnits(form.amount, 'ether'),
     )
+    bus.emit(BUS_EVENTS.success)
 
     await tx.wait()
 
     bus.emit(BUS_EVENTS.success)
-    bus.emit(BUS_EVENTS.changedPoolUserData)
+    bus.emit(BUS_EVENTS.changedPoolData)
     emit('cancel')
   } catch (error) {
     ErrorHandler.process(error)

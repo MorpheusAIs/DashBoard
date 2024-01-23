@@ -11,12 +11,12 @@
     <info-dashboard
       :indicators="dashboardIndicators"
       :progress="dashboardProgress"
-      :is-loading="isInitializing || isUserDataUpdating"
+      :is-loading="isDashboardLoading"
     >
       <app-button
         class="coders-view__dashboard-btn"
         :text="$t('home-page.coders-view.claim-btn')"
-        :is-loading="isInitializing || isUserDataUpdating"
+        :is-loading="isDashboardLoading"
         :disabled="!currentUserReward || currentUserReward.isZero()"
         @click="isClaimModalShown = true"
       />
@@ -35,7 +35,7 @@ import { AppButton, ClaimModal, InfoBar, InfoDashboard } from '@/common'
 import { useContext, useContract } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
-import { ErrorHandler } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import type {
   Erc1967ProxyType,
@@ -45,7 +45,7 @@ import type {
 } from '@/types'
 import { formatEther, BigNumber, Time } from '@/utils'
 import { config } from '@config'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const POOL_ID = 1
 
@@ -60,7 +60,7 @@ const { contractWithProvider: erc1967Proxy } = useContract(
 
 const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
 const dailyReward = ref<BigNumber | null>(null)
-const userData = ref<Erc1967ProxyType.UserData | null>(null)
+const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
 const currentUserReward = ref<BigNumber | null>(null)
 
 const isClaimModalShown = ref(false)
@@ -102,9 +102,16 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
 ])
 
 const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
-  value: userData.value?.deposited || BigNumber.from('0'),
+  value: userPoolData.value?.deposited || BigNumber.from('0'),
   total: poolData.value?.totalDeposited || BigNumber.from('1'),
 }))
+
+const isDashboardLoading = computed<boolean>(
+  () =>
+    isInitializing.value ||
+    isUserDataUpdating.value ||
+    isCurrentUserRewardFetching.value,
+)
 
 const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
   const poolDataResponses = await Promise.all([
@@ -146,7 +153,7 @@ const fetchDailyReward = async (): Promise<BigNumber> => {
   )
 }
 
-const fetchUserData = async (): Promise<Erc1967ProxyType.UserData> => {
+const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
@@ -163,14 +170,20 @@ const fetchUserData = async (): Promise<Erc1967ProxyType.UserData> => {
   }
 }
 
+const isCurrentUserRewardFetching = ref(false)
 const fetchCurrentUserReward = async (): Promise<BigNumber> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
-  return erc1967Proxy.value.getCurrentUserReward(
-    POOL_ID,
-    web3ProvidersStore.provider.selectedAddress,
-  )
+  isCurrentUserRewardFetching.value = true
+  try {
+    return await erc1967Proxy.value.getCurrentUserReward(
+      POOL_ID,
+      web3ProvidersStore.provider.selectedAddress,
+    )
+  } finally {
+    isCurrentUserRewardFetching.value = false
+  }
 }
 
 const isUserDataUpdating = ref(false)
@@ -179,11 +192,11 @@ const updateUserData = async (): Promise<void> => {
 
   try {
     const [userDataResponse, currentUserRewardResponse] = await Promise.all([
-      fetchUserData(),
+      fetchUserPoolData(),
       fetchCurrentUserReward(),
     ])
 
-    userData.value = userDataResponse
+    userPoolData.value = userDataResponse
     currentUserReward.value = currentUserRewardResponse
   } finally {
     isUserDataUpdating.value = false
@@ -219,8 +232,23 @@ const init = async () => {
   isInitializing.value = false
 }
 
+const onChangeCurrentUserReward = async (): Promise<void> => {
+  if (web3ProvidersStore.provider.selectedAddress) {
+    try {
+      currentUserReward.value = await fetchCurrentUserReward()
+    } catch (error) {
+      ErrorHandler.process(error)
+    }
+  }
+}
+
 onMounted(() => {
   init()
+  bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
 })
 </script>
 

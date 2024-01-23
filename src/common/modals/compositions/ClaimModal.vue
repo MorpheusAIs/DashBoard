@@ -84,11 +84,12 @@ const claim = async (): Promise<void> => {
         value: parseUnits('0.02', 'ether'),
       },
     )
+    bus.emit(BUS_EVENTS.success)
 
     await tx.wait()
 
     bus.emit(BUS_EVENTS.success)
-    bus.emit(BUS_EVENTS.changedPoolUserData)
+    bus.emit(BUS_EVENTS.changedCurrentUserReward)
     emit('update:is-shown', false)
   } catch (error) {
     ErrorHandler.process(error)

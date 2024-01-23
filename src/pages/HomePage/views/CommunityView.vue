@@ -39,21 +39,23 @@
     <info-dashboard
       :progress="dashboardProgress"
       :indicators="dashboardIndicators"
-      :is-loading="isInitializing || isUserDataUpdating"
+      :is-loading="isDashboardLoading"
     >
       <div class="community-view__dashboard-buttons-wrp">
         <app-button
           class="community-view__dashboard-button"
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
-          :is-loading="isInitializing || isUserDataUpdating"
-          :disabled="!userData?.deposited || userData.deposited.isZero()"
+          :is-loading="isDashboardLoading"
+          :disabled="
+            !userPoolData?.deposited || userPoolData.deposited.isZero()
+          "
           @click="isWithdrawModalShown = true"
         />
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
-          :is-loading="isInitializing || isUserDataUpdating"
+          :is-loading="isDashboardLoading"
           :disabled="!currentUserReward || currentUserReward.isZero()"
           @click="isClaimModalShown = true"
         />
@@ -62,10 +64,10 @@
         {{ $t('home-page.community-view.dashboard-description') }}
       </p>
       <withdraw-modal
-        v-if="userData?.deposited"
+        v-if="userPoolData?.deposited"
         v-model:is-shown="isWithdrawModalShown"
         :pool-id="POOL_ID"
-        :available-amount="userData.deposited"
+        :available-amount="userPoolData.deposited"
       />
       <claim-modal
         v-if="currentUserReward"
@@ -115,7 +117,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
 const dailyReward = ref<BigNumber | null>(null)
-const userData = ref<Erc1967ProxyType.UserData | null>(null)
+const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
 const currentUserReward = ref<BigNumber | null>(null)
 
 const isClaimModalShown = ref(false)
@@ -169,8 +171,8 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
   {
     iconName: ICON_NAMES.ethereum,
     title: $t('home-page.community-view.user-invested-title'),
-    value: userData.value
-      ? `${formatEther(userData.value.deposited)} stETH`
+    value: userPoolData.value
+      ? `${formatEther(userPoolData.value.deposited)} stETH`
       : '',
   },
   {
@@ -183,9 +185,16 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
 ])
 
 const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
-  value: userData.value?.deposited || BigNumber.from('0'),
+  value: userPoolData.value?.deposited || BigNumber.from('0'),
   total: poolData.value?.totalDeposited || BigNumber.from('1'),
 }))
+
+const isDashboardLoading = computed<boolean>(
+  () =>
+    isInitializing.value ||
+    isUserDataUpdating.value ||
+    isCurrentUserRewardFetching.value,
+)
 
 const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
   const poolDataResponses = await Promise.all([
@@ -227,7 +236,7 @@ const fetchDailyReward = async (): Promise<BigNumber> => {
   )
 }
 
-const fetchUserData = async (): Promise<Erc1967ProxyType.UserData> => {
+const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
@@ -244,14 +253,20 @@ const fetchUserData = async (): Promise<Erc1967ProxyType.UserData> => {
   }
 }
 
+const isCurrentUserRewardFetching = ref(false)
 const fetchCurrentUserReward = async (): Promise<BigNumber> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
-  return erc1967Proxy.value.getCurrentUserReward(
-    POOL_ID,
-    web3ProvidersStore.provider.selectedAddress,
-  )
+  isCurrentUserRewardFetching.value = true
+  try {
+    return await erc1967Proxy.value.getCurrentUserReward(
+      POOL_ID,
+      web3ProvidersStore.provider.selectedAddress,
+    )
+  } finally {
+    isCurrentUserRewardFetching.value = false
+  }
 }
 
 const isUserDataUpdating = ref(false)
@@ -260,11 +275,11 @@ const updateUserData = async (): Promise<void> => {
 
   try {
     const [userDataResponse, currentUserRewardResponse] = await Promise.all([
-      fetchUserData(),
+      fetchUserPoolData(),
       fetchCurrentUserReward(),
     ])
 
-    userData.value = userDataResponse
+    userPoolData.value = userDataResponse
     currentUserReward.value = currentUserRewardResponse
   } finally {
     isUserDataUpdating.value = false
@@ -300,21 +315,35 @@ const init = async () => {
   isInitializing.value = false
 }
 
-const onChangePoolUserData = async (): Promise<void> => {
+const onChangePoolData = async (): Promise<void> => {
   try {
-    await updateUserData()
+    poolData.value = await fetchPoolData()
+
+    if (web3ProvidersStore.provider.selectedAddress) await updateUserData()
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
 
+const onChangeCurrentUserReward = async (): Promise<void> => {
+  if (web3ProvidersStore.provider.selectedAddress) {
+    try {
+      currentUserReward.value = await fetchCurrentUserReward()
+    } catch (error) {
+      ErrorHandler.process(error)
+    }
+  }
+}
+
 onMounted(() => {
   init()
-  bus.on(BUS_EVENTS.changedPoolUserData, onChangePoolUserData)
+  bus.on(BUS_EVENTS.changedPoolData, onChangePoolData)
+  bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
 })
 
 onBeforeUnmount(() => {
-  bus.off(BUS_EVENTS.changedPoolUserData, onChangePoolUserData)
+  bus.off(BUS_EVENTS.changedPoolData, onChangePoolData)
+  bus.off(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
 })
 </script>
 
