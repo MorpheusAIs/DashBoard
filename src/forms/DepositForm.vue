@@ -23,7 +23,8 @@
       class="deposit-form__input-field"
       :placeholder="
         $t('deposit-form.amount-placeholder', {
-          currency: form.available.value.currency,
+          currency:
+            form.available?.value.currency || AVAILABLE_CURRENCIES.stEth,
         })
       "
       :error-message="getFieldErrorMessage('amount')"
@@ -76,7 +77,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
 
 enum AVAILABLE_CURRENCIES {
-  stEth = 'stEth',
+  stEth = 'stETH',
 }
 
 type AvailableOptionValue = {
@@ -140,7 +141,9 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     amount: {
       required,
       ether,
-      maxEther: maxEther(form.available.value.amount),
+      ...(form.available && {
+        maxEther: maxEther(form.available.value.amount),
+      }),
     },
   })
 
@@ -162,7 +165,7 @@ const fetchAllowanceByCurrency = async (
 ): Promise<BigNumber> => {
   let contract
   switch (currency) {
-    case 'stEth':
+    case AVAILABLE_CURRENCIES.stEth:
       contract = stEthWithProvider.value
       break
     default:
@@ -178,7 +181,7 @@ const fetchAllowanceByCurrency = async (
 const approveByCurrency = async (currency: AVAILABLE_CURRENCIES) => {
   let contract
   switch (currency) {
-    case 'stEth':
+    case AVAILABLE_CURRENCIES.stEth:
       contract = stEthWithSigner.value
       break
     default:
@@ -229,7 +232,7 @@ const init = async (): Promise<void> => {
   isInitializing.value = true
 
   try {
-    allowances.stEth = await fetchAllowanceByCurrency(
+    allowances[AVAILABLE_CURRENCIES.stEth] = await fetchAllowanceByCurrency(
       AVAILABLE_CURRENCIES.stEth,
     )
   } catch (error) {

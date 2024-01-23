@@ -15,6 +15,7 @@
               class="community-view__bar-button"
               :text="$t('home-page.community-view.deposit-btn')"
               :is-loading="isInitializing"
+              :disabled="isDepositDisabled"
               @click="isDepositModalShown = true"
             />
             <app-button
@@ -30,6 +31,7 @@
             />
           </div>
           <deposit-modal
+            v-if="!isDepositDisabled"
             v-model:is-shown="isDepositModalShown"
             :pool-id="POOL_ID"
           />
@@ -195,6 +197,11 @@ const isDashboardLoading = computed<boolean>(
     isUserDataUpdating.value ||
     isCurrentUserRewardFetching.value,
 )
+
+const isDepositDisabled = computed<boolean>(() => {
+  if (!web3ProvidersStore.balances.stEth) return true
+  return web3ProvidersStore.balances.stEth.isZero()
+})
 
 const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
   const poolDataResponses = await Promise.all([

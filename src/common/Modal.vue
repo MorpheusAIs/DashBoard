@@ -1,9 +1,9 @@
 <template>
   <teleport to="#modal">
     <transition name="fade">
-      <div v-if="isShown" class="modal" v-bind="$attrs">
+      <div v-show="isShown" class="modal" v-bind="$attrs">
         <div class="modal__pane" ref="modalPane">
-          <slot :modal="{ close: closeModal }" :key="String(isShown)" />
+          <slot :modal="{ close: closeModal }" />
         </div>
       </div>
     </transition>
