@@ -89,9 +89,7 @@ const testNetworks: Network[] = [
 const switchNetwork = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.IS_MAINNET
-        ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumSepolia,
+      config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia,
     )
   } catch (error) {
     ErrorHandler.process(error)
