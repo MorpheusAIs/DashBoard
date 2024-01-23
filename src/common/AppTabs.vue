@@ -3,13 +3,17 @@
     <component
       v-for="tab in tabs"
       :key="tab.id"
-      :is="tab.route ? 'router-link' : 'button'"
-      :text="tab.title"
+      :is="tab.route ? 'router-link' : 'a'"
       :to="tab.route"
+      :href="tab.href"
+      :target="tab.href ? '_blank' : undefined"
+      :rel="tab.href ? 'noopener noreferrer' : undefined"
       class="app-tabs__btn"
       :class="{ 'app-tabs__btn--active': modelValue?.id === tab.id }"
       @click="updateTab(tab)"
-    />
+    >
+      {{ tab.title }}
+    </component>
   </div>
 </template>
 

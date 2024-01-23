@@ -25,14 +25,27 @@
     "subtitle": "Your funds will be redirected to the platform. Enter the desired amount, in case of the first transaction, you will need to authorize the transfer of funds."
   },
   "home-page": {
+    "capital-tab": "Capital",
     "community-tab": "Community",
     "coders-tab": "Coders",
     "compute-tab": "Compute",
-    "capital-tab": "Capital",
+    "capital-view": {
+      "info-bar": {
+        "title": "Coders",
+        "subtitle": "Group 1",
+        "description": "People who provide the intelligence to use the frontends, capital and compute."
+      },
+      "daily-reward-title": "Current daily reward",
+      "started-at-title": "Started at",
+      "claim-at-title": "Claim is locked until",
+      "claim-at-note": "Note: Claim is locked until",
+      "available-to-claim-title": "Available to claim",
+      "claim-btn": "Claim MOR"
+    },
     "community-view": {
       "info-bar": {
         "title": "Community",
-        "subtitle": "Group 1",
+        "subtitle": "Group 2",
         "description": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
       "total-invested-title": "Total Invested",
@@ -49,19 +62,6 @@
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
       "dashboard-description": "The reward will be claim automatically on withdrawal. Your share in the group will decrease, the award percentage will be reduced accordingly."
-    },
-    "coders-view": {
-      "info-bar": {
-        "title": "Coders",
-        "subtitle": "Group 2",
-        "description": "People who provide the intelligence to use the frontends, capital and compute."
-      },
-      "daily-reward-title": "Current daily reward",
-      "started-at-title": "Started at",
-      "claim-at-title": "Claim is locked until",
-      "claim-at-note": "Note: Claim is locked until",
-      "available-to-claim-title": "Available to claim",
-      "claim-btn": "Claim MOR"
     }
   },
   "info-dashboard": {

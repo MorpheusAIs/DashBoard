@@ -25,4 +25,5 @@ export type Tab = {
   title: string
   id: string
   route?: RouteLocationRaw
+  href?: string
 }
