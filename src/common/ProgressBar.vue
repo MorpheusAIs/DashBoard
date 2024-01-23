@@ -26,9 +26,12 @@ const props = withDefaults(
   { isLoading: false },
 )
 
-const progressPercent = computed<number>(() =>
-  props.progress.value.mul(100).div(props.progress.total).toNumber(),
-)
+const progressPercent = computed<number>(() => {
+  const x = Number(props.progress.value.toString().slice(0, 15))
+  const y = Number(props.progress.total.toString().slice(0, 15))
+
+  return Number((x / y).toFixed(2))
+})
 </script>
 
 <style lang="scss" scoped>
