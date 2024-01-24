@@ -2,7 +2,7 @@
   <select-field
     v-model="selectedBalance"
     class="wallet-balances"
-    :is-loading="isBalancesUpdating"
+    :is-loading="isInitializing"
   >
     <template v-if="selectedBalance" #head>
       <div
@@ -95,34 +95,44 @@ const balances = computed<Balance[]>(() => [
   },
 ])
 
-const isBalancesUpdating = ref(false)
 const updateBalances = async (): Promise<void> => {
-  isBalancesUpdating.value = true
+  if (!web3ProvidersStore.provider.selectedAddress)
+    throw new Error('user address unavailable')
 
-  try {
-    if (!web3ProvidersStore.provider.selectedAddress)
-      throw new Error('user address unavailable')
+  const address = web3ProvidersStore.provider.selectedAddress
 
-    const address = web3ProvidersStore.provider.selectedAddress
+  const [stEthValue, morValue] = await Promise.all([
+    stEth.value.balanceOf(address),
+    mor.value.balanceOf(address),
+  ])
 
-    const [stEthValue, morValue] = await Promise.all([
-      stEth.value.balanceOf(address),
-      mor.value.balanceOf(address),
-    ])
-
-    web3ProvidersStore.balances.stEth = stEthValue
-    web3ProvidersStore.balances.mor = morValue
-  } finally {
-    isBalancesUpdating.value = false
-  }
+  web3ProvidersStore.balances.stEth = stEthValue
+  web3ProvidersStore.balances.mor = morValue
 }
 
 const selectedBalance = ref<Balance>(balances.value[0])
 
+const isInitializing = ref(true)
 const init = async (): Promise<void> => {
+  if (!web3ProvidersStore.provider.selectedAddress) return
+
+  isInitializing.value = true
+
   try {
     await updateBalances()
     selectedBalance.value = balances.value[0]
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isInitializing.value = false
+}
+
+const onChangeBalances = async () => {
+  if (!web3ProvidersStore.provider.selectedAddress) return
+
+  try {
+    await updateBalances()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -130,18 +140,18 @@ const init = async (): Promise<void> => {
 
 onMounted(() => {
   init()
-  bus.on(BUS_EVENTS.changedUserBalance, init)
-  bus.on(BUS_EVENTS.changedPoolData, init)
-  bus.on(BUS_EVENTS.changedCurrentUserReward, init)
+  bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
+  bus.on(BUS_EVENTS.changedPoolData, onChangeBalances)
+  bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
 })
 
 onBeforeUnmount(() => {
-  bus.on(BUS_EVENTS.changedUserBalance, init)
-  bus.off(BUS_EVENTS.changedPoolData, init)
-  bus.off(BUS_EVENTS.changedCurrentUserReward, init)
+  bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
+  bus.off(BUS_EVENTS.changedPoolData, onChangeBalances)
+  bus.off(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
 })
 
-watch(() => web3ProvidersStore.provider.selectedAddress, init)
+watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
 </script>
 
 <style lang="scss" scoped>
