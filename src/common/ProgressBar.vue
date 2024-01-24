@@ -27,10 +27,10 @@ const props = withDefaults(
 )
 
 const progressPercent = computed<number>(() => {
-  const x = Number(props.progress.value.toString().slice(0, 15))
-  const y = Number(props.progress.total.toString().slice(0, 15))
+  const value = Number(props.progress.value.toString().slice(0, 15))
+  const total = Number(props.progress.total.toString().slice(0, 15))
 
-  return Number((x / y).toFixed(2))
+  return Number((value / total).toFixed(2))
 })
 </script>
 
@@ -109,16 +109,6 @@ $z-index: 1;
     @include respond-to(medium) {
       height: toRem(30);
     }
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(-35deg);
-  }
-
-  to {
-    transform: rotate(325deg);
   }
 }
 </style>
