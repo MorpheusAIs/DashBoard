@@ -39,7 +39,7 @@
 .app__init-logo {
   color: #ffffff;
   animation: 0.5s ease-in-out infinite alternate twinkle;
-  width: 300px;
+  width: 18.75rem;
 }
 
 @media (max-width: 1023px) {
@@ -60,7 +60,7 @@
   }
 
   .app__init-logo {
-    width: 200px;
+    width: 12.5rem;
   }
 }
 
