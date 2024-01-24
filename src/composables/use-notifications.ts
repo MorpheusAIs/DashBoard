@@ -30,7 +30,7 @@ export const useNotifications = () => {
     [TYPE.INFO]: ICON_NAMES.exclamationCircle,
     [TYPE.SUCCESS]: ICON_NAMES.checkCircle,
     [TYPE.ERROR]: ICON_NAMES.xCircle,
-    [TYPE.WARNING]: ICON_NAMES.shieldExclamation,
+    [TYPE.WARNING]: ICON_NAMES.exclamationCircle,
   }
 
   const showToast = (
@@ -81,6 +81,7 @@ export const useNotifications = () => {
         toastClassName: 'default-toast',
         timeout: 5000,
         closeOnClick: false,
+        closeButton: false,
       },
     )
   }

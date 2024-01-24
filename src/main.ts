@@ -34,7 +34,10 @@ const initApp = async () => {
       .use(router)
       .use(store)
       .use(i18n)
-      .use(VueToastificationPlugin)
+      .use(VueToastificationPlugin, {
+        transition: 'Vue-Toastification__fade',
+        newestOnTop: false,
+      })
       .use(FloatingVue)
 
     app.config.globalProperties.$routes = ROUTE_NAMES
