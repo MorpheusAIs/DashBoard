@@ -17,11 +17,11 @@
         class="capital-view__dashboard-btn"
         :text="$t('home-page.capital-view.claim-btn')"
         :is-loading="isDashboardLoading"
-        :disabled="!currentUserReward || currentUserReward.isZero()"
+        :disabled="isClaimDisabled"
         @click="isClaimModalShown = true"
       />
       <claim-modal
-        v-if="currentUserReward"
+        v-if="!isClaimDisabled && currentUserReward"
         v-model:is-shown="isClaimModalShown"
         :amount="formatEther(currentUserReward)"
         :pool-id="POOL_ID"
@@ -112,6 +112,11 @@ const isDashboardLoading = computed<boolean>(
     isUserDataUpdating.value ||
     isCurrentUserRewardFetching.value,
 )
+
+const isClaimDisabled = computed<boolean>(() => {
+  if (!currentUserReward.value) return true
+  return currentUserReward.value.isZero()
+})
 
 const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
   const poolDataResponses = await Promise.all([
