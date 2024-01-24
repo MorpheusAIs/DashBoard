@@ -70,7 +70,7 @@ import { InputField, SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
-import { BigNumber, formatEther, parseUnits } from '@/utils'
+import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
@@ -138,7 +138,7 @@ const availableOptions = computed<FieldOption<AvailableOptionValue>[]>(() => [
         {
           title: `${formatEther(web3ProvidersStore.balances.stEth)} stETH`,
           value: {
-            amount: formatEther(web3ProvidersStore.balances.stEth),
+            amount: toEther(web3ProvidersStore.balances.stEth),
             currency: AVAILABLE_CURRENCIES.stEth,
           },
         },
