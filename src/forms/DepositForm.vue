@@ -76,6 +76,11 @@ import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
 
+enum SUBMIT_ACTIONS {
+  approve = 'approve',
+  stake = 'stake',
+}
+
 enum AVAILABLE_CURRENCIES {
   stEth = 'stETH',
 }
@@ -114,6 +119,19 @@ const allowances = reactive<Record<AVAILABLE_CURRENCIES, BigNumber | null>>({
   [AVAILABLE_CURRENCIES.stEth]: null,
 })
 
+const submitAction = computed<SUBMIT_ACTIONS>(() => {
+  if (isFieldsValid.value) {
+    const amountInDecimals = parseUnits(form.amount, 'ether')
+    const allowance = allowances[form.available.value.currency]
+
+    if (allowance && amountInDecimals.gt(allowance)) {
+      return SUBMIT_ACTIONS.approve
+    }
+  }
+
+  return SUBMIT_ACTIONS.stake
+})
+
 const availableOptions = computed<FieldOption<AvailableOptionValue>[]>(() => [
   ...(web3ProvidersStore.balances.stEth
     ? [
@@ -147,18 +165,11 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     },
   })
 
-const submitBtnText = computed<string>(() => {
-  if (isFieldsValid.value) {
-    const amountInDecimals = parseUnits(form.amount, 'ether')
-    const allowance = allowances[form.available.value.currency]
-
-    if (allowance && amountInDecimals.gt(allowance)) {
-      return $t('deposit-form.submit-btn.approve')
-    }
-  }
-
-  return $t('deposit-form.submit-btn.deposit')
-})
+const submitBtnText = computed<string>(() =>
+  submitAction.value === SUBMIT_ACTIONS.approve
+    ? $t('deposit-form.submit-btn.approve')
+    : $t('deposit-form.submit-btn.deposit'),
+)
 
 const fetchAllowanceByCurrency = async (
   currency: AVAILABLE_CURRENCIES,
@@ -197,10 +208,7 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    const amountInDecimals = parseUnits(form.amount, 'ether')
-    const allowance = allowances[form.available.value.currency]
-
-    if (allowance && amountInDecimals.gt(allowance)) {
+    if (submitAction.value === SUBMIT_ACTIONS.approve) {
       const tx = await approveByCurrency(form.available.value.currency)
       bus.emit(BUS_EVENTS.success)
 
@@ -214,6 +222,7 @@ const submit = async (): Promise<void> => {
       return
     }
 
+    const amountInDecimals = parseUnits(form.amount, 'ether')
     const tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
     await tx.wait()
 
