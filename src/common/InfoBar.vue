@@ -30,7 +30,7 @@
           />
         </div>
         <p class="info-bar__indicator-value">
-          {{ isLoading ? $t('info-bar.loading') : indicator.value || '-' }}
+          {{ indicator.value || '-' }}
         </p>
       </li>
     </ul>

@@ -27,11 +27,7 @@
               </h5>
             </div>
             <p class="info-dashboard__indicator-value">
-              {{
-                isLoading
-                  ? $t('info-dashboard.loading')
-                  : indicator.value || '-'
-              }}
+              {{ indicator.value || '-' }}
             </p>
           </li>
         </ul>
