@@ -40,7 +40,7 @@ import { AppButton } from '@/common'
 import { useContract, useFormValidation } from '@/composables'
 import { InputField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
-import { BigNumber, formatEther, parseUnits } from '@/utils'
+import { BigNumber, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, required } from '@/validators'
 import { config } from '@config'
 import { computed, reactive, ref } from 'vue'
@@ -63,9 +63,7 @@ const form = reactive({
   amount: '' as string,
 })
 
-const availableEther = computed<string>(() =>
-  formatEther(props.availableAmount),
-)
+const availableEther = computed<string>(() => toEther(props.availableAmount))
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
