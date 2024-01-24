@@ -49,16 +49,14 @@
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
           :is-loading="isInitializing"
-          :disabled="
-            !userPoolData?.deposited || userPoolData.deposited.isZero()
-          "
+          :disabled="isWithdrawDisabled"
           @click="isWithdrawModalShown = true"
         />
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
           :is-loading="isInitializing"
-          :disabled="!currentUserReward || currentUserReward.isZero()"
+          :disabled="isClaimDisabled"
           @click="isClaimModalShown = true"
         />
       </div>
@@ -66,13 +64,13 @@
         {{ $t('home-page.community-view.dashboard-description') }}
       </p>
       <withdraw-modal
-        v-if="userPoolData?.deposited"
+        v-if="!isWithdrawDisabled && userPoolData"
         v-model:is-shown="isWithdrawModalShown"
         :pool-id="POOL_ID"
         :available-amount="userPoolData.deposited"
       />
       <claim-modal
-        v-if="currentUserReward"
+        v-if="!isClaimDisabled && currentUserReward"
         v-model:is-shown="isClaimModalShown"
         :amount="formatEther(currentUserReward)"
         :pool-id="POOL_ID"
@@ -194,6 +192,16 @@ const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
 const isDepositDisabled = computed<boolean>(() => {
   if (!web3ProvidersStore.balances.stEth) return true
   return web3ProvidersStore.balances.stEth.isZero()
+})
+
+const isWithdrawDisabled = computed<boolean>(() => {
+  if (!userPoolData.value?.deposited) return true
+  return userPoolData.value.deposited.isZero()
+})
+
+const isClaimDisabled = computed<boolean>(() => {
+  if (!currentUserReward.value) return true
+  return currentUserReward.value.isZero()
 })
 
 const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
