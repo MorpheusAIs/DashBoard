@@ -37,11 +37,13 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
 
 <style lang="scss">
 .Vue-Toastification__container.top-right {
+  top: toRem(20);
+  padding: 0;
+
   @include respond-to(medium) {
     top: 0;
     right: 0;
     width: 100vw;
-    padding: 0;
   }
 }
 
@@ -50,11 +52,9 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
   padding: toRem(12) toRem(16);
   border-radius: 0;
   box-shadow: 0 toRem(4) toRem(16) rgba(#a0a0a0, 0.25);
-  top: toRem(80);
 
   @include respond-to(medium) {
     margin-bottom: toRem(8);
-    top: toRem(56);
     width: 100%;
     max-width: unset;
   }
