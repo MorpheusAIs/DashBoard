@@ -41,14 +41,14 @@
     <info-dashboard
       :progress="dashboardProgress"
       :indicators="dashboardIndicators"
-      :is-loading="isDashboardLoading"
+      :is-loading="isInitializing"
     >
       <div class="community-view__dashboard-buttons-wrp">
         <app-button
           class="community-view__dashboard-button"
           color="secondary"
           :text="$t('home-page.community-view.withdraw-btn')"
-          :is-loading="isDashboardLoading"
+          :is-loading="isInitializing"
           :disabled="
             !userPoolData?.deposited || userPoolData.deposited.isZero()
           "
@@ -57,7 +57,7 @@
         <app-button
           class="community-view__dashboard-button"
           :text="$t('home-page.community-view.claim-btn')"
-          :is-loading="isDashboardLoading"
+          :is-loading="isInitializing"
           :disabled="!currentUserReward || currentUserReward.isZero()"
           @click="isClaimModalShown = true"
         />
@@ -191,13 +191,6 @@ const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
   total: poolData.value?.totalDeposited || BigNumber.from('1'),
 }))
 
-const isDashboardLoading = computed<boolean>(
-  () =>
-    isInitializing.value ||
-    isUserDataUpdating.value ||
-    isCurrentUserRewardFetching.value,
-)
-
 const isDepositDisabled = computed<boolean>(() => {
   if (!web3ProvidersStore.balances.stEth) return true
   return web3ProvidersStore.balances.stEth.isZero()
@@ -260,37 +253,24 @@ const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
   }
 }
 
-const isCurrentUserRewardFetching = ref(false)
 const fetchCurrentUserReward = async (): Promise<BigNumber> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
-  isCurrentUserRewardFetching.value = true
-  try {
-    return await erc1967Proxy.value.getCurrentUserReward(
-      POOL_ID,
-      web3ProvidersStore.provider.selectedAddress,
-    )
-  } finally {
-    isCurrentUserRewardFetching.value = false
-  }
+  return erc1967Proxy.value.getCurrentUserReward(
+    POOL_ID,
+    web3ProvidersStore.provider.selectedAddress,
+  )
 }
 
-const isUserDataUpdating = ref(false)
 const updateUserData = async (): Promise<void> => {
-  isUserDataUpdating.value = true
+  const [userDataResponse, currentUserRewardResponse] = await Promise.all([
+    fetchUserPoolData(),
+    fetchCurrentUserReward(),
+  ])
 
-  try {
-    const [userDataResponse, currentUserRewardResponse] = await Promise.all([
-      fetchUserPoolData(),
-      fetchCurrentUserReward(),
-    ])
-
-    userPoolData.value = userDataResponse
-    currentUserReward.value = currentUserRewardResponse
-  } finally {
-    isUserDataUpdating.value = false
-  }
+  userPoolData.value = userDataResponse
+  currentUserReward.value = currentUserRewardResponse
 }
 
 watch(
@@ -311,10 +291,18 @@ const init = async () => {
   isInitializing.value = true
 
   try {
-    poolData.value = await fetchPoolData()
-    dailyReward.value = await fetchDailyReward()
+    if (web3ProvidersStore.provider.selectedAddress) {
+      const [pooDataResponse] = await Promise.all([
+        fetchPoolData(),
+        updateUserData(),
+      ])
 
-    if (web3ProvidersStore.provider.selectedAddress) await updateUserData()
+      poolData.value = pooDataResponse
+    } else {
+      poolData.value = await fetchPoolData()
+    }
+
+    dailyReward.value = await fetchDailyReward()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -324,9 +312,17 @@ const init = async () => {
 
 const onChangePoolData = async (): Promise<void> => {
   try {
-    poolData.value = await fetchPoolData()
+    if (web3ProvidersStore.provider.selectedAddress) {
+      const [pooDataResponse] = await Promise.all([
+        fetchPoolData(),
+        updateUserData(),
+      ])
 
-    if (web3ProvidersStore.provider.selectedAddress) await updateUserData()
+      poolData.value = pooDataResponse
+      return
+    }
+
+    poolData.value = await fetchPoolData()
   } catch (error) {
     ErrorHandler.process(error)
   }

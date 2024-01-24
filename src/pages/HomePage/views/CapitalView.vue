@@ -11,12 +11,12 @@
     <info-dashboard
       :indicators="dashboardIndicators"
       :progress="dashboardProgress"
-      :is-loading="isDashboardLoading"
+      :is-loading="isInitializing"
     >
       <app-button
         class="capital-view__dashboard-btn"
         :text="$t('home-page.capital-view.claim-btn')"
-        :is-loading="isDashboardLoading"
+        :is-loading="isInitializing"
         :disabled="isClaimDisabled"
         @click="isClaimModalShown = true"
       />
@@ -106,13 +106,6 @@ const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
   total: poolData.value?.totalDeposited || BigNumber.from('1'),
 }))
 
-const isDashboardLoading = computed<boolean>(
-  () =>
-    isInitializing.value ||
-    isUserDataUpdating.value ||
-    isCurrentUserRewardFetching.value,
-)
-
 const isClaimDisabled = computed<boolean>(() => {
   if (!currentUserReward.value) return true
   return currentUserReward.value.isZero()
@@ -175,37 +168,24 @@ const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
   }
 }
 
-const isCurrentUserRewardFetching = ref(false)
 const fetchCurrentUserReward = async (): Promise<BigNumber> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
-  isCurrentUserRewardFetching.value = true
-  try {
-    return await erc1967Proxy.value.getCurrentUserReward(
-      POOL_ID,
-      web3ProvidersStore.provider.selectedAddress,
-    )
-  } finally {
-    isCurrentUserRewardFetching.value = false
-  }
+  return erc1967Proxy.value.getCurrentUserReward(
+    POOL_ID,
+    web3ProvidersStore.provider.selectedAddress,
+  )
 }
 
-const isUserDataUpdating = ref(false)
 const updateUserData = async (): Promise<void> => {
-  isUserDataUpdating.value = true
+  const [userDataResponse, currentUserRewardResponse] = await Promise.all([
+    fetchUserPoolData(),
+    fetchCurrentUserReward(),
+  ])
 
-  try {
-    const [userDataResponse, currentUserRewardResponse] = await Promise.all([
-      fetchUserPoolData(),
-      fetchCurrentUserReward(),
-    ])
-
-    userPoolData.value = userDataResponse
-    currentUserReward.value = currentUserRewardResponse
-  } finally {
-    isUserDataUpdating.value = false
-  }
+  userPoolData.value = userDataResponse
+  currentUserReward.value = currentUserRewardResponse
 }
 
 watch(
@@ -226,10 +206,18 @@ const init = async () => {
   isInitializing.value = true
 
   try {
-    poolData.value = await fetchPoolData()
-    dailyReward.value = await fetchDailyReward()
+    if (web3ProvidersStore.provider.selectedAddress) {
+      const [pooDataResponse] = await Promise.all([
+        fetchPoolData(),
+        updateUserData(),
+      ])
 
-    if (web3ProvidersStore.provider.selectedAddress) await updateUserData()
+      poolData.value = pooDataResponse
+    } else {
+      poolData.value = await fetchPoolData()
+    }
+
+    dailyReward.value = await fetchDailyReward()
   } catch (error) {
     ErrorHandler.process(error)
   }
