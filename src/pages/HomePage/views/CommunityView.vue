@@ -105,7 +105,15 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const POOL_ID = 0
 
-const { $t } = useContext()
+const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
+const dailyReward = ref<BigNumber | null>(null)
+const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
+const currentUserReward = ref<BigNumber | null>(null)
+
+const isInitializing = ref(false)
+const isClaimModalShown = ref(false)
+const isDepositModalShown = ref(false)
+const isWithdrawModalShown = ref(false)
 
 const { contractWithProvider: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
@@ -113,16 +121,8 @@ const { contractWithProvider: erc1967Proxy } = useContract(
   config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
 
+const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
-
-const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
-const dailyReward = ref<BigNumber | null>(null)
-const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
-const currentUserReward = ref<BigNumber | null>(null)
-
-const isClaimModalShown = ref(false)
-const isDepositModalShown = ref(false)
-const isWithdrawModalShown = ref(false)
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
@@ -294,7 +294,6 @@ watch(
   },
 )
 
-const isInitializing = ref(false)
 const init = async () => {
   isInitializing.value = true
 
@@ -310,7 +309,7 @@ const init = async () => {
       poolData.value = await fetchPoolData()
     }
 
-    dailyReward.value = await fetchDailyReward()
+    if (poolData.value) dailyReward.value = await fetchDailyReward()
   } catch (error) {
     ErrorHandler.process(error)
   }

@@ -47,6 +47,7 @@ import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
+  (e: 'success', v: void): void
 }>()
 
 const props = defineProps<{
@@ -54,15 +55,16 @@ const props = defineProps<{
   availableAmount: BigNumber
 }>()
 
-const { contractWithSigner: erc1967Proxy } = useContract(
-  'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
-)
+const isSubmitting = ref(false)
 
 const form = reactive({
   amount: '' as string,
 })
 
+const { contractWithSigner: erc1967Proxy } = useContract(
+  'ERC1967Proxy__factory',
+  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+)
 const availableEther = computed<string>(() => toEther(props.availableAmount))
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -70,7 +72,6 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     amount: { required, ether, maxEther: maxEther(availableEther.value) },
   })
 
-const isSubmitting = ref(false)
 const submit = async (): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
@@ -80,13 +81,13 @@ const submit = async (): Promise<void> => {
       props.poolId,
       parseUnits(form.amount, 'ether'),
     )
-    bus.emit(BUS_EVENTS.success)
+    bus.emit(BUS_EVENTS.info)
 
     await tx.wait()
 
     bus.emit(BUS_EVENTS.success)
     bus.emit(BUS_EVENTS.changedPoolData)
-    emit('cancel')
+    emit('success')
   } catch (error) {
     ErrorHandler.process(error)
   }

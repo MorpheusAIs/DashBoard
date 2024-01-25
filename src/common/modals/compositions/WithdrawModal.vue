@@ -32,6 +32,7 @@
         :pool-id="poolId"
         :available-amount="availableAmount"
         @cancel="modal.close"
+        @success="modal.close"
       />
     </template>
   </basic-modal>

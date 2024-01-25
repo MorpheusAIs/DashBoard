@@ -4,7 +4,6 @@ import pickBy from 'lodash/pickBy'
 import mapKeys from 'lodash/mapKeys'
 
 export const config = {
-  API_URL: import.meta.env.VITE_API_URL,
   NAME: import.meta.env.VITE_APP_NAME,
   ERC1967_PROXY_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ERC1967_PROXY_CONTRACT_ADDRESS,
@@ -12,7 +11,7 @@ export const config = {
   MOR_CONTRACT_ADDRESS: import.meta.env.VITE_APP_MOR_CONTRACT_ADDRESS,
   IS_MAINNET: import.meta.env.VITE_APP_IS_MAINNET,
   LOG_LEVEL: 'trace' as LogLevelDesc,
-  BUILD_VERSION: packageJson.version || import.meta.env.VITE_BUILD_VERSION,
+  BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
 } as const
 
 Object.assign(config, _mapEnvCfg(import.meta.env))

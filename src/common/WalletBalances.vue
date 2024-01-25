@@ -62,6 +62,8 @@ type Balance = {
   tokenIconName: ICON_NAMES
 }
 
+const isInitializing = ref(true)
+
 const { contractWithProvider: stEth } = useContract(
   'ERC20__factory',
   config.STETH_CONTRACT_ADDRESS,
@@ -112,9 +114,11 @@ const updateBalances = async (): Promise<void> => {
 
 const selectedBalance = ref<Balance>(balances.value[0])
 
-const isInitializing = ref(true)
 const init = async (): Promise<void> => {
-  if (!web3ProvidersStore.provider.selectedAddress) return
+  if (!web3ProvidersStore.provider.selectedAddress) {
+    isInitializing.value = false
+    return
+  }
 
   isInitializing.value = true
 

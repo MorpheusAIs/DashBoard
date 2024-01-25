@@ -64,6 +64,8 @@ const props = withDefaults(
   },
 )
 
+const isClaiming = ref(false)
+
 const { contractWithSigner: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
@@ -71,7 +73,6 @@ const { contractWithSigner: erc1967Proxy } = useContract(
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const isClaiming = ref(false)
 const claim = async (): Promise<void> => {
   isClaiming.value = true
 
@@ -84,7 +85,7 @@ const claim = async (): Promise<void> => {
         value: parseUnits('0.02', 'ether'),
       },
     )
-    bus.emit(BUS_EVENTS.success)
+    bus.emit(BUS_EVENTS.info)
 
     await tx.wait()
 

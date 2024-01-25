@@ -49,6 +49,14 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const POOL_ID = 1
 
+const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
+const dailyReward = ref<BigNumber | null>(null)
+const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
+const currentUserReward = ref<BigNumber | null>(null)
+
+const isInitializing = ref(false)
+const isClaimModalShown = ref(false)
+
 const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -57,13 +65,6 @@ const { contractWithProvider: erc1967Proxy } = useContract(
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
   config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
 )
-
-const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
-const dailyReward = ref<BigNumber | null>(null)
-const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
-const currentUserReward = ref<BigNumber | null>(null)
-
-const isClaimModalShown = ref(false)
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
@@ -201,7 +202,6 @@ watch(
   },
 )
 
-const isInitializing = ref(false)
 const init = async () => {
   isInitializing.value = true
 
@@ -217,7 +217,7 @@ const init = async () => {
       poolData.value = await fetchPoolData()
     }
 
-    dailyReward.value = await fetchDailyReward()
+    if (poolData.value) dailyReward.value = await fetchDailyReward()
   } catch (error) {
     ErrorHandler.process(error)
   }

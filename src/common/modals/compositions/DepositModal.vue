@@ -12,6 +12,7 @@
         class="deposit-modal__form"
         :pool-id="poolId"
         @cancel="modal.close"
+        @success="modal.close"
       />
     </template>
   </basic-modal>

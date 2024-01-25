@@ -92,9 +92,17 @@ type AvailableOptionValue = {
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
+  (e: 'success', v: void): void
 }>()
 
 const props = defineProps<{ poolId: number }>()
+
+const isInitializing = ref(true)
+const isSubmitting = ref(false)
+
+const allowances = reactive<Record<AVAILABLE_CURRENCIES, BigNumber | null>>({
+  [AVAILABLE_CURRENCIES.stEth]: null,
+})
 
 const { contractWithSigner: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
@@ -114,10 +122,6 @@ const { contractWithSigner: stEthWithSigner } = useContract(
 
 const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
-
-const allowances = reactive<Record<AVAILABLE_CURRENCIES, BigNumber | null>>({
-  [AVAILABLE_CURRENCIES.stEth]: null,
-})
 
 const submitAction = computed<SUBMIT_ACTIONS>(() => {
   if (isFieldsValid.value) {
@@ -202,7 +206,6 @@ const approveByCurrency = async (currency: AVAILABLE_CURRENCIES) => {
   return contract.approve(config.ERC1967_PROXY_CONTRACT_ADDRESS, MAX_UINT_256)
 }
 
-const isSubmitting = ref(false)
 const submit = async (): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
@@ -210,7 +213,7 @@ const submit = async (): Promise<void> => {
   try {
     if (submitAction.value === SUBMIT_ACTIONS.approve) {
       const tx = await approveByCurrency(form.available.value.currency)
-      bus.emit(BUS_EVENTS.success)
+      bus.emit(BUS_EVENTS.info)
 
       await tx.wait()
 
@@ -224,11 +227,17 @@ const submit = async (): Promise<void> => {
 
     const amountInDecimals = parseUnits(form.amount, 'ether')
     const tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
+    bus.emit(BUS_EVENTS.info)
+
     await tx.wait()
+
+    allowances[form.available.value.currency] = await fetchAllowanceByCurrency(
+      form.available.value.currency,
+    )
 
     bus.emit(BUS_EVENTS.success)
     bus.emit(BUS_EVENTS.changedPoolData)
-    emit('cancel')
+    emit('success')
   } catch (error) {
     ErrorHandler.process(error)
   } finally {
@@ -236,7 +245,6 @@ const submit = async (): Promise<void> => {
   }
 }
 
-const isInitializing = ref(true)
 const init = async (): Promise<void> => {
   isInitializing.value = true
 
