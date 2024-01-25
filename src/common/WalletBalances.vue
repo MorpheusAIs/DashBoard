@@ -1,6 +1,6 @@
 <template>
   <select-field
-    v-model="selectedBalance"
+    v-model="selectedIdx"
     class="wallet-balances"
     :is-loading="isInitializing"
   >
@@ -26,7 +26,7 @@
         v-for="(balance, idx) in balances"
         :key="idx"
         class="wallet-balances__balance"
-        @click="selectField.select(balance)"
+        @click="selectField.select(idx)"
       >
         <icon
           class="wallet-balances__balance-logo"
@@ -63,6 +63,7 @@ type Balance = {
 }
 
 const isInitializing = ref(true)
+const selectedIdx = ref<number>(0)
 
 const { contractWithProvider: stEth } = useContract(
   'ERC20__factory',
@@ -97,6 +98,10 @@ const balances = computed<Balance[]>(() => [
   },
 ])
 
+const selectedBalance = computed<Balance | null>(
+  () => balances.value[selectedIdx.value] || null,
+)
+
 const updateBalances = async (): Promise<void> => {
   if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
@@ -112,8 +117,6 @@ const updateBalances = async (): Promise<void> => {
   web3ProvidersStore.balances.mor = morValue
 }
 
-const selectedBalance = ref<Balance>(balances.value[0])
-
 const init = async (): Promise<void> => {
   if (!web3ProvidersStore.provider.selectedAddress) {
     isInitializing.value = false
@@ -124,7 +127,6 @@ const init = async (): Promise<void> => {
 
   try {
     await updateBalances()
-    selectedBalance.value = balances.value[0]
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -150,7 +152,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
+  bus.off(BUS_EVENTS.changedUserBalance, onChangeBalances)
   bus.off(BUS_EVENTS.changedPoolData, onChangeBalances)
   bus.off(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
 })
