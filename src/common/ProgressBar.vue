@@ -27,10 +27,16 @@ const props = withDefaults(
 )
 
 const progressPercent = computed<number>(() => {
-  const value = Number(props.progress.value.toString().slice(0, 15))
-  const total = Number(props.progress.total.toString().slice(0, 15))
+  const valueString = props.progress.value.toString()
+  const totalString = props.progress.total.toString()
 
-  return Number((value / total).toFixed(2))
+  const lengthDiff = totalString.length - valueString.length
+  if (lengthDiff >= 15) return 0
+
+  const value = Number(valueString.slice(0, 15 - lengthDiff))
+  const total = Number(totalString.slice(0, 15))
+
+  return Number(((value / total) * 100).toFixed(2))
 })
 </script>
 
