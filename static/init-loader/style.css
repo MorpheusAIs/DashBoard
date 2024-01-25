@@ -1,4 +1,4 @@
-.app__init {
+.init-loader {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,7 +12,7 @@
   background: #000000;
 }
 
-.app__init::before {
+.init-loader::before {
   position: absolute;
   z-index: -1;
   bottom: -52rem;
@@ -24,7 +24,7 @@
   background: radial-gradient(#215244, transparent 60%);
 }
 
-.app__init::after {
+.init-loader::after {
   position: absolute;
   z-index: -1;
   top: -52rem;
@@ -36,14 +36,18 @@
   background: radial-gradient(#215244, transparent 60%);
 }
 
-.app__init-logo {
+.app--initialized ~ .init-loader {
+  display: none;
+}
+
+.init-loader__logo {
   color: #ffffff;
   animation: 0.5s ease-in-out infinite alternate twinkle;
   width: 18.75rem;
 }
 
 @media (max-width: 1023px) {
-  .app__init::before {
+  .init-loader::before {
     margin: 0 auto;
     bottom: -106rem;
     left: unset;
@@ -51,7 +55,7 @@
     width: 136rem;
   }
 
-  .app__init::after {
+  .init-loader::after {
     margin: 0 auto;
     top: -106rem;
     right: unset;
@@ -59,7 +63,7 @@
     width: 136rem;
   }
 
-  .app__init-logo {
+  .init-loader__logo {
     width: 12.5rem;
   }
 }

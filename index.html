@@ -5,7 +5,7 @@
 
   <noscript>
     <style>
-      #noscript {
+      #init-loader {
         display: none;
       }
     </style>
@@ -40,14 +40,16 @@
 </head>
 <body>
 <div id="app" class="app">
-  <div id="noscript" class="app__init">
-    <svg class="app__init-logo">
-      <use href="/branding/logo.svg#logo" />
-    </svg>
-  </div>
+  <!-- built files will be auto injected -->
 </div>
-<div id="modal"></div>
-<!-- built files will be auto injected -->
+<div id="modal">
+  <!-- built files will be auto injected -->
+</div>
+<div id="init-loader" class="init-loader">
+  <svg class="init-loader__logo">
+    <use href="/branding/logo.svg#logo" />
+  </svg>
+</div>
 <noscript>
   <div class="noscript">
     <h1 class="noscript__title">Update your browser or enable JavaScript</h1>

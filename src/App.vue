@@ -1,16 +1,18 @@
 <template>
-  <div v-if="isAppInitialized" class="app__container">
-    <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
-    <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
-    <div class="app__page-wrp">
-      <router-view v-slot="{ Component, route }">
-        <transition :name="route.meta.transition || 'fade'" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+  <transition name="fade">
+    <div v-if="isAppInitialized" class="app__container">
+      <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
+      <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
+      <div class="app__page-wrp">
+        <router-view v-slot="{ Component, route }">
+          <transition :name="route.meta.transition || 'fade'" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
+      <invalid-network-modal v-model:is-shown="isShownInvalidNetworkModal" />
     </div>
-    <invalid-network-modal v-model:is-shown="isShownInvalidNetworkModal" />
-  </div>
+  </transition>
 </template>
 
 <script lang="ts" setup>
@@ -64,6 +66,8 @@ const init = async () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+
+  document.querySelector('#app')?.classList.add('app--initialized')
   isAppInitialized.value = true
 }
 
