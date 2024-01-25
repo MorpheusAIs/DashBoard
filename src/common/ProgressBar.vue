@@ -1,24 +1,37 @@
 <template>
-  <div class="progress-bar" :style="{ '--progress': `${progressPercent}%` }">
+  <div
+    class="progress-bar"
+    :class="{ 'progress-bar--loading': isLoading }"
+    :style="{ '--progress': `${progressPercent}%` }"
+  >
     <p class="progress-bar__title">
       {{ title }}
     </p>
-    <h4>{{ `${progressPercent}%` }}</h4>
+    <h4 class="progress-bar__percent">
+      {{ `${progressPercent}%` }}
+    </h4>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { type ProgressBarType } from '@/types'
 import { computed } from 'vue'
 
-const props = defineProps<{
-  title: string
-  progress: number
-  total: number
-}>()
-
-const progressPercent = computed<number>(() =>
-  Number(((props.progress / props.total) * 100).toFixed(2)),
+const props = withDefaults(
+  defineProps<{
+    title: string
+    progress: ProgressBarType.Progress
+    isLoading?: boolean
+  }>(),
+  { isLoading: false },
 )
+
+const progressPercent = computed<number>(() => {
+  const value = Number(props.progress.value.toString().slice(0, 15))
+  const total = Number(props.progress.total.toString().slice(0, 15))
+
+  return Number((value / total).toFixed(2))
+})
 </script>
 
 <style lang="scss" scoped>
@@ -65,11 +78,37 @@ $z-index: 1;
       background: #12241f;
     }
   }
+
+  &--loading {
+    gap: toRem(8);
+
+    @include skeleton;
+
+    border-radius: 50%;
+  }
 }
 
 .progress-bar__title {
   text-align: center;
 
+  .progress-bar--loading & {
+    @include skeleton;
+  }
+
   @include body-3-regular;
+}
+
+.progress-bar__percent {
+  .progress-bar--loading & {
+    height: toRem(34);
+    width: 100%;
+    max-width: 50%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(30);
+    }
+  }
 }
 </style>

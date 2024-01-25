@@ -9,10 +9,7 @@
         </transition>
       </router-view>
     </div>
-    <invalid-network-modal
-      v-model:is-shown="isShownInvalidNetworkModal"
-      is-close-by-click-outside
-    />
+    <invalid-network-modal v-model:is-shown="isShownInvalidNetworkModal" />
   </div>
 </template>
 
@@ -60,7 +57,7 @@ const initNotifications = () => {
 
 const init = async () => {
   try {
-    document.title = config.APP_NAME
+    document.title = config.NAME
 
     initNotifications()
     await web3ProvidersStore.init()

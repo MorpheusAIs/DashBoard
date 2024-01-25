@@ -1,25 +1,29 @@
 <template>
-  <select-field v-model="currentBalance" class="wallet-balances">
-    <template #head>
+  <select-field
+    v-model="selectedBalance"
+    class="wallet-balances"
+    :is-loading="isInitializing"
+  >
+    <template v-if="selectedBalance" #head>
       <div
-        v-tooltip="`${currentBalance.value} ${currentBalance.tokenTitle}`"
-        class="wallet-balances__current-balance"
+        v-tooltip="selectedBalance.value"
+        class="wallet-balances__selected-balance"
       >
         <icon
           class="wallet-balances__balance-logo"
           :class="[
-            `wallet-balances__balance-logo--${currentBalance.logoIconName}`,
+            `wallet-balances__balance-logo--${selectedBalance.logoIconName}`,
           ]"
-          :name="currentBalance.logoIconName"
+          :name="selectedBalance.logoIconName"
         />
         <span class="wallet-balances__balance-value">
-          {{ currentBalance.value }}
+          {{ selectedBalance.value }}
         </span>
       </div>
     </template>
     <template #default="{ selectField }">
       <button
-        v-for="(balance, idx) in mockBalances"
+        v-for="(balance, idx) in balances"
         :key="idx"
         class="wallet-balances__balance"
         @click="selectField.select(balance)"
@@ -30,7 +34,7 @@
           :name="balance.logoIconName"
         />
         <span class="wallet-balances__balance-value">
-          {{ `${balance.value} ${balance.tokenTitle}` }}
+          {{ balance.value }}
         </span>
         <icon
           class="wallet-balances__balance-token-icon"
@@ -42,38 +46,121 @@
 </template>
 
 <script lang="ts" setup>
-import { ICON_NAMES } from '@/enums'
+import { useContract } from '@/composables'
+import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
 import { SelectField } from '@/fields'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
+import { formatEther } from '@/utils'
+import { config } from '@config'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Icon from './Icon.vue'
-import { ref } from 'vue'
 
 type Balance = {
   logoIconName: ICON_NAMES
   value: string
-  tokenTitle: string
   tokenIconName: ICON_NAMES
 }
 
-const mockBalances: Balance[] = [
+const isInitializing = ref(true)
+
+const { contractWithProvider: stEth } = useContract(
+  'ERC20__factory',
+  config.STETH_CONTRACT_ADDRESS,
+  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+)
+
+const { contractWithProvider: mor } = useContract(
+  'ERC20__factory',
+  config.MOR_CONTRACT_ADDRESS,
+  config.IS_MAINNET
+    ? ETHEREUM_RPC_URLS.arbitrum
+    : ETHEREUM_RPC_URLS.arbitrumSepolia,
+)
+
+const web3ProvidersStore = useWeb3ProvidersStore()
+
+const balances = computed<Balance[]>(() => [
   {
     logoIconName: ICON_NAMES.steth,
-    value: '163.894',
-    tokenTitle: 'stETH',
+    value: web3ProvidersStore.balances.stEth
+      ? `${formatEther(web3ProvidersStore.balances.stEth)} stETH`
+      : '',
     tokenIconName: ICON_NAMES.ethereum,
   },
   {
     logoIconName: ICON_NAMES.morpheus,
-    value: '12 546.894',
-    tokenTitle: 'MOR',
+    value: web3ProvidersStore.balances.mor
+      ? `${formatEther(web3ProvidersStore.balances.mor)} MOR`
+      : '',
     tokenIconName: ICON_NAMES.arbitrum,
   },
-]
+])
 
-const currentBalance = ref<Balance>(mockBalances[0])
+const updateBalances = async (): Promise<void> => {
+  if (!web3ProvidersStore.provider.selectedAddress)
+    throw new Error('user address unavailable')
+
+  const address = web3ProvidersStore.provider.selectedAddress
+
+  const [stEthValue, morValue] = await Promise.all([
+    stEth.value.balanceOf(address),
+    mor.value.balanceOf(address),
+  ])
+
+  web3ProvidersStore.balances.stEth = stEthValue
+  web3ProvidersStore.balances.mor = morValue
+}
+
+const selectedBalance = ref<Balance>(balances.value[0])
+
+const init = async (): Promise<void> => {
+  if (!web3ProvidersStore.provider.selectedAddress) {
+    isInitializing.value = false
+    return
+  }
+
+  isInitializing.value = true
+
+  try {
+    await updateBalances()
+    selectedBalance.value = balances.value[0]
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isInitializing.value = false
+}
+
+const onChangeBalances = async () => {
+  if (!web3ProvidersStore.provider.selectedAddress) return
+
+  try {
+    await updateBalances()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+onMounted(() => {
+  init()
+  bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
+  bus.on(BUS_EVENTS.changedPoolData, onChangeBalances)
+  bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
+})
+
+onBeforeUnmount(() => {
+  bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
+  bus.off(BUS_EVENTS.changedPoolData, onChangeBalances)
+  bus.off(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
+})
+
+watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
 </script>
 
 <style lang="scss" scoped>
 .wallet-balances {
+  position: relative;
   height: toRem(48);
   background: var(--background-secondary-main);
   width: toRem(160);
@@ -92,10 +179,9 @@ const currentBalance = ref<Balance>(mockBalances[0])
   }
 }
 
-.wallet-balances__current-balance {
+.wallet-balances__selected-balance {
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: toRem(12) toRem(6) toRem(12) toRem(16);
   color: var(--text-secondary-light);
 }

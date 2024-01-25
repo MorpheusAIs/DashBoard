@@ -9,4 +9,63 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #000000;
+}
+
+.app__init::before {
+  position: absolute;
+  z-index: -1;
+  bottom: -52rem;
+  left: -52rem;
+  content: '';
+  display: block;
+  height: 88rem;
+  width: 88rem;
+  background: radial-gradient(#215244, transparent 60%);
+}
+
+.app__init::after {
+  position: absolute;
+  z-index: -1;
+  top: -52rem;
+  right: -52rem;
+  content: '';
+  display: block;
+  height: 88rem;
+  width: 88rem;
+  background: radial-gradient(#215244, transparent 60%);
+}
+
+.app__init-logo {
+  color: #ffffff;
+  animation: 0.5s ease-in-out infinite alternate twinkle;
+  width: 18.75rem;
+}
+
+@media (max-width: 1023px) {
+  .app__init::before {
+    margin: 0 auto;
+    bottom: -106rem;
+    left: unset;
+    height: 136rem;
+    width: 136rem;
+  }
+
+  .app__init::after {
+    margin: 0 auto;
+    top: -106rem;
+    right: unset;
+    height: 136rem;
+    width: 136rem;
+  }
+
+  .app__init-logo {
+    width: 12.5rem;
+  }
+}
+
+@keyframes twinkle {
+  to {
+    color: #03ff85;
+  }
 }

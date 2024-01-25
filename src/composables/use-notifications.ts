@@ -6,8 +6,6 @@ import { TYPE, useToast } from 'vue-toastification'
 import { DefaultToast } from '@/common'
 import { CommonNotificationTypes, NotificationObjectPayload } from '@/types'
 
-const MINUTE = 60 * 1000
-
 export const useNotifications = () => {
   const toast = useToast()
 
@@ -32,7 +30,7 @@ export const useNotifications = () => {
     [TYPE.INFO]: ICON_NAMES.exclamationCircle,
     [TYPE.SUCCESS]: ICON_NAMES.checkCircle,
     [TYPE.ERROR]: ICON_NAMES.xCircle,
-    [TYPE.WARNING]: ICON_NAMES.shieldExclamation,
+    [TYPE.WARNING]: ICON_NAMES.exclamationCircle,
   }
 
   const showToast = (
@@ -81,8 +79,9 @@ export const useNotifications = () => {
           warning: TYPE.WARNING,
         }[messageType],
         toastClassName: 'default-toast',
-        timeout: MINUTE / 2,
+        timeout: 5000,
         closeOnClick: false,
+        closeButton: false,
       },
     )
   }

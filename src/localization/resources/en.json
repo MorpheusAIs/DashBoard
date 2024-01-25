@@ -15,21 +15,37 @@
     "available-label": "Available to deposit",
     "amount-placeholder": "Enter {currency} amount",
     "cancel-btn": "Cancel",
-    "submit-btn": "Deposit"
+    "submit-btn": {
+      "deposit": "Deposit",
+      "approve": "Approve"
+    }
   },
   "deposit-modal": {
     "title": "Deposit",
     "subtitle": "Your funds will be redirected to the platform. Enter the desired amount, in case of the first transaction, you will need to authorize the transfer of funds."
   },
   "home-page": {
+    "capital-tab": "Capital",
     "community-tab": "Community",
     "coders-tab": "Coders",
     "compute-tab": "Compute",
-    "capital-tab": "Capital",
+    "capital-view": {
+      "info-bar": {
+        "title": "Coders",
+        "subtitle": "Group 1",
+        "description": "People who provide the intelligence to use the frontends, capital and compute."
+      },
+      "daily-reward-title": "Current daily reward",
+      "started-at-title": "Started at",
+      "claim-at-title": "Claim is locked until",
+      "claim-at-note": "Note: Claim is locked until the specified time",
+      "available-to-claim-title": "Available to claim",
+      "claim-btn": "Claim MOR"
+    },
     "community-view": {
       "info-bar": {
         "title": "Community",
-        "subtitle": "Group 1",
+        "subtitle": "Group 2",
         "description": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
       "total-invested-title": "Total Invested",
@@ -37,8 +53,8 @@
       "started-at-title": "Started at",
       "withdraw-at-title": "Withdraw is locked until",
       "claim-at-title": "Claim is locked until",
-      "withdraw-at-note": "Note: Withdraw is locked until",
-      "claim-at-note": "Note: Claim is locked until",
+      "withdraw-at-note": "Note: Withdraw is locked until the specified time",
+      "claim-at-note": "Note: Claim is locked until the specified time",
       "deposit-btn": "Deposit stETH",
       "external-link": "How to receive stETH?",
       "withdraw-btn": "Withdraw stETH",
@@ -46,24 +62,10 @@
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
       "dashboard-description": "The reward will be claim automatically on withdrawal. Your share in the group will decrease, the award percentage will be reduced accordingly."
-    },
-    "coders-view": {
-      "info-bar": {
-        "title": "Coders",
-        "subtitle": "Group 2",
-        "description": "People who provide the intelligence to use the frontends, capital and compute."
-      },
-      "daily-reward-title": "Current daily reward",
-      "started-at-title": "Started at",
-      "claim-at-title": "Claim is locked until",
-      "claim-at-note": "Note: Claim is locked until",
-      "total-earning-title": "Lifetime earning",
-      "available-to-claim-title": "Available to claim",
-      "claim-btn": "Claim MOR"
     }
   },
   "info-dashboard": {
-    "progress-bar-title": "Your share",
+    "progress-bar-title": "Your portion",
     "connection-msg": "Your personal investments and rewards will be displayed here after connecting your MetaMask wallet",
     "connect-wallet-btn": "Connect Wallet"
   },
@@ -83,8 +85,9 @@
     "switch-btn": "Switch network"
   },
   "validations": {
-    "field-error_numeric": "Field must be numeric",
-    "field-error_required": "Please fill out this field",
+    "field-error_ether": "Field must be amount of ether",
+    "field-error_maxEther": "Field must be within available amount of ether",
+    "field-error_required": "Field must be filled in",
     "field-error_email": "Field must be a valid email"
   },
   "withdraw-form": {

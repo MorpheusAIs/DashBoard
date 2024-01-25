@@ -8,7 +8,7 @@
   >
     <div class="invalid-network-modal__board">
       <div
-        v-for="network in config.IS_TESTNET ? testNetworks : mainNetworks"
+        v-for="network in config.IS_MAINNET ? mainNetworks : testNetworks"
         :key="network.title"
         class="invalid-network-modal__network-wrp"
       >
@@ -89,9 +89,7 @@ const testNetworks: Network[] = [
 const switchNetwork = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      !config.IS_TESTNET
-        ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumGoerli,
+      config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia,
     )
   } catch (error) {
     ErrorHandler.process(error)

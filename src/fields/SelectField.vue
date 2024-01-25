@@ -106,6 +106,7 @@ const props = withDefaults(
     scheme?: 'primary'
     modification?: 'dropdown' | 'dropup'
     uid?: string
+    isLoading?: boolean
   }>(),
   {
     valueOptions: () => [],
@@ -117,6 +118,7 @@ const props = withDefaults(
     scheme: 'primary',
     modification: 'dropdown',
     uid: `select-field--${uuidv4()}`,
+    isLoading: false,
   },
 )
 
@@ -147,6 +149,7 @@ const selectFieldClasses = computed(() => ({
   'select-field': true,
   'select-field--error': props.errorMessage,
   'select-field--filled': props.modelValue,
+  'select-field--loading': props.isLoading,
   'select-field--open': isDropMenuOpen.value,
   'select-field--disabled': isDisabled.value,
   'select-field--readonly': isReadonly.value,
@@ -206,6 +209,18 @@ $z-local-index: 2;
   flex-direction: column;
   position: relative;
   flex: 1;
+
+  &--loading {
+    &:before {
+      $z-index: 1;
+
+      z-index: $z-index;
+    }
+
+    @include skeleton;
+
+    border-radius: 0;
+  }
 }
 
 .select-field__label {
@@ -232,7 +247,7 @@ $z-local-index: 2;
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
   &:disabled {
-    background: var(--field-bg-primary-disabled);
+    cursor: not-allowed;
     color: var(--field-text-readonly);
   }
 

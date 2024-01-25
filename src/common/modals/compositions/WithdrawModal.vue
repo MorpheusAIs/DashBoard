@@ -9,7 +9,7 @@
     <template #default="{ modal }">
       <div class="withdraw-modal__indicators">
         <div
-          v-for="(indicator, idx) in mockIndicators"
+          v-for="(indicator, idx) in indicators"
           :key="idx"
           class="withdraw-modal__indicator"
         >
@@ -27,7 +27,13 @@
           </p>
         </div>
       </div>
-      <withdraw-form class="withdraw-modal__form" @cancel="modal.close" />
+      <withdraw-form
+        class="withdraw-modal__form"
+        :pool-id="poolId"
+        :available-amount="availableAmount"
+        @cancel="modal.close"
+        @success="modal.close"
+      />
     </template>
   </basic-modal>
 </template>
@@ -37,7 +43,10 @@ import { Icon } from '@/common'
 import { useContext } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import { WithdrawForm } from '@/forms'
+import { type BigNumber } from '@/types'
+import { formatEther } from '@/utils'
 import BasicModal from '../BasicModal.vue'
+import { computed } from 'vue'
 
 type Indicator = {
   iconName: ICON_NAMES
@@ -52,6 +61,8 @@ const emit = defineEmits<{
 const props = withDefaults(
   defineProps<{
     isShown: boolean
+    poolId: number
+    availableAmount: BigNumber
     isCloseByClickOutside?: boolean
   }>(),
   {
@@ -61,13 +72,13 @@ const props = withDefaults(
 
 const { $t } = useContext()
 
-const mockIndicators: Indicator[] = [
+const indicators = computed<Indicator[]>(() => [
   {
     iconName: ICON_NAMES.ethereum,
     title: $t('withdraw-modal.available-to-withdraw-title'),
-    value: '111 stETH',
+    value: `${formatEther(props.availableAmount)} stETH`,
   },
-]
+])
 </script>
 
 <style lang="scss" scoped>

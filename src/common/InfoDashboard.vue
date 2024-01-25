@@ -1,5 +1,5 @@
 <template>
-  <div class="info-dashboard">
+  <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div
         v-if="web3ProvidersStore.provider.isConnected"
@@ -8,8 +8,8 @@
         <progress-bar
           class="info-dashboard__progress-bar"
           :title="$t('info-dashboard.progress-bar-title')"
-          :progress="56.5"
-          :total="100"
+          :progress="progress"
+          :is-loading="isLoading"
         />
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
@@ -27,7 +27,7 @@
               </h5>
             </div>
             <p class="info-dashboard__indicator-value">
-              {{ indicator.value }}
+              {{ indicator.value || '-' }}
             </p>
           </li>
         </ul>
@@ -54,15 +54,23 @@
 </template>
 
 <script lang="ts" setup>
-import { type InfoDashboardType } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
+import type { InfoDashboardType, ProgressBarType } from '@/types'
 import ConnectWalletButton from './ConnectWalletButton.vue'
 import Icon from './Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 
-defineProps<{
-  indicators?: InfoDashboardType.Indicator[]
-}>()
+withDefaults(
+  defineProps<{
+    progress: ProgressBarType.Progress
+    indicators?: InfoDashboardType.Indicator[]
+    isLoading?: boolean
+  }>(),
+  {
+    indicators: () => [],
+    isLoading: false,
+  },
+)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 </script>
@@ -130,6 +138,17 @@ const web3ProvidersStore = useWeb3ProvidersStore()
   align-items: center;
   grid-gap: toRem(8);
 
+  .info-dashboard--loading & {
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
+  }
+
   @include respond-to(medium) {
     grid-gap: toRem(4);
   }
@@ -150,7 +169,18 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 }
 
 .info-dashboard__indicator-value {
-  text-align: right;
+  justify-self: end;
+
+  .info-dashboard--loading & {
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
+  }
 
   @include body-3-semi-bold;
 

@@ -2,7 +2,9 @@
   <main class="home-page">
     <div class="home-page__content-wrp">
       <app-tabs :tabs="tabs" />
-      <router-view class="home-page__view" />
+      <router-view v-slot="{ Component }" class="home-page__view">
+        <keep-alive><component :is="Component" /></keep-alive>
+      </router-view>
     </div>
   </main>
 </template>
@@ -17,6 +19,11 @@ const { $t } = useContext()
 
 const tabs: Tab[] = [
   {
+    title: $t('home-page.capital-tab'),
+    id: 'capital',
+    route: { name: ROUTE_NAMES.appCapital },
+  },
+  {
     title: $t('home-page.community-tab'),
     id: 'community',
     route: { name: ROUTE_NAMES.appCommunity },
@@ -24,17 +31,12 @@ const tabs: Tab[] = [
   {
     title: $t('home-page.coders-tab'),
     id: 'coders',
-    route: { name: ROUTE_NAMES.appCoders },
+    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Code%20-%20Proof_Of_Contribution.md',
   },
   {
     title: $t('home-page.compute-tab'),
     id: 'compute',
-    route: { name: ROUTE_NAMES.appCompute },
-  },
-  {
-    title: $t('home-page.capital-tab'),
-    id: 'capital',
-    route: { name: ROUTE_NAMES.appCapital },
+    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Compute%20-%20Proof%20of%20Contribution.md',
   },
 ]
 </script>

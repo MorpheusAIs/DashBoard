@@ -1,5 +1,5 @@
 <template>
-  <div class="info-bar">
+  <div class="info-bar" :class="{ 'info-bar--loading': isLoading }">
     <div class="info-bar__subtitle-wrp">
       <p class="info-bar__subtitle">
         {{ subtitle }}
@@ -30,7 +30,7 @@
           />
         </div>
         <p class="info-bar__indicator-value">
-          {{ indicator.value }}
+          {{ indicator.value || '-' }}
         </p>
       </li>
     </ul>
@@ -44,13 +44,17 @@
 import { Icon } from '@/common'
 import { type InfoBarType } from '@/types'
 
-defineProps<{
-  subtitle: string
-  status: 'public' | 'private'
-  title: string
-  description: string
-  indicators: InfoBarType.Indicator[]
-}>()
+withDefaults(
+  defineProps<{
+    subtitle: string
+    status: 'public' | 'private'
+    title: string
+    description: string
+    indicators: InfoBarType.Indicator[]
+    isLoading?: boolean
+  }>(),
+  { isLoading: false },
+)
 </script>
 
 <style lang="scss" scoped>
@@ -83,6 +87,12 @@ defineProps<{
 
   &--private {
     background: linear-gradient(90deg, #e08c5c 0%, #ffbe72 100%);
+  }
+
+  .info-bar--loading & {
+    width: toRem(80);
+
+    @include skeleton;
   }
 
   @include respond-to(medium) {
@@ -132,6 +142,17 @@ defineProps<{
   grid-auto-flow: column;
   align-items: center;
   grid-gap: toRem(4);
+
+  .info-bar--loading & {
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
+  }
 }
 
 .info-bar__indicator-title {
@@ -153,7 +174,18 @@ defineProps<{
 }
 
 .info-bar__indicator-value {
-  text-align: right;
+  justify-self: end;
+
+  .info-bar--loading & {
+    height: toRem(26);
+    width: 100%;
+
+    @include skeleton;
+
+    @include respond-to(medium) {
+      height: toRem(20);
+    }
+  }
 
   @include body-3-semi-bold;
 

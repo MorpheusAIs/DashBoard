@@ -30,6 +30,8 @@
         <app-button
           class="claim-modal__btn"
           :text="$t('claim-modal.claim-btn')"
+          :disabled="isClaiming"
+          @click="claim"
         />
       </div>
     </template>
@@ -38,22 +40,64 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
+import { useContract } from '@/composables'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
+import { parseUnits } from '@/utils'
+import { config } from '@config'
 import BasicModal from '../BasicModal.vue'
+import { ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isShown: boolean
     amount: string
+    poolId: number
     isCloseByClickOutside?: boolean
   }>(),
   {
     isCloseByClickOutside: true,
   },
 )
+
+const isClaiming = ref(false)
+
+const { contractWithSigner: erc1967Proxy } = useContract(
+  'ERC1967Proxy__factory',
+  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+)
+
+const web3ProvidersStore = useWeb3ProvidersStore()
+
+const claim = async (): Promise<void> => {
+  isClaiming.value = true
+
+  try {
+    const tx = await erc1967Proxy.value.claim(
+      props.poolId,
+      web3ProvidersStore.provider.selectedAddress,
+      {
+        // TODO: estimate by LayerZero
+        value: parseUnits('0.02', 'ether'),
+      },
+    )
+    bus.emit(BUS_EVENTS.info)
+
+    await tx.wait()
+
+    bus.emit(BUS_EVENTS.success)
+    bus.emit(BUS_EVENTS.changedCurrentUserReward)
+    emit('update:is-shown', false)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isClaiming.value = false
+}
 </script>
 
 <style lang="scss" scoped>
