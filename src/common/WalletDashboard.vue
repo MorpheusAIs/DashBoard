@@ -1,21 +1,26 @@
 <template>
-  <div class="wallet-dashboard">
+  <div v-tooltip="web3ProvidersStore.address" class="wallet-dashboard">
     <div ref="jazziconWrpElement" class="wallet-dashboard__jazzicon-wrp" />
     <p class="wallet-dashboard__address">
       {{ abbrCenter(web3ProvidersStore.address) }}
     </p>
+    <button class="wallet-dashboard__copy-btn" @click="onCopyBtnClick" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { abbrCenter } from '@/helpers'
+import { useContext } from '@/composables'
+import { abbrCenter, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
+import { useClipboard } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import generateJazzicon from 'jazzicon'
 
-const web3ProvidersStore = useWeb3ProvidersStore()
-
 const jazziconWrpElement = ref<HTMLDivElement | null>(null)
+
+const { $t } = useContext()
+const { copy } = useClipboard()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const setJazzicon = () => {
   if (!jazziconWrpElement.value) return
@@ -25,6 +30,15 @@ const setJazzicon = () => {
   )
 }
 
+const onCopyBtnClick = async () => {
+  try {
+    await copy(web3ProvidersStore.address)
+    bus.emit(BUS_EVENTS.info, $t('wallet-dashboard.address-copied'))
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
 watch(() => web3ProvidersStore.address, setJazzicon)
 
 onMounted(setJazzicon)
@@ -32,6 +46,7 @@ onMounted(setJazzicon)
 
 <style lang="scss" scoped>
 .wallet-dashboard {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,5 +72,10 @@ onMounted(setJazzicon)
 
 .wallet-dashboard__jazzicon-wrp {
   display: flex;
+}
+
+.wallet-dashboard__copy-btn {
+  position: absolute;
+  inset: 0;
 }
 </style>

@@ -91,6 +91,9 @@
     "field-error_required": "Field must be filled in",
     "field-error_email": "Field must be a valid email"
   },
+  "wallet-dashboard": {
+    "address-copied": "The address was copied to the clipboard"
+  },
   "withdraw-form": {
     "amount-placeholder": "Enter stETH amount",
     "cancel-btn": "Cancel",
