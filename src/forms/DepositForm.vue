@@ -9,13 +9,16 @@
         {{ $t('deposit-form.available-label') }}
       </label>
       <select-field
-        v-model="form.available"
+        :model-value="formAvailable"
         :uid="`select-field--${uid}`"
         :value-options="availableOptions"
-        :error-message="getFieldErrorMessage('available')"
+        :error-message="getFieldErrorMessage('availableOptionIdx')"
         :is-loading="isInitializing"
         :disabled="isSubmitting"
-        @blur="touchField('available')"
+        @update:model-value="
+          form.availableOptionIdx = availableOptions.indexOf($event)
+        "
+        @blur="touchField('availableOptionIdx')"
       />
     </div>
     <input-field
@@ -23,8 +26,7 @@
       class="deposit-form__input-field"
       :placeholder="
         $t('deposit-form.amount-placeholder', {
-          currency:
-            form.available?.value.currency || AVAILABLE_CURRENCIES.stEth,
+          currency: formAvailable?.value.currency || AVAILABLE_CURRENCIES.stEth,
         })
       "
       :error-message="getFieldErrorMessage('amount')"
@@ -38,7 +40,7 @@
           scheme="link"
           text="max"
           :disabled="isSubmitting"
-          @click="form.amount = form.available.value.amount"
+          @click="form.amount = formAvailable?.value.amount || ''"
         />
       </template>
     </input-field>
@@ -97,6 +99,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{ poolId: number }>()
 
+const uid = uuidv4()
 const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
@@ -126,7 +129,9 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const submitAction = computed<SUBMIT_ACTIONS>(() => {
   if (isFieldsValid.value) {
     const amountInDecimals = parseUnits(form.amount, 'ether')
-    const allowance = allowances[form.available.value.currency]
+    const allowance = formAvailable.value
+      ? allowances[formAvailable.value.value.currency]
+      : null
 
     if (allowance && amountInDecimals.gt(allowance)) {
       return SUBMIT_ACTIONS.approve
@@ -150,21 +155,23 @@ const availableOptions = computed<FieldOption<AvailableOptionValue>[]>(() => [
     : []),
 ])
 
-const uid = uuidv4()
-
 const form = reactive({
-  available: availableOptions.value[0] || null,
+  availableOptionIdx: 0,
   amount: '',
 })
 
+const formAvailable = computed<FieldOption<AvailableOptionValue> | null>(
+  () => availableOptions.value[form.availableOptionIdx] || null,
+)
+
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
-    available: { required },
+    availableOptionIdx: { required },
     amount: {
       required,
       ether,
-      ...(form.available && {
-        maxEther: maxEther(form.available.value.amount),
+      ...(formAvailable.value?.value && {
+        maxEther: maxEther(formAvailable.value.value.amount),
       }),
     },
   })
@@ -211,14 +218,14 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    if (submitAction.value === SUBMIT_ACTIONS.approve) {
-      const tx = await approveByCurrency(form.available.value.currency)
+    if (submitAction.value === SUBMIT_ACTIONS.approve && formAvailable.value) {
+      const tx = await approveByCurrency(formAvailable.value.value.currency)
       bus.emit(BUS_EVENTS.info)
 
       await tx.wait()
 
-      allowances[form.available.value.currency] =
-        await fetchAllowanceByCurrency(form.available.value.currency)
+      allowances[formAvailable.value.value.currency] =
+        await fetchAllowanceByCurrency(formAvailable.value.value.currency)
 
       bus.emit(BUS_EVENTS.success)
       bus.emit(BUS_EVENTS.changedUserBalance)
@@ -231,9 +238,9 @@ const submit = async (): Promise<void> => {
 
     await tx.wait()
 
-    allowances[form.available.value.currency] = await fetchAllowanceByCurrency(
-      form.available.value.currency,
-    )
+    if (formAvailable.value)
+      allowances[formAvailable.value.value.currency] =
+        await fetchAllowanceByCurrency(formAvailable.value.value.currency)
 
     bus.emit(BUS_EVENTS.success)
     bus.emit(BUS_EVENTS.changedPoolData)
