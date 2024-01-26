@@ -1,8 +1,7 @@
 {
   "app-navbar": {
     "token-contract-link": "Token Contract",
-    "community-website-link": "Community Website",
-    "connect-wallet-btn": "Connect wallet"
+    "community-website-link": "Community Website"
   },
   "claim-modal": {
     "title": "Claim rewards",
@@ -12,6 +11,11 @@
     "claim-btn": "Claim",
     "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "connect-wallet-button": {
+    "to-app": "Go To Metamask",
+    "to-install": "Install MetaMask",
+    "default": "Connect Wallet"
   },
   "deposit-form": {
     "available-label": "Available to deposit",
@@ -70,8 +74,7 @@
   },
   "info-dashboard": {
     "progress-bar-title": "Your portion",
-    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
-    "connect-wallet-btn": "Connect Wallet"
+    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
   },
   "info-bar": {
     "status--public": "Open",
