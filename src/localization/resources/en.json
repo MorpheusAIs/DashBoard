@@ -35,7 +35,7 @@
     "compute-tab": "Compute",
     "capital-view": {
       "info-bar": {
-        "title": "Coders",
+        "title": "Capital",
         "subtitle": "Group 1",
         "description": "People who provide the intelligence to use the frontends, capital and compute."
       },
@@ -65,7 +65,7 @@
       "user-deposit-title": "Your deposit",
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
-      "dashboard-description": "The reward will be claim automatically on withdrawal. Your share in the group will decrease, the award percentage will be reduced accordingly."
+      "dashboard-description": "Upon withdrawal, your deposit will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time."
     }
   },
   "info-dashboard": {
