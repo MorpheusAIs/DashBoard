@@ -126,7 +126,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
-    title: $t('home-page.community-view.total-invested-title'),
+    title: $t('home-page.community-view.total-deposits-title'),
     value: poolData.value
       ? `${formatEther(poolData.value.totalDeposited)} stETH`
       : '',
@@ -170,7 +170,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
 const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
   {
     iconName: ICON_NAMES.ethereum,
-    title: $t('home-page.community-view.user-invested-title'),
+    title: $t('home-page.community-view.user-deposit-title'),
     value: userPoolData.value
       ? `${formatEther(userPoolData.value.deposited)} stETH`
       : '',

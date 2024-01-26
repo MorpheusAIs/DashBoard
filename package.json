@@ -1,5 +1,5 @@
 {
-  "name": "vue-vite-template",
+  "name": "morpheus-dashboard",
   "version": "1.0.0-rc.1",
   "gitHooks": {
     "pre-commit": "yarn lint",

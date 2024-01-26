@@ -1,7 +1,7 @@
 {
   "app-navbar": {
     "token-contract-link": "Token Contract",
-    "chat-app-link": "Chat App",
+    "community-website-link": "Community Website",
     "connect-wallet-btn": "Connect wallet"
   },
   "claim-modal": {
@@ -48,7 +48,7 @@
         "subtitle": "Group 2",
         "description": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
-      "total-invested-title": "Total Invested",
+      "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
       "started-at-title": "Started at",
       "withdraw-at-title": "Withdraw is locked until",
@@ -58,7 +58,7 @@
       "deposit-btn": "Deposit stETH",
       "external-link": "How to receive stETH?",
       "withdraw-btn": "Withdraw stETH",
-      "user-invested-title": "You invested",
+      "user-deposit-title": "Your deposit",
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
       "dashboard-description": "The reward will be claim automatically on withdrawal. Your share in the group will decrease, the award percentage will be reduced accordingly."
@@ -66,7 +66,7 @@
   },
   "info-dashboard": {
     "progress-bar-title": "Your portion",
-    "connection-msg": "Your personal investments and rewards will be displayed here after connecting your MetaMask wallet",
+    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
     "connect-wallet-btn": "Connect Wallet"
   },
   "info-bar": {

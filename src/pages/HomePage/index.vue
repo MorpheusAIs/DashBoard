@@ -31,12 +31,12 @@ const tabs: Tab[] = [
   {
     title: $t('home-page.coders-tab'),
     id: 'coders',
-    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Code%20-%20Proof_Of_Contribution.md',
+    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
   },
   {
     title: $t('home-page.compute-tab'),
     id: 'compute',
-    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Compute%20-%20Proof%20of%20Contribution.md',
+    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
   },
 ]
 </script>
