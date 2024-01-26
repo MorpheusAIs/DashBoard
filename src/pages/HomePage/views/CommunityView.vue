@@ -104,6 +104,7 @@ import { config } from '@config'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const POOL_ID = 0
+let _currentUserRewardUpdateIntervalId: Parameters<typeof clearInterval>[0]
 
 const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
 const dailyReward = ref<BigNumber | null>(null)
@@ -349,11 +350,21 @@ onMounted(() => {
   init()
   bus.on(BUS_EVENTS.changedPoolData, onChangePoolData)
   bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
+  _currentUserRewardUpdateIntervalId = setInterval(async () => {
+    if (!web3ProvidersStore.provider.selectedAddress) return
+
+    try {
+      currentUserReward.value = await fetchCurrentUserReward()
+    } catch (error) {
+      ErrorHandler.process(error)
+    }
+  }, 30000)
 })
 
 onBeforeUnmount(() => {
   bus.off(BUS_EVENTS.changedPoolData, onChangePoolData)
   bus.off(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
+  clearInterval(_currentUserRewardUpdateIntervalId)
 })
 </script>
 
