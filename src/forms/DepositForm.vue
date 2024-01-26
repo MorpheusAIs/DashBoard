@@ -67,9 +67,9 @@
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_RPC_URLS } from '@/enums'
+import { ETHEREUM_EXPLORER_URLS, ETHEREUM_RPC_URLS } from '@/enums'
 import { InputField, SelectField } from '@/fields'
-import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
@@ -94,7 +94,7 @@ type AvailableOptionValue = {
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
-  (e: 'success', v: void): void
+  (e: 'stake-tx-sent', v: void): void
 }>()
 
 const props = defineProps<{ poolId: number }>()
@@ -218,33 +218,39 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    let tx
     if (submitAction.value === SUBMIT_ACTIONS.approve && formAvailable.value) {
-      const tx = await approveByCurrency(formAvailable.value.value.currency)
-      bus.emit(BUS_EVENTS.info)
-
-      await tx.wait()
-
-      allowances[formAvailable.value.value.currency] =
-        await fetchAllowanceByCurrency(formAvailable.value.value.currency)
-
-      bus.emit(BUS_EVENTS.success)
-      bus.emit(BUS_EVENTS.changedUserBalance)
-      return
+      tx = await approveByCurrency(formAvailable.value.value.currency)
+    } else {
+      const amountInDecimals = parseUnits(form.amount, 'ether')
+      tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
+      emit('stake-tx-sent')
     }
 
-    const amountInDecimals = parseUnits(form.amount, 'ether')
-    const tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
-    bus.emit(BUS_EVENTS.info)
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.IS_MAINNET
+        ? ETHEREUM_EXPLORER_URLS.ethereum
+        : ETHEREUM_EXPLORER_URLS.sepolia,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      $t('deposit-form.tx-sent-message', { explorerTxUrl }),
+    )
 
     await tx.wait()
+
+    bus.emit(
+      BUS_EVENTS.success,
+      $t('deposit-form.success-message', { explorerTxUrl }),
+    )
+
+    bus.emit(BUS_EVENTS.changedPoolData)
 
     if (formAvailable.value)
       allowances[formAvailable.value.value.currency] =
         await fetchAllowanceByCurrency(formAvailable.value.value.currency)
-
-    bus.emit(BUS_EVENTS.success)
-    bus.emit(BUS_EVENTS.changedPoolData)
-    emit('success')
   } catch (error) {
     ErrorHandler.process(error)
   } finally {

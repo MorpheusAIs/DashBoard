@@ -120,11 +120,13 @@ main {
 }
 
 .fade-enter-active {
-  animation: fade-in var(--transition-duration-fast) ease-in;
+  animation: fade-in var(--transition-duration-fast)
+    var(--transition-timing-default);
 }
 
 .fade-leave-active {
-  animation: fade-in var(--transition-duration-fast) ease-in reverse;
+  animation: fade-in var(--transition-duration-fast)
+    var(--transition-timing-default) reverse;
 }
 
 @keyframes fade-in {

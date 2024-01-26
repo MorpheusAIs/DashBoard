@@ -9,7 +9,9 @@
     "subtitle": "You are about to Claim Rewards. Your current reward - {reward}",
     "reward": "{amount} MOR.",
     "close-btn": "Cancel",
-    "claim-btn": "Claim"
+    "claim-btn": "Claim",
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "deposit-form": {
     "available-label": "Available to deposit",
@@ -18,7 +20,9 @@
     "submit-btn": {
       "deposit": "Deposit",
       "approve": "Approve"
-    }
+    },
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "deposit-modal": {
     "title": "Deposit",
@@ -93,7 +97,9 @@
   "withdraw-form": {
     "amount-placeholder": "Enter stETH amount",
     "cancel-btn": "Cancel",
-    "submit-btn": "Withdraw"
+    "submit-btn": "Withdraw",
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "withdraw-modal": {
     "title": "Withdraw funds",
