@@ -80,12 +80,6 @@
   "invalid-network-modal": {
     "title": "Invalid network",
     "subtitle": "Your wallet is connected to the unsupported chain. Please, switch to another network:",
-    "network-title": {
-      "ethereum": "Ethereum",
-      "arbitrum": "Arbitrum",
-      "goerli": "Goerli testnet",
-      "arbitrum-testnet": "Arbitrum testnet"
-    },
     "switch-btn": "Switch network"
   },
   "validations": {
