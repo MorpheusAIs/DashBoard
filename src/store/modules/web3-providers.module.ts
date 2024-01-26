@@ -3,6 +3,7 @@ import { ETHEREUM_CHAINS, SUPPORTED_PROVIDERS } from '@/enums'
 import { type BigNumber } from '@/types'
 import { config } from '@config'
 import { defineStore } from 'pinia'
+import { ProviderDetector } from '@distributedlab/w3p'
 
 const STORE_NAME = 'web3-providers-store'
 
@@ -29,7 +30,11 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
 
   actions: {
     async init() {
-      await this.provider.selectProvider(SUPPORTED_PROVIDERS.Metamask)
+      const providerDetector = new ProviderDetector()
+      await providerDetector.init()
+
+      if (providerDetector.providers.metamask)
+        await this.provider.selectProvider(SUPPORTED_PROVIDERS.Metamask)
     },
   },
 })

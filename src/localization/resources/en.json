@@ -105,7 +105,25 @@
     "available-to-withdraw-title": "Available to withdraw"
   },
   "errors": {
-    "default": "Something went wrong"
+    "default": "Something went wrong",
+    "provider-user-rejected-request": "User rejected request",
+    "provider-unauthorized": "The requested method and/or account has not been authorized by the user",
+    "provider-unsupported-method": "The Provider does not support the requested method",
+    "provider-disconnected": "The Provider is disconnected from all chains",
+    "provider-chain-disconnected": "The Provider is not connected to the requested chain",
+    "provider-parse-error": "Invalid JSON",
+    "provider-invalid-request": "JSON is not a valid request object",
+    "provider-method-not-found": "Method does not exist",
+    "provider-invalid-params": "Invalid method parameters",
+    "provider-internal-error": "Internal JSON-RPC error",
+    "provider-invalid-input": "Missing or invalid parameters",
+    "provider-resource-not-found": "Requested resource not found",
+    "provider-resource-unavailable": "MetaMask is busy",
+    "provider-transaction-rejected": "Transaction creation failed",
+    "provider-method-not-supported": "Method is not implemented",
+    "provider-limit-exceeded": "Request exceeds defined limit",
+    "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported",
+    "provider-wrapper-method-not-found": "Provider does not exist or method not supported"
   },
   "notification": {
     "default-title-success": "Success",
