@@ -7,3 +7,8 @@ export function abbrCenter(text: string, amount = 4): string {
     text.length,
   )}`
 }
+
+export function capitalize(text: string): string {
+  if (!text.length) return ''
+  return text[0].toUpperCase().concat(text.slice(1))
+}

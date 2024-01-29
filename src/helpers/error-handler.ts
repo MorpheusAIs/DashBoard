@@ -1,6 +1,7 @@
 import { errors } from '@/errors'
 import { bus, BUS_EVENTS } from '@/helpers'
 import { i18n } from '@/localization'
+import { capitalize } from './text.helpers'
 import log from 'loglevel'
 
 export class ErrorHandler {
@@ -76,7 +77,13 @@ export class ErrorHandler {
           errorMessage = t('errors.provider-json-rpc-version-not-supported')
           break
         default: {
-          errorMessage = t('errors.default')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const reason = (error as any)?.reason
+
+          errorMessage =
+            typeof reason === 'string' && reason.length
+              ? capitalize(reason)
+              : t('errors.default')
         }
       }
     }
