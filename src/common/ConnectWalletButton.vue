@@ -17,7 +17,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { computed } from 'vue'
 import AppButton from './AppButton.vue'
 
-enum CLICK_ACTIONS {
+enum ACTIONS {
   toApp = 'to-app',
   toInstall = 'to-install',
   connect = 'connect',
@@ -30,22 +30,22 @@ const { fullPath } = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const clickAction = computed<CLICK_ACTIONS>(() => {
+const action = computed<ACTIONS>(() => {
   switch (true) {
     case !web3ProvidersStore.provider.selectedProvider && isMobile():
-      return CLICK_ACTIONS.toApp
+      return ACTIONS.toApp
     case !web3ProvidersStore.provider.selectedProvider:
-      return CLICK_ACTIONS.toInstall
+      return ACTIONS.toInstall
     default:
-      return CLICK_ACTIONS.connect
+      return ACTIONS.connect
   }
 })
 
 const text = computed<string>(() => {
-  switch (clickAction.value) {
-    case CLICK_ACTIONS.toApp:
+  switch (action.value) {
+    case ACTIONS.toApp:
       return $t('connect-wallet-button.to-app')
-    case CLICK_ACTIONS.toInstall:
+    case ACTIONS.toInstall:
       return $t('connect-wallet-button.to-install')
     default:
       return $t('connect-wallet-button.default')
@@ -58,14 +58,14 @@ const appUrl = computed<string>(
 
 const onClick = async () => {
   try {
-    switch (clickAction.value) {
-      case CLICK_ACTIONS.toApp:
+    switch (action.value) {
+      case ACTIONS.toApp:
         window.open(appUrl.value, '_top', 'noreferrer')
         return
-      case CLICK_ACTIONS.toInstall:
+      case ACTIONS.toInstall:
         window.open(WALLET_INSTALL_URL, '_blank', 'noreferrer')
         return
-      case CLICK_ACTIONS.connect:
+      case ACTIONS.connect:
         await web3ProvidersStore.provider.connect()
         return
       default:
