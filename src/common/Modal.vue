@@ -2,18 +2,16 @@
   <teleport to="#modal">
     <transition name="fade">
       <div v-show="isShown" class="modal" v-bind="$attrs">
-        <div class="modal__pane" ref="modalPane">
+        <div class="modal__pane">
           <slot :modal="{ close: closeModal }" />
         </div>
+        <button class="modal__backdrop" @click="onBackdropClick" />
       </div>
     </transition>
   </teleport>
 </template>
 
 <script lang="ts" setup>
-import { onClickOutside } from '@vueuse/core'
-import { onMounted, ref } from 'vue'
-
 const props = withDefaults(
   defineProps<{
     isShown?: boolean
@@ -29,17 +27,9 @@ const emit = defineEmits<{
   (e: 'update:is-shown', value: boolean): void
 }>()
 
-const modalPane = ref<HTMLElement | undefined>()
-
-onMounted(() => {
-  if (modalPane.value) {
-    if (props.isCloseByClickOutside) {
-      onClickOutside(modalPane, () => {
-        closeModal()
-      })
-    }
-  }
-})
+const onBackdropClick = () => {
+  if (props.isCloseByClickOutside) closeModal()
+}
 
 const closeModal = () => {
   emit('update:is-shown', false)
@@ -71,5 +61,13 @@ $z-index: 1000;
   position: relative;
   height: auto;
   max-width: var(--max-width);
+}
+
+.modal__backdrop {
+  $z-index: -1;
+
+  position: absolute;
+  z-index: $z-index;
+  inset: 0;
 }
 </style>
