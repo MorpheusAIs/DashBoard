@@ -41,10 +41,13 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useContext, useContract } from '@/composables'
-import { ETHEREUM_EXPLORER_URLS } from '@/enums'
-import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import {
+  ETHEREUM_EXPLORER_URLS,
+  ETHEREUM_RPC_URLS,
+  LAYER_ZERO_ENDPOINTS,
+} from '@/enums'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { parseUnits } from '@/utils'
 import { config } from '@config'
 import BasicModal from '../BasicModal.vue'
 import { ref } from 'vue'
@@ -72,6 +75,12 @@ const { contractWithSigner: erc1967Proxy } = useContract(
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
 )
 
+const { contractWithProvider: endpoint } = useContract(
+  'Endpoint__factory',
+  config.ENDPOINT_CONTRACT_ADDRESS,
+  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+)
+
 const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -79,13 +88,21 @@ const claim = async (): Promise<void> => {
   isClaiming.value = true
 
   try {
+    const fees = await endpoint.value.estimateFees(
+      config.IS_MAINNET
+        ? LAYER_ZERO_ENDPOINTS.arbitrum
+        : LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
+      config.ERC1967_PROXY_CONTRACT_ADDRESS,
+      // TODO: replace mock payload
+      '0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000',
+      false,
+      '0x',
+    )
+
     const tx = await erc1967Proxy.value.claim(
       props.poolId,
       web3ProvidersStore.provider.selectedAddress,
-      {
-        // TODO: estimate by LayerZero
-        value: parseUnits('0.02', 'ether'),
-      },
+      { value: fees.nativeFee },
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
