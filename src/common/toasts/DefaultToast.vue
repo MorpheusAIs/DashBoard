@@ -41,7 +41,7 @@ $color-warning: #ffd21e;
 $color-info: #ffffff;
 
 .Vue-Toastification__container.top-right {
-  top: toRem(20);
+  top: toRem(100);
   padding: 0;
 
   @include respond-to(medium) {
