@@ -18,7 +18,7 @@
     "default": "Connect Wallet"
   },
   "deposit-form": {
-    "available-label": "Available to deposit",
+    "balance-label": "Available to deposit",
     "amount-placeholder": "Enter {currency} amount",
     "cancel-btn": "Cancel",
     "submit-btn": {
