@@ -7,6 +7,7 @@ import {
 } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/enums'
+import { config } from '@/config'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,11 +25,16 @@ const routes: Array<RouteRecordRaw> = [
         name: ROUTE_NAMES.appCapital,
         component: () => import('@/pages/HomePage/views/CapitalView.vue'),
       },
-      {
-        path: 'community',
-        name: ROUTE_NAMES.appCommunity,
-        component: () => import('@/pages/HomePage/views/CommunityView.vue'),
-      },
+      ...(!config.IS_MAINNET
+        ? [
+            {
+              path: 'community',
+              name: ROUTE_NAMES.appCommunity,
+              component: () =>
+                import('@/pages/HomePage/views/CommunityView.vue'),
+            },
+          ]
+        : []),
     ],
   },
   {

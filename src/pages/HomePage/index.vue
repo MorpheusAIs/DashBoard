@@ -14,6 +14,7 @@ import { AppTabs } from '@/common'
 import { useContext } from '@/composables'
 import { ROUTE_NAMES } from '@/enums'
 import { type Tab } from '@/types'
+import { config } from '@config'
 
 const { $t } = useContext()
 
@@ -26,7 +27,11 @@ const tabs: Tab[] = [
   {
     title: $t('home-page.community-tab'),
     id: 'community',
-    route: { name: ROUTE_NAMES.appCommunity },
+    ...(!config.IS_MAINNET
+      ? { route: { name: ROUTE_NAMES.appCommunity } }
+      : {
+          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
+        }),
   },
   {
     title: $t('home-page.coders-tab'),
