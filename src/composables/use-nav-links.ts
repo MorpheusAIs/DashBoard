@@ -10,7 +10,7 @@ export const useNavLinks = () => {
       route: { name: ROUTE_NAMES.app },
     },
     {
-      text: $t('app-navbar.chat-app-link'),
+      text: $t('app-navbar.community-website-link'),
       href: 'https://mor.org/',
     },
   ]

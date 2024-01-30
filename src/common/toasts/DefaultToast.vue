@@ -7,9 +7,8 @@
       <h5 class="default-toast__title">
         {{ title }}
       </h5>
-      <p class="default-toast__message">
-        {{ message }}
-      </p>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <p v-html="message" class="default-toast__message" />
     </div>
   </div>
 </template>
@@ -36,8 +35,13 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
 </script>
 
 <style lang="scss">
+$color-success: #00df80;
+$color-error: #f04248;
+$color-warning: #ffd21e;
+$color-info: #ffffff;
+
 .Vue-Toastification__container.top-right {
-  top: toRem(20);
+  top: toRem(100);
   padding: 0;
 
   @include respond-to(medium) {
@@ -95,9 +99,7 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
   }
 
   .Vue-Toastification__toast--success & {
-    $color: #00df80;
-
-    color: $color;
+    color: $color-success;
 
     &:before {
       background: radial-gradient(
@@ -109,9 +111,7 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
   }
 
   .Vue-Toastification__toast--error & {
-    $color: #f04248;
-
-    color: $color;
+    color: $color-error;
 
     &:before {
       background: radial-gradient(
@@ -123,9 +123,7 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
   }
 
   .Vue-Toastification__toast--warning & {
-    $color: #ffd21e;
-
-    color: $color;
+    color: $color-warning;
 
     &:before {
       background: radial-gradient(
@@ -137,9 +135,7 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
   }
 
   .Vue-Toastification__toast--info & {
-    $color: #ffffff;
-
-    color: $color;
+    color: $color-info;
 
     &:before {
       background: radial-gradient(
@@ -176,6 +172,67 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
 
   color: $color;
   width: toRem(260);
+
+  .link {
+    --underline: transparent;
+
+    position: relative;
+    display: inline-block;
+
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: toRem(0);
+      height: toRem(1);
+      width: 100%;
+      display: block;
+      background: var(--underline);
+      transition: var(--transition-duration-fast)
+        var(--transition-timing-default);
+    }
+
+    &:hover:after {
+      background: var(--underline-hover);
+    }
+
+    &:focus:after {
+      background: var(--underline-focus);
+    }
+
+    &:active:after {
+      background: var(--underline-active);
+    }
+
+    .Vue-Toastification__toast--success & {
+      color: $color-success;
+      --underline-hover: #{$color-success};
+      --underline-focus: #{$color-success};
+      --underline-active: #{$color-success};
+    }
+
+    .Vue-Toastification__toast--error & {
+      color: $color-error;
+      --underline-hover: #{$color-error};
+      --underline-focus: #{$color-error};
+      --underline-active: #{$color-error};
+    }
+
+    .Vue-Toastification__toast--warning & {
+      color: $color-warning;
+      --underline-hover: #{$color-warning};
+      --underline-focus: #{$color-warning};
+      --underline-active: #{$color-warning};
+    }
+
+    .Vue-Toastification__toast--info & {
+      color: $color-info;
+      --underline-hover: #{$color-info};
+      --underline-focus: #{$color-info};
+      --underline-active: #{$color-info};
+    }
+
+    @include body-5-regular;
+  }
 
   @include body-5-regular;
 

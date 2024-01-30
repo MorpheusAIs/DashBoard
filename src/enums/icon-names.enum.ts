@@ -116,7 +116,6 @@ export enum ICON_NAMES {
   gift = 'gift',
   globeAlt = 'globe-alt',
   globe = 'globe',
-  goerliAlt1 = 'goerli-alt-1',
   hand = 'hand',
   hashtag = 'hashtag',
   heart = 'heart',

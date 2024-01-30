@@ -6,16 +6,19 @@
   >
     <div class="deposit-form__select-field-wrp">
       <label class="deposit-form__label" :for="`select-field--${uid}`">
-        {{ $t('deposit-form.available-label') }}
+        {{ $t('deposit-form.balance-label') }}
       </label>
       <select-field
-        v-model="form.available"
+        :model-value="balanceOfForm"
         :uid="`select-field--${uid}`"
-        :value-options="availableOptions"
-        :error-message="getFieldErrorMessage('available')"
+        :value-options="balanceOptions"
+        :error-message="getFieldErrorMessage('balanceOptionIdx')"
         :is-loading="isInitializing"
         :disabled="isSubmitting"
-        @blur="touchField('available')"
+        @update:model-value="
+          form.balanceOptionIdx = balanceOptions.indexOf($event)
+        "
+        @blur="touchField('balanceOptionIdx')"
       />
     </div>
     <input-field
@@ -23,8 +26,7 @@
       class="deposit-form__input-field"
       :placeholder="
         $t('deposit-form.amount-placeholder', {
-          currency:
-            form.available?.value.currency || AVAILABLE_CURRENCIES.stEth,
+          currency: balanceOfForm?.value.currency || CURRENCIES.stEth,
         })
       "
       :error-message="getFieldErrorMessage('amount')"
@@ -37,8 +39,8 @@
           class="deposit-form__input-field-btn"
           scheme="link"
           text="max"
-          :disabled="isSubmitting"
-          @click="form.amount = form.available.value.amount"
+          :disabled="isSubmitting || !balanceOfForm"
+          @click="form.amount = balanceOfForm?.value.amount || ''"
         />
       </template>
     </input-field>
@@ -52,7 +54,7 @@
       />
       <app-button
         class="deposit-form__btn"
-        :text="submitBtnText"
+        :text="submissionBtnText"
         :disabled="isSubmitting || !isFieldsValid"
         :is-loading="isInitializing"
         @click="submit"
@@ -65,9 +67,9 @@
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_RPC_URLS } from '@/enums'
+import { ETHEREUM_EXPLORER_URLS, ETHEREUM_RPC_URLS } from '@/enums'
 import { InputField, SelectField } from '@/fields'
-import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
@@ -76,32 +78,33 @@ import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
 
-enum SUBMIT_ACTIONS {
+enum ACTIONS {
   approve = 'approve',
   stake = 'stake',
 }
 
-enum AVAILABLE_CURRENCIES {
+enum CURRENCIES {
   stEth = 'stETH',
 }
 
-type AvailableOptionValue = {
+type BalanceOptionValue = {
   amount: string
-  currency: AVAILABLE_CURRENCIES
+  currency: CURRENCIES
 }
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
-  (e: 'success', v: void): void
+  (e: 'stake-tx-sent', v: void): void
 }>()
 
 const props = defineProps<{ poolId: number }>()
 
+const uid = uuidv4()
 const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
-const allowances = reactive<Record<AVAILABLE_CURRENCIES, BigNumber | null>>({
-  [AVAILABLE_CURRENCIES.stEth]: null,
+const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
+  [CURRENCIES.stEth]: null,
 })
 
 const { contractWithSigner: erc1967Proxy } = useContract(
@@ -123,64 +126,68 @@ const { contractWithSigner: stEthWithSigner } = useContract(
 const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const submitAction = computed<SUBMIT_ACTIONS>(() => {
+const action = computed<ACTIONS>(() => {
   if (isFieldsValid.value) {
     const amountInDecimals = parseUnits(form.amount, 'ether')
-    const allowance = allowances[form.available.value.currency]
+    const allowance = balanceOfForm.value
+      ? allowances[balanceOfForm.value.value.currency]
+      : null
 
     if (allowance && amountInDecimals.gt(allowance)) {
-      return SUBMIT_ACTIONS.approve
+      return ACTIONS.approve
     }
   }
 
-  return SUBMIT_ACTIONS.stake
+  return ACTIONS.stake
 })
 
-const availableOptions = computed<FieldOption<AvailableOptionValue>[]>(() => [
+const balanceOptions = computed<FieldOption<BalanceOptionValue>[]>(() => [
   ...(web3ProvidersStore.balances.stEth
     ? [
         {
           title: `${formatEther(web3ProvidersStore.balances.stEth)} stETH`,
           value: {
             amount: toEther(web3ProvidersStore.balances.stEth),
-            currency: AVAILABLE_CURRENCIES.stEth,
+            currency: CURRENCIES.stEth,
           },
         },
       ]
     : []),
 ])
 
-const uid = uuidv4()
-
 const form = reactive({
-  available: availableOptions.value[0] || null,
+  balanceOptionIdx: 0,
   amount: '',
 })
 
+const balanceOfForm = computed<FieldOption<BalanceOptionValue> | null>(
+  () => balanceOptions.value[form.balanceOptionIdx] || null,
+)
+
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
-    available: { required },
+    balanceOptionIdx: { required },
     amount: {
       required,
       ether,
-      ...(form.available && {
-        maxEther: maxEther(form.available.value.amount),
+      ...(balanceOfForm.value?.value && {
+        maxEther: maxEther(balanceOfForm.value.value.amount),
       }),
     },
   })
 
-const submitBtnText = computed<string>(() =>
-  submitAction.value === SUBMIT_ACTIONS.approve
+const submissionBtnText = computed<string>(() =>
+  action.value === ACTIONS.approve
     ? $t('deposit-form.submit-btn.approve')
     : $t('deposit-form.submit-btn.deposit'),
 )
 
 const fetchAllowanceByCurrency = async (
-  currency: AVAILABLE_CURRENCIES,
+  currency: CURRENCIES,
 ): Promise<BigNumber> => {
   let contract
   switch (currency) {
-    case AVAILABLE_CURRENCIES.stEth:
+    case CURRENCIES.stEth:
       contract = stEthWithProvider.value
       break
     default:
@@ -193,10 +200,10 @@ const fetchAllowanceByCurrency = async (
   )
 }
 
-const approveByCurrency = async (currency: AVAILABLE_CURRENCIES) => {
+const approveByCurrency = async (currency: CURRENCIES) => {
   let contract
   switch (currency) {
-    case AVAILABLE_CURRENCIES.stEth:
+    case CURRENCIES.stEth:
       contract = stEthWithSigner.value
       break
     default:
@@ -211,33 +218,39 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    if (submitAction.value === SUBMIT_ACTIONS.approve) {
-      const tx = await approveByCurrency(form.available.value.currency)
-      bus.emit(BUS_EVENTS.info)
-
-      await tx.wait()
-
-      allowances[form.available.value.currency] =
-        await fetchAllowanceByCurrency(form.available.value.currency)
-
-      bus.emit(BUS_EVENTS.success)
-      bus.emit(BUS_EVENTS.changedUserBalance)
-      return
+    let tx
+    if (action.value === ACTIONS.approve && balanceOfForm.value) {
+      tx = await approveByCurrency(balanceOfForm.value.value.currency)
+    } else {
+      const amountInDecimals = parseUnits(form.amount, 'ether')
+      tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
+      emit('stake-tx-sent')
     }
 
-    const amountInDecimals = parseUnits(form.amount, 'ether')
-    const tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
-    bus.emit(BUS_EVENTS.info)
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.IS_MAINNET
+        ? ETHEREUM_EXPLORER_URLS.ethereum
+        : ETHEREUM_EXPLORER_URLS.sepolia,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      $t('deposit-form.tx-sent-message', { explorerTxUrl }),
+    )
 
     await tx.wait()
 
-    allowances[form.available.value.currency] = await fetchAllowanceByCurrency(
-      form.available.value.currency,
+    bus.emit(
+      BUS_EVENTS.success,
+      $t('deposit-form.success-message', { explorerTxUrl }),
     )
 
-    bus.emit(BUS_EVENTS.success)
     bus.emit(BUS_EVENTS.changedPoolData)
-    emit('success')
+
+    if (balanceOfForm.value)
+      allowances[balanceOfForm.value.value.currency] =
+        await fetchAllowanceByCurrency(balanceOfForm.value.value.currency)
   } catch (error) {
     ErrorHandler.process(error)
   } finally {
@@ -249,8 +262,8 @@ const init = async (): Promise<void> => {
   isInitializing.value = true
 
   try {
-    allowances[AVAILABLE_CURRENCIES.stEth] = await fetchAllowanceByCurrency(
-      AVAILABLE_CURRENCIES.stEth,
+    allowances[CURRENCIES.stEth] = await fetchAllowanceByCurrency(
+      CURRENCIES.stEth,
     )
   } catch (error) {
     emit('cancel')

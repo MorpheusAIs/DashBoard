@@ -40,8 +40,9 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContract } from '@/composables'
-import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { useContext, useContract } from '@/composables'
+import { ETHEREUM_EXPLORER_URLS } from '@/enums'
+import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { parseUnits } from '@/utils'
 import { config } from '@config'
@@ -71,6 +72,7 @@ const { contractWithSigner: erc1967Proxy } = useContract(
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
 )
 
+const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const claim = async (): Promise<void> => {
@@ -85,13 +87,29 @@ const claim = async (): Promise<void> => {
         value: parseUnits('0.02', 'ether'),
       },
     )
-    bus.emit(BUS_EVENTS.info)
+
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.IS_MAINNET
+        ? ETHEREUM_EXPLORER_URLS.ethereum
+        : ETHEREUM_EXPLORER_URLS.sepolia,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      $t('claim-modal.tx-sent-message', { explorerTxUrl }),
+    )
+
+    emit('update:is-shown', false)
 
     await tx.wait()
 
-    bus.emit(BUS_EVENTS.success)
+    bus.emit(
+      BUS_EVENTS.success,
+      $t('claim-modal.success-message', { explorerTxUrl }),
+    )
+
     bus.emit(BUS_EVENTS.changedCurrentUserReward)
-    emit('update:is-shown', false)
   } catch (error) {
     ErrorHandler.process(error)
   }

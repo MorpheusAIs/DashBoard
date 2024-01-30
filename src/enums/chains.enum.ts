@@ -11,3 +11,10 @@ export enum ETHEREUM_RPC_URLS {
   arbitrum = 'https://arb1.arbitrum.io/rpc',
   arbitrumSepolia = 'https://sepolia-rollup.arbitrum.io/rpc',
 }
+
+export enum ETHEREUM_EXPLORER_URLS {
+  ethereum = 'https://etherscan.io',
+  sepolia = 'https://sepolia.etherscan.io',
+  arbitrum = 'https://arbiscan.io',
+  arbitrumSepolia = 'https://sepolia.arbiscan.io',
+}

@@ -20,7 +20,6 @@
         v-if="!web3ProvidersStore.provider.isConnected"
         class="app-navbar__connect-wallet-btn"
         color="secondary"
-        :text="$t('app-navbar.connect-wallet-btn')"
       />
       <div v-else class="app-navbar__wallet-info-wrp">
         <wallet-balances />
@@ -31,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useContext, useNavLinks } from '@/composables'
+import { useNavLinks } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
@@ -39,7 +38,6 @@ import ConnectWalletButton from './ConnectWalletButton.vue'
 import WalletBalances from './WalletBalances.vue'
 import WalletDashboard from './WalletDashboard.vue'
 
-const { $t } = useContext()
 const { links } = useNavLinks()
 const web3ProvidersStore = useWeb3ProvidersStore()
 </script>

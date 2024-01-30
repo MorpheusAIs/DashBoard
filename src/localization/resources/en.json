@@ -1,24 +1,32 @@
 {
   "app-navbar": {
     "token-contract-link": "Token Contract",
-    "chat-app-link": "Chat App",
-    "connect-wallet-btn": "Connect wallet"
+    "community-website-link": "Community Website"
   },
   "claim-modal": {
     "title": "Claim rewards",
     "subtitle": "You are about to Claim Rewards. Your current reward - {reward}",
     "reward": "{amount} MOR.",
     "close-btn": "Cancel",
-    "claim-btn": "Claim"
+    "claim-btn": "Claim",
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "connect-wallet-button": {
+    "to-app": "Go To Metamask",
+    "to-install": "Install MetaMask",
+    "default": "Connect Wallet"
   },
   "deposit-form": {
-    "available-label": "Available to deposit",
+    "balance-label": "Available to deposit",
     "amount-placeholder": "Enter {currency} amount",
     "cancel-btn": "Cancel",
     "submit-btn": {
       "deposit": "Deposit",
       "approve": "Approve"
-    }
+    },
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "deposit-modal": {
     "title": "Deposit",
@@ -31,7 +39,7 @@
     "compute-tab": "Compute",
     "capital-view": {
       "info-bar": {
-        "title": "Coders",
+        "title": "Capital",
         "subtitle": "Group 1",
         "description": "People who provide the intelligence to use the frontends, capital and compute."
       },
@@ -48,7 +56,7 @@
         "subtitle": "Group 2",
         "description": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
-      "total-invested-title": "Total Invested",
+      "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
       "started-at-title": "Started at",
       "withdraw-at-title": "Withdraw is locked until",
@@ -58,16 +66,15 @@
       "deposit-btn": "Deposit stETH",
       "external-link": "How to receive stETH?",
       "withdraw-btn": "Withdraw stETH",
-      "user-invested-title": "You invested",
+      "user-deposit-title": "Your deposit",
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
-      "dashboard-description": "The reward will be claim automatically on withdrawal. Your share in the group will decrease, the award percentage will be reduced accordingly."
+      "dashboard-description": "Upon withdrawal, your deposit will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time."
     }
   },
   "info-dashboard": {
     "progress-bar-title": "Your portion",
-    "connection-msg": "Your personal investments and rewards will be displayed here after connecting your MetaMask wallet",
-    "connect-wallet-btn": "Connect Wallet"
+    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
   },
   "info-bar": {
     "status--public": "Open",
@@ -76,12 +83,6 @@
   "invalid-network-modal": {
     "title": "Invalid network",
     "subtitle": "Your wallet is connected to the unsupported chain. Please, switch to another network:",
-    "network-title": {
-      "ethereum": "Ethereum",
-      "arbitrum": "Arbitrum",
-      "goerli": "Goerli testnet",
-      "arbitrum-testnet": "Arbitrum testnet"
-    },
     "switch-btn": "Switch network"
   },
   "validations": {
@@ -90,10 +91,15 @@
     "field-error_required": "Field must be filled in",
     "field-error_email": "Field must be a valid email"
   },
+  "wallet-dashboard": {
+    "address-copied": "The address was copied to the clipboard"
+  },
   "withdraw-form": {
     "amount-placeholder": "Enter stETH amount",
     "cancel-btn": "Cancel",
-    "submit-btn": "Withdraw"
+    "submit-btn": "Withdraw",
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "withdraw-modal": {
     "title": "Withdraw funds",
@@ -102,7 +108,25 @@
     "available-to-withdraw-title": "Available to withdraw"
   },
   "errors": {
-    "default": "Something went wrong"
+    "default": "Something went wrong",
+    "provider-user-rejected-request": "User rejected request",
+    "provider-unauthorized": "The requested method and/or account has not been authorized by the user",
+    "provider-unsupported-method": "The Provider does not support the requested method",
+    "provider-disconnected": "The Provider is disconnected from all chains",
+    "provider-chain-disconnected": "The Provider is not connected to the requested chain",
+    "provider-parse-error": "Invalid JSON",
+    "provider-invalid-request": "JSON is not a valid request object",
+    "provider-method-not-found": "Method does not exist",
+    "provider-invalid-params": "Invalid method parameters",
+    "provider-internal-error": "Internal JSON-RPC error",
+    "provider-invalid-input": "Missing or invalid parameters",
+    "provider-resource-not-found": "Requested resource not found",
+    "provider-resource-unavailable": "MetaMask is busy",
+    "provider-transaction-rejected": "Transaction creation failed",
+    "provider-method-not-supported": "Method is not implemented",
+    "provider-limit-exceeded": "Request exceeds defined limit",
+    "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported",
+    "provider-wrapper-method-not-found": "Provider does not exist or method not supported"
   },
   "notification": {
     "default-title-success": "Success",

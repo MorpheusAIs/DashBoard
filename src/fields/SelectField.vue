@@ -13,7 +13,7 @@
           @blur="emit('blur')"
           @click="toggleDropMenu"
         >
-          <template v-if="$slots.head && !!modelValue">
+          <template v-if="$slots.head">
             <slot
               name="head"
               :select-field="{

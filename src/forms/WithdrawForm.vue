@@ -37,9 +37,10 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContract, useFormValidation } from '@/composables'
+import { useContext, useContract, useFormValidation } from '@/composables'
+import { ETHEREUM_EXPLORER_URLS } from '@/enums'
 import { InputField } from '@/fields'
-import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { BigNumber, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, required } from '@/validators'
 import { config } from '@config'
@@ -47,7 +48,7 @@ import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
-  (e: 'success', v: void): void
+  (e: 'tx-sent', v: void): void
 }>()
 
 const props = defineProps<{
@@ -61,10 +62,13 @@ const form = reactive({
   amount: '' as string,
 })
 
+const { $t } = useContext()
+
 const { contractWithSigner: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
 )
+
 const availableEther = computed<string>(() => toEther(props.availableAmount))
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -81,13 +85,29 @@ const submit = async (): Promise<void> => {
       props.poolId,
       parseUnits(form.amount, 'ether'),
     )
-    bus.emit(BUS_EVENTS.info)
+
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.IS_MAINNET
+        ? ETHEREUM_EXPLORER_URLS.ethereum
+        : ETHEREUM_EXPLORER_URLS.sepolia,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      $t('withdraw-form.tx-sent-message', { explorerTxUrl }),
+    )
+
+    emit('tx-sent')
 
     await tx.wait()
 
-    bus.emit(BUS_EVENTS.success)
+    bus.emit(
+      BUS_EVENTS.success,
+      $t('withdraw-form.success-message', { explorerTxUrl }),
+    )
+
     bus.emit(BUS_EVENTS.changedPoolData)
-    emit('success')
   } catch (error) {
     ErrorHandler.process(error)
   }

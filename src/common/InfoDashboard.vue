@@ -44,10 +44,7 @@
         <p class="info-dashboard__connection-msg">
           {{ $t('info-dashboard.connection-msg') }}
         </p>
-        <connect-wallet-button
-          class="info-dashboard__connect-wallet-btn"
-          :text="$t('info-dashboard.connect-wallet-btn')"
-        />
+        <connect-wallet-button class="info-dashboard__connect-wallet-btn" />
       </div>
     </transition>
   </div>
