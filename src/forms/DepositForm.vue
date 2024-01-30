@@ -54,7 +54,7 @@
       />
       <app-button
         class="deposit-form__btn"
-        :text="submitBtnText"
+        :text="submissionBtnText"
         :disabled="isSubmitting || !isFieldsValid"
         :is-loading="isInitializing"
         @click="submit"
@@ -78,7 +78,7 @@ import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
 
-enum SUBMIT_ACTIONS {
+enum ACTIONS {
   approve = 'approve',
   stake = 'stake',
 }
@@ -126,7 +126,7 @@ const { contractWithSigner: stEthWithSigner } = useContract(
 const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const submitAction = computed<SUBMIT_ACTIONS>(() => {
+const action = computed<ACTIONS>(() => {
   if (isFieldsValid.value) {
     const amountInDecimals = parseUnits(form.amount, 'ether')
     const allowance = formAvailable.value
@@ -134,11 +134,11 @@ const submitAction = computed<SUBMIT_ACTIONS>(() => {
       : null
 
     if (allowance && amountInDecimals.gt(allowance)) {
-      return SUBMIT_ACTIONS.approve
+      return ACTIONS.approve
     }
   }
 
-  return SUBMIT_ACTIONS.stake
+  return ACTIONS.stake
 })
 
 const availableOptions = computed<FieldOption<AvailableOptionValue>[]>(() => [
@@ -176,8 +176,8 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     },
   })
 
-const submitBtnText = computed<string>(() =>
-  submitAction.value === SUBMIT_ACTIONS.approve
+const submissionBtnText = computed<string>(() =>
+  action.value === ACTIONS.approve
     ? $t('deposit-form.submit-btn.approve')
     : $t('deposit-form.submit-btn.deposit'),
 )
@@ -219,7 +219,7 @@ const submit = async (): Promise<void> => {
 
   try {
     let tx
-    if (submitAction.value === SUBMIT_ACTIONS.approve && formAvailable.value) {
+    if (action.value === ACTIONS.approve && formAvailable.value) {
       tx = await approveByCurrency(formAvailable.value.value.currency)
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
