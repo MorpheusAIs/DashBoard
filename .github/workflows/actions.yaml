@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - "fix/common"
+      - "dev"
 
 permissions:
   packages: write
