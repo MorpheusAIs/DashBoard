@@ -3,3 +3,4 @@
 /* eslint-disable */
 export { ERC1967Proxy__factory } from "./ERC1967Proxy__factory";
 export { ERC20__factory } from "./ERC20__factory";
+export { Endpoint__factory } from "./Endpoint__factory";
