@@ -70,7 +70,13 @@ const props = withDefaults(
 
 const isClaiming = ref(false)
 
-const { contractWithSigner: erc1967Proxy } = useContract(
+const { contractWithProvider: erc1967ProxyWithProvider } = useContract(
+  'ERC1967Proxy__factory',
+  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+)
+
+const { contractWithSigner: erc1967ProxyWithSigner } = useContract(
   'ERC1967Proxy__factory',
   config.ERC1967_PROXY_CONTRACT_ADDRESS,
 )
@@ -92,13 +98,13 @@ const claim = async (): Promise<void> => {
       config.IS_MAINNET
         ? LAYER_ZERO_ENDPOINTS.arbitrum
         : LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
-      config.ERC1967_PROXY_CONTRACT_ADDRESS,
+      await erc1967ProxyWithProvider.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
       '0x',
     )
 
-    const tx = await erc1967Proxy.value.claim(
+    const tx = await erc1967ProxyWithSigner.value.claim(
       props.poolId,
       web3ProvidersStore.provider.selectedAddress,
       { value: fees.nativeFee },
