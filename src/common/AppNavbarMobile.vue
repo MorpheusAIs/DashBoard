@@ -6,7 +6,7 @@
       @click="isExtShown = !isExtShown"
     >
       <transition name="fade" mode="out-in">
-        <icon
+        <app-icon
           class="app-navbar-mobile__burger-icon"
           :key="String(isExtShown)"
           :name="!isExtShown ? $icons.menuAlt1 : $icons.x"
@@ -58,13 +58,13 @@
 <script setup lang="ts">
 import { useNavLinks } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
+import { ref } from 'vue'
 import AppButton from './AppButton.vue'
+import AppIcon from './AppIcon.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
-import Icon from './Icon.vue'
 import WalletBalances from './WalletBalances.vue'
 import WalletDashboard from './WalletDashboard.vue'
-import { ref } from 'vue'
 
 const { links } = useNavLinks()
 const web3ProvidersStore = useWeb3ProvidersStore()

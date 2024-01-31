@@ -35,7 +35,7 @@
               </span>
             </template>
           </template>
-          <icon
+          <app-icon
             class="select-field__select-head-indicator"
             :name="$icons.chevronDown"
           />
@@ -74,7 +74,10 @@
       @before-leave="setHeightCSSVar"
     >
       <div v-if="errorMessage || note" class="select-field__msg-wrp">
-        <icon class="select-field__msg-icon" :name="$icons.exclamationCircle" />
+        <app-icon
+          class="select-field__msg-icon"
+          :name="$icons.exclamationCircle"
+        />
         <span v-if="errorMessage" class="select-field__err-msg">
           {{ errorMessage }}
         </span>
@@ -87,12 +90,12 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@/common'
+import { AppIcon } from '@/common'
 import { FieldOption } from '@/types'
 import { onClickOutside } from '@vueuse/core'
+import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, ref, useAttrs, watch } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
-import { v4 as uuidv4 } from 'uuid'
 
 const props = withDefaults(
   defineProps<{

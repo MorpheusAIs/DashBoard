@@ -12,23 +12,22 @@
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
 import { useContext } from '@/composables'
-import { ROUTE_NAMES } from '@/enums'
 import { type Tab } from '@/types'
 import { config } from '@config'
 
-const { $t } = useContext()
+const { $routes, $t } = useContext()
 
 const tabs: Tab[] = [
   {
     title: $t('home-page.capital-tab'),
     id: 'capital',
-    route: { name: ROUTE_NAMES.appCapital },
+    route: { name: $routes.appCapital },
   },
   {
     title: $t('home-page.community-tab'),
     id: 'community',
     ...(!config.IS_MAINNET
-      ? { route: { name: ROUTE_NAMES.appCommunity } }
+      ? { route: { name: $routes.appCommunity } }
       : {
           href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
         }),

@@ -14,7 +14,7 @@
           class="withdraw-modal__indicator"
         >
           <div class="withdraw-modal__indicator-title-wrp">
-            <icon
+            <app-icon
               class="withdraw-modal__indicator-icon"
               :name="indicator.iconName"
             />
@@ -39,14 +39,14 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@/common'
 import { useContext } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import { WithdrawForm } from '@/forms'
 import { type BigNumber } from '@/types'
 import { formatEther } from '@/utils'
-import BasicModal from '../BasicModal.vue'
 import { computed } from 'vue'
+import AppIcon from '../../AppIcon.vue'
+import BasicModal from '../BasicModal.vue'
 
 type Indicator = {
   iconName: ICON_NAMES

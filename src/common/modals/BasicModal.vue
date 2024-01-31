@@ -18,7 +18,7 @@
             {{ subtitle }}
           </p>
           <button class="basic-modal__close-btn" @click="modal.close">
-            <icon class="basic-modal__close-btn-icon" :name="$icons.x" />
+            <app-icon class="basic-modal__close-btn-icon" :name="$icons.x" />
           </button>
         </div>
         <slot :modal="{ close: modal.close }" />
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import Icon from '../Icon.vue'
+import AppIcon from '../AppIcon.vue'
 import Modal from '../Modal.vue'
 
 withDefaults(

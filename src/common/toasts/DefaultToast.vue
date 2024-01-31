@@ -1,7 +1,11 @@
 <template>
   <div class="default-toast__body">
     <div class="default-toast__icon-wrp">
-      <icon v-if="toastIcon" class="default-toast__icon" :name="toastIcon" />
+      <app-icon
+        v-if="toastIcon"
+        class="default-toast__icon"
+        :name="toastIcon"
+      />
     </div>
     <div class="default-toast__details">
       <h5 class="default-toast__title">
@@ -14,10 +18,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@/common'
-
-import { computed } from 'vue'
 import { ICON_NAMES } from '@/enums'
+import { computed } from 'vue'
+import AppIcon from '../AppIcon.vue'
 
 const props = withDefaults(
   defineProps<{

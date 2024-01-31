@@ -49,8 +49,8 @@ import {
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
-import BasicModal from '../BasicModal.vue'
 import { ref } from 'vue'
+import BasicModal from '../BasicModal.vue'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void

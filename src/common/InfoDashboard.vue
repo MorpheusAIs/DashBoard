@@ -18,7 +18,7 @@
             class="info-dashboard__indicator"
           >
             <div class="info-dashboard__indicator-title-wrp">
-              <icon
+              <app-icon
                 class="info-dashboard__indicator-icon"
                 :name="indicator.iconName"
               />
@@ -53,8 +53,8 @@
 <script lang="ts" setup>
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoDashboardType, ProgressBarType } from '@/types'
+import AppIcon from './AppIcon.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
-import Icon from './Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 
 withDefaults(

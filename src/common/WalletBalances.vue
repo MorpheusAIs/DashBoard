@@ -9,7 +9,7 @@
         v-tooltip="selectedBalance.value"
         class="wallet-balances__selected-balance"
       >
-        <icon
+        <app-icon
           class="wallet-balances__balance-logo"
           :class="[
             `wallet-balances__balance-logo--${selectedBalance.logoIconName}`,
@@ -28,7 +28,7 @@
         class="wallet-balances__balance"
         @click="selectField.select(idx)"
       >
-        <icon
+        <app-icon
           class="wallet-balances__balance-logo"
           :class="[`wallet-balances__balance-logo--${balance.logoIconName}`]"
           :name="balance.logoIconName"
@@ -36,7 +36,7 @@
         <span class="wallet-balances__balance-value">
           {{ balance.value }}
         </span>
-        <icon
+        <app-icon
           class="wallet-balances__balance-token-icon"
           :name="balance.tokenIconName"
         />
@@ -54,7 +54,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
 import { config } from '@config'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import Icon from './Icon.vue'
+import AppIcon from './AppIcon.vue'
 
 type Balance = {
   logoIconName: ICON_NAMES

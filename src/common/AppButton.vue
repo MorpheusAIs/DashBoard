@@ -6,7 +6,11 @@
       v-bind="$attrs"
       :to="route"
     >
-      <icon v-if="iconLeft" class="app-button__icon-left" :name="iconLeft" />
+      <app-icon
+        v-if="iconLeft"
+        class="app-button__icon-left"
+        :name="iconLeft"
+      />
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -15,12 +19,20 @@
           {{ text }}
         </span>
       </template>
-      <icon v-if="iconRight" class="app-button__icon-right" :name="iconRight" />
+      <app-icon
+        v-if="iconRight"
+        class="app-button__icon-right"
+        :name="iconRight"
+      />
     </router-link>
   </template>
   <template v-else-if="href">
     <a class="app-button" :class="buttonClasses" v-bind="$attrs" :href="href">
-      <icon v-if="iconLeft" class="app-button__icon-left" :name="iconLeft" />
+      <app-icon
+        v-if="iconLeft"
+        class="app-button__icon-left"
+        :name="iconLeft"
+      />
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -29,7 +41,11 @@
           {{ text }}
         </span>
       </template>
-      <icon v-if="iconRight" class="app-button__icon-right" :name="iconRight" />
+      <app-icon
+        v-if="iconRight"
+        class="app-button__icon-right"
+        :name="iconRight"
+      />
     </a>
   </template>
   <template v-else>
@@ -40,7 +56,11 @@
       :disabled="isDisabled"
       :type="buttonType"
     >
-      <icon v-if="iconLeft" class="app-button__icon-left" :name="iconLeft" />
+      <app-icon
+        v-if="iconLeft"
+        class="app-button__icon-left"
+        :name="iconLeft"
+      />
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -49,17 +69,20 @@
           {{ text }}
         </span>
       </template>
-      <icon v-if="iconRight" class="app-button__icon-right" :name="iconRight" />
+      <app-icon
+        v-if="iconRight"
+        class="app-button__icon-right"
+        :name="iconRight"
+      />
     </button>
   </template>
 </template>
 
 <script lang="ts" setup>
+import { type ICON_NAMES } from '@/enums'
 import { computed, useAttrs, useSlots } from 'vue'
-import type { LocationAsRelativeRaw } from 'vue-router'
-
-import { Icon } from '@/common'
-import type { ICON_NAMES } from '@/enums'
+import { type LocationAsRelativeRaw } from 'vue-router'
+import AppIcon from './AppIcon.vue'
 
 type ButtonType = 'button' | 'submit' | 'reset'
 

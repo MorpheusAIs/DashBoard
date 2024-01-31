@@ -9,7 +9,7 @@
   >
     <div class="invalid-network-modal__board">
       <div class="invalid-network-modal__network-wrp">
-        <icon
+        <app-icon
           class="invalid-network-modal__network-icon"
           :name="$icons.ethereumAlt1"
         />
@@ -23,7 +23,7 @@
       <span class="invalid-network-modal__board-plus">{{ '+' }}</span>
 
       <div class="invalid-network-modal__network-wrp">
-        <icon
+        <app-icon
           class="invalid-network-modal__network-icon"
           :name="$icons.arbitrumAlt1"
         />
@@ -48,8 +48,8 @@ import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
 import AppButton from '../../AppButton.vue'
+import AppIcon from '../../AppIcon.vue'
 import BasicModal from '../BasicModal.vue'
-import Icon from '../../Icon.vue'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
