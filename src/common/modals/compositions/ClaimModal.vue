@@ -93,8 +93,7 @@ const claim = async (): Promise<void> => {
         ? LAYER_ZERO_ENDPOINTS.arbitrum
         : LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
       config.ERC1967_PROXY_CONTRACT_ADDRESS,
-      // TODO: replace mock payload
-      '0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000',
+      '0x'.concat('00'.repeat(64)),
       false,
       '0x',
     )
