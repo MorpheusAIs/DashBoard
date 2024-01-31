@@ -52,8 +52,7 @@ const updateTab = (tab: Tab) => {
   $color: rgba(255, 255, 255, 0.8);
 
   display: grid;
-  align-items: center;
-  justify-items: center;
+  place-items: center;
   padding: toRem(16) toRem(24);
   border: toRem(1) solid #494949;
   color: $color;
