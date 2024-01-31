@@ -1,11 +1,11 @@
 <template>
-  <teleport to="#modal">
+  <teleport to="#app-modals">
     <transition name="fade">
-      <div v-show="isShown" class="modal" v-bind="$attrs">
-        <div class="modal__pane">
+      <div v-show="isShown" class="app-modal" v-bind="$attrs">
+        <div class="app-modal__pane">
           <slot :modal="{ close: closeModal }" />
         </div>
-        <button class="modal__backdrop" @click="onBackdropClick" />
+        <button class="app-modal__backdrop" @click="onBackdropClick" />
       </div>
     </transition>
   </teleport>
@@ -39,7 +39,7 @@ const closeModal = () => {
 <style lang="scss" scoped>
 $z-index: 1000;
 
-.modal {
+.app-modal {
   --max-width: #{toRem(600)};
 
   display: flex;
@@ -54,7 +54,7 @@ $z-index: 1000;
   z-index: $z-index;
 }
 
-.modal__pane {
+.app-modal__pane {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +63,7 @@ $z-index: 1000;
   max-width: var(--max-width);
 }
 
-.modal__backdrop {
+.app-modal__backdrop {
   $z-index: -1;
 
   position: absolute;
