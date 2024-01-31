@@ -37,16 +37,6 @@ const routes: Array<RouteRecordRaw> = [
         : []),
     ],
   },
-  {
-    path: '/ui-kit',
-    name: ROUTE_NAMES.uiKit,
-    component: () => import('@/pages/UiKitPage.vue'),
-  },
-  {
-    path: '/complex-form',
-    name: ROUTE_NAMES.complexForm,
-    component: () => import('@/forms/ComplexForm.vue'),
-  },
 ]
 
 const router = createRouter({

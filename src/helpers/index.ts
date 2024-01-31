@@ -1,4 +1,3 @@
-export * from './clipboard.helpers'
 export * from './error-handler'
 export * from './ethereum.helpers'
 export * from './event-bus'
