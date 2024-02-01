@@ -37,11 +37,11 @@
     "community-tab": "Community",
     "coders-tab": "Coders",
     "compute-tab": "Compute",
-    "capital-view": {
+    "private-pool-view": {
       "info-bar": {
-        "title": "Capital",
-        "subtitle": "Group 1",
-        "description": "People who provide the intelligence to use the frontends, capital and compute."
+        "title--1": "Capital",
+        "subtitle--1": "Group 1",
+        "description--1": "People who provide the intelligence to use the frontends, capital and compute."
       },
       "daily-reward-title": "Current daily reward",
       "started-at-title": "Started at",
@@ -50,11 +50,11 @@
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR"
     },
-    "community-view": {
+    "public-pool-view": {
       "info-bar": {
-        "title": "Community",
-        "subtitle": "Group 2",
-        "description": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
+        "title--0": "Community",
+        "subtitle--0": "Group 2",
+        "description--0": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
       "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
@@ -69,7 +69,7 @@
       "user-deposit-title": "Your deposit",
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
-      "dashboard-description": "Upon withdrawal, your deposit will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time."
+      "dashboard-description--0": "Upon withdrawal, your deposit will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time."
     }
   },
   "info-dashboard": {
