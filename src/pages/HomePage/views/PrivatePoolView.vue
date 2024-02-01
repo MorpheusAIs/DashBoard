@@ -45,6 +45,8 @@ const props = defineProps<{ poolId: number }>()
 
 const isClaimModalShown = ref(false)
 
+const poolId = computed(() => props.poolId)
+
 const { $t } = useContext()
 
 const {
@@ -57,7 +59,7 @@ const {
 
   isInitializing,
   isUserDataUpdating,
-} = usePool(props.poolId)
+} = usePool(poolId.value)
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
