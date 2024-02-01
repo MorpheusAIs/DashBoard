@@ -16,6 +16,7 @@ export const usePool = (poolId: number) => {
   const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
 
   const isInitializing = ref(false)
+  const isUserDataUpdating = ref(false)
 
   const isClaimDisabled = computed<boolean>(() => {
     if (!currentUserReward.value) return true
@@ -108,13 +109,19 @@ export const usePool = (poolId: number) => {
   }
 
   const updateUserData = async (): Promise<void> => {
-    const [userDataResponse, currentUserRewardResponse] = await Promise.all([
-      fetchUserPoolData(),
-      fetchCurrentUserReward(),
-    ])
+    isUserDataUpdating.value = true
 
-    userPoolData.value = userDataResponse
-    currentUserReward.value = currentUserRewardResponse
+    try {
+      const [userDataResponse, currentUserRewardResponse] = await Promise.all([
+        fetchUserPoolData(),
+        fetchCurrentUserReward(),
+      ])
+
+      userPoolData.value = userDataResponse
+      currentUserReward.value = currentUserRewardResponse
+    } finally {
+      isUserDataUpdating.value = false
+    }
   }
 
   const init = async () => {
@@ -213,5 +220,6 @@ export const usePool = (poolId: number) => {
     isWithdrawDisabled,
 
     isInitializing,
+    isUserDataUpdating,
   }
 }

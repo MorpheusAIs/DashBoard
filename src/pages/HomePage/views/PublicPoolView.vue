@@ -43,7 +43,7 @@
     <info-dashboard
       :progress="dashboardProgress"
       :indicators="dashboardIndicators"
-      :is-loading="isInitializing"
+      :is-loading="isInitializing || isUserDataUpdating"
     >
       <div class="public-pool-view__dashboard-buttons-wrp">
         <app-button
@@ -117,6 +117,7 @@ const {
   isWithdrawDisabled,
 
   isInitializing,
+  isUserDataUpdating,
 } = usePool(props.poolId)
 
 const web3ProvidersStore = useWeb3ProvidersStore()

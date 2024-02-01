@@ -13,7 +13,7 @@
     <info-dashboard
       :indicators="dashboardIndicators"
       :progress="dashboardProgress"
-      :is-loading="isInitializing"
+      :is-loading="isInitializing || isUserDataUpdating"
     >
       <app-button
         class="private-pool-view__dashboard-btn"
@@ -56,6 +56,7 @@ const {
   isClaimDisabled,
 
   isInitializing,
+  isUserDataUpdating,
 } = usePool(props.poolId)
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
