@@ -104,6 +104,8 @@ const isClaimModalShown = ref(false)
 const isDepositModalShown = ref(false)
 const isWithdrawModalShown = ref(false)
 
+const poolId = computed(() => props.poolId)
+
 const { $t } = useContext()
 
 const {
@@ -118,7 +120,7 @@ const {
 
   isInitializing,
   isUserDataUpdating,
-} = usePool(props.poolId)
+} = usePool(poolId.value)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
