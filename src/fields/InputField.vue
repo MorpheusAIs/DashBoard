@@ -37,7 +37,7 @@
           type="button"
           @click="isPasswordShown = !isPasswordShown"
         >
-          <icon
+          <app-icon
             class="input-field__password-icon"
             :name="isPasswordShown ? ICON_NAMES.eye : ICON_NAMES.eyeOff"
           />
@@ -50,7 +50,10 @@
       @before-leave="setHeightCSSVar"
     >
       <div v-if="errorMessage || note" class="input-field__msg-wrp">
-        <icon class="input-field__msg-icon" :name="$icons.exclamationCircle" />
+        <app-icon
+          class="input-field__msg-icon"
+          :name="$icons.exclamationCircle"
+        />
         <span v-if="errorMessage" class="input-field__err-msg">
           {{ errorMessage }}
         </span>
@@ -63,12 +66,11 @@
 </template>
 
 <script lang="ts" setup>
-import { BN, DECIMALS } from '@distributedlab/tools'
-import { computed, onMounted, ref, useAttrs, useSlots } from 'vue'
-
-import { Icon } from '@/common'
+import { AppIcon } from '@/common'
 import { ICON_NAMES } from '@/enums'
+import { BN, DECIMALS } from '@distributedlab/tools'
 import { v4 as uuidv4 } from 'uuid'
+import { computed, onMounted, ref, useAttrs, useSlots } from 'vue'
 
 const props = withDefaults(
   defineProps<{

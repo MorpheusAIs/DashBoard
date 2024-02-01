@@ -23,7 +23,8 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'capital',
         name: ROUTE_NAMES.appCapital,
-        component: () => import('@/pages/HomePage/views/CapitalView.vue'),
+        component: () => import('@/pages/HomePage/views/PrivatePoolView.vue'),
+        props: { poolId: 1 },
       },
       ...(!config.IS_MAINNET
         ? [
@@ -31,21 +32,12 @@ const routes: Array<RouteRecordRaw> = [
               path: 'community',
               name: ROUTE_NAMES.appCommunity,
               component: () =>
-                import('@/pages/HomePage/views/CommunityView.vue'),
+                import('@/pages/HomePage/views/PublicPoolView.vue'),
+              props: { poolId: 0 },
             },
           ]
         : []),
     ],
-  },
-  {
-    path: '/ui-kit',
-    name: ROUTE_NAMES.uiKit,
-    component: () => import('@/pages/UiKitPage.vue'),
-  },
-  {
-    path: '/complex-form',
-    name: ROUTE_NAMES.complexForm,
-    component: () => import('@/forms/ComplexForm.vue'),
   },
 ]
 

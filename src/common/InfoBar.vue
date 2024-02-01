@@ -22,7 +22,7 @@
           <h5 class="info-bar__indicator-title">
             {{ indicator.title }}
           </h5>
-          <icon
+          <app-icon
             v-if="indicator.note"
             v-tooltip="indicator.note"
             class="info-bar__indicator-note"
@@ -41,8 +41,8 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@/common'
 import { type InfoBarType } from '@/types'
+import AppIcon from './AppIcon.vue'
 
 withDefaults(
   defineProps<{

@@ -17,13 +17,12 @@
 
 <script lang="ts" setup>
 import { AppNavbar, AppNavbarMobile, InvalidNetworkModal } from '@/common'
-
-import { ref, watch } from 'vue'
 import { useNotifications } from '@/composables'
-import { useWeb3ProvidersStore } from '@/store'
-import { config } from '@config'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
-import { NotificationPayload } from '@/types'
+import { useWeb3ProvidersStore } from '@/store'
+import { type NotificationPayload } from '@/types'
+import { config } from '@config'
+import { ref, watch } from 'vue'
 
 const isAppInitialized = ref(false)
 const isShownInvalidNetworkModal = ref(false)

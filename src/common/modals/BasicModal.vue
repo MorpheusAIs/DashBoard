@@ -1,5 +1,5 @@
 <template>
-  <modal
+  <app-modal
     class="basic-modal"
     :is-shown="isShown"
     :is-close-by-click-outside="isCloseByClickOutside"
@@ -18,18 +18,18 @@
             {{ subtitle }}
           </p>
           <button class="basic-modal__close-btn" @click="modal.close">
-            <icon class="basic-modal__close-btn-icon" :name="$icons.x" />
+            <app-icon class="basic-modal__close-btn-icon" :name="$icons.x" />
           </button>
         </div>
         <slot :modal="{ close: modal.close }" />
       </div>
     </template>
-  </modal>
+  </app-modal>
 </template>
 
 <script lang="ts" setup>
-import Icon from '../Icon.vue'
-import Modal from '../Modal.vue'
+import AppIcon from '../AppIcon.vue'
+import AppModal from '../AppModal.vue'
 
 withDefaults(
   defineProps<{
