@@ -40,7 +40,7 @@
     "private-pool-view": {
       "info-bar": {
         "title--1": "Capital",
-        "subtitle--1": "Group 1",
+        "subtitle--1": "Group 2",
         "description--1": "People who provide the intelligence to use the frontends, capital and compute."
       },
       "daily-reward-title": "Current daily reward",
@@ -53,7 +53,7 @@
     "public-pool-view": {
       "info-bar": {
         "title--0": "Community",
-        "subtitle--0": "Group 2",
+        "subtitle--0": "Group 1",
         "description--0": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
       "total-deposits-title": "Total deposits",
@@ -77,8 +77,8 @@
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
   },
   "info-bar": {
-    "status--public": "Open",
-    "status--private": "Private"
+    "status--public": "Automated",
+    "status--private": "Non-Automated"
   },
   "invalid-network-modal": {
     "title": "Invalid network",

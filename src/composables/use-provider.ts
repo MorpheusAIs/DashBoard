@@ -57,6 +57,10 @@ export interface IUseProvider {
   switchChain: (chainId: ChainId) => Promise<void>
   selectChain: (chainId: ChainId) => Promise<void>
   selectProvider: (supportedProvider: SUPPORTED_PROVIDERS) => Promise<void>
+  request: (body: {
+    method: string
+    params?: unknown[] | object
+  }) => Promise<unknown>
 
   // TODO: to discuss: chain as arg
   getAddressUrl: (chain: Web3ProviderType.Chain, address: string) => string
@@ -171,6 +175,17 @@ export const useProvider = (): IUseProvider => {
     await init(providerProxyConstructor)
   }
 
+  const request: I['request'] = async body => {
+    // eslint-disable-next-line
+    // @ts-ignore
+    if (!_provider?.rawProvider?.request)
+      throw new errors.ProviderMethodNotFound()
+
+    // eslint-disable-next-line
+    // @ts-ignore
+    return _provider.rawProvider.request(body)
+  }
+
   const getAddressUrl: I['getAddressUrl'] = (chain, address) => {
     if (!_provider?.getAddressUrl) throw new errors.ProviderMethodNotFound()
     return _provider.getAddressUrl(_parseChainToChainW3P(chain), address)
@@ -248,6 +263,7 @@ export const useProvider = (): IUseProvider => {
     switchChain,
     selectChain,
     selectProvider,
+    request,
 
     getAddressUrl,
     getHashFromTxResponse,
