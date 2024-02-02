@@ -90,8 +90,6 @@ withDefaults(
   }
 
   .info-bar--loading & {
-    width: toRem(80);
-
     @include skeleton;
   }
 
