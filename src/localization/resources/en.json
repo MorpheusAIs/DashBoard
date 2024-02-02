@@ -39,9 +39,9 @@
     "compute-tab": "Compute",
     "private-pool-view": {
       "info-bar": {
-        "title--1": "Capital",
+        "title--1": "Community",
         "subtitle--1": "Group 2",
-        "description--1": "People who provide the intelligence to use the frontends, capital and compute."
+        "description--1": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
       },
       "daily-reward-title": "Current daily reward",
       "started-at-title": "Started at",
@@ -52,9 +52,9 @@
     },
     "public-pool-view": {
       "info-bar": {
-        "title--0": "Community",
+        "title--0": "Capital",
         "subtitle--0": "Group 1",
-        "description--0": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
+        "description--0": "People who provide the intelligence to use the frontends, capital and compute."
       },
       "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
