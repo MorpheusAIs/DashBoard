@@ -178,6 +178,9 @@ export const usePool = (poolId: number) => {
   watch(
     () => web3ProvidersStore.provider.selectedAddress,
     async newAddress => {
+      currentUserReward.value = null
+      userPoolData.value = null
+
       if (newAddress) {
         try {
           await updateUserData()
