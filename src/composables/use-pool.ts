@@ -4,6 +4,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { type Erc1967ProxyType } from '@/types'
 import { type BigNumber, Time } from '@/utils'
 import { config } from '@config'
+import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useContract } from './use-contract'
 
@@ -18,6 +19,10 @@ export const usePool = (poolId: number) => {
   const isInitializing = ref(false)
   const isUserDataUpdating = ref(false)
 
+  const currentTimestamp = computed<number>(
+    () => currentTimestampMs.value / 1000,
+  )
+
   const isClaimDisabled = computed<boolean>(() => {
     if (!currentUserReward.value) return true
     return currentUserReward.value.isZero()
@@ -29,9 +34,25 @@ export const usePool = (poolId: number) => {
   })
 
   const isWithdrawDisabled = computed<boolean>(() => {
-    if (!userPoolData.value?.deposited) return true
-    return userPoolData.value.deposited.isZero()
+    if (
+      !poolData.value ||
+      !userPoolData.value ||
+      userPoolData.value.deposited.isZero()
+    )
+      return true
+
+    return userPoolData.value.lastStake.isZero()
+      ? currentTimestamp.value <=
+          poolData.value.payoutStart
+            .add(poolData.value.withdrawLockPeriod)
+            .toNumber()
+      : currentTimestamp.value <=
+          userPoolData.value.lastStake
+            .add(poolData.value.withdrawLockPeriodAfterStake)
+            .toNumber()
   })
+
+  const currentTimestampMs = useTimestamp()
 
   const { contractWithProvider: erc1967Proxy } = useContract(
     'ERC1967Proxy__factory',

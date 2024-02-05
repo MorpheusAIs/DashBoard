@@ -50,14 +50,14 @@
           class="public-pool-view__dashboard-button"
           color="secondary"
           :text="$t('home-page.public-pool-view.withdraw-btn')"
-          :is-loading="isInitializing"
+          :is-loading="isInitializing || isUserDataUpdating"
           :disabled="isWithdrawDisabled"
           @click="isWithdrawModalShown = true"
         />
         <app-button
           class="public-pool-view__dashboard-button"
           :text="$t('home-page.public-pool-view.claim-btn')"
-          :is-loading="isInitializing"
+          :is-loading="isInitializing || isUserDataUpdating"
           :disabled="isClaimDisabled"
           @click="isClaimModalShown = true"
         />
@@ -147,9 +147,15 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
     title: $t('home-page.public-pool-view.withdraw-at-title'),
     value: poolData.value
       ? new Time(
-          (poolData.value.payoutStart.toNumber() +
-            poolData.value.withdrawLockPeriod.toNumber()) *
-            1000,
+          userPoolData.value && !userPoolData.value.lastStake.isZero()
+            ? userPoolData.value.lastStake
+                .add(poolData.value.withdrawLockPeriodAfterStake)
+                .mul(1000)
+                .toNumber()
+            : poolData.value.payoutStart
+                .add(poolData.value.withdrawLockPeriod)
+                .mul(1000)
+                .toNumber(),
         ).format(DEFAULT_TIME_FORMAT)
       : '',
     note: $t('home-page.public-pool-view.withdraw-at-note'),
