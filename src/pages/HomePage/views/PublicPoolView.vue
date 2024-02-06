@@ -10,38 +10,43 @@
       :indicators="barIndicators"
       :is-loading="isInitializing"
     >
-      <transition name="fade">
-        <div
-          v-if="web3ProvidersStore.isConnected"
-          class="public-pool-view__bar-slot-wrp"
-        >
-          <div class="public-pool-view__bar-buttons-wrp">
-            <app-button
-              class="public-pool-view__bar-button"
-              :text="$t('home-page.public-pool-view.deposit-btn')"
-              :is-loading="isInitializing"
-              :disabled="isDepositDisabled"
-              @click="isDepositModalShown = true"
-            />
-            <app-button
-              class="public-pool-view__bar-button"
-              scheme="link"
-              color="none"
-              href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
-              target="_blank"
-              rel="noopener noreferrer"
-              :text="$t('home-page.public-pool-view.external-link')"
-              :icon-right="$icons.externalLink"
-              :is-loading="isInitializing"
+      <template v-if="poolId === 0" #description>
+        <zero-pool-description />
+      </template>
+      <template #default>
+        <transition name="fade">
+          <div
+            v-if="web3ProvidersStore.isConnected"
+            class="public-pool-view__bar-slot-wrp"
+          >
+            <div class="public-pool-view__bar-buttons-wrp">
+              <app-button
+                class="public-pool-view__bar-button"
+                :text="$t('home-page.public-pool-view.deposit-btn')"
+                :is-loading="isInitializing"
+                :disabled="isDepositDisabled"
+                @click="isDepositModalShown = true"
+              />
+              <app-button
+                class="public-pool-view__bar-button"
+                scheme="link"
+                color="none"
+                href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
+                target="_blank"
+                rel="noopener noreferrer"
+                :text="$t('home-page.public-pool-view.external-link')"
+                :icon-right="$icons.externalLink"
+                :is-loading="isInitializing"
+              />
+            </div>
+            <deposit-modal
+              v-if="!isDepositDisabled"
+              v-model:is-shown="isDepositModalShown"
+              :pool-id="poolId"
             />
           </div>
-          <deposit-modal
-            v-if="!isDepositDisabled"
-            v-model:is-shown="isDepositModalShown"
-            :pool-id="poolId"
-          />
-        </div>
-      </transition>
+        </transition>
+      </template>
     </info-bar>
     <info-dashboard
       :progress="dashboardProgress"
@@ -100,6 +105,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import type { InfoBarType, InfoDashboardType, ProgressBarType } from '@/types'
 import { BigNumber, formatEther, Time } from '@/utils'
 import { computed, ref } from 'vue'
+import { ZeroPoolDescription } from '../components'
 
 const props = defineProps<{ poolId: number }>()
 

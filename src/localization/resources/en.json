@@ -53,8 +53,7 @@
     "public-pool-view": {
       "info-bar": {
         "title--0": "Capital",
-        "subtitle--0": "Group 1",
-        "description--0": "People who provide the intelligence to use the frontends, capital and compute."
+        "subtitle--0": "Group 1"
       },
       "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
@@ -106,6 +105,15 @@
     "title": "Withdraw funds",
     "subtitle": "Specify the amount to be withdrawn. The funds will be sent to your wallet.",
     "available-to-withdraw-title": "Available to withdraw"
+  },
+  "zero-pool-description": {
+    "list": {
+      "1": "Deposit stETH (via ETH) to earn MOR tokens",
+      "2": "stETH can be withdrawn after day 7",
+      "3": "Claim your MOR tokens after 91 days",
+      "4": "MOR tokens are rewarded on Arbitrum"
+    },
+    "details": "Details on"
   },
   "errors": {
     "default": "Something went wrong",

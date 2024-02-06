@@ -9,9 +9,14 @@
       </p>
     </div>
     <h1>{{ title }}</h1>
-    <p class="info-bar__description">
-      {{ description }}
-    </p>
+    <div class="info-bar__description-wrp">
+      <template v-if="$slots.description">
+        <slot name="description" />
+      </template>
+      <template v-else>
+        <p>{{ description }}</p>
+      </template>
+    </div>
     <ul v-if="indicators.length" class="info-bar__indicators">
       <li
         v-for="(indicator, idx) in indicators"
@@ -96,7 +101,7 @@ withDefaults(
   }
 }
 
-.info-bar__description {
+.info-bar__description-wrp {
   margin-top: toRem(24);
 
   @include respond-to(medium) {
