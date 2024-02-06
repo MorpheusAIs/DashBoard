@@ -12,6 +12,13 @@
       </div>
     </template>
     <template #default>
+      <div class="wallet-dashboard__address-wrp">
+        <p>{{ abbrCenter(web3ProvidersStore.address, 9) }}</p>
+        <copy-button
+          :content="web3ProvidersStore.address"
+          :message="$t('wallet-dashboard.address-copied')"
+        />
+      </div>
       <button
         v-for="(option, idx) in options"
         :key="idx"
@@ -27,17 +34,16 @@
 <script lang="ts" setup>
 import { useContext } from '@/composables'
 import { ETHEREUM_CHAINS } from '@/enums'
-import { abbrCenter, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { abbrCenter, ErrorHandler } from '@/helpers'
 import { SelectField } from '@/fields'
 import { useWeb3ProvidersStore } from '@/store'
-import { useClipboard } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import generateJazzicon from 'jazzicon'
+import CopyButton from './CopyButton.vue'
 
 const jazziconWrpElement = ref<HTMLDivElement | null>(null)
 
 const { $config, $t } = useContext()
-const { copy } = useClipboard()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const setJazzicon = () => {
@@ -46,15 +52,6 @@ const setJazzicon = () => {
   jazziconWrpElement.value.append(
     generateJazzicon(28, parseInt(web3ProvidersStore.address.slice(2, 10), 16)),
   )
-}
-
-const copyAddressToClipboard = async () => {
-  try {
-    await copy(web3ProvidersStore.address)
-    bus.emit(BUS_EVENTS.info, $t('wallet-dashboard.address-copied'))
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
 }
 
 const addToken = async () => {
@@ -155,6 +152,15 @@ onMounted(setJazzicon)
 .wallet-dashboard__jazzicon-wrp {
   display: flex;
   margin-right: toRem(12);
+}
+
+.wallet-dashboard__address-wrp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: toRem(8);
+  height: toRem(48);
+  padding: 0 toRem(16);
 }
 
 .wallet-dashboard__option {

@@ -91,7 +91,7 @@
     "field-error_required": "Field must be filled in"
   },
   "wallet-dashboard": {
-    "address-copied": "The address was copied to the clipboard",
+    "address-copied": "The address was copied",
     "add-token": "Add MOR token to MetaMask",
     "disconnect": "Disconnect wallet"
   },
