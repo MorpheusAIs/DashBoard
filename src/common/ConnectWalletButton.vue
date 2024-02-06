@@ -2,8 +2,7 @@
   <app-button
     :text="text"
     :disabled="
-      web3ProvidersStore.provider.isConnected ||
-      web3ProvidersStore.provider.isConnecting
+      web3ProvidersStore.isConnected || web3ProvidersStore.provider.isConnecting
     "
     @click="onClick"
   />
@@ -66,7 +65,9 @@ const onClick = async () => {
         window.open(WALLET_INSTALL_URL, '_blank', 'noreferrer')
         return
       case ACTIONS.connect:
-        await web3ProvidersStore.provider.connect()
+        if (!web3ProvidersStore.provider.isConnected)
+          await web3ProvidersStore.provider.connect()
+        web3ProvidersStore.hasConnectedProvider = true
         return
       default:
         throw new Error('unknown case')

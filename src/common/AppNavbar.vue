@@ -17,7 +17,7 @@
     </nav>
     <transition name="fade" mode="out-in">
       <connect-wallet-button
-        v-if="!web3ProvidersStore.provider.isConnected"
+        v-if="!web3ProvidersStore.isConnected"
         class="app-navbar__connect-wallet-btn"
         color="secondary"
       />

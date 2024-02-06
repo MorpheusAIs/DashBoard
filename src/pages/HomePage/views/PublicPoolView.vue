@@ -11,7 +11,10 @@
       :is-loading="isInitializing"
     >
       <transition name="fade">
-        <div v-if="web3ProvidersStore.provider.isConnected">
+        <div
+          v-if="web3ProvidersStore.isConnected"
+          class="public-pool-view__bar-slot-wrp"
+        >
           <div class="public-pool-view__bar-buttons-wrp">
             <app-button
               class="public-pool-view__bar-button"
@@ -197,6 +200,16 @@ const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
 </script>
 
 <style lang="scss" scoped>
+.public-pool-view__bar-slot-wrp {
+  margin-top: toRem(16);
+  border-top: toRem(2) solid #494949;
+  padding-top: toRem(30);
+
+  @include respond-to(medium) {
+    padding-top: toRem(32);
+  }
+}
+
 .public-pool-view__bar-buttons-wrp {
   display: flex;
   align-items: center;

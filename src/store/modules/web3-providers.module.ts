@@ -20,7 +20,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       [BALANCE_CURRENCIES.mor]: null,
     } as Record<BALANCE_CURRENCIES, BigNumber | null>,
     isAddingToken: false,
+    hasConnectedProvider: false,
   }),
+
+  persist: {
+    paths: ['hasConnectedProvider'],
+    storage: localStorage,
+  },
 
   getters: {
     isValidChain: state =>
@@ -30,6 +36,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
           ? ETHEREUM_CHAINS.ethereum
           : ETHEREUM_CHAINS.sepolia),
     address: state => state.provider.selectedAddress,
+    isConnected: state =>
+      state.provider.isConnected && state.hasConnectedProvider,
   },
 
   actions: {

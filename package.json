@@ -30,6 +30,7 @@
     "lodash": "^4.17.21",
     "loglevel": "^1.8.1",
     "pinia": "^2.0.28",
+    "pinia-plugin-persistedstate": "^3.2.1",
     "postcss": "^8.4.20",
     "uuid": "^9.0.0",
     "vue": "^3.3.2",

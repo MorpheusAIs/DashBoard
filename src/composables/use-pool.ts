@@ -149,7 +149,10 @@ export const usePool = (poolId: number) => {
     isInitializing.value = true
 
     try {
-      if (web3ProvidersStore.provider.selectedAddress) {
+      if (
+        web3ProvidersStore.isConnected &&
+        web3ProvidersStore.provider.selectedAddress
+      ) {
         const [pooDataResponse] = await Promise.all([
           fetchPoolData(),
           updateUserData(),
@@ -197,12 +200,15 @@ export const usePool = (poolId: number) => {
   }
 
   watch(
-    () => web3ProvidersStore.provider.selectedAddress,
-    async newAddress => {
+    () => [
+      web3ProvidersStore.provider.selectedAddress,
+      web3ProvidersStore.isConnected,
+    ],
+    async ([newAddress, isConnected]) => {
       currentUserReward.value = null
       userPoolData.value = null
 
-      if (newAddress) {
+      if (newAddress && isConnected) {
         try {
           await updateUserData()
         } catch (error) {
@@ -217,7 +223,11 @@ export const usePool = (poolId: number) => {
     bus.on(BUS_EVENTS.changedPoolData, onChangePoolData)
     bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
     _currentUserRewardUpdateIntervalId = setInterval(async () => {
-      if (!web3ProvidersStore.provider.selectedAddress) return
+      if (
+        !web3ProvidersStore.isConnected ||
+        !web3ProvidersStore.provider.selectedAddress
+      )
+        return
 
       try {
         currentUserReward.value = await fetchCurrentUserReward()

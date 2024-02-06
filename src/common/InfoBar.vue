@@ -34,9 +34,7 @@
         </p>
       </li>
     </ul>
-    <div v-if="$slots.default" class="info-bar__slot-wrp">
-      <slot />
-    </div>
+    <slot />
   </div>
 </template>
 
@@ -113,11 +111,6 @@ withDefaults(
   padding-top: toRem(16);
   border-top: toRem(2) solid #494949;
 
-  &:not(:last-child) {
-    padding-bottom: toRem(16);
-    border-bottom: toRem(2) solid #494949;
-  }
-
   @include respond-to(medium) {
     margin-top: toRem(16);
     grid-gap: toRem(10);
@@ -188,13 +181,5 @@ withDefaults(
   @include body-3-semi-bold;
 
   @include text-ellipsis;
-}
-
-.info-bar__slot-wrp {
-  margin-top: toRem(30);
-
-  @include respond-to(medium) {
-    margin-top: toRem(32);
-  }
 }
 </style>

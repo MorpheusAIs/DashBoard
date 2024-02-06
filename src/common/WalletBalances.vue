@@ -152,7 +152,11 @@ onMounted(() => {
   bus.on(BUS_EVENTS.changedPoolData, onChangeBalances)
   bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
   _morUpdateIntervalId = setInterval(async () => {
-    if (!web3ProvidersStore.provider.selectedAddress) return
+    if (
+      !web3ProvidersStore.isConnected ||
+      !web3ProvidersStore.provider.selectedAddress
+    )
+      return
     const address = web3ProvidersStore.provider.selectedAddress
 
     try {
