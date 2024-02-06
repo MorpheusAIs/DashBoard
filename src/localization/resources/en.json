@@ -91,7 +91,9 @@
     "field-error_required": "Field must be filled in"
   },
   "wallet-dashboard": {
-    "address-copied": "The address was copied to the clipboard"
+    "address-copied": "The address was copied to the clipboard",
+    "add-token": "Add MOR token to MetaMask",
+    "disconnect": "Disconnect wallet"
   },
   "withdraw-form": {
     "amount-placeholder": "Enter stETH amount",

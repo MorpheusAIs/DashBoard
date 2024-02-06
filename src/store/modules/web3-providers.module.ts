@@ -19,12 +19,16 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       [BALANCE_CURRENCIES.stEth]: null,
       [BALANCE_CURRENCIES.mor]: null,
     } as Record<BALANCE_CURRENCIES, BigNumber | null>,
+    isAddingToken: false,
   }),
 
   getters: {
     isValidChain: state =>
+      state.isAddingToken ||
       String(state.provider.chainId) ===
-      (config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia),
+        (config.IS_MAINNET
+          ? ETHEREUM_CHAINS.ethereum
+          : ETHEREUM_CHAINS.sepolia),
     address: state => state.provider.selectedAddress,
   },
 

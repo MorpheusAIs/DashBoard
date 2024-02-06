@@ -187,7 +187,7 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
   :deep(.select-field__select-drop-menu) {
     top: 120%;
 
-    @include respond-to(small) {
+    @include respond-to(medium) {
       left: unset;
       right: 0;
     }
@@ -197,7 +197,7 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
 .wallet-balances__selected-balance {
   display: flex;
   align-items: center;
-  padding: toRem(12) toRem(6) toRem(12) toRem(16);
+  padding: 0 toRem(6) 0 toRem(16);
   color: var(--text-secondary-light);
 }
 

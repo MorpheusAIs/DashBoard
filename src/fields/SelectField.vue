@@ -211,7 +211,6 @@ $z-local-index: 2;
   display: flex;
   flex-direction: column;
   position: relative;
-  flex: 1;
 
   &--loading {
     &:before {
@@ -234,10 +233,12 @@ $z-local-index: 2;
   display: flex;
   flex-direction: column;
   position: relative;
+  height: 100%;
 }
 
 .select-field__select-head-wrp {
   position: relative;
+  height: 100%;
   width: 100%;
 }
 
@@ -245,8 +246,8 @@ $z-local-index: 2;
   text-align: right;
   color: var(--field-text);
   padding-right: toRem(28);
+  height: 100%;
   width: 100%;
-  min-height: toRem(48);
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
   &:disabled {
@@ -259,10 +260,6 @@ $z-local-index: 2;
   }
 
   @include body-1-semi-bold;
-
-  @include respond-to(medium) {
-    min-height: toRem(26);
-  }
 }
 
 .select-field__placeholder {
