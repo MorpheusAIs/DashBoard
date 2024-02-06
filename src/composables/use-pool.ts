@@ -24,8 +24,17 @@ export const usePool = (poolId: number) => {
   )
 
   const isClaimDisabled = computed<boolean>(() => {
-    if (!currentUserReward.value) return true
-    return currentUserReward.value.isZero()
+    if (
+      !poolData.value ||
+      !currentUserReward.value ||
+      currentUserReward.value.isZero()
+    )
+      return true
+
+    return (
+      currentTimestamp.value <=
+      poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber()
+    )
   })
 
   const isDepositDisabled = computed<boolean>(() => {
