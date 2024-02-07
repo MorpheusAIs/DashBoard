@@ -85,9 +85,10 @@
     "switch-btn": "Switch network"
   },
   "validations": {
+    "field-error_required": "Field must be filled in",
     "field-error_ether": "Field must be amount of ether",
     "field-error_maxEther": "Field must be within available amount of ether",
-    "field-error_required": "Field must be filled in"
+    "field-error_minEther": "Field must be greater than or equal to {min}"
   },
   "wallet-dashboard": {
     "address-copied": "The address was copied",

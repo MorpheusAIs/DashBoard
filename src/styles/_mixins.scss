@@ -89,7 +89,6 @@ $media-breakpoints: (
 @mixin field-msg-wrp {
   padding-top: var(--field-error-padding-top);
   display: flex;
-  align-items: center;
   gap: toRem(4);
 }
 

@@ -11,6 +11,7 @@
       <deposit-form
         class="deposit-modal__form"
         :pool-id="poolId"
+        :min-stake="minStake"
         @cancel="modal.close"
         @stake-tx-sent="modal.close"
       />
@@ -20,6 +21,7 @@
 
 <script lang="ts" setup>
 import { DepositForm } from '@/forms'
+import { type BigNumber } from '@/types'
 import BasicModal from '../BasicModal.vue'
 
 const emit = defineEmits<{
@@ -30,6 +32,7 @@ withDefaults(
   defineProps<{
     isShown: boolean
     poolId: number
+    minStake: BigNumber
     isCloseByClickOutside?: boolean
   }>(),
   {

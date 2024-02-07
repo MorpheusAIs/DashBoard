@@ -40,9 +40,10 @@
               />
             </div>
             <deposit-modal
-              v-if="!isDepositDisabled"
+              v-if="!isDepositDisabled && poolData?.minimalStake"
               v-model:is-shown="isDepositModalShown"
               :pool-id="poolId"
+              :min-stake="poolData.minimalStake"
             />
           </div>
         </transition>

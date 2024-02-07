@@ -1,5 +1,6 @@
 import { i18n } from '@/localization'
-import { parseUnits } from '@/utils'
+import { type BigNumber } from '@/types'
+import { formatUnits, parseUnits } from '@/utils'
 import { required as _required } from '@vuelidate/validators'
 import { type ValidationRule } from '@vuelidate/core'
 import { createI18nMessage, type MessageProps } from '@vuelidate/validators'
@@ -33,3 +34,17 @@ export const maxEther = (max: string): ValidationRule =>
       return false
     }
   })
+
+export const minEther = (min: BigNumber): ValidationRule => ({
+  $validator: value => {
+    try {
+      const parsedValue = parseUnits(value, 'ether')
+
+      return parsedValue.gte(min)
+    } catch (error) {
+      return false
+    }
+  },
+  $message: () =>
+    t('validations.field-error_minEther', { min: formatUnits(min, 18) }),
+})
