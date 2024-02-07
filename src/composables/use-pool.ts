@@ -50,6 +50,9 @@ export const usePool = (poolId: number) => {
     )
       return true
 
+    if (currentTimestamp.value < poolData.value.payoutStart.toNumber())
+      return false
+
     return userPoolData.value.lastStake.isZero()
       ? currentTimestamp.value <=
           poolData.value.payoutStart
