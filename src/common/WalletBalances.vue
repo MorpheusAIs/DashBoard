@@ -188,9 +188,7 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
     right: toRem(10);
   }
 
-  :deep(.select-field__select-drop-menu) {
-    top: 120%;
-
+  :deep(.drop-menu) {
     @include respond-to(medium) {
       left: unset;
       right: 0;
