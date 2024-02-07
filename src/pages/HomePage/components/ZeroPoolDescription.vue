@@ -6,7 +6,7 @@
         :key="idx"
         class="zero-pool-description__list-item"
       >
-        <span>{{ item }}</span>
+        {{ item }}
       </li>
     </ul>
     <p class="zero-pool-description__details">
