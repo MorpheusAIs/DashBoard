@@ -17,7 +17,11 @@
           <p v-else-if="subtitle" class="basic-modal__subtitle">
             {{ subtitle }}
           </p>
-          <button class="basic-modal__close-btn" @click="modal.close">
+          <button
+            v-if="hasCloseButton"
+            class="basic-modal__close-btn"
+            @click="modal.close"
+          >
             <app-icon class="basic-modal__close-btn-icon" :name="$icons.x" />
           </button>
         </div>
@@ -35,13 +39,15 @@ withDefaults(
   defineProps<{
     isShown: boolean
     isCloseByClickOutside?: boolean
+    hasCloseButton?: boolean
     title?: string
     subtitle?: string
   }>(),
   {
+    isCloseByClickOutside: true,
+    hasCloseButton: true,
     title: '',
     subtitle: '',
-    isCloseByClickOutside: true,
   },
 )
 
