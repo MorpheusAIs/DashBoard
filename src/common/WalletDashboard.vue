@@ -1,17 +1,27 @@
 <template>
-  <select-field model-value="" class="wallet-dashboard">
-    <template #head>
-      <div
-        v-tooltip="web3ProvidersStore.address"
-        class="wallet-dashboard__head-wrp"
-      >
-        <div ref="jazziconWrpElement" class="wallet-dashboard__jazzicon-wrp" />
-        <p class="wallet-dashboard__address">
-          {{ abbrCenter(web3ProvidersStore.address) }}
-        </p>
-      </div>
-    </template>
-    <template #default>
+  <div
+    ref="rootElement"
+    class="wallet-dashboard"
+    :class="{ 'wallet-dashboard--open': isDropMenuOpen }"
+  >
+    <div
+      v-tooltip="web3ProvidersStore.address"
+      class="wallet-dashboard__head-wrp"
+    >
+      <div ref="jazziconWrpElement" class="wallet-dashboard__jazzicon-wrp" />
+      <p class="wallet-dashboard__address">
+        {{ abbrCenter(web3ProvidersStore.address) }}
+      </p>
+      <app-icon
+        class="wallet-dashboard__head-indicator"
+        :name="$icons.chevronDown"
+      />
+      <button
+        class="wallet-dashboard__open-btn"
+        @click="isDropMenuOpen = !isDropMenuOpen"
+      />
+    </div>
+    <drop-menu v-model:is-shown="isDropMenuOpen">
       <div class="wallet-dashboard__address-wrp">
         <p>{{ abbrCenter(web3ProvidersStore.address, 9) }}</p>
         <copy-button
@@ -27,21 +37,25 @@
       >
         <span class="wallet-dashboard__option-text">{{ option.title }}</span>
       </button>
-    </template>
-  </select-field>
+    </drop-menu>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { useContext } from '@/composables'
 import { ETHEREUM_CHAINS } from '@/enums'
 import { abbrCenter, ErrorHandler } from '@/helpers'
-import { SelectField } from '@/fields'
 import { useWeb3ProvidersStore } from '@/store'
+import { onClickOutside } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import generateJazzicon from 'jazzicon'
+import AppIcon from './AppIcon.vue'
 import CopyButton from './CopyButton.vue'
+import DropMenu from './DropMenu.vue'
 
 const jazziconWrpElement = ref<HTMLDivElement | null>(null)
+const isDropMenuOpen = ref(false)
+const rootElement = ref<HTMLDivElement | null>(null)
 
 const { $config, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -102,18 +116,21 @@ const options = [
 
 watch(() => web3ProvidersStore.address, setJazzicon)
 
-onMounted(setJazzicon)
+onMounted(() => {
+  setJazzicon()
+  if (rootElement.value)
+    onClickOutside(rootElement, () => {
+      isDropMenuOpen.value = false
+    })
+})
 </script>
 
 <style lang="scss" scoped>
 .wallet-dashboard {
+  position: relative;
   background: var(--background-secondary-main);
   height: toRem(48);
   width: toRem(200);
-
-  :deep(.select-field__select-head-indicator) {
-    right: toRem(10);
-  }
 
   :deep(.drop-menu) {
     left: unset;
@@ -127,9 +144,33 @@ onMounted(setJazzicon)
 }
 
 .wallet-dashboard__head-wrp {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 toRem(6) 0 toRem(16);
+  height: 100%;
+  color: var(--text-secondary-light);
+}
+
+.wallet-dashboard__head-indicator {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  right: toRem(10);
+  transform: translateY(-50%);
+  width: toRem(24);
+  height: toRem(24);
+  transition: var(--field-transition-duration) var(--field-transition-timing);
+  color: inherit;
+
+  .wallet-dashboard--open & {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.wallet-dashboard__open-btn {
+  position: absolute;
+  inset: 0;
 }
 
 .wallet-dashboard__address {
