@@ -73,7 +73,7 @@ import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
-import { ether, maxEther, required } from '@/validators'
+import { ether, maxEther, minEther, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
@@ -97,7 +97,10 @@ const emit = defineEmits<{
   (e: 'stake-tx-sent', v: void): void
 }>()
 
-const props = defineProps<{ poolId: number }>()
+const props = defineProps<{
+  poolId: number
+  minStake: BigNumber
+}>()
 
 const uid = uuidv4()
 const isInitializing = ref(true)
@@ -164,17 +167,20 @@ const balanceOfForm = computed<FieldOption<BalanceOptionValue> | null>(
   () => balanceOptions.value[form.balanceOptionIdx] || null,
 )
 
+const validationRules = computed(() => ({
+  balanceOptionIdx: { required },
+  amount: {
+    required,
+    ether,
+    minEther: minEther(props.minStake),
+    ...(balanceOfForm.value?.value && {
+      maxEther: maxEther(balanceOfForm.value.value.amount),
+    }),
+  },
+}))
+
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
-  useFormValidation(form, {
-    balanceOptionIdx: { required },
-    amount: {
-      required,
-      ether,
-      ...(balanceOfForm.value?.value && {
-        maxEther: maxEther(balanceOfForm.value.value.amount),
-      }),
-    },
-  })
+  useFormValidation(form, validationRules)
 
 const submissionBtnText = computed<string>(() =>
   action.value === ACTIONS.approve

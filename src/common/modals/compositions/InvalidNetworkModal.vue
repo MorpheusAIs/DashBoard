@@ -59,9 +59,11 @@ const props = withDefaults(
   defineProps<{
     isShown: boolean
     isCloseByClickOutside?: boolean
+    hasCloseButton?: boolean
   }>(),
   {
     isCloseByClickOutside: false,
+    hasCloseButton: false,
   },
 )
 

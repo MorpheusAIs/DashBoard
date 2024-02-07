@@ -556,11 +556,11 @@ $button-transition: var(--transition-duration-fast)
     --button-icon-size: #{toRem(24)};
 
     gap: toRem(8);
-    height: toRem(48);
 
     &:not(.app-button--scheme-link) {
       padding: toRem(10) toRem(14);
       min-width: toRem(170);
+      height: toRem(48);
 
       @include body-4-medium;
 

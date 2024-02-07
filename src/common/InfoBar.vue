@@ -9,9 +9,14 @@
       </p>
     </div>
     <h1>{{ title }}</h1>
-    <p class="info-bar__description">
-      {{ description }}
-    </p>
+    <div class="info-bar__description-wrp">
+      <template v-if="$slots.description">
+        <slot name="description" />
+      </template>
+      <template v-else>
+        <p>{{ description }}</p>
+      </template>
+    </div>
     <ul v-if="indicators.length" class="info-bar__indicators">
       <li
         v-for="(indicator, idx) in indicators"
@@ -34,9 +39,7 @@
         </p>
       </li>
     </ul>
-    <div v-if="$slots.default" class="info-bar__slot-wrp">
-      <slot />
-    </div>
+    <slot />
   </div>
 </template>
 
@@ -98,7 +101,7 @@ withDefaults(
   }
 }
 
-.info-bar__description {
+.info-bar__description-wrp {
   margin-top: toRem(24);
 
   @include respond-to(medium) {
@@ -112,11 +115,6 @@ withDefaults(
   grid-gap: toRem(8);
   padding-top: toRem(16);
   border-top: toRem(2) solid #494949;
-
-  &:not(:last-child) {
-    padding-bottom: toRem(16);
-    border-bottom: toRem(2) solid #494949;
-  }
 
   @include respond-to(medium) {
     margin-top: toRem(16);
@@ -188,13 +186,5 @@ withDefaults(
   @include body-3-semi-bold;
 
   @include text-ellipsis;
-}
-
-.info-bar__slot-wrp {
-  margin-top: toRem(30);
-
-  @include respond-to(medium) {
-    margin-top: toRem(32);
-  }
 }
 </style>

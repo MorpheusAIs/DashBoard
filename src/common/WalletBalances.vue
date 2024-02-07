@@ -152,7 +152,11 @@ onMounted(() => {
   bus.on(BUS_EVENTS.changedPoolData, onChangeBalances)
   bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
   _morUpdateIntervalId = setInterval(async () => {
-    if (!web3ProvidersStore.provider.selectedAddress) return
+    if (
+      !web3ProvidersStore.isConnected ||
+      !web3ProvidersStore.provider.selectedAddress
+    )
+      return
     const address = web3ProvidersStore.provider.selectedAddress
 
     try {
@@ -184,10 +188,8 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
     right: toRem(10);
   }
 
-  :deep(.select-field__select-drop-menu) {
-    top: 120%;
-
-    @include respond-to(small) {
+  :deep(.drop-menu) {
+    @include respond-to(medium) {
       left: unset;
       right: 0;
     }
@@ -197,7 +199,7 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
 .wallet-balances__selected-balance {
   display: flex;
   align-items: center;
-  padding: toRem(12) toRem(6) toRem(12) toRem(16);
+  padding: 0 toRem(6) 0 toRem(16);
   color: var(--text-secondary-light);
 }
 

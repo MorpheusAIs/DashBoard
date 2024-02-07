@@ -1,10 +1,7 @@
 <template>
   <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
-      <div
-        v-if="web3ProvidersStore.provider.isConnected"
-        class="info-dashboard__wrp"
-      >
+      <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
         <progress-bar
           class="info-dashboard__progress-bar"
           :title="$t('info-dashboard.progress-bar-title')"

@@ -4,6 +4,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { type Erc1967ProxyType } from '@/types'
 import { type BigNumber, Time } from '@/utils'
 import { config } from '@config'
+import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useContract } from './use-contract'
 
@@ -18,9 +19,22 @@ export const usePool = (poolId: number) => {
   const isInitializing = ref(false)
   const isUserDataUpdating = ref(false)
 
+  const currentTimestamp = computed<number>(
+    () => currentTimestampMs.value / 1000,
+  )
+
   const isClaimDisabled = computed<boolean>(() => {
-    if (!currentUserReward.value) return true
-    return currentUserReward.value.isZero()
+    if (
+      !poolData.value ||
+      !currentUserReward.value ||
+      currentUserReward.value.isZero()
+    )
+      return true
+
+    return (
+      currentTimestamp.value <=
+      poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber()
+    )
   })
 
   const isDepositDisabled = computed<boolean>(() => {
@@ -29,9 +43,28 @@ export const usePool = (poolId: number) => {
   })
 
   const isWithdrawDisabled = computed<boolean>(() => {
-    if (!userPoolData.value?.deposited) return true
-    return userPoolData.value.deposited.isZero()
+    if (
+      !poolData.value ||
+      !userPoolData.value ||
+      userPoolData.value.deposited.isZero()
+    )
+      return true
+
+    if (currentTimestamp.value < poolData.value.payoutStart.toNumber())
+      return false
+
+    return userPoolData.value.lastStake.isZero()
+      ? currentTimestamp.value <=
+          poolData.value.payoutStart
+            .add(poolData.value.withdrawLockPeriod)
+            .toNumber()
+      : currentTimestamp.value <=
+          userPoolData.value.lastStake
+            .add(poolData.value.withdrawLockPeriodAfterStake)
+            .toNumber()
   })
+
+  const currentTimestampMs = useTimestamp()
 
   const { contractWithProvider: erc1967Proxy } = useContract(
     'ERC1967Proxy__factory',
@@ -128,7 +161,10 @@ export const usePool = (poolId: number) => {
     isInitializing.value = true
 
     try {
-      if (web3ProvidersStore.provider.selectedAddress) {
+      if (
+        web3ProvidersStore.isConnected &&
+        web3ProvidersStore.provider.selectedAddress
+      ) {
         const [pooDataResponse] = await Promise.all([
           fetchPoolData(),
           updateUserData(),
@@ -176,9 +212,15 @@ export const usePool = (poolId: number) => {
   }
 
   watch(
-    () => web3ProvidersStore.provider.selectedAddress,
-    async newAddress => {
-      if (newAddress) {
+    () => [
+      web3ProvidersStore.provider.selectedAddress,
+      web3ProvidersStore.isConnected,
+    ],
+    async ([newAddress, isConnected]) => {
+      currentUserReward.value = null
+      userPoolData.value = null
+
+      if (newAddress && isConnected) {
         try {
           await updateUserData()
         } catch (error) {
@@ -193,7 +235,11 @@ export const usePool = (poolId: number) => {
     bus.on(BUS_EVENTS.changedPoolData, onChangePoolData)
     bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
     _currentUserRewardUpdateIntervalId = setInterval(async () => {
-      if (!web3ProvidersStore.provider.selectedAddress) return
+      if (
+        !web3ProvidersStore.isConnected ||
+        !web3ProvidersStore.provider.selectedAddress
+      )
+        return
 
       try {
         currentUserReward.value = await fetchCurrentUserReward()

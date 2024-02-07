@@ -40,32 +40,30 @@
             :name="$icons.chevronDown"
           />
         </button>
-        <transition name="select-field__select-drop-menu">
-          <div v-if="isDropMenuOpen" class="select-field__select-drop-menu">
-            <template v-if="$slots.default">
-              <slot
-                :select-field="{
-                  select,
-                  isOpen: isDropMenuOpen,
-                  close: closeDropMenu,
-                  open: openDropMenu,
-                  toggle: toggleDropMenu,
-                }"
-              />
-            </template>
-            <template v-else-if="valueOptions?.length">
-              <button
-                v-for="(option, idx) in valueOptions"
-                :key="`${idx}-${option.value}`"
-                :disabled="isDisabled || isReadonly"
-                class="select-field__select-dropdown-item"
-                @click="select(option)"
-              >
-                {{ option.title }}
-              </button>
-            </template>
-          </div>
-        </transition>
+        <drop-menu v-model:is-shown="isDropMenuOpen">
+          <template v-if="$slots.default">
+            <slot
+              :select-field="{
+                select,
+                isOpen: isDropMenuOpen,
+                close: closeDropMenu,
+                open: openDropMenu,
+                toggle: toggleDropMenu,
+              }"
+            />
+          </template>
+          <template v-else-if="valueOptions?.length">
+            <button
+              v-for="(option, idx) in valueOptions"
+              :key="`${idx}-${option.value}`"
+              :disabled="isDisabled || isReadonly"
+              class="select-field__select-drop-menu-item"
+              @click="select(option)"
+            >
+              {{ option.title }}
+            </button>
+          </template>
+        </drop-menu>
       </div>
     </div>
     <transition
@@ -90,12 +88,11 @@
 </template>
 
 <script lang="ts" setup>
-import { AppIcon } from '@/common'
+import { AppIcon, DropMenu } from '@/common'
 import { FieldOption } from '@/types'
 import { onClickOutside } from '@vueuse/core'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, ref, useAttrs, watch } from 'vue'
-import { onBeforeRouteUpdate } from 'vue-router'
 
 const props = withDefaults(
   defineProps<{
@@ -135,10 +132,6 @@ const attrs = useAttrs()
 const selectElement = ref<HTMLDivElement | null>(null)
 
 const isDropMenuOpen = ref(false)
-
-onBeforeRouteUpdate(() => {
-  closeDropMenu()
-})
 
 const isDisabled = computed(() =>
   ['', 'disabled', true].includes(attrs.disabled as string | boolean),
@@ -211,7 +204,6 @@ $z-local-index: 2;
   display: flex;
   flex-direction: column;
   position: relative;
-  flex: 1;
 
   &--loading {
     &:before {
@@ -234,10 +226,12 @@ $z-local-index: 2;
   display: flex;
   flex-direction: column;
   position: relative;
+  height: 100%;
 }
 
 .select-field__select-head-wrp {
   position: relative;
+  height: 100%;
   width: 100%;
 }
 
@@ -245,8 +239,8 @@ $z-local-index: 2;
   text-align: right;
   color: var(--field-text);
   padding-right: toRem(28);
+  height: 100%;
   width: 100%;
-  min-height: toRem(48);
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
   &:disabled {
@@ -259,10 +253,6 @@ $z-local-index: 2;
   }
 
   @include body-1-semi-bold;
-
-  @include respond-to(medium) {
-    min-height: toRem(26);
-  }
 }
 
 .select-field__placeholder {
@@ -286,50 +276,7 @@ $z-local-index: 2;
   }
 }
 
-.select-field__select-drop-menu {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  overflow: hidden auto;
-  left: 0;
-  width: 100%;
-  min-width: max-content;
-  max-height: 500%;
-  z-index: $z-local-index;
-  background: var(--field-bg-primary);
-  box-shadow: 0 toRem(4) toRem(16) rgba(#a0a0a0, 0.25);
-
-  .select-field--dropdown & {
-    top: 137.5%;
-  }
-
-  .select-field--dropup & {
-    bottom: 137.5%;
-  }
-}
-
-.select-field__select-drop-menu-enter-active {
-  animation: drop-menu var(--field-transition-duration)
-    var(--transition-timing-default);
-}
-
-.select-field__select-drop-menu-leave-active {
-  animation: drop-menu var(--field-transition-duration)
-    var(--transition-timing-default) reverse;
-}
-
-@keyframes drop-menu {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.select-field__select-dropdown-item {
+.select-field__select-drop-menu-item {
   $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
 
   text-align: right;

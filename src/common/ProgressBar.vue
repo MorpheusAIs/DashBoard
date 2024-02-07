@@ -27,6 +27,8 @@ const props = withDefaults(
 )
 
 const progressPercent = computed<number>(() => {
+  if (props.progress.total.isZero()) return 0
+
   const valueString = props.progress.value.toString()
   const totalString = props.progress.total.toString()
 

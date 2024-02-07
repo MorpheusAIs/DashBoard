@@ -3,6 +3,7 @@ export enum ICON_NAMES {
   arbitrum = 'arbitrum',
   checkCircle = 'check-circle',
   chevronDown = 'chevron-down',
+  copy = 'copy',
   ethereumAlt1 = 'ethereum-alt-1',
   ethereum = 'ethereum',
   exclamationCircle = 'exclamation-circle',
