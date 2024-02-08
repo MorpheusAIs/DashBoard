@@ -6,10 +6,10 @@ export enum ETHEREUM_CHAINS {
 }
 
 export enum ETHEREUM_RPC_URLS {
-  ethereum = 'https://mainnet.infura.io/v3/6a6dbd61d68f4101b0a40141e89a5936',
-  sepolia = 'https://sepolia.infura.io/v3/6a6dbd61d68f4101b0a40141e89a5936',
-  arbitrum = 'https://arbitrum-mainnet.infura.io/v3/6a6dbd61d68f4101b0a40141e89a5936',
-  arbitrumSepolia = 'https://arbitrum-sepolia.infura.io/v3/6a6dbd61d68f4101b0a40141e89a5936',
+  ethereum = 'https://eth.llamarpc.com',
+  sepolia = 'https://ethereum-sepolia.publicnode.com',
+  arbitrum = 'https://arbitrum-one.publicnode.com',
+  arbitrumSepolia = 'https://sepolia-rollup.arbitrum.io/rpc',
 }
 
 export enum ETHEREUM_EXPLORER_URLS {
