@@ -127,6 +127,7 @@ $z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: toRem(20);
 }
 
 .app-navbar-mobile .app-navbar-mobile__link {
@@ -159,6 +160,10 @@ $z-index: 1000;
   align-items: center;
   gap: toRem(20);
   margin: toRem(76) auto 0;
+
+  @include respond-to(small) {
+    flex-direction: column-reverse;
+  }
 }
 
 .app-navbar-mobile__ext-backdrop {

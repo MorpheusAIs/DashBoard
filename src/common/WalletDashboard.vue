@@ -23,7 +23,9 @@
     </div>
     <drop-menu v-model:is-shown="isDropMenuOpen">
       <div class="wallet-dashboard__address-wrp">
-        <p>{{ abbrCenter(web3ProvidersStore.address, 9) }}</p>
+        <p class="wallet-dashboard__address">
+          {{ abbrCenter(web3ProvidersStore.address, 9) }}
+        </p>
         <copy-button
           :content="web3ProvidersStore.address"
           :message="$t('wallet-dashboard.address-copied')"

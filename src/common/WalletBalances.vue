@@ -193,6 +193,15 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
       left: unset;
       right: 0;
     }
+
+    @include respond-to(small) {
+      left: 0;
+      right: unset;
+    }
+  }
+
+  @include respond-to(medium) {
+    width: toRem(200);
   }
 }
 
@@ -233,6 +242,11 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
     $color: #ffffff;
 
     color: $color;
+  }
+
+  @include respond-to(medium) {
+    height: toRem(28);
+    width: toRem(28);
   }
 }
 
