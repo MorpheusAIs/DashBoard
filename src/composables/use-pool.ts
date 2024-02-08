@@ -226,7 +226,9 @@ export const usePool = (poolId: number) => {
     _currentUserRewardUpdateIntervalId = setInterval(async () => {
       if (
         !web3ProvidersStore.isConnected ||
-        !web3ProvidersStore.provider.selectedAddress
+        !web3ProvidersStore.provider.selectedAddress ||
+        !web3ProvidersStore.isValidChain ||
+        web3ProvidersStore.isAddingToken
       )
         return
 
