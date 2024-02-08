@@ -1,6 +1,7 @@
-import { type ETHEREUM_RPC_URLS } from '@/enums'
+import { ETHEREUM_RPC_URLS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { factories } from '@/types'
+import { config } from '@/config'
 import { providers } from 'ethers'
 import { computed, ref, type ComputedRef, type Ref, unref } from 'vue'
 
@@ -36,13 +37,19 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
 
   const web3ProvidersStore = useWeb3ProvidersStore()
 
-  const provider: I['provider'] = computed(() =>
-    rpcUrl
-      ? new providers.JsonRpcProvider(rpcUrl)
-      : new providers.Web3Provider(
-          web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
-        ),
-  )
+  const provider: I['provider'] = computed(() => {
+    if (
+      !rpcUrl ||
+      (web3ProvidersStore.provider.isConnected && rpcUrl === config.IS_MAINNET
+        ? ETHEREUM_RPC_URLS.ethereum
+        : ETHEREUM_RPC_URLS.sepolia)
+    )
+      return new providers.Web3Provider(
+        web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
+      )
+
+    return new providers.JsonRpcProvider(rpcUrl)
+  })
 
   const signer: I['signer'] = computed(() => provider.value.getSigner())
 
