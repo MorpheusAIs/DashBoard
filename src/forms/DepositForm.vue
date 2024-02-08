@@ -172,7 +172,7 @@ const validationRules = computed(() => ({
   amount: {
     required,
     ether,
-    minEther: minEther(props.minStake),
+    minEther: minEther(props.minStake.add(parseUnits('0.001', 'ether'))),
     ...(balanceOfForm.value?.value && {
       maxEther: maxEther(balanceOfForm.value.value.amount),
     }),
