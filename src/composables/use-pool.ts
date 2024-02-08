@@ -2,7 +2,7 @@ import { ETHEREUM_RPC_URLS } from '@/enums'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type Erc1967ProxyType } from '@/types'
-import { type BigNumber, Time } from '@/utils'
+import { type BigNumber } from '@/utils'
 import { config } from '@config'
 import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -87,11 +87,14 @@ export const usePool = (poolId: number) => {
   const fetchDailyReward = async (): Promise<BigNumber> => {
     if (!poolData.value) throw new Error('poolData unavailable')
 
-    const currentTimestamp = new Time().timestamp
+    if (currentTimestamp.value <= poolData.value.payoutStart.toNumber())
+      return poolData.value.initialReward
+
     const decreaseIntervalTimestamp = poolData.value.decreaseInterval.toNumber()
 
     const startTimestamp =
-      currentTimestamp - (currentTimestamp % decreaseIntervalTimestamp)
+      currentTimestamp.value -
+      (currentTimestamp.value % decreaseIntervalTimestamp)
     const endTimestamp = startTimestamp + decreaseIntervalTimestamp
 
     return erc1967Proxy.value.getPeriodReward(
