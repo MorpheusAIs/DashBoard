@@ -164,7 +164,7 @@ onMounted(() => {
     } catch (error) {
       ErrorHandler.process(error)
     }
-  }, 30000)
+  }, 5 * 60 * 1000)
 })
 
 onBeforeUnmount(() => {

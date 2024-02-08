@@ -86,22 +86,8 @@ export const usePool = (poolId: number) => {
 
   const fetchDailyReward = async (): Promise<BigNumber> => {
     if (!poolData.value) throw new Error('poolData unavailable')
-
-    if (currentTimestamp.value <= poolData.value.payoutStart.toNumber())
-      return poolData.value.initialReward
-
-    const decreaseIntervalTimestamp = poolData.value.decreaseInterval.toNumber()
-
-    const startTimestamp =
-      currentTimestamp.value -
-      (currentTimestamp.value % decreaseIntervalTimestamp)
-    const endTimestamp = startTimestamp + decreaseIntervalTimestamp
-
-    return erc1967Proxy.value.getPeriodReward(
-      poolId,
-      startTimestamp,
-      endTimestamp,
-    )
+    // TODO: calculate daily reward
+    return poolData.value.initialReward
   }
 
   const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
@@ -240,7 +226,9 @@ export const usePool = (poolId: number) => {
     _currentUserRewardUpdateIntervalId = setInterval(async () => {
       if (
         !web3ProvidersStore.isConnected ||
-        !web3ProvidersStore.provider.selectedAddress
+        !web3ProvidersStore.provider.selectedAddress ||
+        !web3ProvidersStore.isValidChain ||
+        web3ProvidersStore.isAddingToken
       )
         return
 
