@@ -14,37 +14,61 @@
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
 import { useContext } from '@/composables'
+import { ROUTE_NAMES } from '@/enums'
+import { useRoute } from '@/router'
 import { type Tab } from '@/types'
-import { config } from '@config'
+import { computed } from 'vue'
 
 const { $routes, $t } = useContext()
+const { matched: routeMatched } = useRoute()
 
-const tabs: Tab[] = [
-  {
-    title: $t('home-page.capital-tab'),
-    id: 'capital',
-    route: { name: $routes.appCapital },
-  },
-  {
-    title: $t('home-page.coders-tab'),
-    id: 'coders',
-    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
-  },
-  {
-    title: $t('home-page.compute-tab'),
-    id: 'compute',
-    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
-  },
-  {
-    title: $t('home-page.community-tab'),
-    id: 'community',
-    ...(!config.IS_MAINNET
-      ? { route: { name: $routes.appCommunity } }
-      : {
+const tabs = computed<Tab[]>(() =>
+  routeMatched.find(route => route.name === ROUTE_NAMES.appMainnet)
+    ? [
+        {
+          title: $t('home-page.capital-tab'),
+          id: 'capital',
+          route: { name: $routes.appMainnetCapital },
+        },
+        {
+          title: $t('home-page.coders-tab'),
+          id: 'coders',
+          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+        },
+        {
+          title: $t('home-page.compute-tab'),
+          id: 'compute',
+          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
+        },
+        {
+          title: $t('home-page.community-tab'),
+          id: 'community',
           href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
-        }),
-  },
-]
+        },
+      ]
+    : [
+        {
+          title: $t('home-page.capital-tab'),
+          id: 'capital',
+          route: { name: $routes.appTestnetCapital },
+        },
+        {
+          title: $t('home-page.coders-tab'),
+          id: 'coders',
+          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+        },
+        {
+          title: $t('home-page.compute-tab'),
+          id: 'compute',
+          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
+        },
+        {
+          title: $t('home-page.community-tab'),
+          id: 'community',
+          route: { name: $routes.appTestnetCommunity },
+        },
+      ],
+)
 </script>
 
 <style lang="scss" scoped>
