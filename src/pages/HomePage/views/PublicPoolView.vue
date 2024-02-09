@@ -74,6 +74,13 @@
       <p class="public-pool-view__dashboard-description">
         {{ $t(`home-page.public-pool-view.dashboard-description--${poolId}`) }}
       </p>
+      <p v-if="poolData" class="public-pool-view__dashboard-note">
+        {{
+          $t(`home-page.public-pool-view.dashboard-note--${poolId}`, {
+            daysCount: poolData.withdrawLockPeriod.div(24 * 60 * 60),
+          })
+        }}
+      </p>
       <withdraw-modal
         v-if="!isWithdrawDisabled && userPoolData"
         v-model:is-shown="isWithdrawModalShown"
@@ -259,5 +266,14 @@ const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
   color: $color;
 
   @include body-5-regular;
+}
+
+.public-pool-view__dashboard-note {
+  $color: #cccccc;
+
+  margin-top: toRem(24);
+  color: $color;
+
+  @include body-italic;
 }
 </style>
