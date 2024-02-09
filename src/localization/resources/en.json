@@ -85,6 +85,10 @@
     "subtitle": "Your wallet is connected to the unsupported chain. Please, switch to another network:",
     "switch-btn": "Switch network"
   },
+  "network-switch": {
+    "mainnet": "Ethereum Mainnet",
+    "testnet": "Ethereum Sepolia"
+  },
   "validations": {
     "field-error_required": "Field must be filled in",
     "field-error_ether": "Field must be amount of ether",

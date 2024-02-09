@@ -22,6 +22,7 @@
         color="secondary"
       />
       <div v-else class="app-navbar__wallet-info-wrp">
+        <network-switch />
         <wallet-balances />
         <wallet-dashboard />
       </div>
@@ -35,6 +36,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
+import NetworkSwitch from './NetworkSwitch.vue'
 import WalletBalances from './WalletBalances.vue'
 import WalletDashboard from './WalletDashboard.vue'
 
