@@ -83,7 +83,7 @@ export const usePool = (poolId: number) => {
     )
   }
 
-  const fetchDailyReward = async (): Promise<BigNumber> => {
+  const getDailyReward = (): BigNumber => {
     if (!poolData.value) throw new Error('poolData unavailable')
 
     const payoutStartTimestamp = poolData.value.payoutStart.toNumber()
@@ -175,7 +175,7 @@ export const usePool = (poolId: number) => {
         poolData.value = await fetchPoolData()
       }
 
-      if (poolData.value) dailyReward.value = await fetchDailyReward()
+      if (poolData.value) dailyReward.value = getDailyReward()
     } catch (error) {
       ErrorHandler.process(error)
     }
