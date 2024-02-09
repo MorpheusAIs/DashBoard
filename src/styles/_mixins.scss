@@ -368,6 +368,15 @@ $media-breakpoints: (
   letter-spacing: 0;
 }
 
+@mixin body-italic {
+  font-family: var(--app-font-family);
+  font-size: toRem(15);
+  font-style: italic;
+  font-weight: 400;
+  line-height: toRem(22);
+  letter-spacing: 0;
+}
+
 @keyframes shine {
   to {
     background-position-x: -200%;
