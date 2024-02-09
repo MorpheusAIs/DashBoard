@@ -188,18 +188,6 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
     right: toRem(10);
   }
 
-  :deep(.drop-menu) {
-    @include respond-to(medium) {
-      left: unset;
-      right: 0;
-    }
-
-    @include respond-to(small) {
-      left: 0;
-      right: unset;
-    }
-  }
-
   @include respond-to(medium) {
     width: toRem(200);
   }

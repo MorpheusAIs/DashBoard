@@ -133,16 +133,6 @@ onMounted(() => {
   background: var(--background-secondary-main);
   height: toRem(48);
   width: toRem(200);
-
-  :deep(.drop-menu) {
-    left: unset;
-    right: 0;
-
-    @include respond-to(medium) {
-      left: 0;
-      right: unset;
-    }
-  }
 }
 
 .wallet-dashboard__head-wrp {

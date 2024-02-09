@@ -60,7 +60,7 @@ $z-index: 2;
   flex-direction: column;
   position: absolute;
   overflow: hidden auto;
-  left: 0;
+  right: 0;
   width: 100%;
   min-width: max-content;
   max-height: 500%;
