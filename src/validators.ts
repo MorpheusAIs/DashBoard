@@ -1,6 +1,6 @@
 import { i18n } from '@/localization'
 import { type BigNumber } from '@/types'
-import { formatUnits, parseUnits } from '@/utils'
+import { formatUnits, isAddress, parseUnits } from '@/utils'
 import { required as _required } from '@vuelidate/validators'
 import { type ValidationRule } from '@vuelidate/core'
 import { createI18nMessage, type MessageProps } from '@vuelidate/validators'
@@ -13,6 +13,8 @@ const messagePath = ({ $validator }: MessageProps) =>
 const withI18nMessage = createI18nMessage({ t, messagePath })
 
 export const required = <ValidationRule>withI18nMessage(_required)
+
+export const address = <ValidationRule>withI18nMessage(isAddress)
 
 export const ether = <ValidationRule>withI18nMessage(value => {
   try {
