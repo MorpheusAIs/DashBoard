@@ -3,14 +3,17 @@
     "token-contract-link": "Token Contract",
     "community-website-link": "Community Website"
   },
+  "claim-form": {
+    "address-placeholder": "Enter address",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Claim",
+    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
   "claim-modal": {
     "title": "Claim rewards",
     "subtitle": "You are about to Claim Rewards. Your current reward - {reward}",
-    "reward": "{amount} MOR.",
-    "close-btn": "Cancel",
-    "claim-btn": "Claim",
-    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
-    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "reward": "{amount} MOR."
   },
   "connect-wallet-button": {
     "to-app": "Go To Metamask",
@@ -86,6 +89,7 @@
     "switch-btn": "Switch network"
   },
   "validations": {
+    "field-error_address": "Field must be a valid address with prefix \"0x\"",
     "field-error_required": "Field must be filled in",
     "field-error_ether": "Field must be amount of ether",
     "field-error_maxEther": "Field must be within available amount of ether",
