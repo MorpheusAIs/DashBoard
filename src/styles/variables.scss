@@ -156,6 +156,11 @@
   --field-error-icon: var(--error-main);
   --field-error-padding-top: #{toRem(10)};
 
+  @include respond-to(medium) {
+    --field-error-font-size: #{toRem(14)};
+    --field-error-line-height: #{toRem(20)};
+  }
+
   /* border */
   --field-border: var(--border-primary-main);
   --field-border-hover: var(--border-primary-light);
