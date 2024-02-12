@@ -1,6 +1,10 @@
 <template>
-  <select-field v-model="network" class="network-switch">
-    <template #head>
+  <select-field
+    class="network-switch"
+    :model-value="network"
+    @update:model-value="onNetworkUpdate"
+  >
+    <template v-if="network" #head>
       <div class="network-switch__head-wrp">
         <span class="network-switch__network">
           {{ network.title }}
@@ -25,23 +29,66 @@
 <script lang="ts" setup>
 import { useContext } from '@/composables'
 import { SelectField } from '@/fields'
+import { ErrorHandler } from '@/helpers'
+import { useRouter } from '@/router'
 import { type FieldOption } from '@/types'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
-const { $t } = useContext()
+enum Networks {
+  mainnet = 'mainnet',
+  testnet = 'testnet',
+}
 
-const networkOptions = computed<FieldOption<string>[]>(() => [
+const { $routes, $t } = useContext()
+const { currentRoute, push: pushRoute } = useRouter()
+
+const networkOptions = computed<FieldOption<Networks>[]>(() => [
   {
     title: $t('network-switch.mainnet'),
-    value: $t('network-switch.mainnet'),
+    value: Networks.mainnet,
   },
   {
     title: $t('network-switch.testnet'),
-    value: $t('network-switch.testnet'),
+    value: Networks.testnet,
   },
 ])
 
-const network = ref(networkOptions.value[0])
+const network = computed(() => {
+  const matched = currentRoute.value.matched
+
+  if (matched.find(route => route.name === $routes.appMainnet))
+    return networkOptions.value[0]
+
+  if (matched.find(route => route.name === $routes.appTestnet))
+    return networkOptions.value[1]
+
+  return null
+})
+
+const onNetworkUpdate = async (networkOption: FieldOption<Networks>) => {
+  try {
+    if (networkOption.value === Networks.mainnet) {
+      switch (currentRoute.value.name) {
+        case $routes.appTestnetCapital:
+          await pushRoute({ name: $routes.appMainnetCapital })
+          return
+        default:
+          await pushRoute({ name: $routes.appMainnet })
+          return
+      }
+    }
+
+    switch (currentRoute.value.name) {
+      case $routes.appMainnetCapital:
+        await pushRoute({ name: $routes.appTestnetCapital })
+        break
+      default:
+        await pushRoute({ name: $routes.appTestnet })
+    }
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
 </script>
 
 <style lang="scss" scoped>
