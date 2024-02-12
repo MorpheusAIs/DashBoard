@@ -281,7 +281,7 @@ export interface ERC1967ProxyInterface extends utils.Interface {
     "PoolCreated(uint256,(uint128,uint128,uint128,uint128,uint128,uint256,uint256,uint256,bool))": EventFragment;
     "PoolEdited(uint256,(uint128,uint128,uint128,uint128,uint128,uint256,uint256,uint256,bool))": EventFragment;
     "Upgraded(address)": EventFragment;
-    "UserClaimed(uint256,address,uint256)": EventFragment;
+    "UserClaimed(uint256,address,address,uint256)": EventFragment;
     "UserStaked(uint256,address,uint256)": EventFragment;
     "UserWithdrawn(uint256,address,uint256)": EventFragment;
   };
@@ -382,10 +382,11 @@ export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 export interface UserClaimedEventObject {
   poolId: BigNumber;
   user: string;
+  receiver: string;
   amount: BigNumber;
 }
 export type UserClaimedEvent = TypedEvent<
-  [BigNumber, string, BigNumber],
+  [BigNumber, string, string, BigNumber],
   UserClaimedEventObject
 >;
 
@@ -458,7 +459,7 @@ export interface ERC1967Proxy extends BaseContract {
 
     claim(
       poolId_: BigNumberish,
-      user_: string,
+      receiver_: string,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -613,7 +614,7 @@ export interface ERC1967Proxy extends BaseContract {
 
   claim(
     poolId_: BigNumberish,
-    user_: string,
+    receiver_: string,
     overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -766,7 +767,7 @@ export interface ERC1967Proxy extends BaseContract {
 
     claim(
       poolId_: BigNumberish,
-      user_: string,
+      receiver_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -953,14 +954,16 @@ export interface ERC1967Proxy extends BaseContract {
     "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
     Upgraded(implementation?: string | null): UpgradedEventFilter;
 
-    "UserClaimed(uint256,address,uint256)"(
+    "UserClaimed(uint256,address,address,uint256)"(
       poolId?: BigNumberish | null,
       user?: string | null,
+      receiver?: null,
       amount?: null
     ): UserClaimedEventFilter;
     UserClaimed(
       poolId?: BigNumberish | null,
       user?: string | null,
+      receiver?: null,
       amount?: null
     ): UserClaimedEventFilter;
 
@@ -1004,7 +1007,7 @@ export interface ERC1967Proxy extends BaseContract {
 
     claim(
       poolId_: BigNumberish,
-      user_: string,
+      receiver_: string,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1120,7 +1123,7 @@ export interface ERC1967Proxy extends BaseContract {
 
     claim(
       poolId_: BigNumberish,
-      user_: string,
+      receiver_: string,
       overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
