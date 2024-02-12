@@ -15,15 +15,17 @@
 import { AppTabs } from '@/common'
 import { useContext } from '@/composables'
 import { ROUTE_NAMES } from '@/enums'
-import { useRoute } from '@/router'
+import { useRouter } from '@/router'
 import { type Tab } from '@/types'
 import { computed } from 'vue'
 
 const { $routes, $t } = useContext()
-const { matched: routeMatched } = useRoute()
+const { currentRoute } = useRouter()
 
 const tabs = computed<Tab[]>(() =>
-  routeMatched.find(route => route.name === ROUTE_NAMES.appMainnet)
+  currentRoute.value.matched.find(
+    route => route.name === ROUTE_NAMES.appMainnet,
+  )
     ? [
         {
           title: $t('home-page.capital-tab'),
