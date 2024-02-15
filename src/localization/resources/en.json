@@ -7,8 +7,8 @@
     "address-placeholder": "Enter address",
     "cancel-btn": "Cancel",
     "submit-btn": "Claim",
-    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
-    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "claim-modal": {
     "title": "Claim rewards",
@@ -28,12 +28,12 @@
       "deposit": "Deposit",
       "approve": "Approve"
     },
-    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
-    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "deposit-modal": {
     "title": "Deposit",
-    "subtitle": "Your funds will be redirected to the platform. Enter the desired amount, in case of the first transaction, you will need to authorize the transfer of funds."
+    "subtitle": "Your funds will be redirected to the platform. Enter the desired amount, in case of the first transaction, you will need to approve the transfer of funds."
   },
   "home-page": {
     "capital-tab": "Capital",
@@ -71,7 +71,7 @@
       "user-deposit-title": "Your deposit",
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim MOR",
-      "dashboard-description--0": "Upon withdrawal, your deposit will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
+      "dashboard-description--0": "Upon withdrawal, your deposited stETH will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
       "dashboard-note--0": "Note: You can withdraw your stETH {daysCount} days after deposit."
     }
   },
@@ -84,31 +84,31 @@
     "status--private": "Non-Automated"
   },
   "invalid-network-modal": {
-    "title": "Invalid network",
-    "subtitle": "Your wallet is connected to the unsupported chain. Please, switch to another network:",
-    "switch-btn": "Switch network"
+    "title": "Invalid Network",
+    "subtitle": "Your wallet is connected to an unsupported chain. Please, switch to another network:",
+    "switch-btn": "Switch Network"
   },
   "validations": {
     "field-error_address": "Field must be a valid address with prefix \"0x\"",
     "field-error_required": "Field must be filled in",
-    "field-error_ether": "Field must be amount of ether",
-    "field-error_maxEther": "Field must be within available amount of ether",
+    "field-error_ether": "Please enter an amount of stETH",
+    "field-error_maxEther": "Insufficient amount of stETH",
     "field-error_minEther": "Field must be greater than or equal to {min}"
   },
   "wallet-dashboard": {
-    "address-copied": "The address was copied",
+    "address-copied": "Address copied",
     "add-token": "Add MOR token to MetaMask",
-    "disconnect": "Disconnect wallet"
+    "disconnect": "Disconnect Wallet"
   },
   "withdraw-form": {
-    "amount-placeholder": "Enter stETH amount",
+    "amount-placeholder": "Enter stETH amount to withdraw",
     "cancel-btn": "Cancel",
     "submit-btn": "Withdraw",
-    "tx-sent-message": "The transaction was sent, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
-    "success-message": "The transaction was confirmed, we can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "withdraw-modal": {
-    "title": "Withdraw funds",
+    "title": "Withdraw Funds",
     "subtitle": "Specify the amount to be withdrawn. The funds will be sent to your wallet.",
     "available-to-withdraw-title": "Available to withdraw"
   },
