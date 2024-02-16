@@ -8,6 +8,11 @@ import type { ERC1967Proxy, ERC1967ProxyInterface } from "../ERC1967Proxy";
 
 const _abi = [
   {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -252,6 +257,12 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "uint256",
         name: "amount",
         type: "uint256",
@@ -418,7 +429,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "user_",
+        name: "receiver_",
         type: "address",
       },
     ],
