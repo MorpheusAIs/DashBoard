@@ -1,4 +1,3 @@
-import { ROUTE_NAMES } from '@/enums'
 import { useContext } from './use-context'
 
 export const useNavLinks = () => {
@@ -6,8 +5,8 @@ export const useNavLinks = () => {
 
   const links = [
     {
-      text: $t('app-navbar.token-contract-link'),
-      route: { name: ROUTE_NAMES.app },
+      text: $t('app-navbar.contract-faq-link'),
+      href: 'https://github.com/MorpheusAIs/Docs/blob/main/Guide/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
     },
     {
       text: $t('app-navbar.community-website-link'),
