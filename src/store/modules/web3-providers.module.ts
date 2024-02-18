@@ -1,5 +1,7 @@
 import { useProvider } from '@/composables'
-import { ETHEREUM_CHAINS, SUPPORTED_PROVIDERS } from '@/enums'
+import { ETHEREUM_CHAINS, ROUTE_NAMES, SUPPORTED_PROVIDERS } from '@/enums'
+import { sleep } from '@/helpers'
+import { useRouter } from '@/router'
 import { type BigNumber } from '@/types'
 import { config } from '@config'
 import { defineStore } from 'pinia'
@@ -21,6 +23,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
     } as Record<BALANCE_CURRENCIES, BigNumber | null>,
     isAddingToken: false,
     hasConnectedProvider: false,
+    _router: useRouter(),
   }),
 
   persist: {
@@ -29,12 +32,35 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
   },
 
   getters: {
-    isValidChain: state =>
-      state.isAddingToken ||
-      String(state.provider.chainId) ===
-        (config.IS_MAINNET
-          ? ETHEREUM_CHAINS.ethereum
-          : ETHEREUM_CHAINS.sepolia),
+    isMainnet: state =>
+      Boolean(
+        state._router.currentRoute.matched.find(
+          route => route.name === ROUTE_NAMES.appMainnet,
+        ),
+      ),
+    contractAddressesMap(): Record<string, string> {
+      return {
+        erc1967Proxy: this.isMainnet
+          ? config.ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS
+          : config.ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
+        stEth: this.isMainnet
+          ? config.STETH_MAINNET_CONTRACT_ADDRESS
+          : config.STETH_TESTNET_CONTRACT_ADDRESS,
+        mor: this.isMainnet
+          ? config.MOR_MAINNET_CONTRACT_ADDRESS
+          : config.MOR_TESTNET_CONTRACT_ADDRESS,
+        endpoint: this.isMainnet
+          ? config.ENDPOINT_MAINNET_CONTRACT_ADDRESS
+          : config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
+      }
+    },
+    isValidChain(state): boolean {
+      return (
+        state.isAddingToken ||
+        String(state.provider.chainId) ===
+          (this.isMainnet ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia)
+      )
+    },
     address: state => state.provider.selectedAddress,
     isConnected: state =>
       state.provider.isConnected && state.hasConnectedProvider,
@@ -47,6 +73,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
 
       if (providerDetector.providers.metamask)
         await this.provider.selectProvider(SUPPORTED_PROVIDERS.Metamask)
+
+      // store requires time for sync with vue-router
+      await sleep(1000)
     },
   },
 })

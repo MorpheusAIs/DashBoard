@@ -41,9 +41,9 @@ import { useContext, useContract, useFormValidation } from '@/composables'
 import { ETHEREUM_EXPLORER_URLS } from '@/enums'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
 import { BigNumber, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, required } from '@/validators'
-import { config } from '@config'
 import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
@@ -63,10 +63,11 @@ const form = reactive({
 })
 
 const { $t } = useContext()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const { contractWithSigner: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+  computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
 )
 
 const availableEther = computed<string>(() => toEther(props.availableAmount))
@@ -87,7 +88,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.IS_MAINNET
+      web3ProvidersStore.isMainnet
         ? ETHEREUM_EXPLORER_URLS.ethereum
         : ETHEREUM_EXPLORER_URLS.sepolia,
       tx.hash,

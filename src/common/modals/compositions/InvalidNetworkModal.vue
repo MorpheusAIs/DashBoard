@@ -2,7 +2,7 @@
   <basic-modal
     v-bind="props"
     class="invalid-network-modal"
-    :class="{ 'invalid-network-modal--mainnet': $config.IS_MAINNET }"
+    :class="{ 'invalid-network-modal--mainnet': web3ProvidersStore.isMainnet }"
     :title="$t('invalid-network-modal.title')"
     :subtitle="$t('invalid-network-modal.subtitle')"
     @update:is-shown="emit('update:is-shown', $event)"
@@ -15,7 +15,7 @@
         />
         <span class="invalid-network-modal__network-title">
           <!-- eslint-disable-next-line vue-i18n/no-raw-text -->
-          {{ config.IS_MAINNET ? 'Ethereum' : 'Ethereum Sepolia' }}
+          {{ web3ProvidersStore.isMainnet ? 'Ethereum' : 'Ethereum Sepolia' }}
         </span>
       </div>
 
@@ -29,7 +29,7 @@
         />
         <span class="invalid-network-modal__network-title">
           <!-- eslint-disable-next-line vue-i18n/no-raw-text -->
-          {{ config.IS_MAINNET ? 'Arbitrum' : 'Arbitrum Sepolia' }}
+          {{ web3ProvidersStore.isMainnet ? 'Arbitrum' : 'Arbitrum Sepolia' }}
         </span>
       </div>
     </div>
@@ -46,7 +46,6 @@
 import { ETHEREUM_CHAINS } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { config } from '@config'
 import AppButton from '../../AppButton.vue'
 import AppIcon from '../../AppIcon.vue'
 import BasicModal from '../BasicModal.vue'
@@ -72,7 +71,9 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const switchNetwork = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia,
+      web3ProvidersStore.isMainnet
+        ? ETHEREUM_CHAINS.ethereum
+        : ETHEREUM_CHAINS.sepolia,
     )
   } catch (error) {
     ErrorHandler.process(error)

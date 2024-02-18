@@ -28,16 +28,12 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
-import {
-  ETHEREUM_EXPLORER_URLS,
-  ETHEREUM_RPC_URLS,
-  LAYER_ZERO_ENDPOINTS,
-} from '@/enums'
+import { ETHEREUM_EXPLORER_URLS, LAYER_ZERO_ENDPOINTS } from '@/enums'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
-import { config } from '@config'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
@@ -60,22 +56,19 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   })
 
 const { $t } = useContext()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
-const { contractWithProvider: erc1967ProxyWithProvider } = useContract(
+const {
+  contractWithProvider: erc1967ProxyWithProvider,
+  contractWithSigner: erc1967ProxyWithSigner,
+} = useContract(
   'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
-)
-
-const { contractWithSigner: erc1967ProxyWithSigner } = useContract(
-  'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+  computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
 )
 
 const { contractWithProvider: endpoint } = useContract(
   'Endpoint__factory',
-  config.ENDPOINT_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+  computed(() => web3ProvidersStore.contractAddressesMap.endpoint),
 )
 
 const submit = async (): Promise<void> => {
@@ -84,7 +77,7 @@ const submit = async (): Promise<void> => {
 
   try {
     const fees = await endpoint.value.estimateFees(
-      config.IS_MAINNET
+      web3ProvidersStore.isMainnet
         ? LAYER_ZERO_ENDPOINTS.arbitrum
         : LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
       await erc1967ProxyWithProvider.value.l1Sender(),
@@ -100,7 +93,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.IS_MAINNET
+      web3ProvidersStore.isMainnet
         ? ETHEREUM_EXPLORER_URLS.ethereum
         : ETHEREUM_EXPLORER_URLS.sepolia,
       tx.hash,

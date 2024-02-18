@@ -67,14 +67,13 @@
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_EXPLORER_URLS, ETHEREUM_RPC_URLS } from '@/enums'
+import { ETHEREUM_EXPLORER_URLS } from '@/enums'
 import { InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, minEther, required } from '@/validators'
-import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
 
@@ -112,18 +111,15 @@ const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
 
 const { contractWithSigner: erc1967Proxy } = useContract(
   'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
+  computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
 )
 
-const { contractWithProvider: stEthWithProvider } = useContract(
+const {
+  contractWithProvider: stEthWithProvider,
+  contractWithSigner: stEthWithSigner,
+} = useContract(
   'ERC20__factory',
-  config.STETH_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
-)
-
-const { contractWithSigner: stEthWithSigner } = useContract(
-  'ERC20__factory',
-  config.STETH_CONTRACT_ADDRESS,
+  computed(() => web3ProvidersStore.contractAddressesMap.stEth),
 )
 
 const { $t } = useContext()
@@ -202,7 +198,7 @@ const fetchAllowanceByCurrency = async (
 
   return contract.allowance(
     web3ProvidersStore.provider.selectedAddress,
-    config.ERC1967_PROXY_CONTRACT_ADDRESS,
+    web3ProvidersStore.contractAddressesMap.erc1967Proxy,
   )
 }
 
@@ -216,7 +212,10 @@ const approveByCurrency = async (currency: CURRENCIES) => {
       throw new Error('unknown currency')
   }
 
-  return contract.approve(config.ERC1967_PROXY_CONTRACT_ADDRESS, MAX_UINT_256)
+  return contract.approve(
+    web3ProvidersStore.contractAddressesMap.erc1967Proxy,
+    MAX_UINT_256,
+  )
 }
 
 const submit = async (): Promise<void> => {
@@ -234,7 +233,7 @@ const submit = async (): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.IS_MAINNET
+      web3ProvidersStore.isMainnet
         ? ETHEREUM_EXPLORER_URLS.ethereum
         : ETHEREUM_EXPLORER_URLS.sepolia,
       tx.hash,

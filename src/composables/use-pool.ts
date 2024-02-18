@@ -1,8 +1,6 @@
-import { ETHEREUM_RPC_URLS } from '@/enums'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type BigNumber, type Erc1967ProxyType } from '@/types'
-import { config } from '@config'
 import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useContract } from './use-contract'
@@ -67,8 +65,7 @@ export const usePool = (poolId: number) => {
 
   const { contractWithProvider: erc1967Proxy } = useContract(
     'ERC1967Proxy__factory',
-    config.ERC1967_PROXY_CONTRACT_ADDRESS,
-    config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+    computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
   )
 
   const web3ProvidersStore = useWeb3ProvidersStore()

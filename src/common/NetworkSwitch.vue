@@ -5,7 +5,7 @@
     @update:model-value="onNetworkUpdate"
   >
     <template v-if="network" #head>
-      <div class="network-switch__head-wrp">
+      <div v-tooltip="network.title" class="network-switch__head-wrp">
         <span class="network-switch__network">
           {{ network.title }}
         </span>
@@ -31,6 +31,7 @@ import { useContext } from '@/composables'
 import { SelectField } from '@/fields'
 import { ErrorHandler } from '@/helpers'
 import { useRouter } from '@/router'
+import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { computed } from 'vue'
 
@@ -41,6 +42,7 @@ enum Networks {
 
 const { $routes, $t } = useContext()
 const { currentRoute, push: pushRoute } = useRouter()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const networkOptions = computed<FieldOption<Networks>[]>(() => [
   {
@@ -53,17 +55,11 @@ const networkOptions = computed<FieldOption<Networks>[]>(() => [
   },
 ])
 
-const network = computed(() => {
-  const matched = currentRoute.value.matched
-
-  if (matched.find(route => route.name === $routes.appMainnet))
-    return networkOptions.value[0]
-
-  if (matched.find(route => route.name === $routes.appTestnet))
-    return networkOptions.value[1]
-
-  return null
-})
+const network = computed<FieldOption<Networks>>(() =>
+  web3ProvidersStore.isMainnet
+    ? networkOptions.value[0]
+    : networkOptions.value[1],
+)
 
 const onNetworkUpdate = async (networkOption: FieldOption<Networks>) => {
   try {

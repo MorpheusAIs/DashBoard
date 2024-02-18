@@ -52,7 +52,6 @@ import { SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
-import { config } from '@config'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 
@@ -65,23 +64,24 @@ type Balance = {
 let _morUpdateIntervalId: Parameters<typeof clearInterval>[0]
 
 const isInitializing = ref(true)
-const selectedIdx = ref<number>(0)
+const selectedIdx = ref(0)
+
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const { contractWithProvider: stEth } = useContract(
   'ERC20__factory',
-  config.STETH_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+  computed(() => web3ProvidersStore.contractAddressesMap.stEth),
 )
 
 const { contractWithProvider: mor } = useContract(
   'ERC20__factory',
-  config.MOR_CONTRACT_ADDRESS,
-  config.IS_MAINNET
-    ? ETHEREUM_RPC_URLS.arbitrum
-    : ETHEREUM_RPC_URLS.arbitrumSepolia,
+  computed(() => web3ProvidersStore.contractAddressesMap.mor),
+  computed(() =>
+    web3ProvidersStore.isMainnet
+      ? ETHEREUM_RPC_URLS.arbitrum
+      : ETHEREUM_RPC_URLS.arbitrumSepolia,
+  ),
 )
-
-const web3ProvidersStore = useWeb3ProvidersStore()
 
 const balances = computed<Balance[]>(() => [
   {
@@ -175,6 +175,7 @@ onBeforeUnmount(() => {
 })
 
 watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
+watch(() => web3ProvidersStore.isMainnet, init)
 </script>
 
 <style lang="scss" scoped>

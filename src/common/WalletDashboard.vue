@@ -59,7 +59,7 @@ const jazziconWrpElement = ref<HTMLDivElement | null>(null)
 const isDropMenuOpen = ref(false)
 const rootElement = ref<HTMLDivElement | null>(null)
 
-const { $config, $t } = useContext()
+const { $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const setJazzicon = () => {
@@ -75,7 +75,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      $config.IS_MAINNET
+      web3ProvidersStore.isMainnet
         ? ETHEREUM_CHAINS.arbitrum
         : ETHEREUM_CHAINS.arbitrumSepolia,
     )
@@ -85,7 +85,7 @@ const addToken = async () => {
       params: {
         type: 'ERC20',
         options: {
-          address: $config.MOR_CONTRACT_ADDRESS,
+          address: web3ProvidersStore.contractAddressesMap.mor,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),
@@ -94,7 +94,9 @@ const addToken = async () => {
     })
 
     await web3ProvidersStore.provider.selectChain(
-      $config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia,
+      web3ProvidersStore.isMainnet
+        ? ETHEREUM_CHAINS.ethereum
+        : ETHEREUM_CHAINS.sepolia,
     )
   } catch (error) {
     ErrorHandler.process(error)
