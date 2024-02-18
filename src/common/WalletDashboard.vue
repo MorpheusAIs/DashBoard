@@ -9,7 +9,7 @@
       class="wallet-dashboard__head-wrp"
     >
       <div ref="jazziconWrpElement" class="wallet-dashboard__jazzicon-wrp" />
-      <p class="wallet-dashboard__address">
+      <p class="wallet-dashboard__head-address">
         {{ abbrCenter(web3ProvidersStore.address) }}
       </p>
       <app-icon
@@ -134,7 +134,11 @@ onMounted(() => {
   position: relative;
   background: var(--background-secondary-main);
   height: toRem(48);
-  width: toRem(200);
+  width: toRem(92);
+
+  @include respond-to(medium) {
+    width: toRem(220);
+  }
 }
 
 .wallet-dashboard__head-wrp {
@@ -144,6 +148,19 @@ onMounted(() => {
   padding: 0 toRem(6) 0 toRem(16);
   height: 100%;
   color: var(--text-secondary-light);
+}
+
+.wallet-dashboard__head-address {
+  display: none;
+
+  @include respond-to(medium) {
+    display: block;
+    font-family: var(--app-font-family);
+    font-size: toRem(18);
+    font-weight: 400;
+    line-height: toRem(26);
+    letter-spacing: 0;
+  }
 }
 
 .wallet-dashboard__head-indicator {

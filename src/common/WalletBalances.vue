@@ -190,7 +190,7 @@ watch(() => web3ProvidersStore.isMainnet, init)
   }
 
   @include respond-to(medium) {
-    width: toRem(200);
+    width: toRem(220);
   }
 }
 
