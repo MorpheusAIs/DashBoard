@@ -57,7 +57,7 @@
         :text="submissionBtnText"
         :disabled="isSubmitting || !isFieldsValid"
         :is-loading="isInitializing"
-        @click="submit"
+        @click="onSubmit"
       />
     </div>
   </form>
@@ -261,6 +261,14 @@ const submit = async (): Promise<void> => {
   } finally {
     isSubmitting.value = false
   }
+}
+
+const onSubmit = async () => {
+  if (action.value === ACTIONS.approve) {
+    await submit()
+  }
+
+  await submit()
 }
 
 const init = async (): Promise<void> => {
