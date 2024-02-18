@@ -14,18 +14,15 @@
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
 import { useContext } from '@/composables'
-import { ROUTE_NAMES } from '@/enums'
-import { useRouter } from '@/router'
+import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
 import { computed } from 'vue'
 
 const { $routes, $t } = useContext()
-const { currentRoute } = useRouter()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const tabs = computed<Tab[]>(() =>
-  currentRoute.value.matched.find(
-    route => route.name === ROUTE_NAMES.appMainnet,
-  )
+  web3ProvidersStore.isMainnet
     ? [
         {
           title: $t('home-page.capital-tab'),
