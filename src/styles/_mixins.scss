@@ -96,6 +96,11 @@ $media-breakpoints: (
   height: toRem(24);
   width: toRem(24);
   color: var(--field-error-icon);
+
+  @include respond-to(medium) {
+    height: toRem(20);
+    width: toRem(20);
+  }
 }
 
 @mixin scrollbar {
