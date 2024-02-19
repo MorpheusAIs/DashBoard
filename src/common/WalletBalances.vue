@@ -199,6 +199,7 @@ watch(() => web3ProvidersStore.isMainnet, init)
   align-items: center;
   padding: 0 toRem(6) 0 toRem(16);
   color: var(--text-secondary-light);
+  height: 100%;
 }
 
 .wallet-balances__balance {
