@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => {
         }
       : {}),
     publicDir: 'static',
-
+    base: '',
     build: {
       rollupOptions: {
         output: {
