@@ -81,7 +81,6 @@ $z-index: 1000;
 .app-navbar__wallet-info-wrp {
   display: flex;
   align-items: center;
-  justify-self: right;
   gap: toRem(20);
 }
 </style>

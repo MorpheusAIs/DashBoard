@@ -96,6 +96,14 @@ const onNetworkUpdate = async (networkOption: FieldOption<Networks>) => {
   :deep(.select-field__select-head-indicator) {
     right: toRem(10);
   }
+
+  @include respond-to(xmedium) {
+    width: toRem(116);
+  }
+
+  @include respond-to(medium) {
+    width: toRem(220);
+  }
 }
 
 .network-switch__head-wrp {
