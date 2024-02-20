@@ -28,6 +28,7 @@
 
 <script lang="ts" setup>
 import { useContext } from '@/composables'
+import { ETHEREUM_CHAINS } from '@/enums'
 import { SelectField } from '@/fields'
 import { ErrorHandler } from '@/helpers'
 import { useRouter } from '@/router'
@@ -67,19 +68,26 @@ const onNetworkUpdate = async (networkOption: FieldOption<Networks>) => {
       switch (currentRoute.value.name) {
         case $routes.appTestnetCapital:
           await pushRoute({ name: $routes.appMainnetCapital })
-          return
+          break
         default:
           await pushRoute({ name: $routes.appMainnet })
-          return
+      }
+    } else {
+      switch (currentRoute.value.name) {
+        case $routes.appMainnetCapital:
+          await pushRoute({ name: $routes.appTestnetCapital })
+          break
+        default:
+          await pushRoute({ name: $routes.appTestnet })
       }
     }
 
-    switch (currentRoute.value.name) {
-      case $routes.appMainnetCapital:
-        await pushRoute({ name: $routes.appTestnetCapital })
-        break
-      default:
-        await pushRoute({ name: $routes.appTestnet })
+    if (web3ProvidersStore.isConnected) {
+      await web3ProvidersStore.provider.selectChain(
+        web3ProvidersStore.isMainnet
+          ? ETHEREUM_CHAINS.ethereum
+          : ETHEREUM_CHAINS.sepolia,
+      )
     }
   } catch (error) {
     ErrorHandler.process(error)
