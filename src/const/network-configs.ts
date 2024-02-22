@@ -1,4 +1,8 @@
-import { ETHEREUM_CHAINS, ETHEREUM_RPC_URLS } from '@/enums'
+import {
+  ETHEREUM_CHAINS,
+  ETHEREUM_EXPLORER_URLS,
+  ETHEREUM_RPC_URLS,
+} from '@/enums'
 import { type Web3ProviderType } from '@/types'
 import { utils } from 'ethers'
 
@@ -12,7 +16,7 @@ export const ARBITRUM_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
       decimals: 18,
     },
     rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
-    blockExplorerUrls: ['https://arbiscan.io/'],
+    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrum],
   })
 
 export const ARBITRUM_SEPOLIA_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
@@ -25,7 +29,7 @@ export const ARBITRUM_SEPOLIA_NETWORK_CONFIG: Readonly<Web3ProviderType.Chain> =
       decimals: 18,
     },
     rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
-    blockExplorerUrls: ['https://sepolia.arbiscan.io'],
+    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrumSepolia],
   })
 
 export const CHAINS_NETWORK_CONFIGS_MAP: Readonly<

@@ -22,9 +22,7 @@ enum ACTIONS {
   connect = 'connect',
 }
 
-const WALLET_INSTALL_URL = 'https://metamask.io/download/'
-
-const { $t } = useContext()
+const { $config, $t } = useContext()
 const { fullPath } = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -62,7 +60,7 @@ const onClick = async () => {
         window.open(appUrl.value, '_top', 'noreferrer')
         return
       case ACTIONS.toInstall:
-        window.open(WALLET_INSTALL_URL, '_blank', 'noreferrer')
+        window.open($config.WALLET_INSTALL_URL, '_blank', 'noreferrer')
         return
       case ACTIONS.connect:
         if (!web3ProvidersStore.provider.isConnected)

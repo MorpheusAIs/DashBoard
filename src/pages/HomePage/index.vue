@@ -18,7 +18,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
 import { computed } from 'vue'
 
-const { $routes, $t } = useContext()
+const { $config, $routes, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const tabs = computed<Tab[]>(() =>
@@ -32,17 +32,17 @@ const tabs = computed<Tab[]>(() =>
         {
           title: $t('home-page.coders-tab'),
           id: 'coders',
-          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+          href: $config.CODE_CONTRIBUTION_URL,
         },
         {
           title: $t('home-page.compute-tab'),
           id: 'compute',
-          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
+          href: $config.COMPUTE_CONTRIBUTION_URL,
         },
         {
           title: $t('home-page.community-tab'),
           id: 'community',
-          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
+          href: $config.COMMUNITY_CONTRIBUTION_URL,
         },
       ]
     : [
@@ -54,12 +54,12 @@ const tabs = computed<Tab[]>(() =>
         {
           title: $t('home-page.coders-tab'),
           id: 'coders',
-          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+          href: $config.CODE_CONTRIBUTION_URL,
         },
         {
           title: $t('home-page.compute-tab'),
           id: 'compute',
-          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
+          href: $config.COMPUTE_CONTRIBUTION_URL,
         },
         {
           title: $t('home-page.community-tab'),

@@ -1,16 +1,16 @@
 import { useContext } from './use-context'
 
 export const useNavLinks = () => {
-  const { $t } = useContext()
+  const { $config, $t } = useContext()
 
   const links = [
     {
       text: $t('app-navbar.contract-faq-link'),
-      href: 'https://github.com/MorpheusAIs/Docs/blob/main/Guide/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
+      href: $config.CONTRACT_FAQ_URL,
     },
     {
       text: $t('app-navbar.community-website-link'),
-      href: 'https://mor.org/',
+      href: $config.LANDING_URL,
     },
   ]
 

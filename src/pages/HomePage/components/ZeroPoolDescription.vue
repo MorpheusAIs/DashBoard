@@ -14,10 +14,10 @@
       <app-button
         class="zero-pool-description__details-link"
         scheme="link"
-        href="https://github.com/MorpheusAIs/Morpheus/tree/main/!KEYDOCS%20README%20FIRST!"
         target="_blank"
         rel="noopener noreferrer"
         text="GitHub"
+        :href="$config.GITHUB_URL"
       />
     </p>
   </div>

@@ -1,13 +1,26 @@
 import packageJson from '../package.json'
 import { LogLevelDesc } from 'loglevel'
-import pickBy from 'lodash/pickBy'
-import mapKeys from 'lodash/mapKeys'
+import { pickBy, mapKeys } from 'lodash'
 
 export const config = {
   // General
   NAME: import.meta.env.VITE_APP_NAME,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   LOG_LEVEL: 'trace' as LogLevelDesc,
+  GITHUB_URL:
+    'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
+  CONTRACT_FAQ_URL:
+    'https://github.com/MorpheusAIs/Docs/blob/main/English%20Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
+  LANDING_URL: 'https://mor.org/',
+  CODE_CONTRIBUTION_URL:
+    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+  COMPUTE_CONTRIBUTION_URL:
+    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
+  COMMUNITY_CONTRIBUTION_URL:
+    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
+  HOW_GET_STETH_URL:
+    'https://help.lido.fi/en/articles/5232811-how-do-i-get-steth',
+  WALLET_INSTALL_URL: 'https://metamask.io/download/',
 
   // Testnet
   ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS: import.meta.env

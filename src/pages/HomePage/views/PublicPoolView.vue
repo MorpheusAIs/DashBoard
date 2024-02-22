@@ -31,12 +31,12 @@
                 class="public-pool-view__bar-button"
                 scheme="link"
                 color="none"
-                href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
                 target="_blank"
                 rel="noopener noreferrer"
                 :text="$t('home-page.public-pool-view.external-link')"
                 :icon-right="$icons.externalLink"
                 :is-loading="isInitializing"
+                :href="$config.HOW_GET_STETH_URL"
               />
             </div>
             <deposit-modal
