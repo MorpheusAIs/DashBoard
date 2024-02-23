@@ -67,7 +67,6 @@
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_EXPLORER_URLS } from '@/enums'
 import { InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -122,7 +121,7 @@ const {
   computed(() => web3ProvidersStore.contractAddressesMap.stEth),
 )
 
-const { $t } = useContext()
+const { $networks, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
@@ -233,9 +232,7 @@ const submit = async (): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.isMainnet
-        ? ETHEREUM_EXPLORER_URLS.ethereum
-        : ETHEREUM_EXPLORER_URLS.sepolia,
+      $networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 

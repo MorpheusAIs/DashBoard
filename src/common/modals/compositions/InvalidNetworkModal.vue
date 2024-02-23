@@ -2,7 +2,10 @@
   <basic-modal
     v-bind="props"
     class="invalid-network-modal"
-    :class="{ 'invalid-network-modal--mainnet': web3ProvidersStore.isMainnet }"
+    :class="{
+      'invalid-network-modal--mainnet':
+        web3ProvidersStore.networkId === NETWORK_IDS.mainnet,
+    }"
     :title="$t('invalid-network-modal.title')"
     :subtitle="$t('invalid-network-modal.subtitle')"
     @update:is-shown="emit('update:is-shown', $event)"
@@ -14,8 +17,7 @@
           :name="$icons.ethereumAlt1"
         />
         <span class="invalid-network-modal__network-title">
-          <!-- eslint-disable-next-line vue-i18n/no-raw-text -->
-          {{ web3ProvidersStore.isMainnet ? 'Ethereum' : 'Ethereum Sepolia' }}
+          {{ NETWORKS[web3ProvidersStore.networkId].chainTitle }}
         </span>
       </div>
 
@@ -28,8 +30,7 @@
           :name="$icons.arbitrumAlt1"
         />
         <span class="invalid-network-modal__network-title">
-          <!-- eslint-disable-next-line vue-i18n/no-raw-text -->
-          {{ web3ProvidersStore.isMainnet ? 'Arbitrum' : 'Arbitrum Sepolia' }}
+          {{ NETWORKS[web3ProvidersStore.networkId].extendedChainTitle }}
         </span>
       </div>
     </div>
@@ -43,7 +44,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ETHEREUM_CHAINS } from '@/enums'
+import { NETWORKS } from '@/const'
+import { NETWORK_IDS } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import AppButton from '../../AppButton.vue'
@@ -71,9 +73,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const switchNetwork = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.isMainnet
-        ? ETHEREUM_CHAINS.ethereum
-        : ETHEREUM_CHAINS.sepolia,
+      NETWORKS[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
     ErrorHandler.process(error)

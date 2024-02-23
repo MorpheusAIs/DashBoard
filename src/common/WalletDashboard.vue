@@ -45,7 +45,6 @@
 
 <script lang="ts" setup>
 import { useContext } from '@/composables'
-import { ETHEREUM_CHAINS } from '@/enums'
 import { abbrCenter, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { onClickOutside } from '@vueuse/core'
@@ -59,7 +58,7 @@ const jazziconWrpElement = ref<HTMLDivElement | null>(null)
 const isDropMenuOpen = ref(false)
 const rootElement = ref<HTMLDivElement | null>(null)
 
-const { $t } = useContext()
+const { $networks, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const setJazzicon = () => {
@@ -75,9 +74,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.isMainnet
-        ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumSepolia,
+      $networks[web3ProvidersStore.networkId].extendedChainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -94,9 +91,7 @@ const addToken = async () => {
     })
 
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.isMainnet
-        ? ETHEREUM_CHAINS.ethereum
-        : ETHEREUM_CHAINS.sepolia,
+      $networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
     ErrorHandler.process(error)

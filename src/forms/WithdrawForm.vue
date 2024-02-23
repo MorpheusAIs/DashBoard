@@ -38,7 +38,6 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
-import { ETHEREUM_EXPLORER_URLS } from '@/enums'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -62,7 +61,7 @@ const form = reactive({
   amount: '' as string,
 })
 
-const { $t } = useContext()
+const { $networks, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const { contractWithSigner: erc1967Proxy } = useContract(
@@ -88,9 +87,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.isMainnet
-        ? ETHEREUM_EXPLORER_URLS.ethereum
-        : ETHEREUM_EXPLORER_URLS.sepolia,
+      $networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 

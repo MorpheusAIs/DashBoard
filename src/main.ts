@@ -13,6 +13,7 @@ import { i18n } from '@/localization'
 import { config } from '@config'
 import { router } from '@/router'
 import { store } from '@/store'
+import { NETWORKS } from '@/const'
 
 const app = createApp({
   setup() {
@@ -43,6 +44,7 @@ const initApp = async () => {
     app.config.globalProperties.$routes = ROUTE_NAMES
     app.config.globalProperties.$config = config
     app.config.globalProperties.$icons = ICON_NAMES
+    app.config.globalProperties.$networks = NETWORKS
 
     app.config.errorHandler = function (error, instance, info) {
       log.error(error)

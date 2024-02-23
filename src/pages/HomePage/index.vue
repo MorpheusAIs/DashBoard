@@ -14,6 +14,7 @@
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
 import { useContext } from '@/composables'
+import { NETWORK_IDS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
 import { computed } from 'vue'
@@ -21,9 +22,10 @@ import { computed } from 'vue'
 const { $config, $routes, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const tabs = computed<Tab[]>(() =>
-  web3ProvidersStore.isMainnet
-    ? [
+const tabs = computed<Tab[]>(() => {
+  switch (web3ProvidersStore.networkId) {
+    case NETWORK_IDS.mainnet:
+      return [
         {
           title: $t('home-page.capital-tab'),
           id: 'capital',
@@ -45,7 +47,9 @@ const tabs = computed<Tab[]>(() =>
           href: $config.COMMUNITY_CONTRIBUTION_URL,
         },
       ]
-    : [
+
+    case NETWORK_IDS.testnet:
+      return [
         {
           title: $t('home-page.capital-tab'),
           id: 'capital',
@@ -66,8 +70,11 @@ const tabs = computed<Tab[]>(() =>
           id: 'community',
           route: { name: $routes.appTestnetCommunity },
         },
-      ],
-)
+      ]
+  }
+
+  return []
+})
 </script>
 
 <style lang="scss" scoped>

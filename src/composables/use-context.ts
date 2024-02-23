@@ -1,3 +1,4 @@
+import { NETWORKS } from '@/const'
 import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import { config } from '@config'
 import { useI18n } from 'vue-i18n'
@@ -10,5 +11,6 @@ export const useContext = () => {
     $config: config,
     $routes: ROUTE_NAMES,
     $icons: ICON_NAMES,
+    $networks: NETWORKS,
   }
 }

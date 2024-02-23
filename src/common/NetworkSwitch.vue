@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { useContext } from '@/composables'
-import { ETHEREUM_CHAINS } from '@/enums'
+import { NETWORK_IDS } from '@/enums'
 import { SelectField } from '@/fields'
 import { ErrorHandler } from '@/helpers'
 import { useRouter } from '@/router'
@@ -36,57 +36,57 @@ import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { computed } from 'vue'
 
-enum Networks {
-  mainnet = 'mainnet',
-  testnet = 'testnet',
-}
-
-const { $routes, $t } = useContext()
+const { $networks, $routes, $t } = useContext()
 const { currentRoute, push: pushRoute } = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const networkOptions = computed<FieldOption<Networks>[]>(() => [
+const networkOptions = computed<FieldOption<NETWORK_IDS>[]>(() => [
   {
     title: $t('network-switch.mainnet'),
-    value: Networks.mainnet,
+    value: NETWORK_IDS.mainnet,
   },
   {
     title: $t('network-switch.testnet'),
-    value: Networks.testnet,
+    value: NETWORK_IDS.testnet,
   },
 ])
 
-const network = computed<FieldOption<Networks>>(() =>
-  web3ProvidersStore.isMainnet
-    ? networkOptions.value[0]
-    : networkOptions.value[1],
+const network = computed<FieldOption<NETWORK_IDS> | null>(
+  () =>
+    networkOptions.value.find(
+      option => option.value === web3ProvidersStore.networkId,
+    ) || null,
 )
 
-const onNetworkUpdate = async (networkOption: FieldOption<Networks>) => {
+const onNetworkUpdate = async (networkOption: FieldOption<NETWORK_IDS>) => {
   try {
-    if (networkOption.value === Networks.mainnet) {
-      switch (currentRoute.value.name) {
-        case $routes.appTestnetCapital:
-          await pushRoute({ name: $routes.appMainnetCapital })
-          break
-        default:
-          await pushRoute({ name: $routes.appMainnet })
+    switch (networkOption.value) {
+      case NETWORK_IDS.mainnet: {
+        switch (currentRoute.value.name) {
+          case $routes.appTestnetCapital:
+            await pushRoute({ name: $routes.appMainnetCapital })
+            break
+          default:
+            await pushRoute({ name: $routes.appMainnet })
+        }
+
+        break
       }
-    } else {
-      switch (currentRoute.value.name) {
-        case $routes.appMainnetCapital:
-          await pushRoute({ name: $routes.appTestnetCapital })
-          break
-        default:
-          await pushRoute({ name: $routes.appTestnet })
+
+      case NETWORK_IDS.testnet: {
+        switch (currentRoute.value.name) {
+          case $routes.appMainnetCapital:
+            await pushRoute({ name: $routes.appTestnetCapital })
+            break
+          default:
+            await pushRoute({ name: $routes.appTestnet })
+        }
       }
     }
 
     if (web3ProvidersStore.isConnected) {
       await web3ProvidersStore.provider.selectChain(
-        web3ProvidersStore.isMainnet
-          ? ETHEREUM_CHAINS.ethereum
-          : ETHEREUM_CHAINS.sepolia,
+        $networks[web3ProvidersStore.networkId].chainId,
       )
     }
   } catch (error) {

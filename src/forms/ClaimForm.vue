@@ -28,7 +28,6 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useContext, useContract, useFormValidation } from '@/composables'
-import { ETHEREUM_EXPLORER_URLS, LAYER_ZERO_ENDPOINTS } from '@/enums'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -55,7 +54,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     address: { required, address },
   })
 
-const { $t } = useContext()
+const { $networks, $t } = useContext()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const {
@@ -77,9 +76,7 @@ const submit = async (): Promise<void> => {
 
   try {
     const fees = await endpoint.value.estimateFees(
-      web3ProvidersStore.isMainnet
-        ? LAYER_ZERO_ENDPOINTS.arbitrum
-        : LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
+      $networks[web3ProvidersStore.networkId].extendedChainLayerZeroEndpoint,
       await erc1967ProxyWithProvider.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
@@ -93,9 +90,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.isMainnet
-        ? ETHEREUM_EXPLORER_URLS.ethereum
-        : ETHEREUM_EXPLORER_URLS.sepolia,
+      $networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 

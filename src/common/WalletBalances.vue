@@ -47,7 +47,8 @@
 
 <script lang="ts" setup>
 import { useContract } from '@/composables'
-import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
+import { NETWORKS } from '@/const'
+import { ICON_NAMES } from '@/enums'
 import { SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -76,11 +77,7 @@ const { contractWithProvider: stEth } = useContract(
 const { contractWithProvider: mor } = useContract(
   'ERC20__factory',
   computed(() => web3ProvidersStore.contractAddressesMap.mor),
-  computed(() =>
-    web3ProvidersStore.isMainnet
-      ? ETHEREUM_RPC_URLS.arbitrum
-      : ETHEREUM_RPC_URLS.arbitrumSepolia,
-  ),
+  computed(() => NETWORKS[web3ProvidersStore.networkId].extendedChainRpcUrl),
 )
 
 const balances = computed<Balance[]>(() => [
@@ -175,7 +172,7 @@ onBeforeUnmount(() => {
 })
 
 watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
-watch(() => web3ProvidersStore.isMainnet, init)
+watch(() => web3ProvidersStore.networkId, init)
 </script>
 
 <style lang="scss" scoped>

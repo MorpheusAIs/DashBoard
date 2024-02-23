@@ -1,4 +1,5 @@
-import { ETHEREUM_CHAINS, ETHEREUM_RPC_URLS } from '@/enums'
+import { NETWORKS } from '@/const'
+import { ETHEREUM_RPC_URLS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { factories } from '@/types'
 import { providers } from 'ethers'
@@ -42,19 +43,14 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
     if (
       !unrefRpcUrl &&
       String(web3ProvidersStore.provider.chainId) ===
-        (web3ProvidersStore.isMainnet
-          ? ETHEREUM_CHAINS.ethereum
-          : ETHEREUM_CHAINS.sepolia)
+        NETWORKS[web3ProvidersStore.networkId].chainId
     )
       return new providers.Web3Provider(
         web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
       )
 
     return new providers.JsonRpcProvider(
-      unrefRpcUrl ||
-        (web3ProvidersStore.isMainnet
-          ? ETHEREUM_RPC_URLS.ethereum
-          : ETHEREUM_RPC_URLS.sepolia),
+      unrefRpcUrl || NETWORKS[web3ProvidersStore.networkId].rpcUrl,
     )
   })
 
