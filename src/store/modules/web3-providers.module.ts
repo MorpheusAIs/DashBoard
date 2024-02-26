@@ -34,20 +34,12 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
 
   getters: {
     networkId: (state): NETWORK_IDS => {
-      const matchedRoute = state._router.currentRoute.matched.find(
-        route =>
-          route.name === ROUTE_NAMES.appMainnet ||
-          route.name === ROUTE_NAMES.appTestnet,
+      if (
+        state._router.currentRoute.matched.find(
+          route => route.name === ROUTE_NAMES.appMainnet,
+        )
       )
-
-      if (matchedRoute) {
-        switch (matchedRoute.name) {
-          case ROUTE_NAMES.appMainnet:
-            return NETWORK_IDS.mainnet
-          case ROUTE_NAMES.appTestnet:
-            return NETWORK_IDS.testnet
-        }
-      }
+        return NETWORK_IDS.mainnet
 
       return NETWORK_IDS.testnet
     },
