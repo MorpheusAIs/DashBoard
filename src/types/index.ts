@@ -8,3 +8,4 @@ export * as Web3ProviderType from './web3-provider.types'
 export * from './contracts'
 
 export type { BigNumber, Time } from '@/utils'
+export type { LocationAsRelativeRaw as Route } from 'vue-router'

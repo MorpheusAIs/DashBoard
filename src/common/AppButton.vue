@@ -80,8 +80,8 @@
 
 <script lang="ts" setup>
 import { type ICON_NAMES } from '@/enums'
+import { type Route } from '@/types'
 import { computed, useAttrs, useSlots } from 'vue'
-import { type LocationAsRelativeRaw } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 
 type ButtonType = 'button' | 'submit' | 'reset'
@@ -100,7 +100,7 @@ const props = withDefaults(
       | 'info'
       | 'none'
     size?: 'large' | 'medium' | 'small' | 'x-small' | 'none'
-    route?: LocationAsRelativeRaw
+    route?: Route
     href?: string
     iconLeft?: ICON_NAMES
     iconRight?: ICON_NAMES

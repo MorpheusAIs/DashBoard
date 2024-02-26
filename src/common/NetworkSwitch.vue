@@ -1,102 +1,110 @@
 <template>
-  <select-field
+  <div
+    ref="rootElement"
     class="network-switch"
-    :model-value="network"
-    @update:model-value="onNetworkUpdate"
+    :class="{ 'network__switch--open': isDropMenuShown }"
   >
-    <template v-if="network" #head>
-      <div v-tooltip="network.title" class="network-switch__head-wrp">
-        <span class="network-switch__network">
-          {{ network.title }}
-        </span>
-      </div>
-    </template>
-    <template #default="{ selectField }">
+    <div v-tooltip="networkTitle" class="network-switch__head-wrp">
+      <span class="network-switch__network-title">
+        {{ networkTitle }}
+      </span>
+      <app-icon
+        class="network-switch__head-indicator"
+        :name="$icons.chevronDown"
+      />
       <button
-        v-for="(networkOption, idx) in networkOptions"
+        class="network-switch__head-btn"
+        @click="isDropMenuShown = !isDropMenuShown"
+      />
+    </div>
+    <drop-menu v-model:is-shown="isDropMenuShown">
+      <router-link
+        v-for="(link, idx) in links"
         :key="idx"
+        :to="link.route"
         class="network-switch__network-option"
-        @click="selectField.select(networkOption)"
       >
-        <span class="network-switch__network-option-text">
-          {{ networkOption.title }}
-        </span>
-      </button>
-    </template>
-  </select-field>
+        {{ link.title }}
+      </router-link>
+    </drop-menu>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { useContext } from '@/composables'
-import { NETWORK_IDS } from '@/enums'
-import { SelectField } from '@/fields'
-import { ErrorHandler } from '@/helpers'
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
-import { type FieldOption } from '@/types'
-import { computed } from 'vue'
+import { Route } from '@/types'
+import { onClickOutside } from '@vueuse/core'
+import { computed, onMounted, ref } from 'vue'
+import AppIcon from './AppIcon.vue'
+import DropMenu from './DropMenu.vue'
 
-const { $networks, $routes, $t } = useContext()
-const { currentRoute, push: pushRoute } = useRouter()
+type Link = {
+  title: string
+  route: Route
+}
+
+const rootElement = ref<HTMLDivElement | null>(null)
+const isDropMenuShown = ref(false)
+
+const { $t } = useContext()
+const { currentRoute } = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const networkOptions = computed<FieldOption<NETWORK_IDS>[]>(() => [
-  {
-    title: $t('network-switch.mainnet'),
-    value: NETWORK_IDS.mainnet,
-  },
-  {
-    title: $t('network-switch.testnet'),
-    value: NETWORK_IDS.testnet,
-  },
-])
-
-const network = computed<FieldOption<NETWORK_IDS> | null>(
-  () =>
-    networkOptions.value.find(
-      option => option.value === web3ProvidersStore.networkId,
-    ) || null,
-)
-
-const onNetworkUpdate = async (networkOption: FieldOption<NETWORK_IDS>) => {
-  try {
-    switch (networkOption.value) {
-      case NETWORK_IDS.mainnet: {
-        switch (currentRoute.value.name) {
-          case $routes.appTestnetCapital:
-            await pushRoute({ name: $routes.appMainnetCapital })
-            break
-          default:
-            await pushRoute({ name: $routes.appMainnet })
-        }
-
-        break
-      }
-
-      case NETWORK_IDS.testnet: {
-        switch (currentRoute.value.name) {
-          case $routes.appMainnetCapital:
-            await pushRoute({ name: $routes.appTestnetCapital })
-            break
-          default:
-            await pushRoute({ name: $routes.appTestnet })
-        }
-      }
-    }
-
-    if (web3ProvidersStore.isConnected) {
-      await web3ProvidersStore.provider.selectChain(
-        $networks[web3ProvidersStore.networkId].chainId,
-      )
-    }
-  } catch (error) {
-    ErrorHandler.process(error)
+const links = computed<Link[]>(() => {
+  let mainnetRoute
+  switch (currentRoute.value.name) {
+    case ROUTE_NAMES.appTestnetCapital:
+      mainnetRoute = { name: ROUTE_NAMES.appMainnetCapital }
+      break
+    default:
+      mainnetRoute = { name: ROUTE_NAMES.appMainnet }
   }
-}
+
+  let testnetRoute
+  switch (currentRoute.value.name) {
+    case ROUTE_NAMES.appMainnetCapital:
+      testnetRoute = { name: ROUTE_NAMES.appTestnetCapital }
+      break
+    default:
+      testnetRoute = { name: ROUTE_NAMES.appTestnet }
+  }
+
+  return [
+    {
+      title: $t('network-switch.mainnet'),
+      route: mainnetRoute,
+    },
+    {
+      title: $t('network-switch.testnet'),
+      route: testnetRoute,
+    },
+  ]
+})
+
+const networkTitle = computed<string>(() => {
+  switch (web3ProvidersStore.networkId) {
+    case NETWORK_IDS.mainnet:
+      return $t('network-switch.mainnet')
+    case NETWORK_IDS.testnet:
+      return $t('network-switch.testnet')
+    default:
+      return ''
+  }
+})
+
+onMounted(() => {
+  onClickOutside(rootElement, () => {
+    isDropMenuShown.value = false
+  })
+})
 </script>
 
 <style lang="scss" scoped>
 .network-switch {
+  position: relative;
   background: var(--background-secondary-main);
   height: toRem(48);
   width: toRem(220);
@@ -115,14 +123,37 @@ const onNetworkUpdate = async (networkOption: FieldOption<NETWORK_IDS>) => {
 }
 
 .network-switch__head-wrp {
+  position: relative;
   display: flex;
   align-items: center;
+  padding: 0 toRem(34) 0 toRem(16);
   height: 100%;
+  color: var(--text-secondary-light);
 }
 
-.network-switch__network {
-  padding: 0 toRem(6) 0 toRem(16);
-  color: var(--text-secondary-light);
+.network-switch__head-indicator {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  right: toRem(10);
+  transform: translateY(-50%);
+  width: toRem(24);
+  height: toRem(24);
+  transition: var(--field-transition-duration) var(--field-transition-timing);
+  color: inherit;
+
+  .network-switch--open & {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.network-switch__head-btn {
+  position: absolute;
+  inset: 0;
+}
+
+.network-switch__network-title {
+  color: inherit;
 
   @include text-ellipsis;
 
