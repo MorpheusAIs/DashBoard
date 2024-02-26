@@ -22,7 +22,7 @@
         v-for="(link, idx) in links"
         :key="idx"
         :to="link.route"
-        class="network-switch__network-option"
+        class="network-switch__link"
       >
         {{ link.title }}
       </router-link>
@@ -166,7 +166,7 @@ onMounted(() => {
   }
 }
 
-.network-switch__network-option {
+.network-switch__link {
   padding: toRem(12) toRem(16);
   color: var(--text-secondary-light);
   transition: var(--transition-duration-fast) var(--transition-timing-default);
@@ -178,10 +178,6 @@ onMounted(() => {
     background: var(--primary-main);
     color: var(--text-primary-dark);
   }
-}
-
-.network-switch__network-option-text {
-  color: inherit;
 
   @include text-ellipsis;
 
