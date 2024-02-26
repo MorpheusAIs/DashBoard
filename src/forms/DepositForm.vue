@@ -65,8 +65,8 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext, useContract, useFormValidation } from '@/composables'
-import { MAX_UINT_256 } from '@/const'
+import { useContract, useFormValidation, useI18n } from '@/composables'
+import { MAX_UINT_256, NETWORKS } from '@/const'
 import { InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -121,7 +121,7 @@ const {
   computed(() => web3ProvidersStore.contractAddressesMap.stEth),
 )
 
-const { $networks, $t } = useContext()
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
@@ -179,8 +179,8 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 
 const submissionBtnText = computed<string>(() =>
   action.value === ACTIONS.approve
-    ? $t('deposit-form.submit-btn.approve')
-    : $t('deposit-form.submit-btn.deposit'),
+    ? t('deposit-form.submit-btn.approve')
+    : t('deposit-form.submit-btn.deposit'),
 )
 
 const fetchAllowanceByCurrency = async (
@@ -232,20 +232,20 @@ const submit = async (): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      $networks[web3ProvidersStore.networkId].explorerUrl,
+      NETWORKS[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 
     bus.emit(
       BUS_EVENTS.info,
-      $t('deposit-form.tx-sent-message', { explorerTxUrl }),
+      t('deposit-form.tx-sent-message', { explorerTxUrl }),
     )
 
     await tx.wait()
 
     bus.emit(
       BUS_EVENTS.success,
-      $t('deposit-form.success-message', { explorerTxUrl }),
+      t('deposit-form.success-message', { explorerTxUrl }),
     )
 
     bus.emit(BUS_EVENTS.changedPoolData)

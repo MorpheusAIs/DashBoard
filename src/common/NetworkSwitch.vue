@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useContext } from '@/composables'
+import { useI18n } from '@/composables'
 import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -49,7 +49,7 @@ type Link = {
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
 
-const { $t } = useContext()
+const { t } = useI18n()
 const { currentRoute } = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -74,11 +74,11 @@ const links = computed<Link[]>(() => {
 
   return [
     {
-      title: $t('network-switch.mainnet'),
+      title: t('network-switch.mainnet'),
       route: mainnetRoute,
     },
     {
-      title: $t('network-switch.testnet'),
+      title: t('network-switch.testnet'),
       route: testnetRoute,
     },
   ]
@@ -87,9 +87,9 @@ const links = computed<Link[]>(() => {
 const networkTitle = computed<string>(() => {
   switch (web3ProvidersStore.networkId) {
     case NETWORK_IDS.mainnet:
-      return $t('network-switch.mainnet')
+      return t('network-switch.mainnet')
     case NETWORK_IDS.testnet:
-      return $t('network-switch.testnet')
+      return t('network-switch.testnet')
     default:
       return ''
   }

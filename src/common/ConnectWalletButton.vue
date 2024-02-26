@@ -9,10 +9,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useContext } from '@/composables'
+import { useI18n } from '@/composables'
 import { isMobile, ErrorHandler } from '@/helpers'
 import { useRoute } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
+import { config } from '@config'
 import { computed } from 'vue'
 import AppButton from './AppButton.vue'
 
@@ -22,7 +23,7 @@ enum ACTIONS {
   connect = 'connect',
 }
 
-const { $config, $t } = useContext()
+const { t } = useI18n()
 const { fullPath } = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -41,11 +42,11 @@ const action = computed<ACTIONS>(() => {
 const text = computed<string>(() => {
   switch (action.value) {
     case ACTIONS.toApp:
-      return $t('connect-wallet-button.to-app')
+      return t('connect-wallet-button.to-app')
     case ACTIONS.toInstall:
-      return $t('connect-wallet-button.to-install')
+      return t('connect-wallet-button.to-install')
     default:
-      return $t('connect-wallet-button.default')
+      return t('connect-wallet-button.default')
   }
 })
 
@@ -60,7 +61,7 @@ const onClick = async () => {
         window.open(appUrl.value, '_top', 'noreferrer')
         return
       case ACTIONS.toInstall:
-        window.open($config.WALLET_INSTALL_URL, '_blank', 'noreferrer')
+        window.open(config.WALLET_INSTALL_URL, '_blank', 'noreferrer')
         return
       case ACTIONS.connect:
         if (!web3ProvidersStore.provider.isConnected)

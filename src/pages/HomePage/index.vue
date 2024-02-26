@@ -13,13 +13,14 @@
 
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
-import { useContext } from '@/composables'
-import { NETWORK_IDS } from '@/enums'
+import { useI18n } from '@/composables'
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
+import { config } from '@config'
 import { computed } from 'vue'
 
-const { $config, $routes, $t } = useContext()
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const tabs = computed<Tab[]>(() => {
@@ -27,48 +28,48 @@ const tabs = computed<Tab[]>(() => {
     case NETWORK_IDS.mainnet:
       return [
         {
-          title: $t('home-page.capital-tab'),
+          title: t('home-page.capital-tab'),
           id: 'capital',
-          route: { name: $routes.appMainnetCapital },
+          route: { name: ROUTE_NAMES.appMainnetCapital },
         },
         {
-          title: $t('home-page.coders-tab'),
+          title: t('home-page.coders-tab'),
           id: 'coders',
-          href: $config.CODE_CONTRIBUTION_URL,
+          href: config.CODE_CONTRIBUTION_URL,
         },
         {
-          title: $t('home-page.compute-tab'),
+          title: t('home-page.compute-tab'),
           id: 'compute',
-          href: $config.COMPUTE_CONTRIBUTION_URL,
+          href: config.COMPUTE_CONTRIBUTION_URL,
         },
         {
-          title: $t('home-page.community-tab'),
+          title: t('home-page.community-tab'),
           id: 'community',
-          href: $config.COMMUNITY_CONTRIBUTION_URL,
+          href: config.COMMUNITY_CONTRIBUTION_URL,
         },
       ]
 
     case NETWORK_IDS.testnet:
       return [
         {
-          title: $t('home-page.capital-tab'),
+          title: t('home-page.capital-tab'),
           id: 'capital',
-          route: { name: $routes.appTestnetCapital },
+          route: { name: ROUTE_NAMES.appTestnetCapital },
         },
         {
-          title: $t('home-page.coders-tab'),
+          title: t('home-page.coders-tab'),
           id: 'coders',
-          href: $config.CODE_CONTRIBUTION_URL,
+          href: config.CODE_CONTRIBUTION_URL,
         },
         {
-          title: $t('home-page.compute-tab'),
+          title: t('home-page.compute-tab'),
           id: 'compute',
-          href: $config.COMPUTE_CONTRIBUTION_URL,
+          href: config.COMPUTE_CONTRIBUTION_URL,
         },
         {
-          title: $t('home-page.community-tab'),
+          title: t('home-page.community-tab'),
           id: 'community',
-          route: { name: $routes.appTestnetCommunity },
+          route: { name: ROUTE_NAMES.appTestnetCommunity },
         },
       ]
   }

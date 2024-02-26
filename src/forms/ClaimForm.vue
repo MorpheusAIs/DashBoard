@@ -27,7 +27,8 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext, useContract, useFormValidation } from '@/composables'
+import { useContract, useFormValidation, useI18n } from '@/composables'
+import { NETWORKS } from '@/const'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -54,7 +55,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     address: { required, address },
   })
 
-const { $networks, $t } = useContext()
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const {
@@ -76,7 +77,7 @@ const submit = async (): Promise<void> => {
 
   try {
     const fees = await endpoint.value.estimateFees(
-      $networks[web3ProvidersStore.networkId].extendedChainLayerZeroEndpoint,
+      NETWORKS[web3ProvidersStore.networkId].extendedChainLayerZeroEndpoint,
       await erc1967ProxyWithProvider.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
@@ -90,13 +91,13 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      $networks[web3ProvidersStore.networkId].explorerUrl,
+      NETWORKS[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 
     bus.emit(
       BUS_EVENTS.info,
-      $t('claim-form.tx-sent-message', { explorerTxUrl }),
+      t('claim-form.tx-sent-message', { explorerTxUrl }),
     )
 
     emit('tx-sent')
@@ -105,7 +106,7 @@ const submit = async (): Promise<void> => {
 
     bus.emit(
       BUS_EVENTS.success,
-      $t('claim-form.success-message', { explorerTxUrl }),
+      t('claim-form.success-message', { explorerTxUrl }),
     )
 
     bus.emit(BUS_EVENTS.changedCurrentUserReward)

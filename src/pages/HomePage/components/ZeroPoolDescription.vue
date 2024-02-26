@@ -25,16 +25,16 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext } from '@/composables'
+import { useI18n } from '@/composables'
 import { computed } from 'vue'
 
-const { $t } = useContext()
+const { t } = useI18n()
 
 const listItems = computed<string[]>(() => [
-  $t('zero-pool-description.list.1'),
-  $t('zero-pool-description.list.2'),
-  $t('zero-pool-description.list.3'),
-  $t('zero-pool-description.list.4'),
+  t('zero-pool-description.list.1'),
+  t('zero-pool-description.list.2'),
+  t('zero-pool-description.list.3'),
+  t('zero-pool-description.list.4'),
 ])
 </script>
 
