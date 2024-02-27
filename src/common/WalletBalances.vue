@@ -46,13 +46,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useContract } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import { SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
-import { config } from '@config'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 
@@ -68,19 +66,6 @@ const isInitializing = ref(true)
 const selectedIdx = ref(0)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
-
-const { contractWithProvider: stEth } = useContract(
-  'ERC20__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.stEth),
-)
-
-const { contractWithProvider: mor } = useContract(
-  'ERC20__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.mor),
-  computed(
-    () => config.networks[web3ProvidersStore.networkId].extendedChainRpcUrl,
-  ),
-)
 
 const balances = computed<Balance[]>(() => [
   {
@@ -110,8 +95,8 @@ const updateBalances = async (): Promise<void> => {
   const address = web3ProvidersStore.provider.selectedAddress
 
   const [stEthValue, morValue] = await Promise.all([
-    stEth.value.balanceOf(address),
-    mor.value.balanceOf(address),
+    web3ProvidersStore.stEthContract.provider.balanceOf(address),
+    web3ProvidersStore.morContract.provider.balanceOf(address),
   ])
 
   web3ProvidersStore.balances.stEth = stEthValue
@@ -159,7 +144,8 @@ onMounted(() => {
     const address = web3ProvidersStore.provider.selectedAddress
 
     try {
-      web3ProvidersStore.balances.mor = await mor.value.balanceOf(address)
+      web3ProvidersStore.balances.mor =
+        await web3ProvidersStore.morContract.provider.balanceOf(address)
     } catch (error) {
       ErrorHandler.process(error)
     }

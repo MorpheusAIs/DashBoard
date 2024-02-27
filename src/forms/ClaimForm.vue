@@ -27,13 +27,13 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContract, useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n } from '@/composables'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
 import { config } from '@config'
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
@@ -58,34 +58,22 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const {
-  contractWithProvider: erc1967ProxyWithProvider,
-  contractWithSigner: erc1967ProxyWithSigner,
-} = useContract(
-  'ERC1967Proxy__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
-)
-
-const { contractWithProvider: endpoint } = useContract(
-  'Endpoint__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.endpoint),
-)
-
 const submit = async (): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
 
   try {
-    const fees = await endpoint.value.estimateFees(
-      config.networks[web3ProvidersStore.networkId]
-        .extendedChainLayerZeroEndpoint,
-      await erc1967ProxyWithProvider.value.l1Sender(),
-      '0x'.concat('00'.repeat(64)),
-      false,
-      '0x',
-    )
+    const fees =
+      await web3ProvidersStore.endpointContract.provider.estimateFees(
+        config.networks[web3ProvidersStore.networkId]
+          .extendedChainLayerZeroEndpoint,
+        await web3ProvidersStore.erc1967ProxyContract.provider.l1Sender(),
+        '0x'.concat('00'.repeat(64)),
+        false,
+        '0x',
+      )
 
-    const tx = await erc1967ProxyWithSigner.value.claim(
+    const tx = await web3ProvidersStore.erc1967ProxyContract.signer.claim(
       props.poolId,
       form.address,
       { value: fees.nativeFee },

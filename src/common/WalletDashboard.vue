@@ -83,7 +83,9 @@ const addToken = async () => {
       params: {
         type: 'ERC20',
         options: {
-          address: web3ProvidersStore.contractAddressesMap.mor,
+          address:
+            config.networks[web3ProvidersStore.networkId].contractAddressesMap
+              .mor,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),

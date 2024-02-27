@@ -4,4 +4,4 @@ export * from './icon-names.enum'
 export * from './layer-zero.enum'
 export * from './providers.enum'
 
-export { NETWORK_IDS } from '@config'
+export { CONTRACT_IDS, NETWORK_IDS } from '@config'

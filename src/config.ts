@@ -8,6 +8,13 @@ import {
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
 
+export enum CONTRACT_IDS {
+  erc1967Proxy = 'erc1967Proxy',
+  stEth = 'stEth',
+  mor = 'mor',
+  endpoint = 'endpoint',
+}
+
 export enum NETWORK_IDS {
   mainnet = 'mainnet',
   testnet = 'testnet',
@@ -22,6 +29,7 @@ interface Network {
   extendedChainTitle: string
   extendedChainRpcUrl: ETHEREUM_RPC_URLS
   extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS
+  contractAddressesMap: Record<CONTRACT_IDS, string>
 }
 
 export const config = {
@@ -75,6 +83,16 @@ export const config = {
       extendedChainTitle: 'Arbitrum',
       extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrum,
       extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
+      contractAddressesMap: {
+        [CONTRACT_IDS.erc1967Proxy]: import.meta.env
+          .VITE_APP_ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
+        [CONTRACT_IDS.stEth]: import.meta.env
+          .VITE_APP_STETH_MAINNET_CONTRACT_ADDRESS,
+        [CONTRACT_IDS.mor]: import.meta.env
+          .VITE_APP_MOR_MAINNET_CONTRACT_ADDRESS,
+        [CONTRACT_IDS.endpoint]: import.meta.env
+          .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
+      },
     },
     [NETWORK_IDS.testnet]: {
       chainId: ETHEREUM_CHAINS.sepolia,
@@ -85,6 +103,16 @@ export const config = {
       extendedChainTitle: 'Arbitrum Sepolia',
       extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrumSepolia,
       extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
+      contractAddressesMap: {
+        [CONTRACT_IDS.erc1967Proxy]: import.meta.env
+          .VITE_APP_ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
+        [CONTRACT_IDS.stEth]: import.meta.env
+          .VITE_APP_STETH_TESTNET_CONTRACT_ADDRESS,
+        [CONTRACT_IDS.mor]: import.meta.env
+          .VITE_APP_MOR_TESTNET_CONTRACT_ADDRESS,
+        [CONTRACT_IDS.endpoint]: import.meta.env
+          .VITE_APP_ENDPOINT_TESTNET_CONTRACT_ADDRESS,
+      },
     },
   } as Record<NETWORK_IDS, Network>,
 } as const

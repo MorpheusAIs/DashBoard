@@ -65,7 +65,7 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContract, useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
 import { InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
@@ -108,19 +108,6 @@ const isSubmitting = ref(false)
 const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
   [CURRENCIES.stEth]: null,
 })
-
-const { contractWithSigner: erc1967Proxy } = useContract(
-  'ERC1967Proxy__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
-)
-
-const {
-  contractWithProvider: stEthWithProvider,
-  contractWithSigner: stEthWithSigner,
-} = useContract(
-  'ERC20__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.stEth),
-)
 
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -190,15 +177,16 @@ const fetchAllowanceByCurrency = async (
   let contract
   switch (currency) {
     case CURRENCIES.stEth:
-      contract = stEthWithProvider.value
+      contract = web3ProvidersStore.stEthContract
       break
     default:
       throw new Error('unknown currency')
   }
 
-  return contract.allowance(
+  return contract.provider.allowance(
     web3ProvidersStore.provider.selectedAddress,
-    web3ProvidersStore.contractAddressesMap.erc1967Proxy,
+    config.networks[web3ProvidersStore.networkId].contractAddressesMap
+      .erc1967Proxy,
   )
 }
 
@@ -206,14 +194,15 @@ const approveByCurrency = async (currency: CURRENCIES) => {
   let contract
   switch (currency) {
     case CURRENCIES.stEth:
-      contract = stEthWithSigner.value
+      contract = web3ProvidersStore.stEthContract
       break
     default:
       throw new Error('unknown currency')
   }
 
-  return contract.approve(
-    web3ProvidersStore.contractAddressesMap.erc1967Proxy,
+  return contract.signer.approve(
+    config.networks[web3ProvidersStore.networkId].contractAddressesMap
+      .erc1967Proxy,
     MAX_UINT_256,
   )
 }
@@ -228,7 +217,10 @@ const submit = async (): Promise<void> => {
       tx = await approveByCurrency(balanceOfForm.value.value.currency)
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
-      tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
+      tx = await web3ProvidersStore.erc1967ProxyContract.signer.stake(
+        props.poolId,
+        amountInDecimals,
+      )
       emit('stake-tx-sent')
     }
 

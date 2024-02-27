@@ -1,10 +1,16 @@
-import { useProvider } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES, SUPPORTED_PROVIDERS } from '@/enums'
+import { useContract, useProvider } from '@/composables'
+import {
+  CONTRACT_IDS,
+  NETWORK_IDS,
+  ROUTE_NAMES,
+  SUPPORTED_PROVIDERS,
+} from '@/enums'
 import { sleep } from '@/helpers'
 import { useRouter } from '@/router'
 import { type BigNumber } from '@/types'
 import { config } from '@config'
 import { defineStore } from 'pinia'
+import { unref } from 'vue'
 import { ProviderDetector } from '@distributedlab/w3p'
 
 const STORE_NAME = 'web3-providers-store'
@@ -42,25 +48,60 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
 
       return NETWORK_IDS.testnet
     },
-    contractAddressesMap(): Record<string, string> {
-      switch (this.networkId) {
-        case NETWORK_IDS.mainnet:
-          return {
-            erc1967Proxy: config.ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
-            stEth: config.STETH_MAINNET_CONTRACT_ADDRESS,
-            mor: config.MOR_MAINNET_CONTRACT_ADDRESS,
-            endpoint: config.ENDPOINT_MAINNET_CONTRACT_ADDRESS,
-          }
 
-        case NETWORK_IDS.testnet:
-          return {
-            erc1967Proxy: config.ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
-            stEth: config.STETH_TESTNET_CONTRACT_ADDRESS,
-            mor: config.MOR_TESTNET_CONTRACT_ADDRESS,
-            endpoint: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
-          }
+    // Contracts
+    erc1967ProxyContract() {
+      const { contractWithProvider, contractWithSigner } = useContract(
+        'ERC1967Proxy__factory',
+        config.networks[this.networkId].contractAddressesMap[
+          CONTRACT_IDS.erc1967Proxy
+        ],
+      )
+
+      return {
+        provider: unref(contractWithProvider),
+        signer: unref(contractWithSigner),
       }
     },
+    stEthContract() {
+      const { contractWithProvider, contractWithSigner } = useContract(
+        'ERC20__factory',
+        config.networks[this.networkId].contractAddressesMap[
+          CONTRACT_IDS.stEth
+        ],
+      )
+
+      return {
+        provider: unref(contractWithProvider),
+        signer: unref(contractWithSigner),
+      }
+    },
+    morContract() {
+      const { contractWithProvider, contractWithSigner } = useContract(
+        'ERC20__factory',
+        config.networks[this.networkId].contractAddressesMap[CONTRACT_IDS.mor],
+        config.networks[this.networkId].extendedChainRpcUrl,
+      )
+
+      return {
+        provider: unref(contractWithProvider),
+        singer: unref(contractWithSigner),
+      }
+    },
+    endpointContract() {
+      const { contractWithProvider, contractWithSigner } = useContract(
+        'Endpoint__factory',
+        config.networks[this.networkId].contractAddressesMap[
+          CONTRACT_IDS.endpoint
+        ],
+      )
+
+      return {
+        provider: unref(contractWithProvider),
+        signer: unref(contractWithSigner),
+      }
+    },
+
     isValidChain(state): boolean {
       return (
         state.isAddingToken ||

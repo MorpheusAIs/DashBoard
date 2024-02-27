@@ -3,7 +3,6 @@ import { useWeb3ProvidersStore } from '@/store'
 import { type BigNumber, type Erc1967ProxyType } from '@/types'
 import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useContract } from './use-contract'
 
 export const usePool = (poolId: number) => {
   let _currentUserRewardUpdateIntervalId: Parameters<typeof clearInterval>[0]
@@ -63,18 +62,16 @@ export const usePool = (poolId: number) => {
 
   const currentTimestampMs = useTimestamp()
 
-  const { contractWithProvider: erc1967Proxy } = useContract(
-    'ERC1967Proxy__factory',
-    computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
-  )
-
   const web3ProvidersStore = useWeb3ProvidersStore()
 
   const fetchCurrentUserReward = async (): Promise<BigNumber> => {
     if (!web3ProvidersStore.provider.selectedAddress)
       throw new Error('user address unavailable')
 
-    return erc1967Proxy.value.getCurrentUserReward(
+    const { provider: contractProvider } =
+      web3ProvidersStore.erc1967ProxyContract
+
+    return contractProvider.getCurrentUserReward(
       poolId,
       web3ProvidersStore.provider.selectedAddress,
     )
@@ -100,8 +97,8 @@ export const usePool = (poolId: number) => {
 
   const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
     const poolDataResponses = await Promise.all([
-      erc1967Proxy.value.poolsData(poolId),
-      erc1967Proxy.value.pools(poolId),
+      web3ProvidersStore.erc1967ProxyContract.provider.poolsData(poolId),
+      web3ProvidersStore.erc1967ProxyContract.provider.pools(poolId),
     ])
 
     return {
@@ -125,10 +122,11 @@ export const usePool = (poolId: number) => {
     if (!web3ProvidersStore.provider.selectedAddress)
       throw new Error('user address unavailable')
 
-    const response = await erc1967Proxy.value.usersData(
-      web3ProvidersStore.provider.selectedAddress,
-      poolId,
-    )
+    const response =
+      await web3ProvidersStore.erc1967ProxyContract.provider.usersData(
+        web3ProvidersStore.provider.selectedAddress,
+        poolId,
+      )
 
     return {
       lastStake: response.lastStake,

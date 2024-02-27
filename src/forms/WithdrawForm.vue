@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContract, useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n } from '@/composables'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -65,11 +65,6 @@ const form = reactive({
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const { contractWithSigner: erc1967Proxy } = useContract(
-  'ERC1967Proxy__factory',
-  computed(() => web3ProvidersStore.contractAddressesMap.erc1967Proxy),
-)
-
 const availableEther = computed<string>(() => toEther(props.availableAmount))
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -82,7 +77,7 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    const tx = await erc1967Proxy.value.withdraw(
+    const tx = await web3ProvidersStore.erc1967ProxyContract.signer.withdraw(
       props.poolId,
       parseUnits(form.amount, 'ether'),
     )
