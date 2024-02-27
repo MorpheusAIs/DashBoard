@@ -1,5 +1,4 @@
 import { useProvider } from '@/composables'
-import { NETWORKS } from '@/const'
 import { NETWORK_IDS, ROUTE_NAMES, SUPPORTED_PROVIDERS } from '@/enums'
 import { sleep } from '@/helpers'
 import { useRouter } from '@/router'
@@ -65,7 +64,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
     isValidChain(state): boolean {
       return (
         state.isAddingToken ||
-        String(state.provider.chainId) === NETWORKS[this.networkId].chainId
+        String(state.provider.chainId) ===
+          config.networks[this.networkId].chainId
       )
     },
     address: state => state.provider.selectedAddress,

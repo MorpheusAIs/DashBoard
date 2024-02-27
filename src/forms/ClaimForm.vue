@@ -28,11 +28,11 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useContract, useFormValidation, useI18n } from '@/composables'
-import { NETWORKS } from '@/const'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
+import { config } from '@config'
 import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
@@ -77,7 +77,8 @@ const submit = async (): Promise<void> => {
 
   try {
     const fees = await endpoint.value.estimateFees(
-      NETWORKS[web3ProvidersStore.networkId].extendedChainLayerZeroEndpoint,
+      config.networks[web3ProvidersStore.networkId]
+        .extendedChainLayerZeroEndpoint,
       await erc1967ProxyWithProvider.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
@@ -91,7 +92,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      NETWORKS[web3ProvidersStore.networkId].explorerUrl,
+      config.networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 

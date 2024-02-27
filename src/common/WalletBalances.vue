@@ -47,12 +47,12 @@
 
 <script lang="ts" setup>
 import { useContract } from '@/composables'
-import { NETWORKS } from '@/const'
 import { ICON_NAMES } from '@/enums'
 import { SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
+import { config } from '@config'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 
@@ -77,7 +77,9 @@ const { contractWithProvider: stEth } = useContract(
 const { contractWithProvider: mor } = useContract(
   'ERC20__factory',
   computed(() => web3ProvidersStore.contractAddressesMap.mor),
-  computed(() => NETWORKS[web3ProvidersStore.networkId].extendedChainRpcUrl),
+  computed(
+    () => config.networks[web3ProvidersStore.networkId].extendedChainRpcUrl,
+  ),
 )
 
 const balances = computed<Balance[]>(() => [

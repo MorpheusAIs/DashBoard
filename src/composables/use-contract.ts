@@ -1,7 +1,7 @@
-import { NETWORKS } from '@/const'
 import { ETHEREUM_RPC_URLS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { factories } from '@/types'
+import { config } from '@config'
 import { providers } from 'ethers'
 import { computed, type ComputedRef, ref, type Ref, unref } from 'vue'
 
@@ -43,14 +43,14 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
     if (
       !unrefRpcUrl &&
       String(web3ProvidersStore.provider.chainId) ===
-        NETWORKS[web3ProvidersStore.networkId].chainId
+        config.networks[web3ProvidersStore.networkId].chainId
     )
       return new providers.Web3Provider(
         web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
       )
 
     return new providers.JsonRpcProvider(
-      unrefRpcUrl || NETWORKS[web3ProvidersStore.networkId].rpcUrl,
+      unrefRpcUrl || config.networks[web3ProvidersStore.networkId].rpcUrl,
     )
   })
 

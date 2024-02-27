@@ -1,6 +1,28 @@
 import packageJson from '../package.json'
 import { LogLevelDesc } from 'loglevel'
 import { pickBy, mapKeys } from 'lodash'
+import {
+  ETHEREUM_CHAINS,
+  ETHEREUM_EXPLORER_URLS,
+  ETHEREUM_RPC_URLS,
+  LAYER_ZERO_ENDPOINTS,
+} from '@/enums'
+
+export enum NETWORK_IDS {
+  mainnet = 'mainnet',
+  testnet = 'testnet',
+}
+
+interface Network {
+  chainId: ETHEREUM_CHAINS
+  chainTitle: string
+  rpcUrl: ETHEREUM_RPC_URLS
+  explorerUrl: ETHEREUM_EXPLORER_URLS
+  extendedChainId: ETHEREUM_CHAINS
+  extendedChainTitle: string
+  extendedChainRpcUrl: ETHEREUM_RPC_URLS
+  extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS
+}
 
 export const config = {
   // General
@@ -41,6 +63,30 @@ export const config = {
     .VITE_APP_MOR_MAINNET_CONTRACT_ADDRESS,
   ENDPOINT_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
+
+  // Networks
+  networks: {
+    [NETWORK_IDS.mainnet]: {
+      chainId: ETHEREUM_CHAINS.ethereum,
+      chainTitle: 'Ethereum',
+      rpcUrl: ETHEREUM_RPC_URLS.ethereum,
+      explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
+      extendedChainId: ETHEREUM_CHAINS.arbitrum,
+      extendedChainTitle: 'Arbitrum',
+      extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrum,
+      extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
+    },
+    [NETWORK_IDS.testnet]: {
+      chainId: ETHEREUM_CHAINS.sepolia,
+      chainTitle: 'Ethereum Sepolia',
+      rpcUrl: ETHEREUM_RPC_URLS.sepolia,
+      explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
+      extendedChainId: ETHEREUM_CHAINS.arbitrumSepolia,
+      extendedChainTitle: 'Arbitrum Sepolia',
+      extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrumSepolia,
+      extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
+    },
+  } as Record<NETWORK_IDS, Network>,
 } as const
 
 Object.assign(config, _mapEnvCfg(import.meta.env))

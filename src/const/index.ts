@@ -4,5 +4,4 @@ const { MaxUint256: MAX_UINT_256 } = constants
 
 export { MAX_UINT_256 }
 export * from './network-configs'
-export * from './networks'
 export * from './time.const'

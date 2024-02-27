@@ -18,7 +18,6 @@
 <script lang="ts" setup>
 import { AppNavbar, AppNavbarMobile, InvalidNetworkModal } from '@/common'
 import { useNotifications } from '@/composables'
-import { NETWORKS } from '@/const'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type NotificationPayload } from '@/types'
@@ -45,10 +44,10 @@ watch(
 watch(
   () => web3ProvidersStore.networkId,
   async () => {
-    if (web3ProvidersStore.isConnected) {
+    if (isAppInitialized.value && web3ProvidersStore.isConnected) {
       try {
         await web3ProvidersStore.provider.selectChain(
-          NETWORKS[web3ProvidersStore.networkId].chainId,
+          config.networks[web3ProvidersStore.networkId].chainId,
         )
       } catch (error) {
         ErrorHandler.process(error)

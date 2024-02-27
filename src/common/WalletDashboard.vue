@@ -45,9 +45,9 @@
 
 <script lang="ts" setup>
 import { useI18n } from '@/composables'
-import { NETWORKS } from '@/const'
 import { abbrCenter, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
+import { config } from '@config'
 import { onClickOutside } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import generateJazzicon from 'jazzicon'
@@ -75,7 +75,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      NETWORKS[web3ProvidersStore.networkId].extendedChainId,
+      config.networks[web3ProvidersStore.networkId].extendedChainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -92,7 +92,7 @@ const addToken = async () => {
     })
 
     await web3ProvidersStore.provider.selectChain(
-      NETWORKS[web3ProvidersStore.networkId].chainId,
+      config.networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
     ErrorHandler.process(error)

@@ -17,7 +17,7 @@
           :name="$icons.ethereumAlt1"
         />
         <span class="invalid-network-modal__network-title">
-          {{ NETWORKS[web3ProvidersStore.networkId].chainTitle }}
+          {{ config.networks[web3ProvidersStore.networkId].chainTitle }}
         </span>
       </div>
 
@@ -30,7 +30,7 @@
           :name="$icons.arbitrumAlt1"
         />
         <span class="invalid-network-modal__network-title">
-          {{ NETWORKS[web3ProvidersStore.networkId].extendedChainTitle }}
+          {{ config.networks[web3ProvidersStore.networkId].extendedChainTitle }}
         </span>
       </div>
     </div>
@@ -44,10 +44,10 @@
 </template>
 
 <script lang="ts" setup>
-import { NETWORKS } from '@/const'
 import { NETWORK_IDS } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
+import { config } from '@config'
 import AppButton from '../../AppButton.vue'
 import AppIcon from '../../AppIcon.vue'
 import BasicModal from '../BasicModal.vue'
@@ -73,7 +73,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const switchNetwork = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      NETWORKS[web3ProvidersStore.networkId].chainId,
+      config.networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
     ErrorHandler.process(error)

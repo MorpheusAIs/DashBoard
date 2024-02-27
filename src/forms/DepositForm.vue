@@ -66,13 +66,14 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useContract, useFormValidation, useI18n } from '@/composables'
-import { MAX_UINT_256, NETWORKS } from '@/const'
+import { MAX_UINT_256 } from '@/const'
 import { InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
 import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, minEther, required } from '@/validators'
+import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
 
@@ -232,7 +233,7 @@ const submit = async (): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      NETWORKS[web3ProvidersStore.networkId].explorerUrl,
+      config.networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 
