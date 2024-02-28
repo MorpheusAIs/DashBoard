@@ -2,7 +2,7 @@
   <div
     ref="rootElement"
     class="network-switch"
-    :class="{ 'network__switch--open': isDropMenuShown }"
+    :class="{ 'network-switch--open': isDropMenuShown }"
   >
     <div v-tooltip="networkTitle" class="network-switch__head-wrp">
       <span class="network-switch__network-title">
