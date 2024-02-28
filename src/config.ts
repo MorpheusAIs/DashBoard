@@ -1,12 +1,13 @@
-import packageJson from '../package.json'
-import { LogLevelDesc } from 'loglevel'
-import { pickBy, mapKeys } from 'lodash'
 import {
   ETHEREUM_CHAINS,
   ETHEREUM_EXPLORER_URLS,
   ETHEREUM_RPC_URLS,
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
+import { providers } from 'ethers'
+import { pickBy, mapKeys } from 'lodash'
+import { LogLevelDesc } from 'loglevel'
+import packageJson from '../package.json'
 
 export enum CONTRACT_IDS {
   erc1967Proxy = 'erc1967Proxy',
@@ -23,11 +24,11 @@ export enum NETWORK_IDS {
 interface Network {
   chainId: ETHEREUM_CHAINS
   chainTitle: string
-  rpcUrl: ETHEREUM_RPC_URLS
+  provider: providers.JsonRpcProvider
   explorerUrl: ETHEREUM_EXPLORER_URLS
   extendedChainId: ETHEREUM_CHAINS
   extendedChainTitle: string
-  extendedChainRpcUrl: ETHEREUM_RPC_URLS
+  extendedChainProvider: providers.JsonRpcProvider
   extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS
   contractAddressesMap: Record<CONTRACT_IDS, string>
 }
@@ -82,11 +83,13 @@ config.networks = {
   [NETWORK_IDS.mainnet]: {
     chainId: ETHEREUM_CHAINS.ethereum,
     chainTitle: 'Ethereum',
-    rpcUrl: ETHEREUM_RPC_URLS.ethereum,
+    provider: new providers.JsonRpcProvider(ETHEREUM_RPC_URLS.ethereum),
     explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
     extendedChainId: ETHEREUM_CHAINS.arbitrum,
     extendedChainTitle: 'Arbitrum',
-    extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrum,
+    extendedChainProvider: new providers.JsonRpcProvider(
+      ETHEREUM_RPC_URLS.arbitrum,
+    ),
     extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
     contractAddressesMap: {
       [CONTRACT_IDS.erc1967Proxy]:
@@ -99,11 +102,13 @@ config.networks = {
   [NETWORK_IDS.testnet]: {
     chainId: ETHEREUM_CHAINS.sepolia,
     chainTitle: 'Ethereum Sepolia',
-    rpcUrl: ETHEREUM_RPC_URLS.sepolia,
+    provider: new providers.JsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
     explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
     extendedChainId: ETHEREUM_CHAINS.arbitrumSepolia,
     extendedChainTitle: 'Arbitrum Sepolia',
-    extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrumSepolia,
+    extendedChainProvider: new providers.JsonRpcProvider(
+      ETHEREUM_RPC_URLS.arbitrumSepolia,
+    ),
     extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
     contractAddressesMap: {
       [CONTRACT_IDS.erc1967Proxy]:

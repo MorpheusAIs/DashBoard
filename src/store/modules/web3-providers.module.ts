@@ -84,7 +84,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       const { contractWithProvider, contractWithSigner } = useContract(
         'ERC20__factory',
         config.networks[networkId].contractAddressesMap[CONTRACT_IDS.mor],
-        config.networks[networkId].extendedChainRpcUrl,
+        config.networks[networkId].extendedChainProvider,
       )
 
       return {

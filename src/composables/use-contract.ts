@@ -1,4 +1,3 @@
-import { ETHEREUM_RPC_URLS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { factories } from '@/types'
 import { config } from '@config'
@@ -31,17 +30,15 @@ export interface IUseContract<
 export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
   contractFactoryKey: K,
   contractAddress: Ref<string> | string,
-  rpcUrl?: Ref<ETHEREUM_RPC_URLS> | ETHEREUM_RPC_URLS,
+  provider?: providers.JsonRpcProvider,
 ): IUseContract<K> {
   type I = IUseContract<K>
 
   const web3ProvidersStore = useWeb3ProvidersStore()
 
-  const provider: I['provider'] = computed(() => {
-    const unrefRpcUrl = unref(rpcUrl)
-
+  const _provider: I['provider'] = computed(() => {
     if (
-      !unrefRpcUrl &&
+      !provider &&
       String(web3ProvidersStore.provider.chainId) ===
         config.networks[web3ProvidersStore.networkId].chainId
     )
@@ -49,12 +46,10 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
         web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
       )
 
-    return new providers.JsonRpcProvider(
-      unrefRpcUrl || config.networks[web3ProvidersStore.networkId].rpcUrl,
-    )
+    return provider || config.networks[web3ProvidersStore.networkId].provider
   })
 
-  const signer: I['signer'] = computed(() => provider.value.getSigner())
+  const signer: I['signer'] = computed(() => _provider.value.getSigner())
 
   const _factoryClass = ref<ContractFactoryClass>(factories[contractFactoryKey])
 
@@ -66,7 +61,7 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
     const unrefContractAddress = unref(contractAddress)
     return _factoryClass.value.connect(
       unrefContractAddress,
-      provider.value,
+      _provider.value,
     ) as Contract<K>
   })
 
@@ -79,7 +74,7 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
   })
 
   return {
-    provider,
+    provider: _provider,
     signer,
     contractInterface,
     contractWithProvider,

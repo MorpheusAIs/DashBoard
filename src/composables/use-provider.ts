@@ -1,5 +1,4 @@
 import { CHAINS_NETWORK_CONFIGS_MAP } from '@/const'
-import { SUPPORTED_PROVIDERS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
 // TODO: remove after update type 'Chain' of @distributedlab/w3p
@@ -7,6 +6,7 @@ import { type Web3ProviderType } from '@/types'
 import {
   CHAIN_TYPES,
   FallbackEvmProvider,
+  PROVIDERS,
   Provider,
   ProviderDetector,
   MetamaskProvider,
@@ -31,7 +31,11 @@ import {
   type UnwrapRef,
 } from 'vue'
 
-// TODO: required keys
+export enum SUPPORTED_PROVIDERS {
+  Metamask = PROVIDERS.Metamask,
+  Fallback = PROVIDERS.Fallback,
+}
+
 const SUPPORTED_PROXY_CONSTRUCTORS: Record<
   SUPPORTED_PROVIDERS,
   ProviderProxyConstructor
