@@ -72,53 +72,48 @@ export const config = {
   ENDPOINT_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
 
-  // Networks
-  networks: {
-    [NETWORK_IDS.mainnet]: {
-      chainId: ETHEREUM_CHAINS.ethereum,
-      chainTitle: 'Ethereum',
-      rpcUrl: ETHEREUM_RPC_URLS.ethereum,
-      explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
-      extendedChainId: ETHEREUM_CHAINS.arbitrum,
-      extendedChainTitle: 'Arbitrum',
-      extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrum,
-      extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
-      contractAddressesMap: {
-        [CONTRACT_IDS.erc1967Proxy]: import.meta.env
-          .VITE_APP_ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
-        [CONTRACT_IDS.stEth]: import.meta.env
-          .VITE_APP_STETH_MAINNET_CONTRACT_ADDRESS,
-        [CONTRACT_IDS.mor]: import.meta.env
-          .VITE_APP_MOR_MAINNET_CONTRACT_ADDRESS,
-        [CONTRACT_IDS.endpoint]: import.meta.env
-          .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
-      },
-    },
-    [NETWORK_IDS.testnet]: {
-      chainId: ETHEREUM_CHAINS.sepolia,
-      chainTitle: 'Ethereum Sepolia',
-      rpcUrl: ETHEREUM_RPC_URLS.sepolia,
-      explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
-      extendedChainId: ETHEREUM_CHAINS.arbitrumSepolia,
-      extendedChainTitle: 'Arbitrum Sepolia',
-      extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrumSepolia,
-      extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
-      contractAddressesMap: {
-        [CONTRACT_IDS.erc1967Proxy]: import.meta.env
-          .VITE_APP_ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
-        [CONTRACT_IDS.stEth]: import.meta.env
-          .VITE_APP_STETH_TESTNET_CONTRACT_ADDRESS,
-        [CONTRACT_IDS.mor]: import.meta.env
-          .VITE_APP_MOR_TESTNET_CONTRACT_ADDRESS,
-        [CONTRACT_IDS.endpoint]: import.meta.env
-          .VITE_APP_ENDPOINT_TESTNET_CONTRACT_ADDRESS,
-      },
-    },
-  } as Record<NETWORK_IDS, Network>,
-} as const
+  networks: {} as Record<NETWORK_IDS, Network>,
+}
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
 Object.assign(config, _mapEnvCfg(document.ENV))
+
+config.networks = {
+  [NETWORK_IDS.mainnet]: {
+    chainId: ETHEREUM_CHAINS.ethereum,
+    chainTitle: 'Ethereum',
+    rpcUrl: ETHEREUM_RPC_URLS.ethereum,
+    explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
+    extendedChainId: ETHEREUM_CHAINS.arbitrum,
+    extendedChainTitle: 'Arbitrum',
+    extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrum,
+    extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
+    contractAddressesMap: {
+      [CONTRACT_IDS.erc1967Proxy]:
+        config.ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.stEth]: config.STETH_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.mor]: config.MOR_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.endpoint]: config.ENDPOINT_MAINNET_CONTRACT_ADDRESS,
+    },
+  },
+  [NETWORK_IDS.testnet]: {
+    chainId: ETHEREUM_CHAINS.sepolia,
+    chainTitle: 'Ethereum Sepolia',
+    rpcUrl: ETHEREUM_RPC_URLS.sepolia,
+    explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
+    extendedChainId: ETHEREUM_CHAINS.arbitrumSepolia,
+    extendedChainTitle: 'Arbitrum Sepolia',
+    extendedChainRpcUrl: ETHEREUM_RPC_URLS.arbitrumSepolia,
+    extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
+    contractAddressesMap: {
+      [CONTRACT_IDS.erc1967Proxy]:
+        config.ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.stEth]: config.STETH_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.mor]: config.MOR_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.endpoint]: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
+    },
+  },
+}
 
 function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
   [k: string]: string | boolean | undefined
