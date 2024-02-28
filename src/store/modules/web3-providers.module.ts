@@ -51,9 +51,11 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
 
     // Contracts
     erc1967ProxyContract() {
+      const networkId = this.networkId as NETWORK_IDS
+
       const { contractWithProvider, contractWithSigner } = useContract(
         'ERC1967Proxy__factory',
-        config.networks[this.networkId].contractAddressesMap[
+        config.networks[networkId].contractAddressesMap[
           CONTRACT_IDS.erc1967Proxy
         ],
       )
@@ -64,11 +66,11 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       }
     },
     stEthContract() {
+      const networkId = this.networkId as NETWORK_IDS
+
       const { contractWithProvider, contractWithSigner } = useContract(
         'ERC20__factory',
-        config.networks[this.networkId].contractAddressesMap[
-          CONTRACT_IDS.stEth
-        ],
+        config.networks[networkId].contractAddressesMap[CONTRACT_IDS.stEth],
       )
 
       return {
@@ -77,10 +79,12 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       }
     },
     morContract() {
+      const networkId = this.networkId as NETWORK_IDS
+
       const { contractWithProvider, contractWithSigner } = useContract(
         'ERC20__factory',
-        config.networks[this.networkId].contractAddressesMap[CONTRACT_IDS.mor],
-        config.networks[this.networkId].extendedChainRpcUrl,
+        config.networks[networkId].contractAddressesMap[CONTRACT_IDS.mor],
+        config.networks[networkId].extendedChainRpcUrl,
       )
 
       return {
@@ -89,11 +93,11 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       }
     },
     endpointContract() {
+      const networkId = this.networkId as NETWORK_IDS
+
       const { contractWithProvider, contractWithSigner } = useContract(
         'Endpoint__factory',
-        config.networks[this.networkId].contractAddressesMap[
-          CONTRACT_IDS.endpoint
-        ],
+        config.networks[networkId].contractAddressesMap[CONTRACT_IDS.endpoint],
       )
 
       return {
