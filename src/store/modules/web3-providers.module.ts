@@ -1,23 +1,42 @@
 import { useContract, useProvider } from '@/composables'
-import {
-  CONTRACT_IDS,
-  NETWORK_IDS,
-  ROUTE_NAMES,
-  SUPPORTED_PROVIDERS,
-} from '@/enums'
+import { CONTRACT_IDS, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { sleep } from '@/helpers'
 import { useRouter } from '@/router'
 import { type BigNumber } from '@/types'
 import { config } from '@config'
+import { providers } from 'ethers'
 import { defineStore } from 'pinia'
-import { unref } from 'vue'
-import { ProviderDetector } from '@distributedlab/w3p'
+import { type MaybeRef } from 'vue'
+import {
+  FallbackEvmProvider,
+  MetamaskProvider,
+  ProviderDetector,
+  PROVIDERS,
+  type ProviderProxyConstructor,
+} from '@distributedlab/w3p'
 
-const STORE_NAME = 'web3-providers-store'
+type DefaultProvider = MaybeRef<
+  providers.Web3Provider | providers.JsonRpcProvider
+>
 
 enum BALANCE_CURRENCIES {
   stEth = 'stEth',
   mor = 'mor',
+}
+
+export enum SUPPORTED_PROVIDERS {
+  Metamask = PROVIDERS.Metamask,
+  Fallback = PROVIDERS.Fallback,
+}
+
+const STORE_NAME = 'web3-providers-store'
+
+const SUPPORTED_PROXY_CONSTRUCTORS: Record<
+  SUPPORTED_PROVIDERS,
+  ProviderProxyConstructor
+> = {
+  [SUPPORTED_PROVIDERS.Fallback]: FallbackEvmProvider,
+  [SUPPORTED_PROVIDERS.Metamask]: MetamaskProvider,
 }
 
 export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
@@ -49,61 +68,54 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       return NETWORK_IDS.testnet
     },
 
+    defaultProvider(state): DefaultProvider {
+      const networkId = this.networkId as NETWORK_IDS
+      if (String(state.provider.chainId) === config.networks[networkId].chainId)
+        return new providers.Web3Provider(
+          state.provider.rawProvider as providers.ExternalProvider,
+        )
+
+      return config.networks[networkId].provider
+    },
+
     // Contracts
     erc1967ProxyContract() {
       const networkId = this.networkId as NETWORK_IDS
 
-      const { contractWithProvider, contractWithSigner } = useContract(
+      return useContract(
         'ERC1967Proxy__factory',
         config.networks[networkId].contractAddressesMap[
           CONTRACT_IDS.erc1967Proxy
         ],
+        this.defaultProvider as unknown as DefaultProvider,
       )
-
-      return {
-        provider: unref(contractWithProvider),
-        signer: unref(contractWithSigner),
-      }
     },
     stEthContract() {
       const networkId = this.networkId as NETWORK_IDS
 
-      const { contractWithProvider, contractWithSigner } = useContract(
+      return useContract(
         'ERC20__factory',
         config.networks[networkId].contractAddressesMap[CONTRACT_IDS.stEth],
+        this.defaultProvider as unknown as DefaultProvider,
       )
-
-      return {
-        provider: unref(contractWithProvider),
-        signer: unref(contractWithSigner),
-      }
     },
     morContract() {
       const networkId = this.networkId as NETWORK_IDS
 
-      const { contractWithProvider, contractWithSigner } = useContract(
+      return useContract(
         'ERC20__factory',
         config.networks[networkId].contractAddressesMap[CONTRACT_IDS.mor],
         config.networks[networkId].extendedChainProvider,
       )
-
-      return {
-        provider: unref(contractWithProvider),
-        singer: unref(contractWithSigner),
-      }
     },
     endpointContract() {
       const networkId = this.networkId as NETWORK_IDS
 
-      const { contractWithProvider, contractWithSigner } = useContract(
+      return useContract(
         'Endpoint__factory',
         config.networks[networkId].contractAddressesMap[CONTRACT_IDS.endpoint],
+        this.defaultProvider as unknown as DefaultProvider,
       )
-
-      return {
-        provider: unref(contractWithProvider),
-        signer: unref(contractWithSigner),
-      }
     },
 
     isValidChain(state): boolean {
@@ -124,7 +136,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
       await providerDetector.init()
 
       if (providerDetector.providers.metamask)
-        await this.provider.selectProvider(SUPPORTED_PROVIDERS.Metamask)
+        await this.provider.init(
+          SUPPORTED_PROXY_CONSTRUCTORS[SUPPORTED_PROVIDERS.Metamask],
+        )
 
       // store requires time for sync with vue-router
       await sleep(1000)
