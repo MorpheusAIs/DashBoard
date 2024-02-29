@@ -39,16 +39,14 @@ const action = computed<ACTIONS>(() => {
   }
 })
 
-const text = computed<string>(() => {
-  switch (action.value) {
-    case ACTIONS.toApp:
-      return t('connect-wallet-button.to-app')
-    case ACTIONS.toInstall:
-      return t('connect-wallet-button.to-install')
-    default:
-      return t('connect-wallet-button.default')
-  }
-})
+const text = computed<string>(
+  () =>
+    ({
+      [ACTIONS.toApp]: t('connect-wallet-button.to-app'),
+      [ACTIONS.toInstall]: t('connect-wallet-button.to-install'),
+      [ACTIONS.connect]: t('connect-wallet-button.connect'),
+    }[action.value]),
+)
 
 const appUrl = computed<string>(
   () => `https://metamask.app.link/dapp/${window.location.host}${fullPath}`,
