@@ -46,6 +46,14 @@ type Link = {
   route: Route
 }
 
+const MAINNET_ROUTES_MAP: Partial<Record<ROUTE_NAMES, ROUTE_NAMES>> = {
+  [ROUTE_NAMES.appTestnetCapital]: ROUTE_NAMES.appMainnetCapital,
+}
+
+const TESTNET_ROUTES_MAP: Partial<Record<ROUTE_NAMES, ROUTE_NAMES>> = {
+  [ROUTE_NAMES.appMainnetCapital]: ROUTE_NAMES.appTestnetCapital,
+}
+
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
 
@@ -53,47 +61,32 @@ const { t } = useI18n()
 const { currentRoute } = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const links = computed<Link[]>(() => {
-  let mainnetRoute
-  switch (currentRoute.value.name) {
-    case ROUTE_NAMES.appTestnetCapital:
-      mainnetRoute = { name: ROUTE_NAMES.appMainnetCapital }
-      break
-    default:
-      mainnetRoute = { name: ROUTE_NAMES.appMainnet }
-  }
-
-  let testnetRoute
-  switch (currentRoute.value.name) {
-    case ROUTE_NAMES.appMainnetCapital:
-      testnetRoute = { name: ROUTE_NAMES.appTestnetCapital }
-      break
-    default:
-      testnetRoute = { name: ROUTE_NAMES.appTestnet }
-  }
-
-  return [
-    {
-      title: t('network-switch.mainnet'),
-      route: mainnetRoute,
+const links = computed<Link[]>(() => [
+  {
+    title: t('network-switch.mainnet'),
+    route: {
+      name:
+        MAINNET_ROUTES_MAP[currentRoute.value.name as ROUTE_NAMES] ||
+        ROUTE_NAMES.appMainnet,
     },
-    {
-      title: t('network-switch.testnet'),
-      route: testnetRoute,
+  },
+  {
+    title: t('network-switch.testnet'),
+    route: {
+      name:
+        TESTNET_ROUTES_MAP[currentRoute.value.name as ROUTE_NAMES] ||
+        ROUTE_NAMES.appTestnet,
     },
-  ]
-})
+  },
+])
 
-const networkTitle = computed<string>(() => {
-  switch (web3ProvidersStore.networkId) {
-    case NETWORK_IDS.mainnet:
-      return t('network-switch.mainnet')
-    case NETWORK_IDS.testnet:
-      return t('network-switch.testnet')
-    default:
-      return ''
-  }
-})
+const networkTitle = computed<string>(
+  () =>
+    ({
+      [NETWORK_IDS.mainnet]: t('network-switch.mainnet'),
+      [NETWORK_IDS.testnet]: t('network-switch.testnet'),
+    }[web3ProvidersStore.networkId]),
+)
 
 onMounted(() => {
   onClickOutside(rootElement, () => {
