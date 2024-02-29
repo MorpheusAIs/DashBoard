@@ -41,21 +41,6 @@ watch(
   },
 )
 
-watch(
-  () => web3ProvidersStore.networkId,
-  async () => {
-    if (isAppInitialized.value && web3ProvidersStore.isConnected) {
-      try {
-        await web3ProvidersStore.provider.selectChain(
-          config.networks[web3ProvidersStore.networkId].chainId,
-        )
-      } catch (error) {
-        ErrorHandler.process(error)
-      }
-    }
-  },
-)
-
 const initNotifications = () => {
   bus.on(BUS_EVENTS.success, payload =>
     showToast('success', payload as NotificationPayload),

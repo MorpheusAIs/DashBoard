@@ -48,6 +48,7 @@ import { NETWORK_IDS } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
+import { watch } from 'vue'
 import AppButton from '../../AppButton.vue'
 import AppIcon from '../../AppIcon.vue'
 import BasicModal from '../BasicModal.vue'
@@ -79,6 +80,21 @@ const switchNetwork = async () => {
     ErrorHandler.process(error)
   }
 }
+
+watch(
+  () => web3ProvidersStore.networkId,
+  async () => {
+    if (web3ProvidersStore.isConnected) {
+      try {
+        await web3ProvidersStore.provider.selectChain(
+          config.networks[web3ProvidersStore.networkId].chainId,
+        )
+      } catch (error) {
+        ErrorHandler.process(error)
+      }
+    }
+  },
+)
 </script>
 
 <style lang="scss" scoped>
