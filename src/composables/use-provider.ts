@@ -5,16 +5,14 @@ import { sleep } from '@/helpers'
 import { type Web3ProviderType } from '@/types'
 import {
   CHAIN_TYPES,
-  FallbackEvmProvider,
-  PROVIDERS,
   Provider,
   ProviderDetector,
-  MetamaskProvider,
   createProvider,
   // TODO: remove after update type 'Chain' of @distributedlab/w3p
   type Chain as ChainW3P,
   type ChainId,
   type CreateProviderOpts,
+  type PROVIDERS,
   type ProviderInstance,
   type ProviderProxyConstructor,
   type RawProvider,
@@ -31,22 +29,9 @@ import {
   type UnwrapRef,
 } from 'vue'
 
-export enum SUPPORTED_PROVIDERS {
-  Metamask = PROVIDERS.Metamask,
-  Fallback = PROVIDERS.Fallback,
-}
-
-const SUPPORTED_PROXY_CONSTRUCTORS: Record<
-  SUPPORTED_PROVIDERS,
-  ProviderProxyConstructor
-> = {
-  [SUPPORTED_PROVIDERS.Fallback]: FallbackEvmProvider,
-  [SUPPORTED_PROVIDERS.Metamask]: MetamaskProvider,
-}
-
 export interface IUseProvider {
   selectedAddress: Ref<string>
-  selectedProvider: Ref<SUPPORTED_PROVIDERS | null>
+  selectedProvider: Ref<PROVIDERS | null>
   rawProvider: Ref<RawProvider | null>
   chainId: Ref<ChainId | null>
 
@@ -60,7 +45,6 @@ export interface IUseProvider {
   addProvider: (provider: ProviderInstance) => void
   switchChain: (chainId: ChainId) => Promise<void>
   selectChain: (chainId: ChainId) => Promise<void>
-  selectProvider: (supportedProvider: SUPPORTED_PROVIDERS) => Promise<void>
   request: (body: {
     method: string
     params?: unknown[] | object
@@ -105,8 +89,7 @@ export const useProvider = (): IUseProvider => {
 
   const _updateProviderState = (): void => {
     _providerReactiveState.selectedAddress = _provider?.address || ''
-    _providerReactiveState.selectedProvider =
-      (_provider?.providerType as unknown as SUPPORTED_PROVIDERS) || null
+    _providerReactiveState.selectedProvider = _provider?.providerType || null
     _providerReactiveState.rawProvider = _provider?.rawProvider || null
     _providerReactiveState.chainId = _provider?.chainId
       ? String(_provider?.chainId)
@@ -169,16 +152,6 @@ export const useProvider = (): IUseProvider => {
     }
   }
 
-  const selectProvider: I['selectProvider'] = async supportedProvider => {
-    const providerProxyConstructor: ProviderProxyConstructor | null =
-      SUPPORTED_PROXY_CONSTRUCTORS[supportedProvider] ?? null
-
-    if (!providerProxyConstructor)
-      throw new errors.ProviderProxyConstructorUnavailable()
-
-    await init(providerProxyConstructor)
-  }
-
   const request: I['request'] = async body => {
     // eslint-disable-next-line
     // @ts-ignore
@@ -215,9 +188,9 @@ export const useProvider = (): IUseProvider => {
     return _provider.signMessage(message)
   }
 
-  const _detector = computed<
-    ProviderDetector<keyof typeof SUPPORTED_PROVIDERS>
-  >(() => new ProviderDetector<keyof typeof SUPPORTED_PROVIDERS>())
+  const _detector = computed<ProviderDetector<PROVIDERS>>(
+    () => new ProviderDetector<PROVIDERS>(),
+  )
 
   async function init(
     ...[providerProxyConstructor, createProviderOpts]: Parameters<I['init']>
@@ -266,7 +239,6 @@ export const useProvider = (): IUseProvider => {
     addProvider,
     switchChain,
     selectChain,
-    selectProvider,
     request,
 
     getAddressUrl,
