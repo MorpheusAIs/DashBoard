@@ -1,5 +1,5 @@
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
-import { useWeb3ProvidersStore } from '@/store'
+import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { type BigNumber, type Erc1967ProxyType } from '@/types'
 import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -63,15 +63,13 @@ export const usePool = (poolId: number) => {
   const currentTimestampMs = useTimestamp()
 
   const web3ProvidersStore = useWeb3ProvidersStore()
+  const { erc1967ProxyContract } = storeToRefs(web3ProvidersStore)
 
   const fetchCurrentUserReward = async (): Promise<BigNumber> => {
     if (!web3ProvidersStore.provider.selectedAddress)
       throw new Error('user address unavailable')
 
-    const { provider: contractProvider } =
-      web3ProvidersStore.erc1967ProxyContract
-
-    return contractProvider.getCurrentUserReward(
+    return erc1967ProxyContract.value.providerBased.value.getCurrentUserReward(
       poolId,
       web3ProvidersStore.provider.selectedAddress,
     )
@@ -97,8 +95,8 @@ export const usePool = (poolId: number) => {
 
   const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
     const poolDataResponses = await Promise.all([
-      web3ProvidersStore.erc1967ProxyContract.provider.poolsData(poolId),
-      web3ProvidersStore.erc1967ProxyContract.provider.pools(poolId),
+      erc1967ProxyContract.value.providerBased.value.poolsData(poolId),
+      erc1967ProxyContract.value.providerBased.value.pools(poolId),
     ])
 
     return {
@@ -123,7 +121,7 @@ export const usePool = (poolId: number) => {
       throw new Error('user address unavailable')
 
     const response =
-      await web3ProvidersStore.erc1967ProxyContract.provider.usersData(
+      await erc1967ProxyContract.value.providerBased.value.usersData(
         web3ProvidersStore.provider.selectedAddress,
         poolId,
       )

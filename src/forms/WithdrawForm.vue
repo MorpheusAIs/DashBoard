@@ -77,10 +77,11 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    const tx = await web3ProvidersStore.erc1967ProxyContract.signer.withdraw(
-      props.poolId,
-      parseUnits(form.amount, 'ether'),
-    )
+    const tx =
+      await web3ProvidersStore.erc1967ProxyContract.signerBased.value.withdraw(
+        props.poolId,
+        parseUnits(form.amount, 'ether'),
+      )
 
     const explorerTxUrl = getEthExplorerTxUrl(
       config.networks[web3ProvidersStore.networkId].explorerUrl,

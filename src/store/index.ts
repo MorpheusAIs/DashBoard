@@ -5,4 +5,5 @@ const store = createPinia()
 store.use(piniaPluginPersistedstate)
 
 export { store }
+export { storeToRefs } from 'pinia'
 export * from './modules'

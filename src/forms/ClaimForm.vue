@@ -30,7 +30,7 @@ import { AppButton } from '@/common'
 import { useFormValidation, useI18n } from '@/composables'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
-import { useWeb3ProvidersStore } from '@/store'
+import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
 import { config } from '@config'
 import { reactive, ref } from 'vue'
@@ -56,31 +56,32 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   })
 
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
+
+const { endpointContract, erc1967ProxyContract, networkId } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const submit = async (): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
 
   try {
-    const fees =
-      await web3ProvidersStore.endpointContract.provider.estimateFees(
-        config.networks[web3ProvidersStore.networkId]
-          .extendedChainLayerZeroEndpoint,
-        await web3ProvidersStore.erc1967ProxyContract.provider.l1Sender(),
-        '0x'.concat('00'.repeat(64)),
-        false,
-        '0x',
-      )
+    const fees = await endpointContract.value.providerBased.value.estimateFees(
+      config.networks[networkId.value].extendedChainLayerZeroEndpoint,
+      await erc1967ProxyContract.value.providerBased.value.l1Sender(),
+      '0x'.concat('00'.repeat(64)),
+      false,
+      '0x',
+    )
 
-    const tx = await web3ProvidersStore.erc1967ProxyContract.signer.claim(
+    const tx = await erc1967ProxyContract.value.signerBased.value.claim(
       props.poolId,
       form.address,
       { value: fees.nativeFee },
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networks[web3ProvidersStore.networkId].explorerUrl,
+      config.networks[networkId.value].explorerUrl,
       tx.hash,
     )
 

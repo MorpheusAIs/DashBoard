@@ -95,8 +95,8 @@ const updateBalances = async (): Promise<void> => {
   const address = web3ProvidersStore.provider.selectedAddress
 
   const [stEthValue, morValue] = await Promise.all([
-    web3ProvidersStore.stEthContract.provider.balanceOf(address),
-    web3ProvidersStore.morContract.provider.balanceOf(address),
+    web3ProvidersStore.stEthContract.providerBased.value.balanceOf(address),
+    web3ProvidersStore.morContract.providerBased.value.balanceOf(address),
   ])
 
   web3ProvidersStore.balances.stEth = stEthValue
@@ -145,7 +145,9 @@ onMounted(() => {
 
     try {
       web3ProvidersStore.balances.mor =
-        await web3ProvidersStore.morContract.provider.balanceOf(address)
+        await web3ProvidersStore.morContract.providerBased.value.balanceOf(
+          address,
+        )
     } catch (error) {
       ErrorHandler.process(error)
     }

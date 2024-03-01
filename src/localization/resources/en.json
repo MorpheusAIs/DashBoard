@@ -18,7 +18,7 @@
   "connect-wallet-button": {
     "to-app": "Go To Metamask",
     "to-install": "Install MetaMask",
-    "default": "Connect Wallet"
+    "connect": "Connect Wallet"
   },
   "deposit-form": {
     "balance-label": "Available to deposit",
