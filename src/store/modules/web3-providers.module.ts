@@ -6,7 +6,7 @@ import { type BigNumber } from '@/types'
 import { config } from '@config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
-import { type MaybeRef } from 'vue'
+import { computed, reactive, ref, type MaybeRef } from 'vue'
 import {
   FallbackEvmProvider,
   MetamaskProvider,
@@ -39,109 +39,129 @@ const SUPPORTED_PROXY_CONSTRUCTORS: Record<
   [SUPPORTED_PROVIDERS.Metamask]: MetamaskProvider,
 }
 
-export const useWeb3ProvidersStore = defineStore(STORE_NAME, {
-  state: () => ({
-    provider: useProvider(),
-    balances: {
+export const useWeb3ProvidersStore = defineStore(
+  STORE_NAME,
+  () => {
+    const _router = reactive(useRouter())
+
+    // State
+    const provider = reactive(useProvider())
+
+    const balances = reactive<Record<BALANCE_CURRENCIES, BigNumber | null>>({
       [BALANCE_CURRENCIES.stEth]: null,
       [BALANCE_CURRENCIES.mor]: null,
-    } as Record<BALANCE_CURRENCIES, BigNumber | null>,
-    isAddingToken: false,
-    hasConnectedProvider: false,
-    _router: useRouter(),
-  }),
+    })
 
-  persist: {
-    paths: ['hasConnectedProvider'],
-    storage: localStorage,
-  },
+    const isAddingToken = ref(false)
+    const hasConnectedProvider = ref(false)
 
-  getters: {
-    networkId: (state): NETWORK_IDS => {
+    // Getters
+    const networkId = computed<NETWORK_IDS>(() => {
       if (
-        state._router.currentRoute.matched.find(
+        _router.currentRoute.matched.find(
           route => route.name === ROUTE_NAMES.appMainnet,
         )
       )
         return NETWORK_IDS.mainnet
 
       return NETWORK_IDS.testnet
-    },
+    })
 
-    defaultProvider(state): DefaultProvider {
-      const networkId = this.networkId as NETWORK_IDS
-      if (String(state.provider.chainId) === config.networks[networkId].chainId)
+    const defaultProvider = computed<DefaultProvider>(() => {
+      if (String(provider.chainId) === config.networks[networkId.value].chainId)
         return new providers.Web3Provider(
-          state.provider.rawProvider as providers.ExternalProvider,
+          provider.rawProvider as providers.ExternalProvider,
         )
 
-      return config.networks[networkId].provider
-    },
+      return config.networks[networkId.value].provider
+    })
 
-    // Contracts
-    erc1967ProxyContract() {
-      const networkId = this.networkId as NETWORK_IDS
+    const isValidChain = computed<boolean>(() => {
+      return (
+        isAddingToken.value ||
+        String(provider.chainId) === config.networks[networkId.value].chainId
+      )
+    })
 
-      return useContract(
+    const isConnected = computed<boolean>(
+      () => provider.isConnected && hasConnectedProvider.value,
+    )
+
+    const address = computed<string>(() => provider.selectedAddress)
+
+    const erc1967ProxyContract = computed(() =>
+      useContract(
         'ERC1967Proxy__factory',
-        config.networks[networkId].contractAddressesMap[
+        config.networks[networkId.value].contractAddressesMap[
           CONTRACT_IDS.erc1967Proxy
         ],
-        this.defaultProvider as unknown as DefaultProvider,
-      )
-    },
-    stEthContract() {
-      const networkId = this.networkId as NETWORK_IDS
+        defaultProvider.value,
+      ),
+    )
 
-      return useContract(
+    const stEthContract = computed(() =>
+      useContract(
         'ERC20__factory',
-        config.networks[networkId].contractAddressesMap[CONTRACT_IDS.stEth],
-        this.defaultProvider as unknown as DefaultProvider,
-      )
-    },
-    morContract() {
-      const networkId = this.networkId as NETWORK_IDS
+        config.networks[networkId.value].contractAddressesMap[
+          CONTRACT_IDS.stEth
+        ],
+        defaultProvider.value,
+      ),
+    )
 
-      return useContract(
+    const morContract = computed(() =>
+      useContract(
         'ERC20__factory',
-        config.networks[networkId].contractAddressesMap[CONTRACT_IDS.mor],
-        config.networks[networkId].extendedChainProvider,
-      )
-    },
-    endpointContract() {
-      const networkId = this.networkId as NETWORK_IDS
+        config.networks[networkId.value].contractAddressesMap[CONTRACT_IDS.mor],
+        config.networks[networkId.value].extendedChainProvider,
+      ),
+    )
 
-      return useContract(
+    const endpointContract = computed(() =>
+      useContract(
         'Endpoint__factory',
-        config.networks[networkId].contractAddressesMap[CONTRACT_IDS.endpoint],
-        this.defaultProvider as unknown as DefaultProvider,
-      )
-    },
+        config.networks[networkId.value].contractAddressesMap[
+          CONTRACT_IDS.endpoint
+        ],
+        defaultProvider.value,
+      ),
+    )
 
-    isValidChain(state): boolean {
-      return (
-        state.isAddingToken ||
-        String(state.provider.chainId) ===
-          config.networks[this.networkId].chainId
-      )
-    },
-    address: state => state.provider.selectedAddress,
-    isConnected: state =>
-      state.provider.isConnected && state.hasConnectedProvider,
-  },
-
-  actions: {
-    async init() {
+    // Actions
+    const init = async () => {
       const providerDetector = new ProviderDetector()
       await providerDetector.init()
 
       if (providerDetector.providers.metamask)
-        await this.provider.init(
+        await provider.init(
           SUPPORTED_PROXY_CONSTRUCTORS[SUPPORTED_PROVIDERS.Metamask],
         )
 
       // store requires time for sync with vue-router
       await sleep(1000)
-    },
+    }
+
+    return {
+      // State
+      provider,
+      balances,
+      isAddingToken,
+      hasConnectedProvider,
+
+      // Getters
+      networkId,
+      defaultProvider,
+      isValidChain,
+      isConnected,
+      address,
+      erc1967ProxyContract,
+      stEthContract,
+      morContract,
+      endpointContract,
+
+      // Actions
+      init,
+    }
   },
-})
+  { persist: { paths: ['hasConnectedProvider'] } },
+)
