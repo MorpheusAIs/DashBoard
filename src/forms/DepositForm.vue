@@ -183,7 +183,7 @@ const fetchAllowanceByCurrency = async (
       throw new Error('unknown currency')
   }
 
-  return contract.provider.allowance(
+  return contract.providerBased.value.allowance(
     web3ProvidersStore.provider.selectedAddress,
     config.networks[web3ProvidersStore.networkId].contractAddressesMap
       .erc1967Proxy,
@@ -200,27 +200,28 @@ const approveByCurrency = async (currency: CURRENCIES) => {
       throw new Error('unknown currency')
   }
 
-  return contract.signer.approve(
+  return contract.signerBased.value.approve(
     config.networks[web3ProvidersStore.networkId].contractAddressesMap
       .erc1967Proxy,
     MAX_UINT_256,
   )
 }
 
-const submit = async (): Promise<void> => {
+const submit = async (action: ACTIONS): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
 
   try {
     let tx
-    if (action.value === ACTIONS.approve && balanceOfForm.value) {
+    if (action === ACTIONS.approve && balanceOfForm.value) {
       tx = await approveByCurrency(balanceOfForm.value.value.currency)
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
-      tx = await web3ProvidersStore.erc1967ProxyContract.signer.stake(
-        props.poolId,
-        amountInDecimals,
-      )
+      tx =
+        await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
+          props.poolId,
+          amountInDecimals,
+        )
       emit('stake-tx-sent')
     }
 
@@ -253,12 +254,10 @@ const submit = async (): Promise<void> => {
   }
 }
 
+// FIXME: simplify flow
 const onSubmit = async () => {
-  if (action.value === ACTIONS.approve) {
-    await submit()
-  }
-
-  await submit()
+  if (action.value === ACTIONS.approve) await submit(ACTIONS.approve)
+  if (action.value == ACTIONS.stake) await submit(ACTIONS.stake)
 }
 
 const init = async (): Promise<void> => {
