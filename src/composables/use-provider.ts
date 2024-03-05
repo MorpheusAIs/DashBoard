@@ -1,8 +1,8 @@
-import { CHAINS_NETWORK_CONFIGS_MAP } from '@/const'
+import { type ETHEREUM_CHAINS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
+import { config, type Chain } from '@config'
 // TODO: remove after update type 'Chain' of @distributedlab/w3p
-import { type Web3ProviderType } from '@/types'
 import {
   CHAIN_TYPES,
   Provider,
@@ -41,7 +41,7 @@ export interface IUseProvider {
 
   connect: () => Promise<void>
   disconnect: () => Promise<void>
-  addChain: (chain: Web3ProviderType.Chain) => Promise<void>
+  addChain: (chain: Chain) => Promise<void>
   addProvider: (provider: ProviderInstance) => void
   switchChain: (chainId: ChainId) => Promise<void>
   selectChain: (chainId: ChainId) => Promise<void>
@@ -51,12 +51,12 @@ export interface IUseProvider {
   }) => Promise<unknown>
 
   // TODO: to discuss: chain as arg
-  getAddressUrl: (chain: Web3ProviderType.Chain, address: string) => string
+  getAddressUrl: (chain: Chain, address: string) => string
 
   getHashFromTxResponse: (txResponse: TransactionResponse) => string
 
   // TODO: to discuss: chain as arg
-  getTxUrl: (chain: Web3ProviderType.Chain, txHash: string) => string
+  getTxUrl: (chain: Chain, txHash: string) => string
 
   signAndSendTx: (txRequestBody: TxRequestBody) => Promise<TransactionResponse>
   signMessage: (message: string) => Promise<string | null>
@@ -139,8 +139,7 @@ export const useProvider = (): IUseProvider => {
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
-      const chainNetworkConfig = CHAINS_NETWORK_CONFIGS_MAP[chainId]
-      await addChain(chainNetworkConfig)
+      await addChain(config.chainsMap[chainId as ETHEREUM_CHAINS])
 
       // onChainChanged provider event needs time for execute
       await sleep(1000)
@@ -253,7 +252,7 @@ export const useProvider = (): IUseProvider => {
 }
 
 // TODO: remove after update type 'Chain' of @distributedlab/w3p
-function _parseChainToChainW3P(chain: Web3ProviderType.Chain): ChainW3P {
+function _parseChainToChainW3P(chain: Chain): ChainW3P {
   return {
     id: Number(chain.chainId),
     name: chain.chainName,

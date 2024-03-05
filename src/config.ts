@@ -4,7 +4,7 @@ import {
   ETHEREUM_RPC_URLS,
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
-import { providers } from 'ethers'
+import { providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
 import packageJson from '../package.json'
@@ -19,6 +19,22 @@ export enum CONTRACT_IDS {
 export enum NETWORK_IDS {
   mainnet = 'mainnet',
   testnet = 'testnet',
+}
+
+/** EIP-3085 */
+export interface Chain {
+  /** A 0x-prefixed hexadecimal string */
+  chainId: string
+
+  chainName: string
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
+  rpcUrls: string[]
+  blockExplorerUrls?: string[]
+  iconUrls?: string[]
 }
 
 interface Network {
@@ -74,6 +90,31 @@ export const config = {
     .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
 
   networks: {} as Record<NETWORK_IDS, Network>,
+
+  chainsMap: {
+    [ETHEREUM_CHAINS.arbitrum]: {
+      chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrum)),
+      chainName: 'Arbitrum One',
+      nativeCurrency: {
+        name: 'ETH',
+        symbol: 'ETH',
+        decimals: 18,
+      },
+      rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
+      blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrum],
+    },
+    [ETHEREUM_CHAINS.arbitrumSepolia]: {
+      chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumSepolia)),
+      chainName: 'Arbitrum Sepolia (Testnet)',
+      nativeCurrency: {
+        name: 'ETH',
+        symbol: 'ETH',
+        decimals: 18,
+      },
+      rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
+      blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrumSepolia],
+    },
+  } as Record<ETHEREUM_CHAINS, Chain>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
