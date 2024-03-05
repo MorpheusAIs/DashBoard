@@ -37,7 +37,7 @@
     <app-button
       class="invalid-network-modal__btn"
       :text="$t('invalid-network-modal.switch-btn')"
-      :disabled="web3ProvidersStore.provider.isChainSelecting"
+      :disabled="web3ProvidersStore.walletProvider.isChainSelecting"
       @click="switchNetwork"
     />
   </basic-modal>
@@ -73,7 +73,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const switchNetwork = async () => {
   try {
-    await web3ProvidersStore.provider.selectChain(
+    await web3ProvidersStore.walletProvider.selectChain(
       config.networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
@@ -86,7 +86,7 @@ watch(
   async () => {
     if (web3ProvidersStore.isConnected) {
       try {
-        await web3ProvidersStore.provider.selectChain(
+        await web3ProvidersStore.walletProvider.selectChain(
           config.networks[web3ProvidersStore.networkId].chainId,
         )
       } catch (error) {

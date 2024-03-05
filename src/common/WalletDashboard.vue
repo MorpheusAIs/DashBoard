@@ -74,11 +74,11 @@ const addToken = async () => {
   web3ProvidersStore.isAddingToken = true
 
   try {
-    await web3ProvidersStore.provider.selectChain(
+    await web3ProvidersStore.walletProvider.selectChain(
       config.networks[web3ProvidersStore.networkId].extendedChainId,
     )
 
-    await web3ProvidersStore.provider.request({
+    await web3ProvidersStore.walletProvider.request({
       method: 'wallet_watchAsset',
       params: {
         type: 'ERC20',
@@ -93,7 +93,7 @@ const addToken = async () => {
       },
     })
 
-    await web3ProvidersStore.provider.selectChain(
+    await web3ProvidersStore.walletProvider.selectChain(
       config.networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
