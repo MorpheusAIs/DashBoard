@@ -1,5 +1,4 @@
-import { factories } from '@/types'
-import { providers } from 'ethers'
+import { factories, type Provider } from '@/types'
 import { computed, unref, type ComputedRef, type MaybeRef } from 'vue'
 
 type ContractFactoryKey = keyof typeof factories
@@ -24,7 +23,7 @@ export interface IUseContract<
 export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
   contractFactoryKey: K,
   contractAddress: MaybeRef<string>,
-  provider: MaybeRef<providers.Web3Provider | providers.JsonRpcProvider>,
+  provider: MaybeRef<Provider>,
 ): IUseContract<K> {
   type I = IUseContract<K>
 

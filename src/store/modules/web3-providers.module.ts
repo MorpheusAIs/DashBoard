@@ -2,11 +2,11 @@ import { useContract, useProvider } from '@/composables'
 import { CONTRACT_IDS, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { sleep } from '@/helpers'
 import { useRouter } from '@/router'
-import { type BigNumber } from '@/types'
+import { type BigNumber, type Provider } from '@/types'
 import { config } from '@config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
-import { computed, reactive, ref, type MaybeRef } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import {
   FallbackEvmProvider,
   MetamaskProvider,
@@ -14,10 +14,6 @@ import {
   PROVIDERS,
   type ProviderProxyConstructor,
 } from '@distributedlab/w3p'
-
-type DefaultProvider = MaybeRef<
-  providers.Web3Provider | providers.JsonRpcProvider
->
 
 enum BALANCE_CURRENCIES {
   stEth = 'stEth',
@@ -67,7 +63,7 @@ export const useWeb3ProvidersStore = defineStore(
       return NETWORK_IDS.testnet
     })
 
-    const defaultProvider = computed<DefaultProvider>(() => {
+    const defaultProvider = computed<Provider>(() => {
       if (String(provider.chainId) === config.networks[networkId.value].chainId)
         return new providers.Web3Provider(
           provider.rawProvider as providers.ExternalProvider,

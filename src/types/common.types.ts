@@ -1,5 +1,6 @@
 import type { ICON_NAMES } from '@/enums'
-import { RouteLocationRaw } from 'vue-router'
+import type { RouteLocationRaw } from 'vue-router'
+import type { providers } from 'ethers'
 
 export type CommonNotificationTypes =
   | 'success'
@@ -27,3 +28,5 @@ export type Tab = {
   route?: RouteLocationRaw
   href?: string
 }
+
+export type Provider = providers.Web3Provider | providers.JsonRpcProvider
