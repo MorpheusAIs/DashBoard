@@ -27,14 +27,10 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext, useContract, useFormValidation } from '@/composables'
-import {
-  ETHEREUM_EXPLORER_URLS,
-  ETHEREUM_RPC_URLS,
-  LAYER_ZERO_ENDPOINTS,
-} from '@/enums'
+import { useFormValidation, useI18n } from '@/composables'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
 import { config } from '@config'
 import { reactive, ref } from 'vue'
@@ -59,23 +55,10 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     address: { required, address },
   })
 
-const { $t } = useContext()
+const { t } = useI18n()
 
-const { contractWithProvider: erc1967ProxyWithProvider } = useContract(
-  'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
-)
-
-const { contractWithSigner: erc1967ProxyWithSigner } = useContract(
-  'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
-)
-
-const { contractWithProvider: endpoint } = useContract(
-  'Endpoint__factory',
-  config.ENDPOINT_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
+const { endpointContract, erc1967ProxyContract, networkId } = storeToRefs(
+  useWeb3ProvidersStore(),
 )
 
 const submit = async (): Promise<void> => {
@@ -83,32 +66,28 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    const fees = await endpoint.value.estimateFees(
-      config.IS_MAINNET
-        ? LAYER_ZERO_ENDPOINTS.arbitrum
-        : LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
-      await erc1967ProxyWithProvider.value.l1Sender(),
+    const fees = await endpointContract.value.providerBased.value.estimateFees(
+      config.networks[networkId.value].extendedChainLayerZeroEndpoint,
+      await erc1967ProxyContract.value.providerBased.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
       '0x',
     )
 
-    const tx = await erc1967ProxyWithSigner.value.claim(
+    const tx = await erc1967ProxyContract.value.signerBased.value.claim(
       props.poolId,
       form.address,
       { value: fees.nativeFee },
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.IS_MAINNET
-        ? ETHEREUM_EXPLORER_URLS.ethereum
-        : ETHEREUM_EXPLORER_URLS.sepolia,
+      config.networks[networkId.value].explorerUrl,
       tx.hash,
     )
 
     bus.emit(
       BUS_EVENTS.info,
-      $t('claim-form.tx-sent-message', { explorerTxUrl }),
+      t('claim-form.tx-sent-message', { explorerTxUrl }),
     )
 
     emit('tx-sent')
@@ -117,7 +96,7 @@ const submit = async (): Promise<void> => {
 
     bus.emit(
       BUS_EVENTS.success,
-      $t('claim-form.success-message', { explorerTxUrl }),
+      t('claim-form.success-message', { explorerTxUrl }),
     )
 
     bus.emit(BUS_EVENTS.changedCurrentUserReward)

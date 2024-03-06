@@ -14,10 +14,10 @@
       <app-button
         class="zero-pool-description__details-link"
         scheme="link"
-        href="https://github.com/MorpheusAIs/Morpheus/tree/main/!KEYDOCS%20README%20FIRST!"
         target="_blank"
         rel="noopener noreferrer"
         text="GitHub"
+        :href="$config.GITHUB_URL"
       />
     </p>
   </div>
@@ -25,16 +25,16 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext } from '@/composables'
+import { useI18n } from '@/composables'
 import { computed } from 'vue'
 
-const { $t } = useContext()
+const { t } = useI18n()
 
 const listItems = computed<string[]>(() => [
-  $t('zero-pool-description.list.1'),
-  $t('zero-pool-description.list.2'),
-  $t('zero-pool-description.list.3'),
-  $t('zero-pool-description.list.4'),
+  t('zero-pool-description.list.1'),
+  t('zero-pool-description.list.2'),
+  t('zero-pool-description.list.3'),
+  t('zero-pool-description.list.4'),
 ])
 </script>
 

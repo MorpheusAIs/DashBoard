@@ -9,7 +9,7 @@
       class="wallet-dashboard__head-wrp"
     >
       <div ref="jazziconWrpElement" class="wallet-dashboard__jazzicon-wrp" />
-      <p class="wallet-dashboard__address">
+      <p class="wallet-dashboard__head-address">
         {{ abbrCenter(web3ProvidersStore.address) }}
       </p>
       <app-icon
@@ -44,10 +44,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useContext } from '@/composables'
-import { ETHEREUM_CHAINS } from '@/enums'
+import { useI18n } from '@/composables'
 import { abbrCenter, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
+import { config } from '@config'
 import { onClickOutside } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import generateJazzicon from 'jazzicon'
@@ -59,7 +59,7 @@ const jazziconWrpElement = ref<HTMLDivElement | null>(null)
 const isDropMenuOpen = ref(false)
 const rootElement = ref<HTMLDivElement | null>(null)
 
-const { $config, $t } = useContext()
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const setJazzicon = () => {
@@ -75,9 +75,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      $config.IS_MAINNET
-        ? ETHEREUM_CHAINS.arbitrum
-        : ETHEREUM_CHAINS.arbitrumSepolia,
+      config.networks[web3ProvidersStore.networkId].extendedChainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -85,7 +83,9 @@ const addToken = async () => {
       params: {
         type: 'ERC20',
         options: {
-          address: $config.MOR_CONTRACT_ADDRESS,
+          address:
+            config.networks[web3ProvidersStore.networkId].contractAddressesMap
+              .mor,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),
@@ -94,7 +94,7 @@ const addToken = async () => {
     })
 
     await web3ProvidersStore.provider.selectChain(
-      $config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia,
+      config.networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
     ErrorHandler.process(error)
@@ -105,11 +105,11 @@ const addToken = async () => {
 
 const options = [
   {
-    title: $t('wallet-dashboard.add-token'),
+    title: t('wallet-dashboard.add-token'),
     onClick: addToken,
   },
   {
-    title: $t('wallet-dashboard.disconnect'),
+    title: t('wallet-dashboard.disconnect'),
     onClick: () => {
       web3ProvidersStore.hasConnectedProvider = false
     },
@@ -132,16 +132,10 @@ onMounted(() => {
   position: relative;
   background: var(--background-secondary-main);
   height: toRem(48);
-  width: toRem(200);
+  width: toRem(92);
 
-  :deep(.drop-menu) {
-    left: unset;
-    right: 0;
-
-    @include respond-to(medium) {
-      left: 0;
-      right: unset;
-    }
+  @include respond-to(medium) {
+    width: toRem(220);
   }
 }
 
@@ -152,6 +146,19 @@ onMounted(() => {
   padding: 0 toRem(6) 0 toRem(16);
   height: 100%;
   color: var(--text-secondary-light);
+}
+
+.wallet-dashboard__head-address {
+  display: none;
+
+  @include respond-to(medium) {
+    display: block;
+    font-family: var(--app-font-family);
+    font-size: toRem(18);
+    font-weight: 400;
+    line-height: toRem(26);
+    letter-spacing: 0;
+  }
 }
 
 .wallet-dashboard__head-indicator {

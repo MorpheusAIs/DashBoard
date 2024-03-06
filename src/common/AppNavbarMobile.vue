@@ -23,9 +23,8 @@
                 :key="idx"
                 :text="link.text"
                 :href="link.href"
-                :route="link.route"
-                :target="link.href ? '_blank' : undefined"
-                :rel="link.href ? 'noopener noreferrer' : undefined"
+                target="_blank"
+                rel="noopener noreferrer"
                 scheme="link"
                 color="none"
                 class="app-navbar-mobile__link"
@@ -39,8 +38,9 @@
                 color="secondary"
               />
               <div v-else class="app-navbar-mobile__wallet-info-wrp">
-                <wallet-dashboard />
+                <network-switch />
                 <wallet-balances />
+                <wallet-dashboard />
               </div>
             </transition>
           </div>
@@ -63,6 +63,7 @@ import AppButton from './AppButton.vue'
 import AppIcon from './AppIcon.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
+import NetworkSwitch from './NetworkSwitch.vue'
 import WalletBalances from './WalletBalances.vue'
 import WalletDashboard from './WalletDashboard.vue'
 
@@ -161,8 +162,8 @@ $z-index: 1000;
   gap: toRem(20);
   margin: toRem(76) auto 0;
 
-  @include respond-to(small) {
-    flex-direction: column-reverse;
+  @include respond-to(medium) {
+    flex-direction: column;
   }
 }
 

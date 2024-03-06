@@ -2,7 +2,10 @@
   <basic-modal
     v-bind="props"
     class="invalid-network-modal"
-    :class="{ 'invalid-network-modal--mainnet': $config.IS_MAINNET }"
+    :class="{
+      'invalid-network-modal--mainnet':
+        web3ProvidersStore.networkId === NETWORK_IDS.mainnet,
+    }"
     :title="$t('invalid-network-modal.title')"
     :subtitle="$t('invalid-network-modal.subtitle')"
     @update:is-shown="emit('update:is-shown', $event)"
@@ -14,8 +17,7 @@
           :name="$icons.ethereumAlt1"
         />
         <span class="invalid-network-modal__network-title">
-          <!-- eslint-disable-next-line vue-i18n/no-raw-text -->
-          {{ config.IS_MAINNET ? 'Ethereum' : 'Ethereum Sepolia' }}
+          {{ config.networks[web3ProvidersStore.networkId].chainTitle }}
         </span>
       </div>
 
@@ -28,8 +30,7 @@
           :name="$icons.arbitrumAlt1"
         />
         <span class="invalid-network-modal__network-title">
-          <!-- eslint-disable-next-line vue-i18n/no-raw-text -->
-          {{ config.IS_MAINNET ? 'Arbitrum' : 'Arbitrum Sepolia' }}
+          {{ config.networks[web3ProvidersStore.networkId].extendedChainTitle }}
         </span>
       </div>
     </div>
@@ -43,10 +44,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ETHEREUM_CHAINS } from '@/enums'
+import { NETWORK_IDS } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
+import { watch } from 'vue'
 import AppButton from '../../AppButton.vue'
 import AppIcon from '../../AppIcon.vue'
 import BasicModal from '../BasicModal.vue'
@@ -72,12 +74,27 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const switchNetwork = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.IS_MAINNET ? ETHEREUM_CHAINS.ethereum : ETHEREUM_CHAINS.sepolia,
+      config.networks[web3ProvidersStore.networkId].chainId,
     )
   } catch (error) {
     ErrorHandler.process(error)
   }
 }
+
+watch(
+  () => web3ProvidersStore.networkId,
+  async () => {
+    if (web3ProvidersStore.isConnected) {
+      try {
+        await web3ProvidersStore.provider.selectChain(
+          config.networks[web3ProvidersStore.networkId].chainId,
+        )
+      } catch (error) {
+        ErrorHandler.process(error)
+      }
+    }
+  },
+)
 </script>
 
 <style lang="scss" scoped>

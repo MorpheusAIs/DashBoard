@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
 import { AppButton, ClaimModal, InfoBar, InfoDashboard } from '@/common'
-import { useContext, usePool } from '@/composables'
+import { useI18n, usePool } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { ICON_NAMES } from '@/enums'
 import type { InfoBarType, InfoDashboardType, ProgressBarType } from '@/types'
@@ -47,7 +47,7 @@ const isClaimModalShown = ref(false)
 
 const poolId = computed(() => props.poolId)
 
-const { $t } = useContext()
+const { t } = useI18n()
 
 const {
   currentUserReward,
@@ -63,11 +63,11 @@ const {
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
-    title: $t('home-page.private-pool-view.daily-reward-title'),
+    title: t('home-page.private-pool-view.daily-reward-title'),
     value: dailyReward.value ? `${formatEther(dailyReward.value)} MOR` : '',
   },
   {
-    title: $t('home-page.private-pool-view.started-at-title'),
+    title: t('home-page.private-pool-view.started-at-title'),
     value: poolData.value
       ? new Time(poolData.value.payoutStart.toNumber() * 1000).format(
           DEFAULT_TIME_FORMAT,
@@ -75,7 +75,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
       : '',
   },
   {
-    title: $t('home-page.private-pool-view.claim-at-title'),
+    title: t('home-page.private-pool-view.claim-at-title'),
     value: poolData.value
       ? new Time(
           (poolData.value.payoutStart.toNumber() +
@@ -83,14 +83,14 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
             1000,
         ).format(DEFAULT_TIME_FORMAT)
       : '',
-    note: $t('home-page.private-pool-view.claim-at-note'),
+    note: t('home-page.private-pool-view.claim-at-note'),
   },
 ])
 
 const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
   {
     iconName: ICON_NAMES.arbitrum,
-    title: $t('home-page.private-pool-view.available-to-claim-title'),
+    title: t('home-page.private-pool-view.available-to-claim-title'),
     value: currentUserReward.value
       ? `${formatEther(currentUserReward.value)} MOR`
       : '',

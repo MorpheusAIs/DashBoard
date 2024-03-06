@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useContext } from '@/composables'
+import { useI18n } from '@/composables'
 import { ICON_NAMES } from '@/enums'
 import { WithdrawForm } from '@/forms'
 import { type BigNumber } from '@/types'
@@ -70,12 +70,12 @@ const props = withDefaults(
   },
 )
 
-const { $t } = useContext()
+const { t } = useI18n()
 
 const indicators = computed<Indicator[]>(() => [
   {
     iconName: ICON_NAMES.ethereum,
-    title: $t('withdraw-modal.available-to-withdraw-title'),
+    title: t('withdraw-modal.available-to-withdraw-title'),
     value: `${formatEther(props.availableAmount)} stETH`,
   },
 ])

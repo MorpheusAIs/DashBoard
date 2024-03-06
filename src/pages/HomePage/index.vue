@@ -13,38 +13,69 @@
 
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
-import { useContext } from '@/composables'
+import { useI18n } from '@/composables'
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
 import { config } from '@config'
+import { computed } from 'vue'
 
-const { $routes, $t } = useContext()
+const { t } = useI18n()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
-const tabs: Tab[] = [
-  {
-    title: $t('home-page.capital-tab'),
-    id: 'capital',
-    route: { name: $routes.appCapital },
-  },
-  {
-    title: $t('home-page.coders-tab'),
-    id: 'coders',
-    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
-  },
-  {
-    title: $t('home-page.compute-tab'),
-    id: 'compute',
-    href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
-  },
-  {
-    title: $t('home-page.community-tab'),
-    id: 'community',
-    ...(!config.IS_MAINNET
-      ? { route: { name: $routes.appCommunity } }
-      : {
-          href: 'https://github.com/MorpheusAIs/Morpheus/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
-        }),
-  },
-]
+const tabs = computed<Tab[]>(() => {
+  switch (web3ProvidersStore.networkId) {
+    case NETWORK_IDS.mainnet:
+      return [
+        {
+          title: t('home-page.capital-tab'),
+          id: 'capital',
+          route: { name: ROUTE_NAMES.appMainnetCapital },
+        },
+        {
+          title: t('home-page.coders-tab'),
+          id: 'coders',
+          href: config.CODE_CONTRIBUTION_URL,
+        },
+        {
+          title: t('home-page.compute-tab'),
+          id: 'compute',
+          href: config.COMPUTE_CONTRIBUTION_URL,
+        },
+        {
+          title: t('home-page.community-tab'),
+          id: 'community',
+          href: config.COMMUNITY_CONTRIBUTION_URL,
+        },
+      ]
+
+    case NETWORK_IDS.testnet:
+      return [
+        {
+          title: t('home-page.capital-tab'),
+          id: 'capital',
+          route: { name: ROUTE_NAMES.appTestnetCapital },
+        },
+        {
+          title: t('home-page.coders-tab'),
+          id: 'coders',
+          href: config.CODE_CONTRIBUTION_URL,
+        },
+        {
+          title: t('home-page.compute-tab'),
+          id: 'compute',
+          href: config.COMPUTE_CONTRIBUTION_URL,
+        },
+        {
+          title: t('home-page.community-tab'),
+          id: 'community',
+          route: { name: ROUTE_NAMES.appTestnetCommunity },
+        },
+      ]
+  }
+
+  return []
+})
 </script>
 
 <style lang="scss" scoped>
@@ -102,6 +133,10 @@ const tabs: Tab[] = [
 .home-page__content-wrp {
   width: 100%;
   max-width: toRem(912);
+
+  @include respond-to(medium) {
+    max-width: unset;
+  }
 }
 
 .home-page .home-page__view {

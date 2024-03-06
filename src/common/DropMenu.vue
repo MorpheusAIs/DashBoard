@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from '@/router'
 import { onClickOutside } from '@vueuse/core'
-import { ref } from 'vue'
-import { onBeforeRouteUpdate } from 'vue-router'
+import { ref, watch } from 'vue'
 
 const emit = defineEmits<{
   (event: 'update:is-shown', value: boolean): void
@@ -38,18 +38,24 @@ const props = withDefaults(
   },
 )
 
-onBeforeRouteUpdate(() => {
-  if (props.isHideOnRouteChange) emit('update:is-shown', false)
-})
+const { currentRoute } = useRouter()
 
 const dropMenuElement = ref<HTMLDivElement | null>(null)
-onClickOutside(dropMenuElement, () => {
-  if (props.isHideOnClickOutside) emit('update:is-shown', false)
-})
 
 const onPointerLeave = () => {
   if (props.isHideOnPointerLeave) emit('update:is-shown', false)
 }
+
+onClickOutside(dropMenuElement, () => {
+  if (props.isHideOnClickOutside) emit('update:is-shown', false)
+})
+
+watch(
+  () => currentRoute.value.fullPath,
+  () => {
+    if (props.isHideOnRouteChange) emit('update:is-shown', false)
+  },
+)
 </script>
 
 <style lang="scss" scoped>
@@ -60,7 +66,7 @@ $z-index: 2;
   flex-direction: column;
   position: absolute;
   overflow: hidden auto;
-  left: 0;
+  right: 0;
   width: 100%;
   min-width: max-content;
   max-height: 500%;

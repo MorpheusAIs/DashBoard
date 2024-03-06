@@ -1,6 +1,6 @@
 {
   "app-navbar": {
-    "token-contract-link": "Token Contract",
+    "contract-faq-link": "Contract FAQ",
     "community-website-link": "Community Website"
   },
   "claim-form": {
@@ -18,7 +18,7 @@
   "connect-wallet-button": {
     "to-app": "Go To Metamask",
     "to-install": "Install MetaMask",
-    "default": "Connect Wallet"
+    "connect": "Connect Wallet"
   },
   "deposit-form": {
     "balance-label": "Available to deposit",
@@ -88,6 +88,10 @@
     "subtitle": "Your wallet is connected to the unsupported chain. Please, switch to another network:",
     "switch-btn": "Switch network"
   },
+  "network-switch": {
+    "mainnet": "Ethereum Mainnet",
+    "testnet": "Ethereum Sepolia"
+  },
   "validations": {
     "field-error_address": "Field must be a valid address with prefix \"0x\"",
     "field-error_required": "Field must be filled in",
@@ -116,7 +120,7 @@
     "list": {
       "1": "Deposit stETH (via ETH) to earn MOR tokens",
       "2": "stETH can be withdrawn after day 7",
-      "3": "Claim your MOR tokens after 91 days",
+      "3": "Claim your MOR tokens starting May 8th",
       "4": "MOR tokens are rewarded on Arbitrum"
     },
     "details": "Details on"

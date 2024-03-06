@@ -1,20 +1,18 @@
-import { CHAINS_NETWORK_CONFIGS_MAP } from '@/const'
-import { SUPPORTED_PROVIDERS } from '@/enums'
+import { type ETHEREUM_CHAINS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
+import { config, type Chain } from '@config'
 // TODO: remove after update type 'Chain' of @distributedlab/w3p
-import { type Web3ProviderType } from '@/types'
 import {
   CHAIN_TYPES,
-  FallbackEvmProvider,
   Provider,
   ProviderDetector,
-  MetamaskProvider,
   createProvider,
   // TODO: remove after update type 'Chain' of @distributedlab/w3p
   type Chain as ChainW3P,
   type ChainId,
   type CreateProviderOpts,
+  type PROVIDERS,
   type ProviderInstance,
   type ProviderProxyConstructor,
   type RawProvider,
@@ -31,18 +29,9 @@ import {
   type UnwrapRef,
 } from 'vue'
 
-// TODO: required keys
-const SUPPORTED_PROXY_CONSTRUCTORS: Record<
-  SUPPORTED_PROVIDERS,
-  ProviderProxyConstructor
-> = {
-  [SUPPORTED_PROVIDERS.Fallback]: FallbackEvmProvider,
-  [SUPPORTED_PROVIDERS.Metamask]: MetamaskProvider,
-}
-
 export interface IUseProvider {
   selectedAddress: Ref<string>
-  selectedProvider: Ref<SUPPORTED_PROVIDERS | null>
+  selectedProvider: Ref<PROVIDERS | null>
   rawProvider: Ref<RawProvider | null>
   chainId: Ref<ChainId | null>
 
@@ -52,23 +41,22 @@ export interface IUseProvider {
 
   connect: () => Promise<void>
   disconnect: () => Promise<void>
-  addChain: (chain: Web3ProviderType.Chain) => Promise<void>
+  addChain: (chain: Chain) => Promise<void>
   addProvider: (provider: ProviderInstance) => void
   switchChain: (chainId: ChainId) => Promise<void>
   selectChain: (chainId: ChainId) => Promise<void>
-  selectProvider: (supportedProvider: SUPPORTED_PROVIDERS) => Promise<void>
   request: (body: {
     method: string
     params?: unknown[] | object
   }) => Promise<unknown>
 
   // TODO: to discuss: chain as arg
-  getAddressUrl: (chain: Web3ProviderType.Chain, address: string) => string
+  getAddressUrl: (chain: Chain, address: string) => string
 
   getHashFromTxResponse: (txResponse: TransactionResponse) => string
 
   // TODO: to discuss: chain as arg
-  getTxUrl: (chain: Web3ProviderType.Chain, txHash: string) => string
+  getTxUrl: (chain: Chain, txHash: string) => string
 
   signAndSendTx: (txRequestBody: TxRequestBody) => Promise<TransactionResponse>
   signMessage: (message: string) => Promise<string | null>
@@ -101,8 +89,7 @@ export const useProvider = (): IUseProvider => {
 
   const _updateProviderState = (): void => {
     _providerReactiveState.selectedAddress = _provider?.address || ''
-    _providerReactiveState.selectedProvider =
-      (_provider?.providerType as unknown as SUPPORTED_PROVIDERS) || null
+    _providerReactiveState.selectedProvider = _provider?.providerType || null
     _providerReactiveState.rawProvider = _provider?.rawProvider || null
     _providerReactiveState.chainId = _provider?.chainId
       ? String(_provider?.chainId)
@@ -152,8 +139,7 @@ export const useProvider = (): IUseProvider => {
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
-      const chainNetworkConfig = CHAINS_NETWORK_CONFIGS_MAP[chainId]
-      await addChain(chainNetworkConfig)
+      await addChain(config.chainsMap[chainId as ETHEREUM_CHAINS])
 
       // onChainChanged provider event needs time for execute
       await sleep(1000)
@@ -163,16 +149,6 @@ export const useProvider = (): IUseProvider => {
     } finally {
       isChainSelecting.value = false
     }
-  }
-
-  const selectProvider: I['selectProvider'] = async supportedProvider => {
-    const providerProxyConstructor: ProviderProxyConstructor | null =
-      SUPPORTED_PROXY_CONSTRUCTORS[supportedProvider] ?? null
-
-    if (!providerProxyConstructor)
-      throw new errors.ProviderProxyConstructorUnavailable()
-
-    await init(providerProxyConstructor)
   }
 
   const request: I['request'] = async body => {
@@ -211,9 +187,9 @@ export const useProvider = (): IUseProvider => {
     return _provider.signMessage(message)
   }
 
-  const _detector = computed<
-    ProviderDetector<keyof typeof SUPPORTED_PROVIDERS>
-  >(() => new ProviderDetector<keyof typeof SUPPORTED_PROVIDERS>())
+  const _detector = computed<ProviderDetector<PROVIDERS>>(
+    () => new ProviderDetector<PROVIDERS>(),
+  )
 
   async function init(
     ...[providerProxyConstructor, createProviderOpts]: Parameters<I['init']>
@@ -262,7 +238,6 @@ export const useProvider = (): IUseProvider => {
     addProvider,
     switchChain,
     selectChain,
-    selectProvider,
     request,
 
     getAddressUrl,
@@ -277,7 +252,7 @@ export const useProvider = (): IUseProvider => {
 }
 
 // TODO: remove after update type 'Chain' of @distributedlab/w3p
-function _parseChainToChainW3P(chain: Web3ProviderType.Chain): ChainW3P {
+function _parseChainToChainW3P(chain: Chain): ChainW3P {
   return {
     id: Number(chain.chainId),
     name: chain.chainName,

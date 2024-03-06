@@ -37,10 +37,10 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext, useContract, useFormValidation } from '@/composables'
-import { ETHEREUM_EXPLORER_URLS } from '@/enums'
+import { useFormValidation, useI18n } from '@/composables'
 import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
 import { BigNumber, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, required } from '@/validators'
 import { config } from '@config'
@@ -62,12 +62,8 @@ const form = reactive({
   amount: '' as string,
 })
 
-const { $t } = useContext()
-
-const { contractWithSigner: erc1967Proxy } = useContract(
-  'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
-)
+const { t } = useI18n()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const availableEther = computed<string>(() => toEther(props.availableAmount))
 
@@ -81,21 +77,20 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    const tx = await erc1967Proxy.value.withdraw(
-      props.poolId,
-      parseUnits(form.amount, 'ether'),
-    )
+    const tx =
+      await web3ProvidersStore.erc1967ProxyContract.signerBased.value.withdraw(
+        props.poolId,
+        parseUnits(form.amount, 'ether'),
+      )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.IS_MAINNET
-        ? ETHEREUM_EXPLORER_URLS.ethereum
-        : ETHEREUM_EXPLORER_URLS.sepolia,
+      config.networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 
     bus.emit(
       BUS_EVENTS.info,
-      $t('withdraw-form.tx-sent-message', { explorerTxUrl }),
+      t('withdraw-form.tx-sent-message', { explorerTxUrl }),
     )
 
     emit('tx-sent')
@@ -104,7 +99,7 @@ const submit = async (): Promise<void> => {
 
     bus.emit(
       BUS_EVENTS.success,
-      $t('withdraw-form.success-message', { explorerTxUrl }),
+      t('withdraw-form.success-message', { explorerTxUrl }),
     )
 
     bus.emit(BUS_EVENTS.changedPoolData)

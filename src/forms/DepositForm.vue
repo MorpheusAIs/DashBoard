@@ -57,7 +57,7 @@
         :text="submissionBtnText"
         :disabled="isSubmitting || !isFieldsValid"
         :is-loading="isInitializing"
-        @click="submit"
+        @click="onSubmit"
       />
     </div>
   </form>
@@ -65,9 +65,8 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useContext, useContract, useFormValidation } from '@/composables'
+import { useFormValidation, useI18n } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_EXPLORER_URLS, ETHEREUM_RPC_URLS } from '@/enums'
 import { InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -110,23 +109,7 @@ const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
   [CURRENCIES.stEth]: null,
 })
 
-const { contractWithSigner: erc1967Proxy } = useContract(
-  'ERC1967Proxy__factory',
-  config.ERC1967_PROXY_CONTRACT_ADDRESS,
-)
-
-const { contractWithProvider: stEthWithProvider } = useContract(
-  'ERC20__factory',
-  config.STETH_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
-)
-
-const { contractWithSigner: stEthWithSigner } = useContract(
-  'ERC20__factory',
-  config.STETH_CONTRACT_ADDRESS,
-)
-
-const { $t } = useContext()
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
@@ -184,8 +167,8 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 
 const submissionBtnText = computed<string>(() =>
   action.value === ACTIONS.approve
-    ? $t('deposit-form.submit-btn.approve')
-    : $t('deposit-form.submit-btn.deposit'),
+    ? t('deposit-form.submit-btn.approve')
+    : t('deposit-form.submit-btn.deposit'),
 )
 
 const fetchAllowanceByCurrency = async (
@@ -194,15 +177,16 @@ const fetchAllowanceByCurrency = async (
   let contract
   switch (currency) {
     case CURRENCIES.stEth:
-      contract = stEthWithProvider.value
+      contract = web3ProvidersStore.stEthContract
       break
     default:
       throw new Error('unknown currency')
   }
 
-  return contract.allowance(
+  return contract.providerBased.value.allowance(
     web3ProvidersStore.provider.selectedAddress,
-    config.ERC1967_PROXY_CONTRACT_ADDRESS,
+    config.networks[web3ProvidersStore.networkId].contractAddressesMap
+      .erc1967Proxy,
   )
 }
 
@@ -210,46 +194,52 @@ const approveByCurrency = async (currency: CURRENCIES) => {
   let contract
   switch (currency) {
     case CURRENCIES.stEth:
-      contract = stEthWithSigner.value
+      contract = web3ProvidersStore.stEthContract
       break
     default:
       throw new Error('unknown currency')
   }
 
-  return contract.approve(config.ERC1967_PROXY_CONTRACT_ADDRESS, MAX_UINT_256)
+  return contract.signerBased.value.approve(
+    config.networks[web3ProvidersStore.networkId].contractAddressesMap
+      .erc1967Proxy,
+    MAX_UINT_256,
+  )
 }
 
-const submit = async (): Promise<void> => {
+const submit = async (action: ACTIONS): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
 
   try {
     let tx
-    if (action.value === ACTIONS.approve && balanceOfForm.value) {
+    if (action === ACTIONS.approve && balanceOfForm.value) {
       tx = await approveByCurrency(balanceOfForm.value.value.currency)
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
-      tx = await erc1967Proxy.value.stake(props.poolId, amountInDecimals)
+      tx =
+        await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
+          props.poolId,
+          amountInDecimals,
+        )
       emit('stake-tx-sent')
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.IS_MAINNET
-        ? ETHEREUM_EXPLORER_URLS.ethereum
-        : ETHEREUM_EXPLORER_URLS.sepolia,
+      config.networks[web3ProvidersStore.networkId].explorerUrl,
       tx.hash,
     )
 
     bus.emit(
       BUS_EVENTS.info,
-      $t('deposit-form.tx-sent-message', { explorerTxUrl }),
+      t('deposit-form.tx-sent-message', { explorerTxUrl }),
     )
 
     await tx.wait()
 
     bus.emit(
       BUS_EVENTS.success,
-      $t('deposit-form.success-message', { explorerTxUrl }),
+      t('deposit-form.success-message', { explorerTxUrl }),
     )
 
     bus.emit(BUS_EVENTS.changedPoolData)
@@ -262,6 +252,12 @@ const submit = async (): Promise<void> => {
   } finally {
     isSubmitting.value = false
   }
+}
+
+// FIXME: simplify flow
+const onSubmit = async () => {
+  if (action.value === ACTIONS.approve) await submit(ACTIONS.approve)
+  if (action.value == ACTIONS.stake) await submit(ACTIONS.stake)
 }
 
 const init = async (): Promise<void> => {

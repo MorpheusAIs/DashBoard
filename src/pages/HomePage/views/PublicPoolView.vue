@@ -31,12 +31,12 @@
                 class="public-pool-view__bar-button"
                 scheme="link"
                 color="none"
-                href="https://help.lido.fi/en/articles/5232811-how-do-i-get-steth"
                 target="_blank"
                 rel="noopener noreferrer"
                 :text="$t('home-page.public-pool-view.external-link')"
                 :icon-right="$icons.externalLink"
                 :is-loading="isInitializing"
+                :href="$config.HOW_GET_STETH_URL"
               />
             </div>
             <deposit-modal
@@ -106,7 +106,7 @@ import {
   InfoDashboard,
   WithdrawModal,
 } from '@/common'
-import { useContext, usePool } from '@/composables'
+import { useI18n, usePool } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { ICON_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
@@ -123,7 +123,7 @@ const isWithdrawModalShown = ref(false)
 
 const poolId = computed(() => props.poolId)
 
-const { $t } = useContext()
+const { t } = useI18n()
 
 const {
   currentUserReward,
@@ -143,17 +143,17 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
-    title: $t('home-page.public-pool-view.total-deposits-title'),
+    title: t('home-page.public-pool-view.total-deposits-title'),
     value: poolData.value
       ? `${formatEther(poolData.value.totalDeposited)} stETH`
       : '',
   },
   {
-    title: $t('home-page.public-pool-view.daily-reward-title'),
+    title: t('home-page.public-pool-view.daily-reward-title'),
     value: dailyReward.value ? `${formatEther(dailyReward.value)} MOR` : '',
   },
   {
-    title: $t('home-page.public-pool-view.started-at-title'),
+    title: t('home-page.public-pool-view.started-at-title'),
     value: poolData.value
       ? new Time(poolData.value.payoutStart.toNumber() * 1000).format(
           DEFAULT_TIME_FORMAT,
@@ -161,7 +161,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
       : '',
   },
   {
-    title: $t('home-page.public-pool-view.withdraw-at-title'),
+    title: t('home-page.public-pool-view.withdraw-at-title'),
     value: poolData.value
       ? new Time(
           userPoolData.value && !userPoolData.value.lastStake.isZero()
@@ -175,10 +175,10 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
                 .toNumber(),
         ).format(DEFAULT_TIME_FORMAT)
       : '',
-    note: $t('home-page.public-pool-view.withdraw-at-note'),
+    note: t('home-page.public-pool-view.withdraw-at-note'),
   },
   {
-    title: $t('home-page.public-pool-view.claim-at-title'),
+    title: t('home-page.public-pool-view.claim-at-title'),
     value: poolData.value
       ? new Time(
           (poolData.value.payoutStart.toNumber() +
@@ -186,21 +186,21 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
             1000,
         ).format(DEFAULT_TIME_FORMAT)
       : '',
-    note: $t('home-page.public-pool-view.claim-at-note'),
+    note: t('home-page.public-pool-view.claim-at-note'),
   },
 ])
 
 const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
   {
     iconName: ICON_NAMES.ethereum,
-    title: $t('home-page.public-pool-view.user-deposit-title'),
+    title: t('home-page.public-pool-view.user-deposit-title'),
     value: userPoolData.value
       ? `${formatEther(userPoolData.value.deposited)} stETH`
       : '',
   },
   {
     iconName: ICON_NAMES.arbitrum,
-    title: $t('home-page.public-pool-view.available-to-claim-title'),
+    title: t('home-page.public-pool-view.available-to-claim-title'),
     value: currentUserReward.value
       ? `${formatEther(currentUserReward.value)} MOR`
       : '',

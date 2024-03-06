@@ -46,13 +46,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useContract } from '@/composables'
-import { ETHEREUM_RPC_URLS, ICON_NAMES } from '@/enums'
+import { ICON_NAMES } from '@/enums'
 import { SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
-import { config } from '@config'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 
@@ -65,21 +63,7 @@ type Balance = {
 let _morUpdateIntervalId: Parameters<typeof clearInterval>[0]
 
 const isInitializing = ref(true)
-const selectedIdx = ref<number>(0)
-
-const { contractWithProvider: stEth } = useContract(
-  'ERC20__factory',
-  config.STETH_CONTRACT_ADDRESS,
-  config.IS_MAINNET ? ETHEREUM_RPC_URLS.ethereum : ETHEREUM_RPC_URLS.sepolia,
-)
-
-const { contractWithProvider: mor } = useContract(
-  'ERC20__factory',
-  config.MOR_CONTRACT_ADDRESS,
-  config.IS_MAINNET
-    ? ETHEREUM_RPC_URLS.arbitrum
-    : ETHEREUM_RPC_URLS.arbitrumSepolia,
-)
+const selectedIdx = ref(0)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -111,8 +95,8 @@ const updateBalances = async (): Promise<void> => {
   const address = web3ProvidersStore.provider.selectedAddress
 
   const [stEthValue, morValue] = await Promise.all([
-    stEth.value.balanceOf(address),
-    mor.value.balanceOf(address),
+    web3ProvidersStore.stEthContract.providerBased.value.balanceOf(address),
+    web3ProvidersStore.morContract.providerBased.value.balanceOf(address),
   ])
 
   web3ProvidersStore.balances.stEth = stEthValue
@@ -160,7 +144,10 @@ onMounted(() => {
     const address = web3ProvidersStore.provider.selectedAddress
 
     try {
-      web3ProvidersStore.balances.mor = await mor.value.balanceOf(address)
+      web3ProvidersStore.balances.mor =
+        await web3ProvidersStore.morContract.providerBased.value.balanceOf(
+          address,
+        )
     } catch (error) {
       ErrorHandler.process(error)
     }
@@ -175,6 +162,7 @@ onBeforeUnmount(() => {
 })
 
 watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
+watch(() => web3ProvidersStore.networkId, init)
 </script>
 
 <style lang="scss" scoped>
@@ -188,20 +176,8 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
     right: toRem(10);
   }
 
-  :deep(.drop-menu) {
-    @include respond-to(medium) {
-      left: unset;
-      right: 0;
-    }
-
-    @include respond-to(small) {
-      left: 0;
-      right: unset;
-    }
-  }
-
   @include respond-to(medium) {
-    width: toRem(200);
+    width: toRem(220);
   }
 }
 
@@ -210,6 +186,7 @@ watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
   align-items: center;
   padding: 0 toRem(6) 0 toRem(16);
   color: var(--text-secondary-light);
+  height: 100%;
 }
 
 .wallet-balances__balance {

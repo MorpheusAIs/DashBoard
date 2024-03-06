@@ -7,9 +7,8 @@
         :key="idx"
         :text="link.text"
         :href="link.href"
-        :route="link.route"
-        :target="link.href ? '_blank' : undefined"
-        :rel="link.href ? 'noopener noreferrer' : undefined"
+        target="_blank"
+        rel="noopener noreferrer"
         scheme="link"
         color="none"
         class="app-navbar__link"
@@ -22,6 +21,7 @@
         color="secondary"
       />
       <div v-else class="app-navbar__wallet-info-wrp">
+        <network-switch />
         <wallet-balances />
         <wallet-dashboard />
       </div>
@@ -35,6 +35,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import AppButton from './AppButton.vue'
 import AppLogo from './AppLogo.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
+import NetworkSwitch from './NetworkSwitch.vue'
 import WalletBalances from './WalletBalances.vue'
 import WalletDashboard from './WalletDashboard.vue'
 
@@ -51,10 +52,10 @@ $z-index: 1000;
   top: 0;
   height: var(--app-navbar-height);
   width: 100%;
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: 1fr max-content 1fr;
-  grid-gap: toRem(24);
+  justify-content: space-between;
+  gap: toRem(24);
   padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
   background: #010201;
   border-bottom: toRem(1) solid #444449;
@@ -80,7 +81,6 @@ $z-index: 1000;
 .app-navbar__wallet-info-wrp {
   display: flex;
   align-items: center;
-  justify-self: right;
   gap: toRem(20);
 }
 </style>
