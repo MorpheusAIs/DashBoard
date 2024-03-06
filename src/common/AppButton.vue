@@ -6,7 +6,11 @@
       v-bind="$attrs"
       :to="route"
     >
-      <icon v-if="iconLeft" class="app-button__icon-left" :name="iconLeft" />
+      <app-icon
+        v-if="iconLeft"
+        class="app-button__icon-left"
+        :name="iconLeft"
+      />
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -15,12 +19,20 @@
           {{ text }}
         </span>
       </template>
-      <icon v-if="iconRight" class="app-button__icon-right" :name="iconRight" />
+      <app-icon
+        v-if="iconRight"
+        class="app-button__icon-right"
+        :name="iconRight"
+      />
     </router-link>
   </template>
   <template v-else-if="href">
     <a class="app-button" :class="buttonClasses" v-bind="$attrs" :href="href">
-      <icon v-if="iconLeft" class="app-button__icon-left" :name="iconLeft" />
+      <app-icon
+        v-if="iconLeft"
+        class="app-button__icon-left"
+        :name="iconLeft"
+      />
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -29,7 +41,11 @@
           {{ text }}
         </span>
       </template>
-      <icon v-if="iconRight" class="app-button__icon-right" :name="iconRight" />
+      <app-icon
+        v-if="iconRight"
+        class="app-button__icon-right"
+        :name="iconRight"
+      />
     </a>
   </template>
   <template v-else>
@@ -40,7 +56,11 @@
       :disabled="isDisabled"
       :type="buttonType"
     >
-      <icon v-if="iconLeft" class="app-button__icon-left" :name="iconLeft" />
+      <app-icon
+        v-if="iconLeft"
+        class="app-button__icon-left"
+        :name="iconLeft"
+      />
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -49,17 +69,20 @@
           {{ text }}
         </span>
       </template>
-      <icon v-if="iconRight" class="app-button__icon-right" :name="iconRight" />
+      <app-icon
+        v-if="iconRight"
+        class="app-button__icon-right"
+        :name="iconRight"
+      />
     </button>
   </template>
 </template>
 
 <script lang="ts" setup>
+import { type ICON_NAMES } from '@/enums'
+import { type Route } from '@/types'
 import { computed, useAttrs, useSlots } from 'vue'
-import type { LocationAsRelativeRaw } from 'vue-router'
-
-import { Icon } from '@/common'
-import type { ICON_NAMES } from '@/enums'
+import AppIcon from './AppIcon.vue'
 
 type ButtonType = 'button' | 'submit' | 'reset'
 
@@ -68,12 +91,20 @@ const props = withDefaults(
     text?: string
     scheme?: 'filled' | 'flat' | 'link' | 'none'
     modification?: 'border-circle' | 'border-rounded' | 'border-square'
-    color?: 'primary' | 'success' | 'error' | 'warning' | 'info' | 'none'
+    color?:
+      | 'primary'
+      | 'secondary'
+      | 'success'
+      | 'error'
+      | 'warning'
+      | 'info'
+      | 'none'
     size?: 'large' | 'medium' | 'small' | 'x-small' | 'none'
-    route?: LocationAsRelativeRaw
+    route?: Route
     href?: string
     iconLeft?: ICON_NAMES
     iconRight?: ICON_NAMES
+    isLoading?: boolean
   }>(),
   {
     text: '',
@@ -85,6 +116,7 @@ const props = withDefaults(
     href: '',
     iconLeft: undefined,
     iconRight: undefined,
+    isLoading: false,
   },
 )
 
@@ -106,6 +138,7 @@ const buttonClasses = computed(() =>
     ...((props.iconLeft || props.iconRight) && !props.text && !slots.default
       ? ['app-button--icon-only']
       : []),
+    ...(props.isLoading ? ['app-button--loading'] : []),
   ].join(' '),
 )
 
@@ -143,7 +176,10 @@ $button-transition: var(--transition-duration-fast)
     cursor: not-allowed;
     background: var(--app-button-bg-disabled);
     color: var(--app-button-text-disabled);
-    border: var(--app-button-border-disabled);
+
+    &:not(.app-button--loading) {
+      border: var(--app-button-border-disabled);
+    }
   }
 
   &:not([disabled]):hover {
@@ -165,6 +201,24 @@ $button-transition: var(--transition-duration-fast)
     background: var(--app-button-bg-active);
     color: var(--app-button-text-active);
     border: var(--app-button-border-active);
+  }
+
+  &--loading {
+    $z-index: 1;
+
+    &:before {
+      z-index: $z-index;
+    }
+
+    @include skeleton;
+
+    &.app-button--scheme-link {
+      height: max-content;
+    }
+
+    &:not(.app-button--scheme-link) {
+      border-radius: 0;
+    }
   }
 
   &--scheme-filled {
@@ -196,17 +250,7 @@ $button-transition: var(--transition-duration-fast)
     --app-button-flat-bg: none;
     --app-button-flat-bg-hover: none;
     --app-button-flat-bg-focused: none;
-    --app-button-flat-bg-active: var(--background-secondary-main);
-
-    --app-button-flat-text: var(--primary-main);
-    --app-button-flat-text-hover: var(--primary-main);
-    --app-button-flat-text-focused: var(--primary-main);
-    --app-button-flat-text-active: var(--primary-main);
-
-    --app-button-flat-border: #{toRem(1)} solid var(--secondary-light);
-    --app-button-flat-border-hover: var(--app-button-flat-border);
-    --app-button-flat-border-focused: var(--app-button-flat-border);
-    --app-button-flat-border-active: var(--app-button-flat-border);
+    --app-button-flat-bg-active: none;
 
     --app-button-bg: var(--app-button-flat-bg);
     --app-button-bg-hover: var(--app-button-flat-bg-hover);
@@ -286,6 +330,16 @@ $button-transition: var(--transition-duration-fast)
     --app-button-filled-border-active: #{toRem(2)} solid var(--primary-main);
     --app-button-filled-border-disabled: #{toRem(2)} solid transparent;
 
+    --app-button-flat-text: var(--primary-main);
+    --app-button-flat-text-hover: var(--primary-main);
+    --app-button-flat-text-focused: var(--primary-main);
+    --app-button-flat-text-active: var(--primary-main);
+
+    --app-button-flat-border: #{toRem(1)} solid var(--secondary-light);
+    --app-button-flat-border-hover: var(--app-button-flat-border);
+    --app-button-flat-border-focused: var(--app-button-flat-border);
+    --app-button-flat-border-active: var(--app-button-flat-border);
+
     --app-button-link-text: var(--primary-main);
     --app-button-link-text-hover: var(--primary-main);
     --app-button-link-text-focused: var(--primary-main);
@@ -330,6 +384,16 @@ $button-transition: var(--transition-duration-fast)
     --app-button-filled-border-focused: #{toRem(1)} solid var(--primary-main);
     --app-button-filled-border-active: #{toRem(1)} solid var(--primary-main);
     --app-button-filled-border-disabled: #{toRem(1)} solid transparent;
+
+    --app-button-flat-text: rgba(255, 255, 255, 0.8);
+    --app-button-flat-text-hover: var(--primary-main);
+    --app-button-flat-text-focused: var(--primary-main);
+    --app-button-flat-text-active: var(--primary-main);
+
+    --app-button-flat-border: #{toRem(1)} solid #494949;
+    --app-button-flat-border-hover: #{toRem(1)} solid var(--primary-main);
+    --app-button-flat-border-focused: var(--app-button-flat-border-hover);
+    --app-button-flat-border-active: var(--app-button-flat-border-hover);
 
     &.app-button--scheme-filled {
       &:not([disabled]):focus,
@@ -453,6 +517,7 @@ $button-transition: var(--transition-duration-fast)
     --app-button-link-text-focused: var(--primary-main);
     --app-button-link-text-active: var(--primary-main);
     --app-button-link-text-disabled: var(--disable-secondary-main);
+    --app-button-icon: var(--primary-main);
 
     --app-button-link-underline: transparent;
     --app-button-link-underline-hover: var(--primary-main);
@@ -490,16 +555,18 @@ $button-transition: var(--transition-duration-fast)
   &--medium {
     --button-icon-size: #{toRem(24)};
 
-    font-family: var(--app-font-family);
-    font-size: toRem(16);
-    font-weight: 500;
-    line-height: toRem(24);
-    letter-spacing: 0;
     gap: toRem(8);
-    height: toRem(48);
 
     &:not(.app-button--scheme-link) {
-      padding: toRem(10) toRem(40);
+      padding: toRem(10) toRem(14);
+      min-width: toRem(170);
+      height: toRem(48);
+
+      @include body-4-medium;
+
+      @include respond-to(medium) {
+        min-width: toRem(140);
+      }
     }
 
     &.app-button--icon-only {
@@ -509,6 +576,8 @@ $button-transition: var(--transition-duration-fast)
       width: calc(var(--button-icon-size) + #{toRem(12)});
       height: calc(var(--button-icon-size) + #{toRem(12)});
     }
+
+    @include body-4-regular;
   }
 
   &--small {
@@ -533,6 +602,7 @@ $button-transition: var(--transition-duration-fast)
 
 .app-button .app-button__icon-left,
 .app-button .app-button__icon-right {
+  color: var(--app-button-icon);
   height: var(--button-icon-size);
   width: var(--button-icon-size);
 }

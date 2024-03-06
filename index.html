@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <title>vue-vite-template</title>
+  <title>Morpheus Dashboard</title>
 
   <noscript>
     <style>
-      #noscript {
+      #init-loader {
         display: none;
       }
     </style>
@@ -16,11 +16,11 @@
   <meta name="theme-color" content="#ffffff">
 
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <meta name="description" content="vue-vite-template">
-  <meta property="og:title" content="vue-vite-template">
-  <meta property="og:description" content="vue-vite-template">
-  <meta property="og:url" content="https://vue-vite-template.com">
-  <meta property="og:image" content="/branding/logo.svg">
+  <meta name="description" content="Morpheus Dashboard: capital, community, coders, compute">
+  <meta property="og:title" content="Morpheus Dashboard">
+  <meta property="og:description" content="Morpheus Dashboard: capital, community, coders, compute">
+  <meta property="og:url" content="https://morpheus.206.189.243.3.sslip.io/">
+  <meta property="og:image" content="/branding/og-image.png">
   <meta property="og:locale" content="en_GB">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
@@ -39,13 +39,17 @@
   <script type="text/javascript" src="/env.js"></script>
 </head>
 <body>
-<div id="app">
-  <div id="noscript" class="app__init">
-    <img src="/init-loader/init-logo.svg" alt="vue-vite-template" width="280">
-  </div>
+<div id="app" class="app">
+  <!-- built files will be auto injected -->
 </div>
-<div id="modal"></div>
-<!-- built files will be auto injected -->
+<div id="app-modals">
+  <!-- built files will be auto injected -->
+</div>
+<div id="init-loader" class="init-loader">
+  <svg class="init-loader__logo">
+    <use href="/branding/logo.svg#logo" />
+  </svg>
+</div>
 <noscript>
   <div class="noscript">
     <h1 class="noscript__title">Update your browser or enable JavaScript</h1>

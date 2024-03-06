@@ -1,10 +1,150 @@
 {
+  "app-navbar": {
+    "contract-faq-link": "Contract FAQ",
+    "community-website-link": "Community Website"
+  },
+  "claim-form": {
+    "address-placeholder": "Enter address",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Claim",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "claim-modal": {
+    "title": "Claim rewards",
+    "subtitle": "You are about to Claim Rewards. Your current reward - {reward}",
+    "reward": "{amount} MOR."
+  },
+  "connect-wallet-button": {
+    "to-app": "Go To Metamask",
+    "to-install": "Install MetaMask",
+    "connect": "Connect Wallet"
+  },
+  "deposit-form": {
+    "balance-label": "Available to deposit",
+    "amount-placeholder": "Enter {currency} amount",
+    "cancel-btn": "Cancel",
+    "submit-btn": {
+      "deposit": "Deposit",
+      "approve": "Approve"
+    },
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "deposit-modal": {
+    "title": "Deposit",
+    "subtitle": "Your funds will be redirected to the platform. Enter the desired amount, in case of the first transaction, you will need to approve the transfer of funds."
+  },
+  "home-page": {
+    "capital-tab": "Capital",
+    "community-tab": "Community",
+    "coders-tab": "Coders",
+    "compute-tab": "Compute",
+    "private-pool-view": {
+      "info-bar": {
+        "title--1": "Community",
+        "subtitle--1": "Group 2",
+        "description--1": "The people who create interfaces and tools for the Morpheus ecosystem are also part of its community."
+      },
+      "daily-reward-title": "Current daily reward",
+      "started-at-title": "Started at",
+      "claim-at-title": "Claim is locked until",
+      "claim-at-note": "Note: Claim is locked until the specified time",
+      "available-to-claim-title": "Available to claim",
+      "claim-btn": "Claim MOR"
+    },
+    "public-pool-view": {
+      "info-bar": {
+        "title--0": "Capital",
+        "subtitle--0": "Group 1"
+      },
+      "total-deposits-title": "Total deposits",
+      "daily-reward-title": "Current daily reward",
+      "started-at-title": "Started at",
+      "withdraw-at-title": "Withdraw is locked until",
+      "claim-at-title": "Claim is locked until",
+      "withdraw-at-note": "Note: Withdraw is locked until the specified time",
+      "claim-at-note": "Note: Claim is locked until the specified time",
+      "deposit-btn": "Deposit stETH",
+      "external-link": "How to receive stETH?",
+      "withdraw-btn": "Withdraw stETH",
+      "user-deposit-title": "Your deposit",
+      "available-to-claim-title": "Available to claim",
+      "claim-btn": "Claim MOR",
+      "dashboard-description--0": "Upon withdrawal, your deposited stETH will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
+      "dashboard-note--0": "Note: You can withdraw your stETH {daysCount} days after deposit."
+    }
+  },
+  "info-dashboard": {
+    "progress-bar-title": "Your portion",
+    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
+  },
+  "info-bar": {
+    "status--public": "Automated",
+    "status--private": "Non-Automated"
+  },
+  "invalid-network-modal": {
+    "title": "Invalid Network",
+    "subtitle": "Your wallet is connected to an unsupported chain. Please, switch to another network:",
+    "switch-btn": "Switch Network"
+  },
+  "network-switch": {
+    "mainnet": "Ethereum Mainnet",
+    "testnet": "Ethereum Sepolia"
+  },
   "validations": {
-    "field-error_required": "Please fill out this field",
-    "field-error_email": "Field must be a valid email"
+    "field-error_address": "Field must be a valid address with prefix \"0x\"",
+    "field-error_required": "Field must be filled in",
+    "field-error_ether": "Please enter an amount of stETH",
+    "field-error_maxEther": "Insufficient amount of stETH",
+    "field-error_minEther": "Field must be greater than or equal to {min}"
+  },
+  "wallet-dashboard": {
+    "address-copied": "Address copied",
+    "add-token": "Add MOR token to MetaMask",
+    "disconnect": "Disconnect Wallet"
+  },
+  "withdraw-form": {
+    "amount-placeholder": "Enter stETH amount to withdraw",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Withdraw",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "withdraw-modal": {
+    "title": "Withdraw Funds",
+    "subtitle": "Specify the amount to be withdrawn. The funds will be sent to your wallet.",
+    "available-to-withdraw-title": "Available to withdraw"
+  },
+  "zero-pool-description": {
+    "list": {
+      "1": "Deposit stETH (via ETH) to earn MOR tokens",
+      "2": "stETH can be withdrawn after day 7",
+      "3": "Claim your MOR tokens starting May 8th",
+      "4": "MOR tokens are rewarded on Arbitrum"
+    },
+    "details": "Details on"
   },
   "errors": {
-    "default": "Something went wrong"
+    "default": "Something went wrong",
+    "provider-user-rejected-request": "User rejected request",
+    "provider-unauthorized": "The requested method and/or account has not been authorized by the user",
+    "provider-unsupported-method": "The Provider does not support the requested method",
+    "provider-disconnected": "The Provider is disconnected from all chains",
+    "provider-chain-disconnected": "The Provider is not connected to the requested chain",
+    "provider-parse-error": "Invalid JSON",
+    "provider-invalid-request": "JSON is not a valid request object",
+    "provider-method-not-found": "Method does not exist",
+    "provider-invalid-params": "Invalid method parameters",
+    "provider-internal-error": "Internal JSON-RPC error",
+    "provider-invalid-input": "Missing or invalid parameters",
+    "provider-resource-not-found": "Requested resource not found",
+    "provider-resource-unavailable": "MetaMask is busy",
+    "provider-transaction-rejected": "Transaction creation failed",
+    "provider-method-not-supported": "Method is not implemented",
+    "provider-limit-exceeded": "Request exceeds defined limit",
+    "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported",
+    "provider-wrapper-method-not-found": "Provider does not exist or method not supported"
   },
   "notification": {
     "default-title-success": "Success",
@@ -17,22 +157,5 @@
     "default-message-warning": "Something you are doing is not recommended",
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
-  },
-  "login-form": {
-    "login-lbl": "Login",
-    "password-lbl": "Password",
-    "login-success-msg": "Access granted",
-    "submit-btn": "Submit"
-  },
-  "ui-kit-page": {
-    "button": "Button",
-    "some-placeholder": "placeholder",
-    "some-label": "label",
-    "some-error-message": "error-message",
-    "modal-btn": "Open modal",
-    "accordion-btn": "Toggle Accordion",
-    "collapse-text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "loading-error-msg": "Oops, something went wrong",
-    "no-data-msg": "Empty data, please add new"
   }
 }

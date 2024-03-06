@@ -1,24 +1,26 @@
 <template>
   <div class="default-toast__body">
     <div class="default-toast__icon-wrp">
-      <icon v-if="toastIcon" class="default-toast__icon" :name="toastIcon" />
+      <app-icon
+        v-if="toastIcon"
+        class="default-toast__icon"
+        :name="toastIcon"
+      />
     </div>
     <div class="default-toast__details">
-      <h4 class="default-toast__title">
+      <h5 class="default-toast__title">
         {{ title }}
-      </h4>
-      <p class="default-toast__message">
-        {{ message }}
-      </p>
+      </h5>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <p v-html="message" class="default-toast__message" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@/common'
-
-import { computed } from 'vue'
 import { ICON_NAMES } from '@/enums'
+import { computed } from 'vue'
+import AppIcon from '../AppIcon.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -36,104 +38,233 @@ const toastIcon = computed(() => props.iconName || ICON_NAMES.checkCircle)
 </script>
 
 <style lang="scss">
+$color-success: #00df80;
+$color-error: #f04248;
+$color-warning: #ffd21e;
+$color-info: #ffffff;
+
+.Vue-Toastification__container.top-right {
+  top: toRem(100);
+  padding: 0;
+
+  @include respond-to(medium) {
+    top: 0;
+    right: 0;
+    width: 100vw;
+  }
+}
+
 .Vue-Toastification__toast.default-toast {
-  background: var(--white);
-  padding: toRem(12);
+  background: #242c32;
+  padding: toRem(12) toRem(16);
+  border-radius: 0;
+  box-shadow: 0 toRem(4) toRem(16) rgba(#a0a0a0, 0.25);
+
+  @include respond-to(medium) {
+    margin-bottom: toRem(8);
+    width: 100%;
+    max-width: unset;
+  }
 }
 
 .default-toast__body {
   display: flex;
-  gap: toRem(12);
+  align-items: center;
+  gap: toRem(16);
+
+  @include respond-to(medium) {
+    gap: toRem(8);
+  }
 }
 
 .default-toast__icon-wrp {
+  flex-shrink: 0;
+  position: relative;
+  height: toRem(32);
+  width: toRem(32);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: toRem(8);
-  min-width: toRem(56);
-  min-height: toRem(56);
-  max-width: toRem(56);
-  max-height: toRem(56);
-  width: toRem(56);
-  height: toRem(56);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+
+  &:before {
+    $z-index: -1;
+
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    height: toRem(212);
+    width: toRem(212);
+    z-index: $z-index;
+    border-radius: 50%;
+  }
 
   .Vue-Toastification__toast--success & {
-    background: var(--success-light);
-    color: var(--success-main);
+    color: $color-success;
+
+    &:before {
+      background: radial-gradient(
+        50% 50% at 50% 50%,
+        rgba(0, 237, 81, 0.12) 0%,
+        rgba(0, 237, 123, 0) 100%
+      );
+    }
   }
 
   .Vue-Toastification__toast--error & {
-    background: var(--error-light);
-    color: var(--error-main);
+    color: $color-error;
+
+    &:before {
+      background: radial-gradient(
+        50% 50% at 50% 50%,
+        rgba(240, 66, 72, 0.12) 0%,
+        rgba(240, 66, 72, 0) 100%
+      );
+    }
   }
 
   .Vue-Toastification__toast--warning & {
-    background: var(--warning-light);
-    color: var(--warning-main);
+    color: $color-warning;
+
+    &:before {
+      background: radial-gradient(
+        50% 50% at 50% 50%,
+        rgba(255, 212, 38, 0.12) 0%,
+        rgba(255, 212, 38, 0) 100%
+      );
+    }
   }
 
   .Vue-Toastification__toast--info & {
-    background: var(--primary-light);
-    color: var(--primary-main);
+    color: $color-info;
+
+    &:before {
+      background: radial-gradient(
+        50% 50% at 50% 50%,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0) 100%
+      );
+    }
   }
 }
 
 .default-toast .default-toast__icon {
-  max-width: toRem(24);
-  max-height: toRem(24);
+  margin: auto;
+  height: toRem(24);
+  width: toRem(24);
 }
 
 .default-toast__details {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: toRem(8) 0;
 }
 
 .default-toast__title {
-  font-size: toRem(14);
-  line-height: 1.5;
-  font-weight: 500;
-  letter-spacing: toRem(0.1);
-  color: var(--text-primary-main);
+  $color: #ffffff;
+
+  color: $color;
+
+  @include body-4-semi-bold;
 }
 
 .default-toast__message {
-  font-size: toRem(14);
-  line-height: 1.5;
-  letter-spacing: toRem(0.25);
-  color: var(--text-secondary-main);
-  width: toRem(230);
+  $color: #c8c5c5;
 
-  @include respond-to(xsmall) {
-    width: toRem(180);
+  color: $color;
+  width: toRem(260);
+
+  .link {
+    --underline: transparent;
+
+    position: relative;
+    display: inline-block;
+
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: toRem(0);
+      height: toRem(1);
+      width: 100%;
+      display: block;
+      background: var(--underline);
+      transition: var(--transition-duration-fast)
+        var(--transition-timing-default);
+    }
+
+    &:hover:after {
+      background: var(--underline-hover);
+    }
+
+    &:focus:after {
+      background: var(--underline-focus);
+    }
+
+    &:active:after {
+      background: var(--underline-active);
+    }
+
+    .Vue-Toastification__toast--success & {
+      color: $color-success;
+      --underline-hover: #{$color-success};
+      --underline-focus: #{$color-success};
+      --underline-active: #{$color-success};
+    }
+
+    .Vue-Toastification__toast--error & {
+      color: $color-error;
+      --underline-hover: #{$color-error};
+      --underline-focus: #{$color-error};
+      --underline-active: #{$color-error};
+    }
+
+    .Vue-Toastification__toast--warning & {
+      color: $color-warning;
+      --underline-hover: #{$color-warning};
+      --underline-focus: #{$color-warning};
+      --underline-active: #{$color-warning};
+    }
+
+    .Vue-Toastification__toast--info & {
+      color: $color-info;
+      --underline-hover: #{$color-info};
+      --underline-focus: #{$color-info};
+      --underline-active: #{$color-info};
+    }
+
+    @include body-5-regular;
   }
-}
 
-.Vue-Toastification__close-button {
-  align-self: flex-start;
-  color: var(--text-secondary-main);
-  padding: 0;
-  font-size: toRem(28);
-  line-height: 1;
+  @include body-5-regular;
+
+  @include respond-to(medium) {
+    width: 100%;
+  }
 }
 
 .Vue-Toastification__progress-bar {
+  height: toRem(2);
+
   .Vue-Toastification__toast--success & {
-    background: var(--success-main);
+    background: #01e17b;
+    box-shadow: 0 0 toRem(4) #01e17b;
   }
 
   .Vue-Toastification__toast--error & {
-    background: var(--error-main);
+    background: #f04349;
+    box-shadow: 0 0 toRem(4) #f04349;
   }
 
   .Vue-Toastification__toast--warning & {
-    background: var(--warning-main);
+    background: #ffd21f;
+    box-shadow: 0 0 toRem(4) #ffd21f;
   }
 
   .Vue-Toastification__toast--info & {
-    background: var(--primary-main);
+    background: #ffffff;
+    box-shadow: 0 0 toRem(4) #ffffff;
   }
 }
 </style>

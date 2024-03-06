@@ -37,6 +37,17 @@ export default defineConfig(({ mode }) => {
         }
       : {}),
     publicDir: 'static',
+    base: '',
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            w3p: ['@distributedlab/w3p']
+          },
+        },
+      },
+    },
+
     plugins: [
       vue(),
 

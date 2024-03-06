@@ -37,7 +37,7 @@
           type="button"
           @click="isPasswordShown = !isPasswordShown"
         >
-          <icon
+          <app-icon
             class="input-field__password-icon"
             :name="isPasswordShown ? ICON_NAMES.eye : ICON_NAMES.eyeOff"
           />
@@ -50,7 +50,10 @@
       @before-leave="setHeightCSSVar"
     >
       <div v-if="errorMessage || note" class="input-field__msg-wrp">
-        <icon class="input-field__msg-icon" :name="$icons.exclamationCircle" />
+        <app-icon
+          class="input-field__msg-icon"
+          :name="$icons.exclamationCircle"
+        />
         <span v-if="errorMessage" class="input-field__err-msg">
           {{ errorMessage }}
         </span>
@@ -63,12 +66,11 @@
 </template>
 
 <script lang="ts" setup>
-import { BN, DECIMALS } from '@distributedlab/tools'
-import { computed, onMounted, ref, useAttrs, useSlots } from 'vue'
-
-import { Icon } from '@/common'
+import { AppIcon } from '@/common'
 import { ICON_NAMES } from '@/enums'
+import { BN, DECIMALS } from '@distributedlab/tools'
 import { v4 as uuidv4 } from 'uuid'
+import { computed, onMounted, ref, useAttrs, useSlots } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -79,6 +81,7 @@ const props = withDefaults(
     type?: 'text' | 'number' | 'password'
     errorMessage?: string
     note?: string
+    isLoading?: boolean
   }>(),
   {
     scheme: 'primary',
@@ -87,6 +90,7 @@ const props = withDefaults(
     placeholder: '',
     errorMessage: '',
     note: '',
+    isLoading: false,
   },
 )
 
@@ -145,6 +149,7 @@ const inputClasses = computed(() => [
   ...(isDisabled.value ? ['input-field--disabled'] : []),
   ...(isReadonly.value ? ['input-field--readonly'] : []),
   ...(props.errorMessage ? ['input-field--error'] : []),
+  ...(props.isLoading ? ['input-field--loading'] : []),
   `input-field--${props.scheme}`,
 ])
 
@@ -216,6 +221,18 @@ $z-index-side-nodes: 1;
   position: relative;
   width: 100%;
   flex: 1;
+
+  &--loading {
+    &:before {
+      $z-index: 2;
+
+      z-index: $z-index;
+    }
+
+    @include skeleton;
+
+    border-radius: 0;
+  }
 }
 
 .input-field__label {
@@ -237,6 +254,7 @@ $z-index-side-nodes: 1;
 
   &:disabled,
   &:read-only {
+    cursor: not-allowed;
     border-color: var(--field-border-disabled);
     background: var(--field-bg-primary-disabled);
   }

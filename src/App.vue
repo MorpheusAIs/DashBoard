@@ -1,37 +1,45 @@
 <template>
-  <div v-if="isAppInitialized" class="app__container">
-    <app-navbar class="app__navbar" />
-    <router-view v-slot="{ Component, route }">
-      <transition :name="route.meta.transition || 'fade'" mode="out-in">
-        <component class="app__main" :is="Component" />
-      </transition>
-    </router-view>
-  </div>
+  <transition name="fade">
+    <div v-if="isAppInitialized" class="app__container">
+      <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
+      <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
+      <div class="app__page-wrp">
+        <router-view v-slot="{ Component, route }">
+          <transition :name="route.meta.transition || 'fade'" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
+      <invalid-network-modal v-model:is-shown="isShownInvalidNetworkModal" />
+    </div>
+  </transition>
 </template>
 
 <script lang="ts" setup>
-import { AppNavbar } from '@/common'
-
-import { ref } from 'vue'
+import { AppNavbar, AppNavbarMobile, InvalidNetworkModal } from '@/common'
 import { useNotifications } from '@/composables'
-import { config } from '@config'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
-import { NotificationPayload } from '@/types'
+import { useWeb3ProvidersStore } from '@/store'
+import { type NotificationPayload } from '@/types'
+import { config } from '@config'
+import { ref, watch } from 'vue'
 
 const isAppInitialized = ref(false)
+const isShownInvalidNetworkModal = ref(false)
 
 const { showToast } = useNotifications()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
-const init = async () => {
-  try {
-    document.title = config.APP_NAME
-
-    initNotifications()
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-  isAppInitialized.value = true
-}
+watch(
+  [
+    () => web3ProvidersStore.isValidChain,
+    () => web3ProvidersStore.provider.isConnected,
+    () => isAppInitialized.value,
+  ],
+  ([isValidChain, isConnected]) => {
+    if (isConnected) isShownInvalidNetworkModal.value = !isValidChain
+  },
+)
 
 const initNotifications = () => {
   bus.on(BUS_EVENTS.success, payload =>
@@ -48,40 +56,50 @@ const initNotifications = () => {
   )
 }
 
+const init = async () => {
+  try {
+    document.title = config.NAME
+
+    initNotifications()
+    await web3ProvidersStore.init()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  document.querySelector('#app')?.classList.add('app--initialized')
+  isAppInitialized.value = true
+}
+
 init()
 </script>
 
 <style lang="scss" scoped>
 .app__container {
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: toRem(85) 1fr max-content;
+  display: flex;
+  flex-direction: column;
   flex: 1;
+}
 
-  @include respond-to(small) {
-    grid-template-rows: max-content 1fr max-content;
+.app .app__navbar {
+  &--desktop {
+    @include respond-to(medium) {
+      display: none;
+    }
+  }
+
+  &--mobile {
+    display: none;
+
+    @include respond-to(medium) {
+      display: flex;
+    }
   }
 }
 
-.app__main {
-  padding: 0 var(--app-padding-right) 0 var(--app-padding-left);
-}
-
-.fade-enter-active {
-  animation: fade-in 0.25s;
-}
-
-.fade-leave-active {
-  animation: fade-in 0.25s reverse;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
+.app__page-wrp {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--app-navbar-height);
 }
 </style>

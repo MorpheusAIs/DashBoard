@@ -1,4 +1,4 @@
-import resources from '@/localization/resources'
+import resources from './resources'
 
 import { createI18n } from 'vue-i18n'
 

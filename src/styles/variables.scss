@@ -83,20 +83,34 @@
   --border-secondary-main: #{$border-secondary-main};
   --border-secondary-dark: #{$border-secondary-dark};
 
+  /* common colors */
+  --backdrop-modal: #{$backdrop-modal};
+
   /* App variables */
   --app-txt: #{$text-primary-main};
   --app-font-family: 'Inter', 'Arial', sans-serif;
-  --app-padding-right: #{toRem(64)};
-  --app-padding-left: #{toRem(64)};
+  --app-navbar-height: #{toRem(88)};
+  --app-padding-top: #{toRem(70)};
+  --app-padding-right: #{toRem(100)};
+  --app-padding-bottom: #{toRem(80)};
+  --app-padding-left: #{toRem(100)};
+  --app-padding:
+    var(--app-padding-top)
+    var(--app-padding-right)
+    var(--app-padding-bottom)
+    var(--app-padding-left);
 
   @include respond-to(xmedium) {
-    --app-padding-right: #{toRem(32)};
-    --app-padding-left: #{toRem(32)};
+    --app-padding-right: #{toRem(64)};
+    --app-padding-left: #{toRem(64)};
   }
 
-  @include respond-to(small) {
-    --app-padding-right: #{toRem(12)};
-    --app-padding-left: #{toRem(12)};
+  @include respond-to(medium) {
+    --app-navbar-height: #{toRem(56)};
+    --app-padding-top: #{toRem(24)};
+    --app-padding-right: #{toRem(16)};
+    --app-padding-bottom: #{toRem(14)};
+    --app-padding-left: #{toRem(16)};
   }
 
   /* --------------------------------------- */
@@ -108,7 +122,7 @@
   --field-bg-primary-disabled: var(--disable-tertiary-dark);
 
   /* label */
-  --field-label-font-family: var(--app-font-family-main);
+  --field-label-font-family: var(--app-font-family);
   --field-label-font-size: #{toRem(16)};
   --field-label-font-weight: 400;
   --field-label-line-height: #{toRem(24)};
@@ -117,18 +131,23 @@
   --field-label-margin-bottom: #{toRem(6)};
 
   /* text */
-  --field-text-font-family: var(--app-font-family-main);
+  --field-text-font-family: var(--app-font-family);
   --field-text-font-size: #{toRem(18)};
   --field-text-font-weight: 400;
-  --field-text-line-height: #{toRem(24)};
+  --field-text-line-height: #{toRem(26)};
   --field-text-letter-spacing: 0;
   --field-text: var(--text-secondary-main);
   --field-text-readonly: var(--disable-tertiary-light);
   --field-placeholder: var(--text-secondary-main);
   --field-placeholder-readonly: var(--disable-secondary-main);
 
+  @include respond-to(medium) {
+    --field-text-font-size: #{toRem(14)};
+    --field-text-line-height: #{toRem(20)};
+  }
+
   /* error */
-  --field-error-font-family: var(--app-font-family-main);
+  --field-error-font-family: var(--app-font-family);
   --field-error-font-size: #{toRem(16)};
   --field-error-font-weight: 400;
   --field-error-line-height: #{toRem(24)};
@@ -136,6 +155,11 @@
   --field-error: var(--text-secondary-main);
   --field-error-icon: var(--error-main);
   --field-error-padding-top: #{toRem(10)};
+
+  @include respond-to(medium) {
+    --field-error-font-size: #{toRem(14)};
+    --field-error-line-height: #{toRem(20)};
+  }
 
   /* border */
   --field-border: var(--border-primary-main);
