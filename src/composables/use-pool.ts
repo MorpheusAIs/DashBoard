@@ -66,12 +66,12 @@ export const usePool = (poolId: number) => {
   const { erc1967ProxyContract } = storeToRefs(web3ProvidersStore)
 
   const fetchCurrentUserReward = async (): Promise<BigNumber> => {
-    if (!web3ProvidersStore.walletProvider.selectedAddress)
+    if (!web3ProvidersStore.provider.selectedAddress)
       throw new Error('user address unavailable')
 
     return erc1967ProxyContract.value.providerBased.value.getCurrentUserReward(
       poolId,
-      web3ProvidersStore.walletProvider.selectedAddress,
+      web3ProvidersStore.provider.selectedAddress,
     )
   }
 
@@ -117,12 +117,12 @@ export const usePool = (poolId: number) => {
   }
 
   const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
-    if (!web3ProvidersStore.walletProvider.selectedAddress)
+    if (!web3ProvidersStore.provider.selectedAddress)
       throw new Error('user address unavailable')
 
     const response =
       await erc1967ProxyContract.value.providerBased.value.usersData(
-        web3ProvidersStore.walletProvider.selectedAddress,
+        web3ProvidersStore.provider.selectedAddress,
         poolId,
       )
 
@@ -156,7 +156,7 @@ export const usePool = (poolId: number) => {
     try {
       if (
         web3ProvidersStore.isConnected &&
-        web3ProvidersStore.walletProvider.selectedAddress
+        web3ProvidersStore.provider.selectedAddress
       ) {
         const [pooDataResponse] = await Promise.all([
           fetchPoolData(),
@@ -177,7 +177,7 @@ export const usePool = (poolId: number) => {
   }
 
   const onChangeCurrentUserReward = async (): Promise<void> => {
-    if (web3ProvidersStore.walletProvider.selectedAddress) {
+    if (web3ProvidersStore.provider.selectedAddress) {
       try {
         currentUserReward.value = await fetchCurrentUserReward()
       } catch (error) {
@@ -188,7 +188,7 @@ export const usePool = (poolId: number) => {
 
   const onChangePoolData = async (): Promise<void> => {
     try {
-      if (web3ProvidersStore.walletProvider.selectedAddress) {
+      if (web3ProvidersStore.provider.selectedAddress) {
         const [pooDataResponse] = await Promise.all([
           fetchPoolData(),
           updateUserData(),
@@ -206,7 +206,7 @@ export const usePool = (poolId: number) => {
 
   watch(
     () => [
-      web3ProvidersStore.walletProvider.selectedAddress,
+      web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.isConnected,
     ],
     async ([newAddress, isConnected]) => {
@@ -230,7 +230,7 @@ export const usePool = (poolId: number) => {
     _currentUserRewardUpdateIntervalId = setInterval(async () => {
       if (
         !web3ProvidersStore.isConnected ||
-        !web3ProvidersStore.walletProvider.selectedAddress ||
+        !web3ProvidersStore.provider.selectedAddress ||
         !web3ProvidersStore.isValidChain ||
         web3ProvidersStore.isAddingToken
       )

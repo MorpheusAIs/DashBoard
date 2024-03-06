@@ -33,7 +33,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 watch(
   [
     () => web3ProvidersStore.isValidChain,
-    () => web3ProvidersStore.walletProvider.isConnected,
+    () => web3ProvidersStore.provider.isConnected,
     () => isAppInitialized.value,
   ],
   ([isValidChain, isConnected]) => {

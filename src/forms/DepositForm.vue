@@ -184,7 +184,7 @@ const fetchAllowanceByCurrency = async (
   }
 
   return contract.providerBased.value.allowance(
-    web3ProvidersStore.walletProvider.selectedAddress,
+    web3ProvidersStore.provider.selectedAddress,
     config.networks[web3ProvidersStore.networkId].contractAddressesMap
       .erc1967Proxy,
   )

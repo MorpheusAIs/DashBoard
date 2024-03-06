@@ -2,8 +2,7 @@
   <app-button
     :text="text"
     :disabled="
-      web3ProvidersStore.isConnected ||
-      web3ProvidersStore.walletProvider.isConnecting
+      web3ProvidersStore.isConnected || web3ProvidersStore.provider.isConnecting
     "
     @click="onClick"
   />
@@ -31,9 +30,9 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
   switch (true) {
-    case !web3ProvidersStore.walletProvider.selectedProvider && isMobile():
+    case !web3ProvidersStore.provider.selectedProvider && isMobile():
       return ACTIONS.toApp
-    case !web3ProvidersStore.walletProvider.selectedProvider:
+    case !web3ProvidersStore.provider.selectedProvider:
       return ACTIONS.toInstall
     default:
       return ACTIONS.connect
@@ -63,8 +62,8 @@ const onClick = async () => {
         window.open(config.WALLET_INSTALL_URL, '_blank', 'noreferrer')
         return
       case ACTIONS.connect:
-        if (!web3ProvidersStore.walletProvider.isConnected)
-          await web3ProvidersStore.walletProvider.connect()
+        if (!web3ProvidersStore.provider.isConnected)
+          await web3ProvidersStore.provider.connect()
         web3ProvidersStore.hasConnectedProvider = true
         return
       default:

@@ -89,10 +89,10 @@ const selectedBalance = computed<Balance | null>(
 )
 
 const updateBalances = async (): Promise<void> => {
-  if (!web3ProvidersStore.walletProvider.selectedAddress)
+  if (!web3ProvidersStore.provider.selectedAddress)
     throw new Error('user address unavailable')
 
-  const address = web3ProvidersStore.walletProvider.selectedAddress
+  const address = web3ProvidersStore.provider.selectedAddress
 
   const [stEthValue, morValue] = await Promise.all([
     web3ProvidersStore.stEthContract.providerBased.value.balanceOf(address),
@@ -104,7 +104,7 @@ const updateBalances = async (): Promise<void> => {
 }
 
 const init = async (): Promise<void> => {
-  if (!web3ProvidersStore.walletProvider.selectedAddress) {
+  if (!web3ProvidersStore.provider.selectedAddress) {
     isInitializing.value = false
     return
   }
@@ -121,7 +121,7 @@ const init = async (): Promise<void> => {
 }
 
 const onChangeBalances = async () => {
-  if (!web3ProvidersStore.walletProvider.selectedAddress) return
+  if (!web3ProvidersStore.provider.selectedAddress) return
 
   try {
     await updateBalances()
@@ -138,10 +138,10 @@ onMounted(() => {
   _morUpdateIntervalId = setInterval(async () => {
     if (
       !web3ProvidersStore.isConnected ||
-      !web3ProvidersStore.walletProvider.selectedAddress
+      !web3ProvidersStore.provider.selectedAddress
     )
       return
-    const address = web3ProvidersStore.walletProvider.selectedAddress
+    const address = web3ProvidersStore.provider.selectedAddress
 
     try {
       web3ProvidersStore.balances.mor =
@@ -161,7 +161,7 @@ onBeforeUnmount(() => {
   clearInterval(_morUpdateIntervalId)
 })
 
-watch(() => web3ProvidersStore.walletProvider.selectedAddress, onChangeBalances)
+watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
 watch(() => web3ProvidersStore.networkId, init)
 </script>
 
