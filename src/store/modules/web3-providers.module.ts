@@ -8,11 +8,9 @@ import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import {
-  FallbackEvmProvider,
-  MetamaskProvider,
   ProviderDetector,
   PROVIDERS,
-  type ProviderProxyConstructor,
+  WalletConnectEvmProvider,
 } from '@distributedlab/w3p'
 
 enum BALANCE_CURRENCIES {
@@ -20,20 +18,7 @@ enum BALANCE_CURRENCIES {
   mor = 'mor',
 }
 
-export enum SUPPORTED_PROVIDERS {
-  Metamask = PROVIDERS.Metamask,
-  Fallback = PROVIDERS.Fallback,
-}
-
 const STORE_NAME = 'web3-providers-store'
-
-const SUPPORTED_PROXY_CONSTRUCTORS: Record<
-  SUPPORTED_PROVIDERS,
-  ProviderProxyConstructor
-> = {
-  [SUPPORTED_PROVIDERS.Fallback]: FallbackEvmProvider,
-  [SUPPORTED_PROVIDERS.Metamask]: MetamaskProvider,
-}
 
 export const useWeb3ProvidersStore = defineStore(
   STORE_NAME,
@@ -128,10 +113,16 @@ export const useWeb3ProvidersStore = defineStore(
       const providerDetector = new ProviderDetector()
       await providerDetector.init()
 
-      if (providerDetector.providers.metamask)
-        await provider.init(
-          SUPPORTED_PROXY_CONSTRUCTORS[SUPPORTED_PROVIDERS.Metamask],
-        )
+      providerDetector.addProvider({
+        name: PROVIDERS.WalletConnect,
+        instance: {
+          // TODO: change project id
+          projectId: '3767d7dfc77ac7e60beea3ac01c83476',
+          relayUrl: 'wss://relay.walletconnect.com',
+        },
+      })
+
+      await provider.init(WalletConnectEvmProvider, { providerDetector })
 
       // store requires time for sync with vue-router
       await sleep(1000)
