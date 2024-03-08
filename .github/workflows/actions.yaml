@@ -48,4 +48,4 @@ jobs:
           echo "${{ secrets.KUBECONFIG }}" > config
           mv config ~/.kube/
           ls ~/.kube/
-          kubectl set image deployment/morpheus-dev-webclient  webclient=ghcr.io/$GITHUB_REPOSITORY:$GITHUB_SHA -n morpheus-dev
+          kubectl set image deployment/morpheus-dev-webclient  webclient=ghcr.io/morpheusais/dashboard:$GITHUB_SHA -n morpheus-dev
