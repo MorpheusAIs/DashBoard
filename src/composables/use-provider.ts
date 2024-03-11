@@ -20,7 +20,7 @@ import {
 export interface IUseProvider {
   selectedAddress: Ref<string>
   selectedProvider: Ref<string>
-  rawProvider: Ref<unknown | null>
+  rawProvider: Ref<ReturnType<Web3Modal['getWalletProvider']> | null>
   chainId: Ref<string>
 
   isChainSelecting: Ref<boolean>
@@ -105,10 +105,10 @@ export const useProvider = (): IUseProvider => {
   }
 
   const request: I['request'] = async body => {
-    const provider = _web3Modal?.getWalletProvider()
+    if (!_providerReactiveState.rawProvider?.request)
+      throw new errors.ProviderMethodNotFound()
 
-    if (!provider?.request) throw new errors.ProviderMethodNotFound()
-    await provider.request(body)
+    await _providerReactiveState.rawProvider.request(body)
   }
 
   let _unsubscribeProvider: (() => void) | null = null
