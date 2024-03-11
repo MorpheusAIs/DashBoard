@@ -155,7 +155,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
     title: t('home-page.public-pool-view.started-at-title'),
     value: poolData.value
-      ? new Time(poolData.value.payoutStart.toNumber() * 1000).format(
+      ? new Time(poolData.value.payoutStart.toNumber()).format(
           DEFAULT_TIME_FORMAT,
         )
       : '',
@@ -167,11 +167,9 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
           userPoolData.value && !userPoolData.value.lastStake.isZero()
             ? userPoolData.value.lastStake
                 .add(poolData.value.withdrawLockPeriodAfterStake)
-                .mul(1000)
                 .toNumber()
             : poolData.value.payoutStart
                 .add(poolData.value.withdrawLockPeriod)
-                .mul(1000)
                 .toNumber(),
         ).format(DEFAULT_TIME_FORMAT)
       : '',
@@ -181,9 +179,9 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
     title: t('home-page.public-pool-view.claim-at-title'),
     value: poolData.value
       ? new Time(
-          (poolData.value.payoutStart.toNumber() +
-            poolData.value.claimLockPeriod.toNumber()) *
-            1000,
+          poolData.value.payoutStart
+            .add(poolData.value.claimLockPeriod)
+            .toNumber(),
         ).format(DEFAULT_TIME_FORMAT)
       : '',
     note: t('home-page.public-pool-view.claim-at-note'),
