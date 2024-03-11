@@ -1,7 +1,8 @@
 import { type ETHEREUM_CHAINS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
-import { config, type Chain } from '@config'
+import { type EthereumType } from '@/types'
+import { config } from '@config'
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5'
 import {
   type Web3Modal,
@@ -27,7 +28,7 @@ export interface IUseProvider {
 
   connect: () => Promise<void>
   disconnect: () => Promise<void>
-  addChain: (chain: Chain) => Promise<void>
+  addChain: (chain: EthereumType.Chain) => Promise<void>
   switchChain: (chainId: string) => Promise<void>
   selectChain: (chainId: string) => Promise<void>
   request: (body: {
@@ -157,7 +158,7 @@ export const useProvider = (): IUseProvider => {
 }
 
 function _parseChainToWeb3ModalChain(
-  chain: Chain,
+  chain: EthereumType.Chain,
 ): Web3ModalClientOptions['chains'][number] {
   return {
     chainId: Number(chain.chainId),

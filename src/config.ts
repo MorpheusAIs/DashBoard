@@ -4,6 +4,7 @@ import {
   ETHEREUM_RPC_URLS,
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
+import { type EthereumType } from '@/types'
 import { providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
@@ -19,22 +20,6 @@ export enum CONTRACT_IDS {
 export enum NETWORK_IDS {
   mainnet = 'mainnet',
   testnet = 'testnet',
-}
-
-/** EIP-3085 */
-export interface Chain {
-  /** A 0x-prefixed hexadecimal string */
-  chainId: string
-
-  chainName: string
-  nativeCurrency: {
-    name: string
-    symbol: string
-    decimals: number
-  }
-  rpcUrls: string[]
-  blockExplorerUrls?: string[]
-  iconUrls?: string[]
 }
 
 interface Network {
@@ -103,7 +88,7 @@ export const config = {
 
   networks: {} as Record<NETWORK_IDS, Network>,
 
-  chainsMap: {} as Record<ETHEREUM_CHAINS, Chain>,
+  chainsMap: {} as Record<ETHEREUM_CHAINS, EthereumType.Chain>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
