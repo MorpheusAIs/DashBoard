@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            w3p: ['@distributedlab/w3p']
+            w3m: ['@web3modal/ethers5'],
           },
         },
       },
@@ -90,7 +90,6 @@ export default defineConfig(({ mode }) => {
         '@': `${root}/`,
         '@config': `${root}/config.ts`,
         '@static': `${root}/../static`,
-        'near-api-js': 'near-api-js/dist/near-api-js.min.js',
       },
     },
     /**
