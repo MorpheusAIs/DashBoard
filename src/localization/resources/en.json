@@ -16,8 +16,6 @@
     "reward": "{amount} MOR."
   },
   "connect-wallet-button": {
-    "to-app": "Go To Metamask",
-    "to-install": "Install MetaMask",
     "connect": "Connect Wallet"
   },
   "deposit-form": {
