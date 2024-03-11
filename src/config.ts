@@ -4,6 +4,7 @@ import {
   ETHEREUM_RPC_URLS,
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
+import { type EthereumType } from '@/types'
 import { providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
@@ -21,22 +22,6 @@ export enum NETWORK_IDS {
   testnet = 'testnet',
 }
 
-/** EIP-3085 */
-export interface Chain {
-  /** A 0x-prefixed hexadecimal string */
-  chainId: string
-
-  chainName: string
-  nativeCurrency: {
-    name: string
-    symbol: string
-    decimals: number
-  }
-  rpcUrls: string[]
-  blockExplorerUrls?: string[]
-  iconUrls?: string[]
-}
-
 interface Network {
   chainId: ETHEREUM_CHAINS
   chainTitle: string
@@ -49,9 +34,19 @@ interface Network {
   contractAddressesMap: Record<CONTRACT_IDS, string>
 }
 
+type Metadata = {
+  name: string
+  description: string
+  url: string
+  icons: string[]
+}
+
 export const config = {
   // General
   NAME: import.meta.env.VITE_APP_NAME,
+  DESCRIPTION: import.meta.env.VITE_APP_DESCRIPTION,
+  URL: import.meta.env.VITE_APP_URL,
+  WALLET_CONNECT_PROJECT_ID: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   GITHUB_URL:
@@ -89,36 +84,22 @@ export const config = {
   ENDPOINT_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
 
+  metadata: {} as Metadata,
+
   networks: {} as Record<NETWORK_IDS, Network>,
 
-  chainsMap: {
-    [ETHEREUM_CHAINS.arbitrum]: {
-      chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrum)),
-      chainName: 'Arbitrum One',
-      nativeCurrency: {
-        name: 'ETH',
-        symbol: 'ETH',
-        decimals: 18,
-      },
-      rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
-      blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrum],
-    },
-    [ETHEREUM_CHAINS.arbitrumSepolia]: {
-      chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumSepolia)),
-      chainName: 'Arbitrum Sepolia (Testnet)',
-      nativeCurrency: {
-        name: 'ETH',
-        symbol: 'ETH',
-        decimals: 18,
-      },
-      rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
-      blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrumSepolia],
-    },
-  } as Record<ETHEREUM_CHAINS, Chain>,
+  chainsMap: {} as Record<ETHEREUM_CHAINS, EthereumType.Chain>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
 Object.assign(config, _mapEnvCfg(document.ENV))
+
+config.metadata = {
+  name: config.NAME,
+  description: config.DESCRIPTION,
+  url: config.URL,
+  icons: [`${config.URL}/branding/logo.svg`],
+}
 
 config.networks = {
   [NETWORK_IDS.mainnet]: {
@@ -158,6 +139,53 @@ config.networks = {
       [CONTRACT_IDS.mor]: config.MOR_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
     },
+  },
+}
+
+config.chainsMap = {
+  [ETHEREUM_CHAINS.arbitrum]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrum)),
+    chainName: 'Arbitrum One',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
+    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrum],
+  },
+  [ETHEREUM_CHAINS.arbitrumSepolia]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumSepolia)),
+    chainName: 'Arbitrum Sepolia (Testnet)',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
+    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrumSepolia],
+  },
+  [ETHEREUM_CHAINS.ethereum]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.ethereum)),
+    chainName: 'Ethereum',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: [ETHEREUM_RPC_URLS.ethereum],
+    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.ethereum],
+  },
+  [ETHEREUM_CHAINS.sepolia]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.sepolia)),
+    chainName: 'Sepolia',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: [ETHEREUM_RPC_URLS.sepolia],
+    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.sepolia],
   },
 }
 

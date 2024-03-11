@@ -103,6 +103,14 @@ const addToken = async () => {
   web3ProvidersStore.isAddingToken = false
 }
 
+const disconnect = async () => {
+  try {
+    await web3ProvidersStore.provider.disconnect()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
 const options = [
   {
     title: t('wallet-dashboard.add-token'),
@@ -110,9 +118,7 @@ const options = [
   },
   {
     title: t('wallet-dashboard.disconnect'),
-    onClick: () => {
-      web3ProvidersStore.hasConnectedProvider = false
-    },
+    onClick: disconnect,
   },
 ]
 
