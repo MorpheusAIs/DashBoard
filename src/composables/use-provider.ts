@@ -85,6 +85,8 @@ export const useProvider = (): IUseProvider => {
 
   const isChainSelecting: I['isChainSelecting'] = ref(false)
   const selectChain: I['selectChain'] = async chainId => {
+    if (_providerReactiveState.chainId === chainId) return
+
     isChainSelecting.value = true
 
     try {
@@ -124,6 +126,7 @@ export const useProvider = (): IUseProvider => {
         '--w3m-font-family': 'var(--app-font-family)',
         '--w3m-accent': 'var(--primary-main)',
         '--w3m-border-radius-master': '0',
+        '--w3m-z-index': 1500,
       },
     })
 
