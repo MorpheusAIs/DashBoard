@@ -81,11 +81,6 @@
     "status--public": "Automated",
     "status--private": "Non-Automated"
   },
-  "invalid-network-modal": {
-    "title": "Invalid Network",
-    "subtitle": "Your wallet is connected to an unsupported chain. Please, switch to another network:",
-    "switch-btn": "Switch Network"
-  },
   "network-switch": {
     "mainnet": "Ethereum Mainnet",
     "testnet": "Ethereum Sepolia"
