@@ -10,36 +10,23 @@
           </transition>
         </router-view>
       </div>
-      <invalid-network-modal v-model:is-shown="isShownInvalidNetworkModal" />
     </div>
   </transition>
 </template>
 
 <script lang="ts" setup>
-import { AppNavbar, AppNavbarMobile, InvalidNetworkModal } from '@/common'
+import { AppNavbar, AppNavbarMobile } from '@/common'
 import { useNotifications } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type NotificationPayload } from '@/types'
 import { config } from '@config'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const isAppInitialized = ref(false)
-const isShownInvalidNetworkModal = ref(false)
 
 const { showToast } = useNotifications()
 const web3ProvidersStore = useWeb3ProvidersStore()
-
-watch(
-  [
-    () => web3ProvidersStore.isValidChain,
-    () => web3ProvidersStore.provider.isConnected,
-    () => isAppInitialized.value,
-  ],
-  ([isValidChain, isConnected]) => {
-    if (isConnected) isShownInvalidNetworkModal.value = !isValidChain
-  },
-)
 
 const initNotifications = () => {
   bus.on(BUS_EVENTS.success, payload =>
