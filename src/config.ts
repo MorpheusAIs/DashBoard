@@ -52,7 +52,7 @@ export const config = {
   GITHUB_URL:
     'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
   CONTRACT_FAQ_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/English%20Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
+    'https://github.com/MorpheusAIs/Docs/blob/main/Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
   LANDING_URL: 'https://mor.org/',
   CODE_CONTRIBUTION_URL:
     'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
