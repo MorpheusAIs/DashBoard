@@ -69,5 +69,7 @@ $z-index: 1000;
   position: absolute;
   z-index: $z-index;
   inset: 0;
+  width: 100%;
+  cursor: default;
 }
 </style>

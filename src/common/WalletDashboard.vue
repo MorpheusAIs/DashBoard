@@ -186,6 +186,7 @@ onMounted(() => {
 .wallet-dashboard__open-btn {
   position: absolute;
   inset: 0;
+  width: 100%;
 }
 
 .wallet-dashboard__address {
