@@ -77,6 +77,10 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      config.networks[web3ProvidersStore.networkId].chainId,
+    )
+
     const tx =
       await web3ProvidersStore.erc1967ProxyContract.signerBased.value.withdraw(
         props.poolId,

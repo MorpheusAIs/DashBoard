@@ -19,6 +19,9 @@ interface ImportMetaEnv {
 
   // General
   VITE_APP_NAME: string
+  VITE_APP_DESCRIPTION: string
+  VITE_APP_URL: string
+  VITE_APP_WALLET_CONNECT_PROJECT_ID: string
   VITE_APP_BUILD_VERSION: string
 
   // Testnet

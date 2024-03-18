@@ -174,6 +174,7 @@ $z-index: 1000;
   cursor: default;
   z-index: $z-index;
   inset: 0;
+  width: 100%;
 }
 
 .slide-enter-active {

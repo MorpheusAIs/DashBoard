@@ -212,6 +212,10 @@ const submit = async (action: ACTIONS): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      config.networks[web3ProvidersStore.networkId].chainId,
+    )
+
     let tx
     if (action === ACTIONS.approve && balanceOfForm.value) {
       tx = await approveByCurrency(balanceOfForm.value.value.currency)

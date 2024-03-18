@@ -36,15 +36,16 @@ jobs:
           . $(werf ci-env github --as-file) 
           werf export web --tag ghcr.io/morpheusais/dashboard:$GITHUB_SHA --dev
 
-  # deploy:
-  #   name: Deploy
-  #   needs: converge
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: ConfigCreate
-  #       run: |
-  #         mkdir ~/.kube/
-  #         echo "${{ secrets.KUBECONFIG }}" > config
-  #         mv config ~/.kube/
-  #         ls ~/.kube/
-  #         kubectl set image deployment/morpheus-webclient  webclient=ghcr.io/$GITHUB_REPOSITORY:$GITHUB_SHA -n morpheus
+  deploy:
+    name: Deploy
+    needs: converge
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - name: ConfigCreate
+        run: |
+          mkdir ~/.kube/
+          echo "${{ secrets.KUBECONFIG }}" > config
+          mv config ~/.kube/
+          ls ~/.kube/
+          kubectl set image deployment/morpheus-dev-webclient  webclient=ghcr.io/morpheusais/dashboard:$GITHUB_SHA -n morpheus-dev

@@ -16,8 +16,6 @@
     "reward": "{amount} MOR."
   },
   "connect-wallet-button": {
-    "to-app": "Go To Metamask",
-    "to-install": "Install MetaMask",
     "connect": "Connect Wallet"
   },
   "deposit-form": {
@@ -82,11 +80,6 @@
   "info-bar": {
     "status--public": "Automated",
     "status--private": "Non-Automated"
-  },
-  "invalid-network-modal": {
-    "title": "Invalid Network",
-    "subtitle": "Your wallet is connected to an unsupported chain. Please, switch to another network:",
-    "switch-btn": "Switch Network"
   },
   "network-switch": {
     "mainnet": "Ethereum Mainnet",

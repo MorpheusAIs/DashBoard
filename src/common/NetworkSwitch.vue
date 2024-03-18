@@ -143,6 +143,7 @@ onMounted(() => {
 .network-switch__head-btn {
   position: absolute;
   inset: 0;
+  width: 100%;
 }
 
 .network-switch__network-title {

@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            w3p: ['@distributedlab/w3p']
+            w3m: ['@web3modal/ethers5'],
           },
         },
       },

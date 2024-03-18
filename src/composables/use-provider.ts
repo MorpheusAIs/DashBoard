@@ -1,26 +1,14 @@
 import { type ETHEREUM_CHAINS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
-import { config, type Chain } from '@config'
-// TODO: remove after update type 'Chain' of @distributedlab/w3p
+import { type EthereumType } from '@/types'
+import { config } from '@config'
+import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5'
 import {
-  CHAIN_TYPES,
-  Provider,
-  ProviderDetector,
-  createProvider,
-  // TODO: remove after update type 'Chain' of @distributedlab/w3p
-  type Chain as ChainW3P,
-  type ChainId,
-  type CreateProviderOpts,
-  type PROVIDERS,
-  type ProviderInstance,
-  type ProviderProxyConstructor,
-  type RawProvider,
-  type TransactionResponse,
-  type TxRequestBody,
-} from '@distributedlab/w3p'
+  type Web3Modal,
+  type Web3ModalClientOptions,
+} from '@web3modal/ethers5/dist/types/src/client'
 import {
-  computed,
   onUnmounted,
   reactive,
   ref,
@@ -31,40 +19,24 @@ import {
 
 export interface IUseProvider {
   selectedAddress: Ref<string>
-  selectedProvider: Ref<PROVIDERS | null>
-  rawProvider: Ref<RawProvider | null>
-  chainId: Ref<ChainId | null>
+  selectedProvider: Ref<string>
+  rawProvider: Ref<ReturnType<Web3Modal['getWalletProvider']> | null>
+  chainId: Ref<string>
 
   isChainSelecting: Ref<boolean>
   isConnected: Ref<boolean>
-  isConnecting: Ref<boolean>
 
   connect: () => Promise<void>
   disconnect: () => Promise<void>
-  addChain: (chain: Chain) => Promise<void>
-  addProvider: (provider: ProviderInstance) => void
-  switchChain: (chainId: ChainId) => Promise<void>
-  selectChain: (chainId: ChainId) => Promise<void>
+  addChain: (chain: EthereumType.Chain) => Promise<void>
+  switchChain: (chainId: string) => Promise<void>
+  selectChain: (chainId: string) => Promise<void>
   request: (body: {
     method: string
     params?: unknown[] | object
   }) => Promise<unknown>
 
-  // TODO: to discuss: chain as arg
-  getAddressUrl: (chain: Chain, address: string) => string
-
-  getHashFromTxResponse: (txResponse: TransactionResponse) => string
-
-  // TODO: to discuss: chain as arg
-  getTxUrl: (chain: Chain, txHash: string) => string
-
-  signAndSendTx: (txRequestBody: TxRequestBody) => Promise<TransactionResponse>
-  signMessage: (message: string) => Promise<string | null>
-
-  init: <T extends keyof Record<string, string>>(
-    providerProxyConstructor: ProviderProxyConstructor,
-    createProviderOpts?: CreateProviderOpts<T>,
-  ) => Promise<void>
+  init: () => void
 }
 
 type ProviderState = {
@@ -77,65 +49,48 @@ type ProviderState = {
 
 export const useProvider = (): IUseProvider => {
   type I = IUseProvider
-  let _provider: Provider | null = null
+  let _web3Modal: Web3Modal | null = null
 
   const _providerReactiveState = reactive<ProviderState>({
     selectedAddress: '',
-    selectedProvider: null,
+    selectedProvider: '',
     rawProvider: null,
     chainId: '',
     isConnected: false,
   })
 
-  const _updateProviderState = (): void => {
-    _providerReactiveState.selectedAddress = _provider?.address || ''
-    _providerReactiveState.selectedProvider = _provider?.providerType || null
-    _providerReactiveState.rawProvider = _provider?.rawProvider || null
-    _providerReactiveState.chainId = _provider?.chainId
-      ? String(_provider?.chainId)
-      : ''
-    _providerReactiveState.isConnected = _provider?.isConnected || false
-  }
-
-  const isConnecting: I['isConnecting'] = ref(false)
   const connect: I['connect'] = async () => {
-    if (!_provider?.connect) throw new errors.ProviderMethodNotFound()
-
-    isConnecting.value = true
-
-    try {
-      await _provider.connect()
-    } finally {
-      isConnecting.value = false
-    }
+    if (!_web3Modal?.open) throw new errors.ProviderMethodNotFound()
+    await _web3Modal.open()
   }
 
   const disconnect: I['disconnect'] = async () => {
-    if (!_provider?.disconnect) throw new errors.ProviderMethodNotFound()
-    await _provider.disconnect()
+    if (!_web3Modal?.disconnect) throw new errors.ProviderMethodNotFound()
+    await _web3Modal.disconnect()
   }
 
   const addChain: I['addChain'] = async chain => {
-    if (!_provider?.addChain) throw new errors.ProviderMethodNotFound()
-    await _provider.addChain(_parseChainToChainW3P(chain))
-  }
-
-  const addProvider: I['addProvider'] = provider => {
-    if (_detector.value.providers?.[provider.name]) return
-    _detector.value.addProvider(provider)
+    await request({
+      method: 'wallet_addEthereumChain',
+      params: [chain],
+    })
   }
 
   const switchChain: I['switchChain'] = async chainId => {
-    if (!_provider?.switchChain) throw new errors.ProviderMethodNotFound()
-    await _provider.switchChain(chainId)
+    await request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: `0x${Number(chainId).toString(16)}` }],
+    })
   }
 
   const isChainSelecting: I['isChainSelecting'] = ref(false)
   const selectChain: I['selectChain'] = async chainId => {
+    if (_providerReactiveState.chainId === chainId) return
+
     isChainSelecting.value = true
 
     try {
-      await switchChain(Number(chainId))
+      await switchChain(chainId)
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
@@ -152,118 +107,68 @@ export const useProvider = (): IUseProvider => {
   }
 
   const request: I['request'] = async body => {
-    // eslint-disable-next-line
-    // @ts-ignore
-    if (!_provider?.rawProvider?.request)
+    if (!_providerReactiveState.rawProvider?.request)
       throw new errors.ProviderMethodNotFound()
 
-    // eslint-disable-next-line
-    // @ts-ignore
-    return _provider.rawProvider.request(body)
+    await _providerReactiveState.rawProvider.request(body)
   }
 
-  const getAddressUrl: I['getAddressUrl'] = (chain, address) => {
-    if (!_provider?.getAddressUrl) throw new errors.ProviderMethodNotFound()
-    return _provider.getAddressUrl(_parseChainToChainW3P(chain), address)
-  }
-
-  const getHashFromTxResponse: I['getHashFromTxResponse'] = txResponse => {
-    if (!_provider?.getHashFromTx) throw new errors.ProviderMethodNotFound()
-    return _provider.getHashFromTx(txResponse)
-  }
-
-  const getTxUrl: I['getTxUrl'] = (chain, txHash) => {
-    if (!_provider?.getTxUrl) throw new errors.ProviderMethodNotFound()
-    return _provider.getTxUrl(_parseChainToChainW3P(chain), txHash)
-  }
-
-  const signAndSendTx: I['signAndSendTx'] = async txRequestBody => {
-    if (!_provider?.signAndSendTx) throw new errors.ProviderMethodNotFound()
-    return _provider.signAndSendTx(txRequestBody)
-  }
-
-  const signMessage: I['signMessage'] = async message => {
-    if (!_provider?.signMessage) throw new errors.ProviderMethodNotFound()
-    return _provider.signMessage(message)
-  }
-
-  const _detector = computed<ProviderDetector<PROVIDERS>>(
-    () => new ProviderDetector<PROVIDERS>(),
-  )
-
-  async function init(
-    ...[providerProxyConstructor, createProviderOpts]: Parameters<I['init']>
-  ): ReturnType<I['init']> {
-    await _detector.value.init()
-
-    _provider = await createProvider(providerProxyConstructor, {
-      providerDetector: createProviderOpts?.providerDetector ?? _detector.value,
-      listeners: {
-        ...createProviderOpts?.listeners,
-        onAccountChanged: () => {
-          createProviderOpts?.listeners?.onAccountChanged?.()
-          _updateProviderState()
-        },
-        onChainChanged: () => {
-          createProviderOpts?.listeners?.onChainChanged?.()
-          _updateProviderState()
-        },
-        onConnect: () => {
-          createProviderOpts?.listeners?.onConnect?.()
-          _updateProviderState()
-        },
-        onDisconnect: () => {
-          createProviderOpts?.listeners?.onDisconnect?.()
-          _updateProviderState()
-        },
+  let _unsubscribeProvider: (() => void) | null = null
+  const init: I['init'] = () => {
+    _web3Modal = createWeb3Modal({
+      ethersConfig: defaultConfig({ metadata: config.metadata }),
+      chains: Object.values(config.chainsMap).map(chain =>
+        _parseChainToWeb3ModalChain(chain),
+      ),
+      projectId: config.WALLET_CONNECT_PROJECT_ID,
+      enableAnalytics: true,
+      themeVariables: {
+        '--w3m-font-family': 'var(--app-font-family)',
+        '--w3m-accent': 'var(--primary-main)',
+        '--w3m-border-radius-master': '0',
+        '--w3m-z-index': 1500,
       },
+      excludeWalletIds: config.excludedWalletIds,
     })
 
-    _updateProviderState()
+    _unsubscribeProvider = _web3Modal.subscribeProvider(newState => {
+      _providerReactiveState.selectedAddress = newState.address || ''
+      _providerReactiveState.selectedProvider = newState.providerType || ''
+      _providerReactiveState.rawProvider = newState.provider || null
+      _providerReactiveState.chainId = newState.chainId
+        ? String(newState.chainId)
+        : ''
+      _providerReactiveState.isConnected = newState.isConnected
+    })
   }
 
   onUnmounted(() => {
-    if (_providerReactiveState.selectedProvider) return
-    _provider?.clearHandlers()
+    _unsubscribeProvider?.()
   })
 
   return {
     ...toRefs(_providerReactiveState),
     isChainSelecting,
-    isConnecting,
 
     connect,
     disconnect,
     addChain,
-    addProvider,
     switchChain,
     selectChain,
     request,
-
-    getAddressUrl,
-    getHashFromTxResponse,
-    getTxUrl,
-
-    signAndSendTx,
-    signMessage,
 
     init,
   }
 }
 
-// TODO: remove after update type 'Chain' of @distributedlab/w3p
-function _parseChainToChainW3P(chain: Chain): ChainW3P {
+function _parseChainToWeb3ModalChain(
+  chain: EthereumType.Chain,
+): Web3ModalClientOptions['chains'][number] {
   return {
-    id: Number(chain.chainId),
+    chainId: Number(chain.chainId),
     name: chain.chainName,
-    type: CHAIN_TYPES.EVM,
-    token: {
-      name: chain.nativeCurrency.name,
-      symbol: chain.nativeCurrency.symbol,
-      decimals: chain.nativeCurrency.decimals,
-    },
-    rpcUrl: chain.rpcUrls[0],
+    currency: chain.nativeCurrency.symbol,
     explorerUrl: chain.blockExplorerUrls?.[0] || '',
-    icon: '',
+    rpcUrl: chain.rpcUrls[0],
   }
 }
