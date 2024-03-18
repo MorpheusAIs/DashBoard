@@ -52,7 +52,7 @@ export const config = {
   GITHUB_URL:
     'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
   CONTRACT_FAQ_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/English%20Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
+    'https://github.com/MorpheusAIs/Docs/blob/main/Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
   LANDING_URL: 'https://mor.org/',
   CODE_CONTRIBUTION_URL:
     'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
@@ -89,6 +89,8 @@ export const config = {
   networks: {} as Record<NETWORK_IDS, Network>,
 
   chainsMap: {} as Record<ETHEREUM_CHAINS, EthereumType.Chain>,
+
+  excludedWalletIds: [] as string[],
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
@@ -188,6 +190,10 @@ config.chainsMap = {
     blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.sepolia],
   },
 }
+
+config.excludedWalletIds = [
+  'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
+]
 
 function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
   [k: string]: string | boolean | undefined
