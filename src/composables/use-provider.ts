@@ -128,9 +128,7 @@ export const useProvider = (): IUseProvider => {
         '--w3m-border-radius-master': '0',
         '--w3m-z-index': 1500,
       },
-      excludeWalletIds: [
-        'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-      ],
+      excludeWalletIds: config.excludedWalletIds,
     })
 
     _unsubscribeProvider = _web3Modal.subscribeProvider(newState => {
