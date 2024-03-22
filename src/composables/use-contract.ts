@@ -1,4 +1,5 @@
 import { factories, type Provider } from '@/types'
+import { providers } from 'ethers'
 import { computed, unref, type ComputedRef, type MaybeRef } from 'vue'
 
 type ContractFactoryKey = keyof typeof factories
@@ -42,9 +43,22 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
 
   const signerBased: I['signerBased'] = computed(() => {
     const unrefContractAddress = unref(contractAddress)
+    const unrefProvider = unref(provider)
+
+    if (unrefProvider instanceof providers.FallbackProvider) {
+      return new Proxy(
+        {},
+        {
+          get: () => {
+            throw new Error('FallbackProvider does not have a signer')
+          },
+        },
+      ) as Contract<K>
+    }
+
     return _factoryClass.connect(
       unrefContractAddress,
-      unref(provider).getSigner(),
+      unrefProvider.getSigner(),
     ) as Contract<K>
   })
 

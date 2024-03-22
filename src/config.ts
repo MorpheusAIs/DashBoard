@@ -4,7 +4,7 @@ import {
   ETHEREUM_RPC_URLS,
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
-import { type EthereumType } from '@/types'
+import type { EthereumType, Provider } from '@/types'
 import { providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
@@ -25,11 +25,11 @@ export enum NETWORK_IDS {
 interface Network {
   chainId: ETHEREUM_CHAINS
   chainTitle: string
-  provider: providers.JsonRpcProvider
+  provider: Provider
   explorerUrl: ETHEREUM_EXPLORER_URLS
   extendedChainId: ETHEREUM_CHAINS
   extendedChainTitle: string
-  extendedChainProvider: providers.JsonRpcProvider
+  extendedChainProvider: Provider
   extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS
   contractAddressesMap: Record<CONTRACT_IDS, string>
 }
@@ -107,11 +107,24 @@ config.networks = {
   [NETWORK_IDS.mainnet]: {
     chainId: ETHEREUM_CHAINS.ethereum,
     chainTitle: 'Ethereum',
-    provider: new providers.JsonRpcProvider(ETHEREUM_RPC_URLS.ethereum),
+    provider: new providers.FallbackProvider(
+      [
+        'https://eth.llamarpc.com',
+        'https://rpc.mevblocker.io',
+        'https://eth-pokt.nodies.app',
+        'https://eth.drpc.org',
+        'https://rpc.payload.de',
+        'https://eth.merkle.io',
+      ].map((rpcUrl, idx) => ({
+        provider: new providers.StaticJsonRpcProvider(rpcUrl),
+        priority: idx,
+      })),
+      1,
+    ),
     explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
     extendedChainId: ETHEREUM_CHAINS.arbitrum,
     extendedChainTitle: 'Arbitrum',
-    extendedChainProvider: new providers.JsonRpcProvider(
+    extendedChainProvider: new providers.StaticJsonRpcProvider(
       ETHEREUM_RPC_URLS.arbitrum,
     ),
     extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
@@ -126,11 +139,11 @@ config.networks = {
   [NETWORK_IDS.testnet]: {
     chainId: ETHEREUM_CHAINS.sepolia,
     chainTitle: 'Ethereum Sepolia',
-    provider: new providers.JsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
+    provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
     explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
     extendedChainId: ETHEREUM_CHAINS.arbitrumSepolia,
     extendedChainTitle: 'Arbitrum Sepolia',
-    extendedChainProvider: new providers.JsonRpcProvider(
+    extendedChainProvider: new providers.StaticJsonRpcProvider(
       ETHEREUM_RPC_URLS.arbitrumSepolia,
     ),
     extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
