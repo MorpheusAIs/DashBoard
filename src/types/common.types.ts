@@ -29,4 +29,7 @@ export type Tab = {
   href?: string
 }
 
-export type Provider = providers.Web3Provider | providers.JsonRpcProvider
+export type Provider =
+  | providers.Web3Provider
+  | providers.StaticJsonRpcProvider
+  | providers.FallbackProvider
