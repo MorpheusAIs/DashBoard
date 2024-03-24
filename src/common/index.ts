@@ -12,7 +12,6 @@ export { default as DropMenu } from './DropMenu.vue'
 export { default as InfoBar } from './InfoBar.vue'
 export { default as InfoDashboard } from './InfoDashboard.vue'
 export { default as NetworkSwitch } from './NetworkSwitch.vue'
-export { default as ProgressBar } from './ProgressBar.vue'
 export { default as WalletBalances } from './WalletBalances.vue'
 export { default as WalletDashboard } from './WalletDashboard.vue'
 

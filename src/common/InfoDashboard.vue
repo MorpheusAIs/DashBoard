@@ -45,14 +45,13 @@
 <script lang="ts" setup>
 import { AMOUNT_OF_DEPOSIT_CHART_CONFIG } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
-import type { ChartConfig, InfoDashboardType, ProgressBarType } from '@/types'
+import type { ChartConfig, InfoDashboardType } from '@/types'
 import AppIcon from './AppIcon.vue'
 import AppChart from './AppChart.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
 
 withDefaults(
   defineProps<{
-    progress: ProgressBarType.Progress
     indicators?: InfoDashboardType.Indicator[]
     isLoading?: boolean
   }>(),
