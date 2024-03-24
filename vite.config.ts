@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             w3m: ['@web3modal/ethers5'],
+            chart: ['chart.js'],
           },
         },
       },

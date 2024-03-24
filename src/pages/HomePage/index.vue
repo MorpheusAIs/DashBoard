@@ -132,7 +132,7 @@ const tabs = computed<Tab[]>(() => {
 
 .home-page__content-wrp {
   width: 100%;
-  max-width: toRem(912);
+  max-width: toRem(1240);
 
   @include respond-to(medium) {
     max-width: unset;
@@ -142,8 +142,8 @@ const tabs = computed<Tab[]>(() => {
 .home-page .home-page__view {
   margin-top: toRem(64);
   display: grid;
-  grid-template-columns: 1fr toRem(420);
-  grid-gap: toRem(68);
+  grid-template-columns: 1fr minmax(0, toRem(704));
+  grid-gap: toRem(30);
 
   @include respond-to(medium) {
     margin-top: toRem(30);

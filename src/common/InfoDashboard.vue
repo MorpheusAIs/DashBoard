@@ -2,12 +2,7 @@
   <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
-        <progress-bar
-          class="info-dashboard__progress-bar"
-          :title="$t('info-dashboard.progress-bar-title')"
-          :progress="progress"
-          :is-loading="isLoading"
-        />
+        <app-chart :config="chartConfig" />
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
             v-for="(indicator, idx) in indicators"
@@ -48,11 +43,12 @@
 </template>
 
 <script lang="ts" setup>
+import { AMOUNT_OF_DEPOSIT_CHART_CONFIG } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
-import type { InfoDashboardType, ProgressBarType } from '@/types'
+import type { ChartConfig, InfoDashboardType, ProgressBarType } from '@/types'
 import AppIcon from './AppIcon.vue'
+import AppChart from './AppChart.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
-import ProgressBar from './ProgressBar.vue'
 
 withDefaults(
   defineProps<{
@@ -65,6 +61,21 @@ withDefaults(
     isLoading: false,
   },
 )
+
+const mockData = [
+  { month: 'March', day: 1, amount: 10000 },
+  { month: 'March', day: 5, amount: 20000 },
+  { month: 'March', day: 10, amount: 15000 },
+  { month: 'March', day: 15, amount: 25000 },
+  { month: 'March', day: 20, amount: 22000 },
+  { month: 'March', day: 25, amount: 30000 },
+  { month: 'March', day: 30, amount: 28000 },
+]
+
+const chartConfig: ChartConfig = { ...AMOUNT_OF_DEPOSIT_CHART_CONFIG }
+
+chartConfig.data.labels = mockData.map(row => `${row.month} ${row.day}`)
+chartConfig.data.datasets[0].data = mockData.map(row => row.amount)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 </script>
@@ -98,21 +109,13 @@ const web3ProvidersStore = useWeb3ProvidersStore()
   align-items: center;
 }
 
-.info-dashboard__progress-bar {
-  height: toRem(156);
-  width: toRem(156);
-
-  @include respond-to(medium) {
-    height: toRem(126);
-    width: toRem(126);
-  }
-}
-
 .info-dashboard__indicators {
-  margin-top: toRem(24);
+  margin-top: toRem(16);
   width: 100%;
   display: grid;
   grid-gap: toRem(8);
+  padding-top: toRem(24);
+  border-top: toRem(2) solid #494949;
 }
 
 .info-dashboard__indicator {
