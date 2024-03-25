@@ -2,7 +2,28 @@
   <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
-        <app-chart :config="chartConfig" />
+        <div class="info-dashboard__header">
+          <div class="info-dashboard__header-title-wrp">
+            <h5 class="info-dashboard__header-title">
+              {{ $t('info-dashboard.header-title') }}
+            </h5>
+            <app-icon
+              v-tooltip="$t('info-dashboard.header-note')"
+              class="info-dashboard__header-title-icon"
+              :name="$icons.exclamationCircle"
+            />
+          </div>
+          <p class="info-dashboard__header-subtitle">
+            {{ $t('info-dashboard.header-subtitle') }}
+          </p>
+        </div>
+        <div class="info-dashboard__app-chart-wrp">
+          <app-chart
+            class="info-dashboard__app-chart"
+            :config="chartConfig"
+            :is-loading="isLoading"
+          />
+        </div>
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
             v-for="(indicator, idx) in indicators"
@@ -81,7 +102,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 <style lang="scss" scoped>
 .info-dashboard {
-  padding: toRem(50) toRem(20) toRem(30);
+  padding: toRem(24) toRem(20) toRem(30);
   height: max-content;
   border: toRem(1) solid;
   border-image-slice: 1;
@@ -106,6 +127,53 @@ const web3ProvidersStore = useWeb3ProvidersStore()
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.info-dashboard__header {
+  width: 100%;
+}
+
+.info-dashboard__header-title-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(12);
+}
+
+.info-dashboard__header-title {
+  @include body-2-semi-bold;
+}
+
+.info-dashboard .info-dashboard__header-title-icon {
+  $color: #cccccc;
+
+  color: $color;
+  height: toRem(24);
+  width: toRem(24);
+  pointer-events: unset;
+  transition: var(--transition-duration-fast) var(--transition-timing-default);
+
+  &:hover {
+    color: var(--text-secondary-light);
+  }
+}
+
+.info-dashboard__header-subtitle {
+  $color: #cccccc;
+
+  color: $color;
+
+  @include body-6-regular;
+}
+
+.info-dashboard__app-chart-wrp {
+  margin-top: toRem(16);
+  padding-top: toRem(24);
+  border-top: toRem(2) solid #494949;
+  width: 100%;
+}
+
+.info-dashboard .info-dashboard__app-chart {
+  height: toRem(242);
 }
 
 .info-dashboard__indicators {

@@ -74,6 +74,9 @@
     }
   },
   "info-dashboard": {
+    "header-title": "Amount of deposited stETH",
+    "header-note": "Note: Amount of deposited stETH",
+    "header-subtitle": "Number of stETH circulating in the project in relation to time",
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
   },
   "info-bar": {

@@ -265,6 +265,7 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
 
   margin-top: toRem(24);
   color: $color;
+  width: 100%;
 
   @include body-italic;
 }

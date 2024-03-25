@@ -4,6 +4,7 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
   Object.freeze({
     type: 'line',
     options: {
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
       },
@@ -28,7 +29,11 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
           },
           ticks: {
             color: '#ffffff',
+            callback: (val: unknown) => String(val).replace(/000$/, 'K'),
+            stepSize: 5000,
           },
+          min: 0,
+          max: 35000,
         },
       },
     },
