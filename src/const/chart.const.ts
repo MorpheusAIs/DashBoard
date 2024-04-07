@@ -18,6 +18,7 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
           },
           ticks: {
             color: '#ffffff',
+            maxTicksLimit: 7,
           },
         },
         y: {
@@ -32,8 +33,6 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
             callback: (val: unknown) => String(val).replace(/000$/, 'K'),
             stepSize: 5000,
           },
-          min: 0,
-          max: 35000,
         },
       },
     },

@@ -3,19 +3,22 @@
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
         <div class="info-dashboard__header">
-          <div class="info-dashboard__header-title-wrp">
-            <h5 class="info-dashboard__header-title">
-              {{ $t('info-dashboard.header-title') }}
-            </h5>
-            <app-icon
-              v-tooltip="$t('info-dashboard.header-note')"
-              class="info-dashboard__header-title-icon"
-              :name="$icons.exclamationCircle"
-            />
+          <div>
+            <div class="info-dashboard__header-title-wrp">
+              <h5 class="info-dashboard__header-title">
+                {{ $t('info-dashboard.header-title') }}
+              </h5>
+              <app-icon
+                v-tooltip="$t('info-dashboard.header-note')"
+                class="info-dashboard__header-title-icon"
+                :name="$icons.exclamationCircle"
+              />
+            </div>
+            <p class="info-dashboard__header-subtitle">
+              {{ $t('info-dashboard.header-subtitle') }}
+            </p>
           </div>
-          <p class="info-dashboard__header-subtitle">
-            {{ $t('info-dashboard.header-subtitle') }}
-          </p>
+          <select-field v-model="selectedMonth" :value-options="monthOptions" />
         </div>
         <div class="info-dashboard__app-chart-wrp">
           <app-chart
@@ -65,14 +68,19 @@
 
 <script lang="ts" setup>
 import { AMOUNT_OF_DEPOSIT_CHART_CONFIG } from '@/const'
+import { SelectField } from '@/fields'
+import { ErrorHandler, getChartData } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import type { ChartConfig, InfoDashboardType } from '@/types'
+import type { ChartConfig, FieldOption, InfoDashboardType } from '@/types'
+import { formatEther } from '@/utils'
+import { onMounted, reactive, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 import AppChart from './AppChart.vue'
 import ConnectWalletButton from './ConnectWalletButton.vue'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    poolId: number
     indicators?: InfoDashboardType.Indicator[]
     isLoading?: boolean
   }>(),
@@ -82,22 +90,47 @@ withDefaults(
   },
 )
 
-const mockData = [
-  { month: 'March', day: 1, amount: 10000 },
-  { month: 'March', day: 5, amount: 20000 },
-  { month: 'March', day: 10, amount: 15000 },
-  { month: 'March', day: 15, amount: 25000 },
-  { month: 'March', day: 20, amount: 22000 },
-  { month: 'March', day: 25, amount: 30000 },
-  { month: 'March', day: 30, amount: 28000 },
+const monthOptions: FieldOption<number>[] = [
+  {
+    title: 'February',
+    value: 2,
+  },
+  {
+    title: 'March',
+    value: 3,
+  },
+  {
+    title: 'April',
+    value: 4,
+  },
 ]
 
-const chartConfig: ChartConfig = { ...AMOUNT_OF_DEPOSIT_CHART_CONFIG }
+const selectedMonth = ref(monthOptions[monthOptions.length - 1])
 
-chartConfig.data.labels = mockData.map(row => `${row.month} ${row.day}`)
-chartConfig.data.datasets[0].data = mockData.map(row => row.amount)
+const chartConfig = reactive<ChartConfig>({ ...AMOUNT_OF_DEPOSIT_CHART_CONFIG })
 
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const updateChartData = async (month: number) => {
+  try {
+    const chartData = await getChartData(props.poolId, month)
+
+    chartConfig.data.labels = Object.keys(chartData).map(day => `March ${day}`)
+    chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
+      Math.ceil(Number(formatEther(amount))),
+    )
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+onMounted(() => {
+  updateChartData(selectedMonth.value.value)
+})
+
+watch(selectedMonth, async newSelectedMonth => {
+  await updateChartData(newSelectedMonth.value)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -130,6 +163,9 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 }
 
 .info-dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
 }
 

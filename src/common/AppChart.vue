@@ -5,9 +5,10 @@
 </template>
 
 <script lang="ts" setup>
+import { ErrorHandler } from '@/helpers'
 import { ChartConfig } from '@/types'
 import Chart from 'chart.js/auto'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -31,6 +32,20 @@ onMounted(() => {
 onBeforeUnmount(() => {
   _chart?.destroy()
 })
+
+watch(
+  () => props.config,
+  () => {
+    if (!_chart) return
+
+    try {
+      _chart.update()
+    } catch (error) {
+      ErrorHandler.process(error)
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <style lang="scss" scoped>

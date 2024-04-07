@@ -50,6 +50,7 @@
       </template>
     </info-bar>
     <info-dashboard
+      :pool-id="poolId"
       :indicators="dashboardIndicators"
       :is-loading="isInitializing || isUserDataUpdating"
     >

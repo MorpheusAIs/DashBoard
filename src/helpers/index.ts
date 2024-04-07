@@ -1,6 +1,7 @@
 export * from './error-handler'
 export * from './ethereum.helpers'
 export * from './event-bus'
+export * from './info-dashboard.helpers'
 export * from './promise.helpers'
 export * from './text.helpers'
 export * from './validators.helpers'

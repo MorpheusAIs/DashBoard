@@ -11,6 +11,7 @@
       :is-loading="isInitializing"
     />
     <info-dashboard
+      :pool-id="poolId"
       :indicators="dashboardIndicators"
       :is-loading="isInitializing || isUserDataUpdating"
     >
