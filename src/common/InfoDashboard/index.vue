@@ -69,14 +69,15 @@
 <script lang="ts" setup>
 import { AMOUNT_OF_DEPOSIT_CHART_CONFIG } from '@/const'
 import { SelectField } from '@/fields'
-import { ErrorHandler, getChartData } from '@/helpers'
+import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import type { ChartConfig, FieldOption, InfoDashboardType } from '@/types'
 import { formatEther } from '@/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
-import AppIcon from './AppIcon.vue'
-import AppChart from './AppChart.vue'
-import ConnectWalletButton from './ConnectWalletButton.vue'
+import { getChartData } from './helpers'
+import AppIcon from '../AppIcon.vue'
+import AppChart from '../AppChart.vue'
+import ConnectWalletButton from '../ConnectWalletButton.vue'
 
 const props = withDefaults(
   defineProps<{
