@@ -97,8 +97,6 @@ export const config = {
 
   chainsMap: {} as Record<ETHEREUM_CHAINS, EthereumType.Chain>,
 
-  excludedWalletIds: [] as string[],
-
   apolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
 
@@ -212,10 +210,6 @@ config.chainsMap = {
     blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.sepolia],
   },
 }
-
-config.excludedWalletIds = [
-  'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-]
 
 config.apolloClient = new ApolloClient({
   link: createHttpLink({ uri: config.GRAPHQL_API_URL }),
