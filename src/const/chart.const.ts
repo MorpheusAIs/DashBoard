@@ -14,7 +14,12 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
             dash: [2],
           },
           grid: {
-            color: '#b1b1b1',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            color: (ctx: any) => {
+              return ctx.index === 0 || (ctx.index + 1) % 5 === 0
+                ? '#b1b1b1'
+                : '#4f4f4f'
+            },
           },
           ticks: {
             color: '#ffffff',
