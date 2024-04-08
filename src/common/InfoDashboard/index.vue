@@ -71,8 +71,13 @@ import { AMOUNT_OF_DEPOSIT_CHART_CONFIG } from '@/const'
 import { SelectField } from '@/fields'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import type { ChartConfig, FieldOption, InfoDashboardType } from '@/types'
-import { formatEther } from '@/utils'
+import type {
+  ChartConfig,
+  Erc1967ProxyType,
+  FieldOption,
+  InfoDashboardType,
+} from '@/types'
+import { Time, formatEther } from '@/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { getChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
@@ -82,6 +87,7 @@ import ConnectWalletButton from '../ConnectWalletButton.vue'
 const props = withDefaults(
   defineProps<{
     poolId: number
+    poolData: Erc1967ProxyType.PoolData | null
     indicators?: InfoDashboardType.Indicator[]
     isLoading?: boolean
   }>(),
@@ -115,12 +121,22 @@ const chartConfig = reactive<ChartConfig>({ ...AMOUNT_OF_DEPOSIT_CHART_CONFIG })
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const updateChartData = async (month: number) => {
+  if (!props.poolData) throw new Error('poolData unavailable')
+
   isChartDataUpdating.value = true
 
   try {
-    const chartData = await getChartData(props.poolId, month)
+    const chartData = await getChartData(
+      props.poolId,
+      props.poolData.payoutStart,
+      month,
+    )
 
-    chartConfig.data.labels = Object.keys(chartData).map(day => `March ${day}`)
+    const monthTime = new Time(month.toString(), 'M')
+
+    chartConfig.data.labels = Object.keys(chartData).map(
+      day => `${monthTime.format('MMMM')} ${day}`,
+    )
     chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
       Math.ceil(Number(formatEther(amount))),
     )
@@ -132,10 +148,10 @@ const updateChartData = async (month: number) => {
 }
 
 onMounted(() => {
-  updateChartData(selectedMonth.value.value)
+  if (props.poolData) updateChartData(selectedMonth.value.value)
 })
 
-watch(selectedMonth, async newSelectedMonth => {
+watch([selectedMonth, () => props.poolData], async ([newSelectedMonth]) => {
   await updateChartData(newSelectedMonth.value)
 })
 </script>

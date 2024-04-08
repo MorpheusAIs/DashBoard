@@ -18,7 +18,7 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
           },
           ticks: {
             color: '#ffffff',
-            maxTicksLimit: 7,
+            autoSkip: false,
           },
         },
         y: {
