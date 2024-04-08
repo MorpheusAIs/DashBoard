@@ -67,7 +67,6 @@
 </template>
 
 <script lang="ts" setup>
-import { AMOUNT_OF_DEPOSIT_CHART_CONFIG } from '@/const'
 import { SelectField } from '@/fields'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -79,6 +78,7 @@ import type {
 } from '@/types'
 import { Time, formatEther } from '@/utils'
 import { onMounted, reactive, ref, watch } from 'vue'
+import { CHART_CONFIG } from './const'
 import { getChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
 import AppChart from '../AppChart.vue'
@@ -116,7 +116,7 @@ const selectedMonth = ref(monthOptions[monthOptions.length - 1])
 
 const isChartDataUpdating = ref(false)
 
-const chartConfig = reactive<ChartConfig>({ ...AMOUNT_OF_DEPOSIT_CHART_CONFIG })
+const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
