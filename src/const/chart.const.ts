@@ -19,6 +19,12 @@ export const AMOUNT_OF_DEPOSIT_CHART_CONFIG: Readonly<ChartConfig> =
           ticks: {
             color: '#ffffff',
             autoSkip: false,
+            maxRotation: 0,
+            callback: function (value: unknown, idx: number) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const label = (this as any).getLabelForValue(value)
+              return idx === 0 || (idx + 1) % 5 === 0 ? label : ''
+            },
           },
         },
         y: {
