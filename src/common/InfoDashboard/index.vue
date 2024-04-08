@@ -67,6 +67,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from '@/composables'
 import { SelectField } from '@/fields'
 import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -97,17 +98,21 @@ const props = withDefaults(
   },
 )
 
+const { t } = useI18n()
+
+const web3ProvidersStore = useWeb3ProvidersStore()
+
 const monthOptions: FieldOption<number>[] = [
   {
-    title: 'February',
+    title: t('months.february'),
     value: 2,
   },
   {
-    title: 'March',
+    title: t('months.march'),
     value: 3,
   },
   {
-    title: 'April',
+    title: t('months.april'),
     value: 4,
   },
 ]
@@ -117,8 +122,6 @@ const selectedMonth = ref(monthOptions[monthOptions.length - 1])
 const isChartDataUpdating = ref(false)
 
 const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
-
-const web3ProvidersStore = useWeb3ProvidersStore()
 
 const updateChartData = async (month: number) => {
   if (!props.poolData) throw new Error('poolData unavailable')
