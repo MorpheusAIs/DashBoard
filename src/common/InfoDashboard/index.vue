@@ -24,7 +24,7 @@
           <app-chart
             class="info-dashboard__app-chart"
             :config="chartConfig"
-            :is-loading="isLoading"
+            :is-loading="isLoading || isChartDataUpdating"
           />
         </div>
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
@@ -108,11 +108,15 @@ const monthOptions: FieldOption<number>[] = [
 
 const selectedMonth = ref(monthOptions[monthOptions.length - 1])
 
+const isChartDataUpdating = ref(false)
+
 const chartConfig = reactive<ChartConfig>({ ...AMOUNT_OF_DEPOSIT_CHART_CONFIG })
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const updateChartData = async (month: number) => {
+  isChartDataUpdating.value = true
+
   try {
     const chartData = await getChartData(props.poolId, month)
 
@@ -123,6 +127,8 @@ const updateChartData = async (month: number) => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+
+  isChartDataUpdating.value = false
 }
 
 onMounted(() => {

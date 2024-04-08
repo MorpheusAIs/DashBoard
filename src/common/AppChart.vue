@@ -34,7 +34,7 @@ onBeforeUnmount(() => {
 })
 
 watch(
-  () => props.config,
+  () => props.config.data,
   () => {
     if (!_chart) return
 
