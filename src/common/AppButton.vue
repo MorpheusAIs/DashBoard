@@ -517,12 +517,15 @@ $button-transition: var(--transition-duration-fast)
     --app-button-link-text-focused: var(--primary-main);
     --app-button-link-text-active: var(--primary-main);
     --app-button-link-text-disabled: var(--disable-secondary-main);
-    --app-button-icon: var(--primary-main);
 
     --app-button-link-underline: transparent;
     --app-button-link-underline-hover: var(--primary-main);
     --app-button-link-underline-focus: var(--primary-main);
     --app-button-link-underline-active: var(--primary-main);
+
+    &:not(.app-button--icon-only) {
+      --app-button-icon: var(--primary-main);
+    }
   }
 
   &--border-circle {

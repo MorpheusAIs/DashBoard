@@ -73,6 +73,33 @@
       "dashboard-note--0": "Note: You can withdraw your stETH {daysCount} days after deposit."
     }
   },
+  "mor20-ecosystem-page": {
+    "title": "MOR20 Ecosystem",
+    "instruction": "It looks like you don't have a MOR20 ecosystem yet. If you want to create one, click the button below.",
+    "create-contract-btn": "Create Contract",
+    "info-card": {
+     "token": {
+       "title": "Token",
+       "description": "The MOR20 Network Token with integrated LayerZero OFT (Omnichain Fungible Token) standard."
+     },
+      "distribution": {
+        "title": "Distribution",
+        "description": "The contract that distributes the\n\"Token\" to the depositors and the team members."
+      },
+      "l1-sender": {
+        "title": "L1 Sender",
+        "description": "A contract that allows to communicate between L1 and L2. It is used to send a minting request to the L2 using the Layer Zero. It is also used to transfer deposited tokens from the L1 to the L2."
+      },
+      "l2-msg-receiver": {
+        "title": "L2 Message Receiver",
+        "description": "A contract that receives Layer Zero messages from the \"L1Sender\" contract."
+      },
+      "l2-token-receiver": {
+        "title": "L2 Token Receiver V2",
+        "description": "A contract that receives tokens from the L1Sender contract and used for Uniswap market making with extended functionality."
+      }
+    }
+  },
   "info-dashboard": {
     "progress-bar-title": "Your portion",
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"

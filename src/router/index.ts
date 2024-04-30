@@ -58,6 +58,11 @@ const routes: Array<RouteRecordRaw> = [
       },
     ],
   },
+  {
+    path: '/mor20-ecosystem',
+    name: ROUTE_NAMES.appTestnetMor20Ecosystem,
+    component: () => import('@/pages/Mor20Ecosystem/index.vue'),
+  },
 ]
 
 const router = createRouter({

@@ -1,8 +1,11 @@
 export enum ICON_NAMES {
+  arbitrumAlt = 'arbitrum-alt',
   arbitrum = 'arbitrum',
   checkCircle = 'check-circle',
   chevronDown = 'chevron-down',
   copy = 'copy',
+  edit = 'edit',
+  ethereumAlt = 'ethereum-alt',
   ethereum = 'ethereum',
   exclamationCircle = 'exclamation-circle',
   externalLink = 'external-link',
