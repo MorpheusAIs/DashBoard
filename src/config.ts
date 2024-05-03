@@ -5,6 +5,12 @@ import {
   LAYER_ZERO_ENDPOINTS,
 } from '@/enums'
 import type { EthereumType, Provider } from '@/types'
+import {
+  ApolloClient,
+  createHttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client/core'
 import { providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
@@ -46,6 +52,7 @@ export const config = {
   NAME: import.meta.env.VITE_APP_NAME,
   DESCRIPTION: import.meta.env.VITE_APP_DESCRIPTION,
   URL: import.meta.env.VITE_APP_URL,
+  GRAPHQL_API_URL: import.meta.env.VITE_APP_GRAPHQL_API_URL,
   WALLET_CONNECT_PROJECT_ID: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   LOG_LEVEL: 'trace' as LogLevelDesc,
@@ -90,7 +97,7 @@ export const config = {
 
   chainsMap: {} as Record<ETHEREUM_CHAINS, EthereumType.Chain>,
 
-  excludedWalletIds: [] as string[],
+  apolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
@@ -204,9 +211,10 @@ config.chainsMap = {
   },
 }
 
-config.excludedWalletIds = [
-  'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96',
-]
+config.apolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.GRAPHQL_API_URL }),
+  cache: new InMemoryCache(),
+})
 
 function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
   [k: string]: string | boolean | undefined

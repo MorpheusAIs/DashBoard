@@ -2,12 +2,31 @@
   <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
-        <progress-bar
-          class="info-dashboard__progress-bar"
-          :title="$t('info-dashboard.progress-bar-title')"
-          :progress="progress"
-          :is-loading="isLoading"
-        />
+        <div class="info-dashboard__header">
+          <div>
+            <div class="info-dashboard__header-title-wrp">
+              <h5 class="info-dashboard__header-title">
+                {{ $t('info-dashboard.header-title') }}
+              </h5>
+              <app-icon
+                v-tooltip="$t('info-dashboard.header-note')"
+                class="info-dashboard__header-title-icon"
+                :name="$icons.exclamationCircle"
+              />
+            </div>
+            <p class="info-dashboard__header-subtitle">
+              {{ $t('info-dashboard.header-subtitle') }}
+            </p>
+          </div>
+          <select-field v-model="selectedMonth" :value-options="monthOptions" />
+        </div>
+        <div class="info-dashboard__app-chart-wrp">
+          <app-chart
+            class="info-dashboard__app-chart"
+            :config="chartConfig"
+            :is-loading="isLoading || isChartDataUpdating"
+          />
+        </div>
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
             v-for="(indicator, idx) in indicators"
@@ -48,15 +67,28 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from '@/composables'
+import { SelectField } from '@/fields'
+import { ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import type { InfoDashboardType, ProgressBarType } from '@/types'
-import AppIcon from './AppIcon.vue'
-import ConnectWalletButton from './ConnectWalletButton.vue'
-import ProgressBar from './ProgressBar.vue'
+import type {
+  ChartConfig,
+  Erc1967ProxyType,
+  FieldOption,
+  InfoDashboardType,
+} from '@/types'
+import { Time, formatEther } from '@/utils'
+import { onMounted, reactive, ref, watch } from 'vue'
+import { CHART_CONFIG } from './const'
+import { getChartData } from './helpers'
+import AppIcon from '../AppIcon.vue'
+import AppChart from '../AppChart.vue'
+import ConnectWalletButton from '../ConnectWalletButton.vue'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
-    progress: ProgressBarType.Progress
+    poolId: number
+    poolData: Erc1967ProxyType.PoolData | null
     indicators?: InfoDashboardType.Indicator[]
     isLoading?: boolean
   }>(),
@@ -66,12 +98,70 @@ withDefaults(
   },
 )
 
+const { t } = useI18n()
+
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const monthOptions: FieldOption<number>[] = [
+  {
+    title: t('months.february'),
+    value: 2,
+  },
+  {
+    title: t('months.march'),
+    value: 3,
+  },
+  {
+    title: t('months.april'),
+    value: 4,
+  },
+]
+
+const selectedMonth = ref(monthOptions[monthOptions.length - 1])
+
+const isChartDataUpdating = ref(false)
+
+const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
+
+const updateChartData = async (month: number) => {
+  if (!props.poolData) throw new Error('poolData unavailable')
+
+  isChartDataUpdating.value = true
+
+  try {
+    const chartData = await getChartData(
+      props.poolId,
+      props.poolData.payoutStart,
+      month,
+    )
+
+    const monthTime = new Time(month.toString(), 'M')
+
+    chartConfig.data.labels = Object.keys(chartData).map(
+      day => `${monthTime.format('MMMM')} ${day}`,
+    )
+    chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
+      Math.ceil(Number(formatEther(amount))),
+    )
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isChartDataUpdating.value = false
+}
+
+onMounted(() => {
+  if (props.poolData) updateChartData(selectedMonth.value.value)
+})
+
+watch([selectedMonth, () => props.poolData], async ([newSelectedMonth]) => {
+  await updateChartData(newSelectedMonth.value)
+})
 </script>
 
 <style lang="scss" scoped>
 .info-dashboard {
-  padding: toRem(50) toRem(20) toRem(30);
+  padding: toRem(24) toRem(20) toRem(30);
   height: max-content;
   border: toRem(1) solid;
   border-image-slice: 1;
@@ -98,21 +188,63 @@ const web3ProvidersStore = useWeb3ProvidersStore()
   align-items: center;
 }
 
-.info-dashboard__progress-bar {
-  height: toRem(156);
-  width: toRem(156);
+.info-dashboard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 
-  @include respond-to(medium) {
-    height: toRem(126);
-    width: toRem(126);
+.info-dashboard__header-title-wrp {
+  display: flex;
+  align-items: center;
+  gap: toRem(12);
+}
+
+.info-dashboard__header-title {
+  @include body-2-semi-bold;
+}
+
+.info-dashboard .info-dashboard__header-title-icon {
+  $color: #cccccc;
+
+  color: $color;
+  height: toRem(24);
+  width: toRem(24);
+  pointer-events: unset;
+  transition: var(--transition-duration-fast) var(--transition-timing-default);
+
+  &:hover {
+    color: var(--text-secondary-light);
   }
 }
 
+.info-dashboard__header-subtitle {
+  $color: #cccccc;
+
+  color: $color;
+
+  @include body-6-regular;
+}
+
+.info-dashboard__app-chart-wrp {
+  margin-top: toRem(16);
+  padding-top: toRem(24);
+  border-top: toRem(2) solid #494949;
+  width: 100%;
+}
+
+.info-dashboard .info-dashboard__app-chart {
+  height: toRem(242);
+}
+
 .info-dashboard__indicators {
-  margin-top: toRem(24);
+  margin-top: toRem(16);
   width: 100%;
   display: grid;
   grid-gap: toRem(8);
+  padding-top: toRem(24);
+  border-top: toRem(2) solid #494949;
 }
 
 .info-dashboard__indicator {
