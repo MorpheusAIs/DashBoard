@@ -115,6 +115,10 @@ const monthOptions: FieldOption<number>[] = [
     title: t('months.april'),
     value: 4,
   },
+  {
+    title: t('months.may'),
+    value: 5,
+  },
 ]
 
 const selectedMonth = ref(monthOptions[monthOptions.length - 1])
