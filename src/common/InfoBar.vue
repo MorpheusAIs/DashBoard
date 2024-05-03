@@ -124,7 +124,7 @@ withDefaults(
 
 .info-bar__indicator {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content minmax(max-content, 1fr);
   align-items: center;
   grid-gap: toRem(24);
 

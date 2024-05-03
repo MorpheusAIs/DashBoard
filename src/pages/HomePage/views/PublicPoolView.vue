@@ -50,7 +50,8 @@
       </template>
     </info-bar>
     <info-dashboard
-      :progress="dashboardProgress"
+      :pool-id="poolId"
+      :pool-data="poolData"
       :indicators="dashboardIndicators"
       :is-loading="isInitializing || isUserDataUpdating"
     >
@@ -110,8 +111,8 @@ import { useI18n, usePool } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { ICON_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
-import type { InfoBarType, InfoDashboardType, ProgressBarType } from '@/types'
-import { BigNumber, formatEther, Time } from '@/utils'
+import type { InfoBarType, InfoDashboardType } from '@/types'
+import { formatEther, Time } from '@/utils'
 import { computed, ref } from 'vue'
 import { ZeroPoolDescription } from '../components'
 
@@ -204,11 +205,6 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
       : '',
   },
 ])
-
-const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
-  value: userPoolData.value?.deposited || BigNumber.from('0'),
-  total: poolData.value?.totalDeposited || BigNumber.from('1'),
-}))
 </script>
 
 <style lang="scss" scoped>
@@ -271,6 +267,7 @@ const dashboardProgress = computed<ProgressBarType.Progress>(() => ({
 
   margin-top: toRem(24);
   color: $color;
+  width: 100%;
 
   @include body-italic;
 }
