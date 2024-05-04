@@ -33,6 +33,11 @@ export const usePool = (poolId: number) => {
     )
   })
 
+  const hasAnyStEthToDeposit = computed<boolean>(() => {
+    const stEthBalance = web3ProvidersStore.balances.stEth
+    return !!stEthBalance && !stEthBalance.isZero()
+  })
+
   const isDepositDisabled = computed<boolean>(() => {
     if (!web3ProvidersStore.balances.stEth) return true
     return web3ProvidersStore.balances.stEth.isZero()
@@ -255,6 +260,7 @@ export const usePool = (poolId: number) => {
     dailyReward,
     poolData,
     userPoolData,
+    hasAnyStEthToDeposit,
 
     isClaimDisabled,
     isDepositDisabled,
