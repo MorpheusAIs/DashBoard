@@ -1,7 +1,13 @@
 import { utils, BigNumber } from 'ethers'
 import { Time } from '@distributedlab/tools'
 
-const { formatEther: toEther, formatUnits, isAddress, parseUnits } = utils
+const {
+  formatEther: toEther,
+  formatUnits,
+  hexlify,
+  isAddress,
+  parseUnits,
+} = utils
 
 const formatEther: typeof toEther = (...params) => {
   const str = toEther(...params)
@@ -14,6 +20,7 @@ const formatEther: typeof toEther = (...params) => {
 export {
   formatEther,
   formatUnits,
+  hexlify,
   isAddress,
   parseUnits,
   toEther,

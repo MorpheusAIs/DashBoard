@@ -101,7 +101,9 @@
     }
   },
   "info-dashboard": {
-    "progress-bar-title": "Your portion",
+    "header-title": "Amount of deposited stETH",
+    "header-note": "Note: Amount of deposited stETH",
+    "header-subtitle": "Number of stETH circulating in the project in relation to time",
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
   },
   "info-bar": {
@@ -177,5 +179,19 @@
     "default-message-warning": "Something you are doing is not recommended",
     "default-message-info": "Something is happening. Just want you to know that",
     "default-message-default": "Just a message"
+  },
+  "months": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
   }
 }

@@ -1,6 +1,7 @@
 import type { ICON_NAMES } from '@/enums'
-import type { RouteLocationRaw } from 'vue-router'
+import type Chart from 'chart.js/auto'
 import type { providers } from 'ethers'
+import type { RouteLocationRaw } from 'vue-router'
 
 export type CommonNotificationTypes =
   | 'success'
@@ -33,3 +34,5 @@ export type Provider =
   | providers.Web3Provider
   | providers.StaticJsonRpcProvider
   | providers.FallbackProvider
+
+export type ChartConfig = Chart['config']
