@@ -26,6 +26,7 @@
         :max="max"
         :disabled="isDisabled || isReadonly"
       />
+      <slot name="default" />
       <div
         v-if="$slots.nodeRight || isPasswordType"
         ref="nodeRightWrp"
@@ -142,6 +143,7 @@ const listeners = computed(() => ({
 }))
 
 const inputClasses = computed(() => [
+  ...(props.modelValue ? ['input-field--filled'] : []),
   ...(slots.nodeLeft ? ['input-field--node-left'] : []),
   ...(slots.nodeRight || isPasswordType.value || props.errorMessage
     ? ['input-field--node-right']
@@ -243,6 +245,11 @@ $z-index-side-nodes: 1;
   display: flex;
   flex-direction: column;
   position: relative;
+  color: var(--field-placeholder);
+
+  .input-field--filled & {
+    color: var(--field-text);
+  }
 }
 
 .input-field__input {
@@ -300,8 +307,10 @@ $z-index-side-nodes: 1;
     border-color: var(--field-border-focus);
   }
 
-  .input-field--error &:not([disabled]):not(:focus):hover {
-    border-color: var(--field-border-error);
+  .input-field__input-wrp:hover &:not([disabled]):not(:focus) {
+    .input-field--error & {
+      border-color: var(--field-border-error);
+    }
   }
 
   // Hide number arrows
@@ -339,7 +348,6 @@ $z-index-side-nodes: 1;
   transform: translateY(-50%);
   color: inherit;
   z-index: $z-index-side-nodes;
-  padding-right: toRem(12);
 }
 
 .input-field__password-icon {

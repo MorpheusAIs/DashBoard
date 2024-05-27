@@ -69,6 +69,10 @@ button {
     border: 0;
     padding: 0;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 li,
@@ -119,6 +123,16 @@ main {
   padding: var(--app-padding);
 }
 
+.drop-enter-active {
+  animation: drop var(--field-transition-duration)
+  var(--transition-timing-default);
+}
+
+.drop-leave-active {
+  animation: drop var(--field-transition-duration)
+  var(--transition-timing-default) reverse;
+}
+
 .fade-enter-active {
   animation: fade-in var(--transition-duration-fast)
     var(--transition-timing-default);
@@ -135,6 +149,17 @@ main {
   }
 
   100% {
+    opacity: 1;
+  }
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
     opacity: 1;
   }
 }
