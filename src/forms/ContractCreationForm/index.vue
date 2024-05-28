@@ -29,7 +29,7 @@
         class="contract-creation-form__btn"
         type="submit"
         :text="$t(`contract-creation-form.submit-btn.${form.stepId}`)"
-        :disabled="!formValidation.isFieldsValid || isSubmitting"
+        :disabled="!formValidation.isFieldsValid.value || isSubmitting"
         @click="submitStep"
       />
     </div>
@@ -42,7 +42,7 @@ import { useFormValidation, useI18n } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
 import { required } from '@/validators'
 import { useStorage } from '@vueuse/core'
-import { computed, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import {
   ArbitrumStep,
   EthereumStep,
@@ -70,66 +70,62 @@ const currentStepTab = computed<StepTab>(
 
 const isSubmitting = ref(false)
 
-const form = reactive(
-  useStorage<Form>(
-    `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.contract-creation-form`,
-    {
-      stepId: STEP_IDS.general,
-      generalConfig: {
-        projectName: '',
-      },
-      arbitrumConfig: {
-        tokenName: '',
-        tokenSymbol: '',
-        adminContractAddress: '',
-        settings: {
-          tokenInAddress: '',
-          tokenOutAddress: '',
-          firstSwapFee: '',
-          secondSwapFee: '',
-        },
-      },
-      ethereumConfig: {
-        tokenName: '',
-        tokenSymbol: '',
-        adminContractAddress: '',
-        isUpgradeable: true,
-        groups: [],
+const form = useStorage<Form>(
+  `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.contract-creation-form`,
+  {
+    stepId: STEP_IDS.general,
+    generalConfig: {
+      projectName: '',
+    },
+    arbitrumConfig: {
+      tokenName: '',
+      tokenSymbol: '',
+      adminContractAddress: '',
+      settings: {
+        tokenInAddress: '',
+        tokenOutAddress: '',
+        firstSwapFee: '',
+        secondSwapFee: '',
       },
     },
-  ),
+    ethereumConfig: {
+      tokenName: '',
+      tokenSymbol: '',
+      adminContractAddress: '',
+      isUpgradeable: true,
+      groups: [],
+    },
+  },
 )
 
-const formValidation = reactive(
-  useFormValidation(
-    form,
-    computed(() => ({
-      ...(form.value.stepId === STEP_IDS.general && {
-        generalConfig: { projectName: { required } },
-      }),
-      ...(form.value.stepId === STEP_IDS.arbitrum && {
-        arbitrumConfig: {
-          tokenName: { required },
-          tokenSymbol: { required },
-          adminContractAddress: { required },
-          settings: {
-            tokenInAddress: { required },
-            tokenOutAddress: { required },
-            firstSwapFee: { required },
-            secondSwapFee: { required },
-          },
+const formValidation = useFormValidation(
+  form,
+  computed(() => ({
+    ...(form.value.stepId === STEP_IDS.general && {
+      generalConfig: { projectName: { required } },
+    }),
+    ...(form.value.stepId === STEP_IDS.arbitrum && {
+      arbitrumConfig: {
+        tokenName: { required },
+        tokenSymbol: { required },
+        adminContractAddress: { required },
+        settings: {
+          tokenInAddress: { required },
+          tokenOutAddress: { required },
+          firstSwapFee: { required },
+          secondSwapFee: { required },
         },
-      }),
-      ...(form.value.stepId === STEP_IDS.ethereum && {
-        ethereumConfig: {
-          tokenName: { required },
-          tokenSymbol: { required },
-          adminContractAddress: { required },
-          // groups validation is delegated to GroupBuilder.vue
-        },
-      }),
-    })),
-  ),
+      },
+    }),
+    ...(form.value.stepId === STEP_IDS.ethereum && {
+      ethereumConfig: {
+        tokenName: { required },
+        tokenSymbol: { required },
+        adminContractAddress: { required },
+        // groups validation is delegated to GroupBuilder.vue
+      },
+    }),
+  })),
 )
 
 const submitStep = () => {

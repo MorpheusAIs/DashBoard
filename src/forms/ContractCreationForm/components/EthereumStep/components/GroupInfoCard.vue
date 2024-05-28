@@ -18,7 +18,9 @@
 
 <script lang="ts" setup>
 import { useI18n } from '@/composables'
+import { DEFAULT_TIME_FORMAT } from '@/const'
 import { type BigNumberish } from '@/types'
+import { Time } from '@/utils'
 import { computed } from 'vue'
 import { type EthereumConfigGroup } from '../../../types'
 
@@ -38,7 +40,7 @@ const indicators = computed<Indicator[]>(() => [
     title: t(
       'contract-creation-form.ethereum-step.group-info-card.payout-start-title',
     ),
-    value: props.group.payoutStartAt,
+    value: new Time(props.group.payoutStartAt, 'X').format(DEFAULT_TIME_FORMAT),
   },
   {
     title: t(
