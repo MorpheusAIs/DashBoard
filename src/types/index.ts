@@ -7,5 +7,5 @@ export * as InfoDashboardType from './info-dashboard.types'
 
 export * from './contracts'
 
-export type { BigNumber, Time } from '@/utils'
+export type { BigNumber, BigNumberish, Time } from '@/utils'
 export type { LocationAsRelativeRaw as Route } from 'vue-router'

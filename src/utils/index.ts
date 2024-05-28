@@ -1,4 +1,4 @@
-import { utils, BigNumber } from 'ethers'
+import { utils, BigNumber, type BigNumberish } from 'ethers'
 import { Time } from '@distributedlab/tools'
 
 const {
@@ -27,3 +27,5 @@ export {
   Time,
   BigNumber,
 }
+
+export type { BigNumberish }

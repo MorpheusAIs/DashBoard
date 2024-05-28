@@ -1,9 +1,7 @@
 export enum ROUTE_NAMES {
   app = 'app',
-  appMainnet = 'app-mainnet',
-  appTestnet = 'app-testnet',
-  appMainnetCapital = 'app-mainnet-capital',
-  appTestnetCapital = 'app-testnet-capital',
-  appTestnetCommunity = 'app-testnet-community',
-  appTestnetMor20Ecosystem = 'app-testnet-mor20-ecosystem',
+  appCapital = 'app-capital',
+  appCommunity = 'app-community',
+  appMor20EcosystemMain = 'app-mor20-ecosystem-main',
+  appMor20EcosystemProtocolCreation = 'app-mor20-ecosystem-protocol-creation',
 }

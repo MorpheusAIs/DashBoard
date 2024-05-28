@@ -5,10 +5,11 @@
       <app-button
         v-for="(link, idx) in links"
         :key="idx"
-        :text="link.text"
+        :route="link.route"
         :href="link.href"
-        target="_blank"
-        rel="noopener noreferrer"
+        :text="link.text"
+        :target="link.href ? '_blank' : undefined"
+        :rel="link.href ? 'noopener noreferrer' : undefined"
         scheme="link"
         color="none"
         class="app-navbar__link"
@@ -67,6 +68,8 @@ $z-index: 1000;
 }
 
 .app-navbar .app-navbar__link {
+  cursor: pointer;
+
   @include body-3-regular;
 
   &.router-link-active {

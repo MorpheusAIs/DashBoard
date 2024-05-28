@@ -1,6 +1,7 @@
 export enum ICON_NAMES {
   arbitrumAlt = 'arbitrum-alt',
   arbitrum = 'arbitrum',
+  arrowLeft = 'arrow-left',
   calendar = 'calendar',
   checkCircle = 'check-circle',
   check = 'check',
@@ -15,6 +16,7 @@ export enum ICON_NAMES {
   eye = 'eye',
   menuAlt1 = 'menu-alt-1',
   morpheus = 'morpheus',
+  save = 'save',
   steth = 'steth',
   xCircle = 'x-circle',
   x = 'x',

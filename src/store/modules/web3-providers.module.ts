@@ -30,14 +30,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
   // Getters
   const networkId = computed<NETWORK_IDS>(() => {
-    if (
-      _router.currentRoute.matched.find(
-        route => route.name === ROUTE_NAMES.appMainnet,
-      )
-    )
-      return NETWORK_IDS.mainnet
-
-    return NETWORK_IDS.testnet
+    const { network } = _router.currentRoute.query
+    return network as NETWORK_IDS
   })
 
   const defaultProvider = computed<Provider>(() => {

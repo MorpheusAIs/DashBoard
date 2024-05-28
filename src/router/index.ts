@@ -6,9 +6,9 @@ import {
   useRouter,
 } from 'vue-router'
 
-import { ROUTE_NAMES } from '@/enums'
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 
-const routes: Array<RouteRecordRaw> = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/:catchAll(.*)',
     redirect: { name: ROUTE_NAMES.app },
@@ -17,51 +17,37 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: ROUTE_NAMES.app,
     component: () => import('@/pages/HomePage/index.vue'),
-    redirect: () => router.resolve({ name: ROUTE_NAMES.appMainnet }).path,
+    redirect: () => router.resolve({ name: ROUTE_NAMES.appCapital }).path,
     children: [
       {
-        path: 'mainnet',
-        name: ROUTE_NAMES.appMainnet,
-        redirect: () =>
-          router.resolve({ name: ROUTE_NAMES.appMainnetCapital }).path,
-        children: [
-          {
-            path: 'capital',
-            name: ROUTE_NAMES.appMainnetCapital,
-            component: () =>
-              import('@/pages/HomePage/views/PublicPoolView.vue'),
-            props: { poolId: 0 },
-          },
-        ],
+        path: 'capital',
+        name: ROUTE_NAMES.appCapital,
+        component: () => import('@/pages/HomePage/views/PublicPoolView.vue'),
+        props: { poolId: 0 },
       },
       {
-        path: 'testnet',
-        name: ROUTE_NAMES.appTestnet,
-        redirect: () =>
-          router.resolve({ name: ROUTE_NAMES.appTestnetCapital }).path,
-        children: [
-          {
-            path: 'capital',
-            name: ROUTE_NAMES.appTestnetCapital,
-            component: () =>
-              import('@/pages/HomePage/views/PublicPoolView.vue'),
-            props: { poolId: 0 },
-          },
-          {
-            path: 'community',
-            name: ROUTE_NAMES.appTestnetCommunity,
-            component: () =>
-              import('@/pages/HomePage/views/PrivatePoolView.vue'),
-            props: { poolId: 1 },
-          },
-        ],
+        path: 'community',
+        name: ROUTE_NAMES.appCommunity,
+        component: () => import('@/pages/HomePage/views/PrivatePoolView.vue'),
+        props: { poolId: 1 },
       },
     ],
   },
   {
     path: '/mor20-ecosystem',
-    name: ROUTE_NAMES.appTestnetMor20Ecosystem,
-    component: () => import('@/pages/Mor20Ecosystem/index.vue'),
+    children: [
+      {
+        path: '',
+        name: ROUTE_NAMES.appMor20EcosystemMain,
+        component: () => import('@/pages/Mor20Ecosystem/MainPage.vue'),
+      },
+      {
+        path: 'contract-creation',
+        name: ROUTE_NAMES.appMor20EcosystemProtocolCreation,
+        component: () =>
+          import('@/pages/Mor20Ecosystem/ContractCreationPage.vue'),
+      },
+    ],
   },
 ]
 
@@ -69,6 +55,14 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
   scrollBehavior: () => ({ top: 0, left: 0 }),
+})
+
+router.beforeEach((to, from) => {
+  if (to.query.network) return
+  return {
+    ...to,
+    query: { network: from.query.network || NETWORK_IDS.mainnet },
+  }
 })
 
 export { router, useRouter, useRoute }

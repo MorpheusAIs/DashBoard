@@ -120,6 +120,15 @@ $media-breakpoints: (
   }
 }
 
+@mixin page-wrp {
+  width: 100%;
+  max-width: toRem(1240);
+
+  @include respond-to(medium) {
+    max-width: unset;
+  }
+}
+
 @mixin page-msg {
   max-width: toRem(420);
   width: 100%;

@@ -19,7 +19,7 @@ import { useRoute } from '@/router'
 const route = useRoute()
 
 const onClick = () => {
-  if (route.name === ROUTE_NAMES.appCommunity) window.location.reload()
+  if (route.name === ROUTE_NAMES.appCapital) window.location.reload()
 }
 </script>
 
