@@ -1,5 +1,5 @@
 import { useContract, useProvider } from '@/composables'
-import { CONTRACT_IDS, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { CONTRACT_IDS, NETWORK_IDS } from '@/enums'
 import { sleep } from '@/helpers'
 import { useRouter } from '@/router'
 import { type BigNumber, type Provider } from '@/types'
