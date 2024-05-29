@@ -56,14 +56,16 @@
       <div class="ethereum-step__groups-dashboard">
         <group-builder :disabled="isSubmitting" @build="emitNewGroup($event)" />
         <div ref="groupsListWrpElement" class="ethereum-step__groups-list-wrp">
-          <ul
+          <transition-group
             v-if="form.ethereumConfig.groups.length"
+            tag="ul"
+            name="fade"
             class="ethereum-step__groups-list"
           >
             <li v-for="(group, idx) in form.ethereumConfig.groups" :key="idx">
               <group-info-card :group="group" />
             </li>
-          </ul>
+          </transition-group>
         </div>
       </div>
     </div>
