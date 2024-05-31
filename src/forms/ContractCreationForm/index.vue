@@ -91,7 +91,7 @@ const form = useStorage<Form>(storageKey.value, {
     tokenName: '',
     tokenSymbol: '',
     adminContractAddress: '',
-    isUpgradable: true,
+    isUpgradeable: true,
     settings: {
       tokenInAddress: '',
       tokenOutAddress: '',
