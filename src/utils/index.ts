@@ -18,14 +18,14 @@ const formatEther: typeof toEther = (...params) => {
 }
 
 export {
+  BigNumber,
+  Time,
   formatEther,
   formatUnits,
   hexlify,
   isAddress,
   parseUnits,
   toEther,
-  Time,
-  BigNumber,
 }
 
 export type { BigNumberish }

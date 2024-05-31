@@ -54,7 +54,11 @@
         {{ $t(`${I18N_KEY_PREFIX}.group-instruction`) }}
       </p>
       <div class="ethereum-step__groups-dashboard">
-        <group-builder :disabled="isSubmitting" @build="emitNewGroup($event)" />
+        <group-builder
+          :preset="form.ethereumConfig.groups[editableGroupIdx]"
+          :disabled="isSubmitting"
+          @build="onGroupBuild"
+        />
         <div ref="groupsListWrpElement" class="ethereum-step__groups-list-wrp">
           <transition-group
             v-if="form.ethereumConfig.groups.length"
@@ -63,7 +67,11 @@
             class="ethereum-step__groups-list"
           >
             <li v-for="(group, idx) in form.ethereumConfig.groups" :key="idx">
-              <group-info-card :group="group" />
+              <group-info-card
+                :group="group"
+                @edit="editGroup(idx)"
+                @remove="removeGroup(idx)"
+              />
             </li>
           </transition-group>
         </div>
@@ -92,6 +100,7 @@ const props = defineProps<{
 }>()
 
 const groupsListWrpElement = ref<HTMLDivElement | null>(null)
+const editableGroupIdx = ref(-1)
 
 watch(
   () => props.form.ethereumConfig.groups.length,
@@ -122,6 +131,44 @@ const emitNewGroup = (group: EthereumConfigGroup) => {
     ethereumConfig: {
       ...props.form.ethereumConfig,
       groups: [...props.form.ethereumConfig.groups, group],
+    },
+  })
+}
+
+const emitEditedGroup = (group: EthereumConfigGroup) => {
+  emit('update:form', {
+    ...props.form,
+    ethereumConfig: {
+      ...props.form.ethereumConfig,
+      groups: props.form.ethereumConfig.groups.toSpliced(
+        editableGroupIdx.value,
+        1,
+        group,
+      ),
+    },
+  })
+}
+
+const onGroupBuild = (group: EthereumConfigGroup) => {
+  if (editableGroupIdx.value !== -1) {
+    emitEditedGroup(group)
+    editableGroupIdx.value = -1
+    return
+  }
+
+  emitNewGroup(group)
+}
+
+const editGroup = (idx: number) => {
+  editableGroupIdx.value = idx
+}
+
+const removeGroup = (idx: number) => {
+  emit('update:form', {
+    ...props.form,
+    ethereumConfig: {
+      ...props.form.ethereumConfig,
+      groups: props.form.ethereumConfig.groups.filter((_, i) => i !== idx),
     },
   })
 }

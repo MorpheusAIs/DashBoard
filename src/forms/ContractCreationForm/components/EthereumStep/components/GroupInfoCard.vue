@@ -1,8 +1,24 @@
 <template>
   <div class="group-info-card">
-    <h5 class="group-info-card__name">
-      {{ group.name }}
-    </h5>
+    <div class="group-info-card__name-wrp">
+      <h5 class="group-info-card__name">
+        {{ group.name }}
+      </h5>
+      <div class="group-info-card__controllers">
+        <button
+          v-for="controller in CONTROLLERS"
+          :key="controller.id"
+          :class="`group-info-card__controller--${controller.id}`"
+          class="group-info-card__controller"
+          @click="controller.onClick"
+        >
+          <app-icon
+            class="group-info-card__controller-icon"
+            :name="controller.iconName"
+          />
+        </button>
+      </div>
+    </div>
     <ul class="group-info-card__indicators">
       <li v-for="(indicator, idx) in indicators" :key="idx">
         <h5 class="group-info-card__indicator-title">
@@ -17,74 +33,117 @@
 </template>
 
 <script lang="ts" setup>
+import { AppIcon } from '@/common'
 import { useI18n } from '@/composables'
-import { DEFAULT_TIME_FORMAT } from '@/const'
-import { type BigNumberish } from '@/types'
+import { ICON_NAMES } from '@/enums'
 import { Time } from '@/utils'
 import { computed } from 'vue'
 import { type EthereumConfigGroup } from '../../../types'
 
 type Indicator = {
   title: string
-  value: BigNumberish
+  value: string
 }
+
+type Controller = {
+  id: string
+  iconName: ICON_NAMES
+  onClick: () => void
+}
+
+const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step.group-info-card'
+const TIME_FORMAT = 'MMM DD, YYYY h:mmA'
 
 const props = defineProps<{
   group: EthereumConfigGroup
 }>()
 
+const emit = defineEmits<{
+  (event: 'edit'): void
+  (event: 'remove'): void
+}>()
+
+const CONTROLLERS: Controller[] = [
+  {
+    id: 'edit',
+    iconName: ICON_NAMES.edit,
+    onClick: () => {
+      emit('edit')
+    },
+  },
+  {
+    id: 'remove',
+    iconName: ICON_NAMES.trash,
+    onClick: () => {
+      emit('remove')
+    },
+  },
+]
+
 const { t } = useI18n()
 
-const indicators = computed<Indicator[]>(() => [
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.payout-start-title',
-    ),
-    value: new Time(props.group.payoutStartAt, 'X').format(DEFAULT_TIME_FORMAT),
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.decrease-interval-title',
-    ),
-    value: props.group.decreaseInterval,
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.withdraw-lock-period-title',
-    ),
-    value: props.group.withdrawLockPeriod,
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.claim-lock-period-title',
-    ),
-    value: props.group.claimLockPeriod,
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.withdraw-lock-period-after-stake-title',
-    ),
-    value: props.group.withdrawLockPeriodAfterStake,
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.initial-reward-title',
-    ),
-    value: props.group.initialReward,
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.reward-decrease-title',
-    ),
-    value: props.group.rewardDecrease,
-  },
-  {
-    title: t(
-      'contract-creation-form.ethereum-step.group-info-card.minimal-stake-title',
-    ),
-    value: props.group.minimalStake,
-  },
-])
+const indicators = computed<Indicator[]>(() =>
+  props.group.isPublic
+    ? [
+        {
+          title: t(`${I18N_KEY_PREFIX}.payout-start-title`),
+          value: new Time(props.group.payoutStartAt, 'X').format(TIME_FORMAT),
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.decrease-interval-title`),
+          value: `${Math.floor(Number(props.group.decreaseInterval) / 3600)} h`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.withdraw-lock-period-title`),
+          value: `${props.group.withdrawLockPeriod}h (${new Time(
+            Number(props.group.payoutStartAt) +
+              Number(props.group.withdrawLockPeriod) * 3600,
+          ).format(TIME_FORMAT)})`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.claim-lock-period-title`),
+          value: `${props.group.claimLockPeriod} h`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.withdraw-lock-period-after-stake-title`),
+          value: `${props.group.withdrawLockPeriodAfterStake} h`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.initial-reward-title`),
+          value: `${props.group.initialReward} MOR`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.reward-decrease-title`),
+          value: `${props.group.rewardDecrease} MOR`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.minimal-stake-title`),
+          value: `${props.group.minimalStake} MOR`,
+        },
+      ]
+    : [
+        {
+          title: t(`${I18N_KEY_PREFIX}.payout-start-title`),
+          value: new Time(props.group.payoutStartAt, 'X').format(TIME_FORMAT),
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.decrease-interval-title`),
+          value: `${Math.floor(Number(props.group.decreaseInterval) / 3600)} h`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.initial-reward-title`),
+          value: `${props.group.initialReward} MOR`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.claim-lock-period-title`),
+          value: `${props.group.claimLockPeriod} h`,
+        },
+        {
+          title: t(`${I18N_KEY_PREFIX}.reward-decrease-title`),
+          value: `${props.group.rewardDecrease} MOR`,
+        },
+      ],
+)
 </script>
 
 <style lang="scss" scoped>
@@ -100,10 +159,46 @@ const indicators = computed<Indicator[]>(() => [
   );
 }
 
+.group-info-card__name-wrp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .group-info-card__name {
   color: var(--primary-main);
 
   @include body-2-semi-bold;
+}
+
+.group-info-card__controllers {
+  display: flex;
+  align-items: center;
+  gap: toRem(24);
+}
+
+.group-info-card__controller {
+  transition: color var(--transition-duration-fast)
+    var(--transition-timing-default);
+
+  &--edit {
+    color: var(--primary-main);
+  }
+
+  &--remove {
+    $color: #ff2f2f;
+
+    color: $color;
+  }
+
+  &:hover {
+    color: var(--text-secondary-main);
+  }
+}
+
+.group-info-card__controller-icon {
+  height: toRem(30);
+  width: toRem(30);
 }
 
 .group-info-card__indicators {
@@ -120,5 +215,7 @@ const indicators = computed<Indicator[]>(() => [
 
 .group-info-card__indicator-value {
   @include body-2-semi-bold;
+
+  @include text-ellipsis;
 }
 </style>

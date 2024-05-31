@@ -1,7 +1,12 @@
 import { i18n } from '@/localization'
 import { type BigNumber } from '@/types'
 import { formatUnits, isAddress, parseUnits } from '@/utils'
-import { required as _required } from '@vuelidate/validators'
+import {
+  integer as _integer,
+  numeric as _numeric,
+  minValue as _minValue,
+  required as _required,
+} from '@vuelidate/validators'
 import { type ValidationRule } from '@vuelidate/core'
 import { createI18nMessage, type MessageProps } from '@vuelidate/validators'
 
@@ -11,6 +16,13 @@ const messagePath = ({ $validator }: MessageProps) =>
   `validations.field-error_${$validator}`
 
 const withI18nMessage = createI18nMessage({ t, messagePath })
+
+export const integer = <ValidationRule>withI18nMessage(_integer)
+
+export const numeric = <ValidationRule>withI18nMessage(_numeric)
+
+export const minValue = (value: number): ValidationRule =>
+  <ValidationRule>withI18nMessage(_minValue(value))
 
 export const required = <ValidationRule>withI18nMessage(_required)
 

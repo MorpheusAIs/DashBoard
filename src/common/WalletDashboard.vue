@@ -92,10 +92,6 @@ const addToken = async () => {
         },
       },
     })
-
-    await web3ProvidersStore.provider.selectChain(
-      config.networks[web3ProvidersStore.networkId].chainId,
-    )
   } catch (error) {
     ErrorHandler.process(error)
   }

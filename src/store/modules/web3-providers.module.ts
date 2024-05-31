@@ -43,6 +43,18 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     return config.networks[networkId.value].provider
   })
 
+  const extendedProvider = computed<Provider>(() => {
+    if (
+      String(provider.chainId) ===
+      config.networks[networkId.value].extendedChainId
+    )
+      return new providers.Web3Provider(
+        provider.rawProvider as providers.ExternalProvider,
+      )
+
+    return config.networks[networkId.value].extendedChainProvider
+  })
+
   const isValidChain = computed<boolean>(() => {
     return (
       isAddingToken.value ||
@@ -76,7 +88,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       config.networks[networkId.value].contractAddressesMap[CONTRACT_IDS.mor],
-      config.networks[networkId.value].extendedChainProvider,
+      extendedProvider,
     ),
   )
 
@@ -87,6 +99,26 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
         CONTRACT_IDS.endpoint
       ],
       defaultProvider.value,
+    ),
+  )
+
+  const l1FactoryContract = computed(() =>
+    useContract(
+      'L1Factory__factory',
+      config.networks[networkId.value].contractAddressesMap[
+        CONTRACT_IDS.l1Factory
+      ],
+      defaultProvider,
+    ),
+  )
+
+  const l2FactoryContract = computed(() =>
+    useContract(
+      'L2Factory__factory',
+      config.networks[networkId.value].contractAddressesMap[
+        CONTRACT_IDS.l2Factory
+      ],
+      extendedProvider,
     ),
   )
 
@@ -114,6 +146,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     stEthContract,
     morContract,
     endpointContract,
+    l1FactoryContract,
+    l2FactoryContract,
 
     // Actions
     init,

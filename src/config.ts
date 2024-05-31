@@ -21,6 +21,8 @@ export enum CONTRACT_IDS {
   stEth = 'stEth',
   mor = 'mor',
   endpoint = 'endpoint',
+  l1Factory = 'l1-factory',
+  l2Factory = 'l2-factory',
 }
 
 export enum NETWORK_IDS {
@@ -36,6 +38,7 @@ interface Network {
   extendedChainId: ETHEREUM_CHAINS
   extendedChainTitle: string
   extendedChainProvider: Provider
+  extendedExplorerUrl: ETHEREUM_EXPLORER_URLS
   extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS
   contractAddressesMap: Record<CONTRACT_IDS, string>
 }
@@ -80,6 +83,10 @@ export const config = {
     .VITE_APP_MOR_TESTNET_CONTRACT_ADDRESS,
   ENDPOINT_TESTNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ENDPOINT_TESTNET_CONTRACT_ADDRESS,
+  L1_TESTNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
+  L2_TESTNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
 
   // Mainnet
   ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS: import.meta.env
@@ -90,6 +97,10 @@ export const config = {
     .VITE_APP_MOR_MAINNET_CONTRACT_ADDRESS,
   ENDPOINT_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
+  L1_MAINNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
+  L2_MAINNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
 
   metadata: {} as Metadata,
 
@@ -134,6 +145,7 @@ config.networks = {
     extendedChainProvider: new providers.StaticJsonRpcProvider(
       ETHEREUM_RPC_URLS.arbitrum,
     ),
+    extendedExplorerUrl: ETHEREUM_EXPLORER_URLS.arbitrum,
     extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
     contractAddressesMap: {
       [CONTRACT_IDS.erc1967Proxy]:
@@ -141,6 +153,8 @@ config.networks = {
       [CONTRACT_IDS.stEth]: config.STETH_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.mor]: config.MOR_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.l1Factory]: config.L1_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.l2Factory]: config.L2_MAINNET_CONTRACT_ADDRESS,
     },
   },
   [NETWORK_IDS.testnet]: {
@@ -153,6 +167,7 @@ config.networks = {
     extendedChainProvider: new providers.StaticJsonRpcProvider(
       ETHEREUM_RPC_URLS.arbitrumSepolia,
     ),
+    extendedExplorerUrl: ETHEREUM_EXPLORER_URLS.arbitrumSepolia,
     extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
     contractAddressesMap: {
       [CONTRACT_IDS.erc1967Proxy]:
@@ -160,6 +175,8 @@ config.networks = {
       [CONTRACT_IDS.stEth]: config.STETH_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.mor]: config.MOR_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.l1Factory]: config.L1_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.l2Factory]: config.L2_TESTNET_CONTRACT_ADDRESS,
     },
   },
 }

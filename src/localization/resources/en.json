@@ -72,7 +72,9 @@
         "reward-decrease-title": "Reward Decrease",
         "minimal-stake-title": "Minimal Stake"
       }
-    }
+    },
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "claim-form": {
     "address-placeholder": "Enter address",
@@ -193,9 +195,12 @@
   "validations": {
     "field-error_address": "Field must be a valid address with prefix \"0x\"",
     "field-error_required": "Field must be filled in",
-    "field-error_ether": "Please enter an amount of stETH",
-    "field-error_maxEther": "Insufficient amount of stETH",
-    "field-error_minEther": "Field must be greater than or equal to {min}"
+    "field-error_ether": "Field must contain the amount of tokens",
+    "field-error_integer": "Field must be integer",
+    "field-error_numeric": "Field must be numeric",
+    "field-error_maxEther": "Insufficient amount of tokens",
+    "field-error_minEther": "Field must be greater than or equal to {min}",
+    "field-error_minValue": "The entered value is less than the minimum value"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",

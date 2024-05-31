@@ -95,8 +95,9 @@
 import { AppButton } from '@/common'
 import { useFormValidation } from '@/composables'
 import { CheckboxField, DatetimeField, InputField } from '@/fields'
-import { required } from '@/validators'
-import { computed, reactive } from 'vue'
+import { Time } from '@/utils'
+import { ether, integer, minValue, numeric, required } from '@/validators'
+import { computed, reactive, watch } from 'vue'
 import { type EthereumConfigGroup } from '../../../types'
 
 const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step.group-builder'
@@ -137,15 +138,15 @@ const groupValidation = useFormValidation(
   group,
   computed(() => ({
     name: { required },
-    payoutStartAt: { required },
-    decreaseInterval: { required },
-    claimLockPeriod: { required },
-    initialReward: { required },
-    rewardDecrease: { required },
+    payoutStartAt: { required, minValue: minValue(new Time().timestamp) },
+    decreaseInterval: { required, integer },
+    claimLockPeriod: { required, numeric },
+    initialReward: { required, ether },
+    rewardDecrease: { required, ether },
     ...(group.isPublic && {
-      withdrawLockPeriod: { required },
-      withdrawLockPeriodAfterStake: { required },
-      minimalStake: { required },
+      withdrawLockPeriod: { required, numeric },
+      withdrawLockPeriodAfterStake: { required, numeric },
+      minimalStake: { required, ether },
     }),
   })),
   { $scope: false },
@@ -160,6 +161,13 @@ const build = () => {
   Object.assign(group, DEFAULT_PRESET)
   groupValidation.reset()
 }
+
+watch(
+  () => props.preset,
+  newPreset => {
+    if (newPreset) Object.assign(group, newPreset)
+  },
+)
 </script>
 
 <style lang="scss" scoped>

@@ -5,6 +5,7 @@
     :aria-expanded="isOpen"
     :disabled="disabled"
     :class="{ 'datetime-field--open': isOpen }"
+    autocomplete="off"
     class="datetime-field"
     @focus="isOpen = true"
     @keydown="onKeydown"

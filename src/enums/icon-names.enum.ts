@@ -18,6 +18,7 @@ export enum ICON_NAMES {
   morpheus = 'morpheus',
   save = 'save',
   steth = 'steth',
+  trash = 'trash',
   xCircle = 'x-circle',
   x = 'x',
 }

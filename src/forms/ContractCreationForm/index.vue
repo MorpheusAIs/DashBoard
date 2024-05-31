@@ -39,8 +39,11 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useFormValidation, useI18n } from '@/composables'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { required } from '@/validators'
+import { parseUnits } from '@/utils'
+import { address, ether, maxEther, required } from '@/validators'
+import { config } from '@config'
 import { useStorage } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import {
@@ -108,12 +111,20 @@ const formValidation = useFormValidation(
       arbitrumConfig: {
         tokenName: { required },
         tokenSymbol: { required },
-        adminContractAddress: { required },
+        adminContractAddress: { required, address },
         settings: {
-          tokenInAddress: { required },
-          tokenOutAddress: { required },
-          firstSwapFee: { required },
-          secondSwapFee: { required },
+          tokenInAddress: { required, address },
+          tokenOutAddress: { required, address },
+          firstSwapFee: {
+            required,
+            ether,
+            maxEther: maxEther('0.000000000016777215'),
+          },
+          secondSwapFee: {
+            required,
+            ether,
+            maxEther: maxEther('0.000000000016777215'),
+          },
         },
       },
     }),
@@ -121,24 +132,129 @@ const formValidation = useFormValidation(
       ethereumConfig: {
         tokenName: { required },
         tokenSymbol: { required },
-        adminContractAddress: { required },
+        adminContractAddress: { required, address },
         // groups validation is delegated to GroupBuilder.vue
       },
     }),
   })),
 )
 
-const submitStep = () => {
+const submitStep = async () => {
   if (!formValidation.isFormValid()) return
 
   isSubmitting.value = true
 
-  switch (form.value.stepId) {
-    case STEP_IDS.general:
-      form.value.stepId = STEP_IDS.arbitrum
-      break
-    case STEP_IDS.arbitrum:
-      form.value.stepId = STEP_IDS.ethereum
+  try {
+    const { l1FactoryContract, l2FactoryContract } = web3ProvidersStore
+    let tx
+    let explorerTxUrl
+
+    switch (form.value.stepId) {
+      case STEP_IDS.arbitrum: {
+        const predictedAddresses =
+          await l1FactoryContract.providerBased.value.predictAddresses(
+            web3ProvidersStore.provider.selectedAddress,
+            form.value.generalConfig.projectName,
+          )
+
+        await web3ProvidersStore.provider.selectChain(
+          config.networks[web3ProvidersStore.networkId].extendedChainId,
+        )
+
+        tx = await l2FactoryContract.signerBased.value.deploy({
+          isUpgradeable: true, // TODO: add checkbox-field
+          owner: form.value.arbitrumConfig.adminContractAddress,
+          protocolName: form.value.generalConfig.projectName,
+          mor20Name: form.value.arbitrumConfig.tokenName,
+          mor20Symbol: form.value.arbitrumConfig.tokenSymbol,
+          l1Sender: predictedAddresses.l1Sender_,
+          firstSwapParams_: {
+            tokenIn: form.value.arbitrumConfig.settings.tokenInAddress,
+            tokenOut: form.value.arbitrumConfig.settings.tokenOutAddress,
+            fee: parseUnits(
+              form.value.arbitrumConfig.settings.firstSwapFee,
+              'ether',
+            ),
+          },
+          secondSwapFee: parseUnits(
+            form.value.arbitrumConfig.settings.secondSwapFee,
+            'ether',
+          ),
+        })
+
+        explorerTxUrl = getEthExplorerTxUrl(
+          config.networks[web3ProvidersStore.networkId].extendedExplorerUrl,
+          tx.hash,
+        )
+
+        break
+      }
+
+      case STEP_IDS.ethereum: {
+        const predictedAddresses =
+          await l2FactoryContract.providerBased.value.predictAddresses(
+            web3ProvidersStore.provider.selectedAddress,
+            form.value.generalConfig.projectName,
+          )
+
+        await web3ProvidersStore.provider.selectChain(
+          config.networks[web3ProvidersStore.networkId].chainId,
+        )
+
+        tx = await l1FactoryContract.signerBased.value.deploy({
+          isUpgradeable: form.value.ethereumConfig.isUpgradeable,
+          owner: form.value.ethereumConfig.adminContractAddress,
+          protocolName: form.value.generalConfig.projectName,
+          l2MessageReceiver: predictedAddresses.l2MessageReceiver_,
+          l2TokenReceiver: predictedAddresses.l2TokenReceiver_,
+          poolsInfo: form.value.ethereumConfig.groups.map(group => ({
+            payoutStart: group.payoutStartAt,
+            decreaseInterval: group.decreaseInterval,
+            claimLockPeriod: Math.round(Number(group.claimLockPeriod) * 60),
+            initialReward: parseUnits(group.initialReward, 'ether'),
+            rewardDecrease: parseUnits(group.rewardDecrease, 'ether'),
+            isPublic: group.isPublic,
+            withdrawLockPeriod: group.isPublic
+              ? Math.round(Number(group.withdrawLockPeriod) * 60)
+              : 0,
+            withdrawLockPeriodAfterStake: group.isPublic
+              ? Math.round(Number(group.withdrawLockPeriodAfterStake) * 60)
+              : 0,
+            minimalStake: group.isPublic ? group.minimalStake : 0,
+          })),
+        })
+
+        explorerTxUrl = getEthExplorerTxUrl(
+          config.networks[web3ProvidersStore.networkId].explorerUrl,
+          tx.hash,
+        )
+      }
+    }
+
+    if (tx && explorerTxUrl) {
+      bus.emit(
+        BUS_EVENTS.info,
+        t('contract-creation-form.tx-sent-message', { explorerTxUrl }),
+      )
+
+      await tx.wait()
+
+      bus.emit(
+        BUS_EVENTS.success,
+        t('contract-creation-form.success-message', { explorerTxUrl }),
+      )
+    }
+
+    switch (form.value.stepId) {
+      case STEP_IDS.general:
+        form.value.stepId = STEP_IDS.arbitrum
+        break
+      case STEP_IDS.arbitrum:
+        form.value.stepId = STEP_IDS.ethereum
+      // case STEP_IDS.ethereum:
+    }
+  } catch (error) {
+    ErrorHandler.process(error)
   }
 
   isSubmitting.value = false
