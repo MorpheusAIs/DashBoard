@@ -27,6 +27,7 @@
       "token-symbol-label": "Lorem ipsum dolor sit amet consectetur. Montes sapien ipsum ipsum adipiscing amet ac purus pellentesque.",
       "token-symbol-placeholder": "Token symbol",
       "admin-contract-address-label": "Lorem ipsum dolor sit amet consectetur. Montes sapien ipsum ipsum adipiscing amet ac purus pellentesque.",
+      "is-upgradeable-label": "Keep upgreadability?",
       "admin-contract-address-placeholder": "Contract administrator's address",
       "settings": {
         "title":"Uniswap settings",

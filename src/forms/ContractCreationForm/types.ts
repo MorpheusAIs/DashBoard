@@ -15,6 +15,7 @@ export type ArbitrumConfig = {
   tokenName: string
   tokenSymbol: string
   adminContractAddress: string
+  isUpgradeable: boolean
   settings: ArbitrumConfigSettings
 }
 

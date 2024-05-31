@@ -91,6 +91,7 @@ const form = useStorage<Form>(storageKey.value, {
     tokenName: '',
     tokenSymbol: '',
     adminContractAddress: '',
+    isUpgradable: true,
     settings: {
       tokenInAddress: '',
       tokenOutAddress: '',
@@ -168,7 +169,7 @@ const submitStep = async () => {
         )
 
         tx = await l2FactoryContract.signerBased.value.deploy({
-          isUpgradeable: true, // TODO: add checkbox-field
+          isUpgradeable: form.value.arbitrumConfig.isUpgradeable,
           owner: form.value.arbitrumConfig.adminContractAddress,
           protocolName: form.value.generalConfig.projectName,
           mor20Name: form.value.arbitrumConfig.tokenName,

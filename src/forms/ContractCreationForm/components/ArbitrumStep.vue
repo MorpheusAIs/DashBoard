@@ -38,6 +38,13 @@
         @blur="formValidation.touchField('arbitrumConfig.adminContractAddress')"
         @update:model-value="emitRootField('adminContractAddress', $event)"
       />
+      <checkbox-field
+        :model-value="form.arbitrumConfig.isUpgradeable"
+        :label="$t(`${I18N_KEY_PREFIX}.is-upgradeable-label`)"
+        :disabled="isSubmitting"
+        class="arbitrum-step__is-upgradeable-checkbox"
+        @update:model-value="emitRootField('isUpgradeable', $event)"
+      />
     </div>
     <div class="arbitrum-step__divider" />
     <div class="arbitrum-step__settings">
@@ -120,7 +127,7 @@
 
 <script lang="ts" setup>
 import { type FormValidation } from '@/composables'
-import { InputField } from '@/fields'
+import { CheckboxField, InputField } from '@/fields'
 import { type Form } from '../types'
 
 const I18N_KEY_PREFIX = 'contract-creation-form.arbitrum-step'
@@ -164,6 +171,10 @@ const emitSettingsField = (
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16) toRem(32);
+}
+
+.arbitrum-step__is-upgradeable-checkbox {
+  grid-column: 1;
 }
 
 .arbitrum-step__divider {
