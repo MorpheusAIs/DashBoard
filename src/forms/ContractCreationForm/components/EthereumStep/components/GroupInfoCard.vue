@@ -8,6 +8,7 @@
         <button
           v-for="controller in CONTROLLERS"
           :key="controller.id"
+          :disabled="disabled"
           :class="`group-info-card__controller--${controller.id}`"
           class="group-info-card__controller"
           @click="controller.onClick"
@@ -53,16 +54,6 @@ type Controller = {
 
 const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step.group-info-card'
 const TIME_FORMAT = 'MMM DD, YYYY h:mmA'
-
-const props = defineProps<{
-  group: EthereumConfigGroup
-}>()
-
-const emit = defineEmits<{
-  (event: 'edit'): void
-  (event: 'remove'): void
-}>()
-
 const CONTROLLERS: Controller[] = [
   {
     id: 'edit',
@@ -79,6 +70,21 @@ const CONTROLLERS: Controller[] = [
     },
   },
 ]
+
+const props = withDefaults(
+  defineProps<{
+    group: EthereumConfigGroup
+    disabled?: boolean
+  }>(),
+  {
+    disabled: false,
+  },
+)
+
+const emit = defineEmits<{
+  (event: 'edit'): void
+  (event: 'remove'): void
+}>()
 
 const { t } = useI18n()
 
@@ -191,7 +197,11 @@ const indicators = computed<Indicator[]>(() =>
     color: $color;
   }
 
-  &:hover {
+  &[disabled] {
+    color: var(--disable-primary-main);
+  }
+
+  &:not([disabled]):hover {
     color: var(--text-secondary-main);
   }
 }

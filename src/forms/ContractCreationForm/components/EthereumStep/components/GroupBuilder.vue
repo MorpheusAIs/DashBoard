@@ -3,6 +3,7 @@
     <checkbox-field
       v-model="group.isPublic"
       :label="$t(`${I18N_KEY_PREFIX}.is-public-label`)"
+      :disabled="disabled"
     />
     <div class="group-builder__fields">
       <input-field

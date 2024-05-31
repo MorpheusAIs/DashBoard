@@ -41,6 +41,7 @@
       <checkbox-field
         :model-value="form.ethereumConfig.isUpgradeable"
         :label="$t('contract-creation-form.ethereum-step.is-upgradeable-label')"
+        :disabled="isSubmitting"
         class="ethereum-step__is-upgradeable-checkbox"
         @update:model-value="emitRootField('isUpgradeable', $event)"
       />
@@ -69,6 +70,7 @@
             <li v-for="(group, idx) in form.ethereumConfig.groups" :key="idx">
               <group-info-card
                 :group="group"
+                :disabled="isSubmitting"
                 @edit="editGroup(idx)"
                 @remove="removeGroup(idx)"
               />

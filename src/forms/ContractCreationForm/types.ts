@@ -46,6 +46,15 @@ export type Form = {
   ethereumConfig: EthereumConfig
 }
 
+export type FormSuccessData = {
+  protocolName: string
+  distributionAddress: string
+  l1SenderAddress: string
+  l2MessageReceiverAddress: string
+  l2TokenReceiverAddress: string
+  tokenAddress: string
+}
+
 export type StepTab = {
   id: string
   title: string

@@ -142,6 +142,9 @@ withDefaults(
 }
 
 .info-card__address {
+  display: grid;
+  width: 100%;
+  grid-auto-flow: column;
   margin-top: auto;
 
   @include body-3-semi-bold;

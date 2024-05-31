@@ -175,7 +175,13 @@
       }
     },
     "contract-creation-page": {
-     "back-link": "Back"
+     "back-link": "Back",
+      "distribution-address-label": "Distribution address",
+      "l1-sender-address-label": "L1 Sender address",
+      "l2-message-receiver-address-label": "L2 Message Receiver address",
+      "l2-token-receiver-address-label": "L2 Token Receiver address",
+      "token-address-label": "Token address",
+      "success-msg": "Your protocol has been successfully deployed."
     }
   },
   "info-dashboard": {

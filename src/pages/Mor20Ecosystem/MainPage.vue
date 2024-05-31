@@ -1,12 +1,20 @@
 <template>
-  <main class="main-page">
+  <main
+    class="main-page"
+    :key="`${$route.query.network}.${web3ProvidersStore.address}`"
+  >
     <div class="main-page__wrp">
-      <h2>{{ $t('mor20-ecosystem.main-page.title') }}</h2>
+      <h2
+        class="main-page__title"
+        :class="{ 'main-page__title--loading': isInitializing }"
+      >
+        {{ data?.protocolName || $t('mor20-ecosystem.main-page.title') }}
+      </h2>
       <div class="main-page__content-wrp">
-        <template v-if="hasContractsMocked && cards.length">
+        <template v-if="(data && cards.length) || isInitializing">
           <ul class="main-page__cards">
             <li v-for="(card, idx) in cards" :key="idx">
-              <info-card :card="card" />
+              <info-card :card="card" :is-loading="isInitializing" />
             </li>
           </ul>
         </template>
@@ -36,17 +44,26 @@
 import { AppButton, InfoCard } from '@/common'
 import { useI18n } from '@/composables'
 import { ICON_NAMES } from '@/enums'
+import { ErrorHandler } from '@/helpers'
+import { router } from '@/router'
+import { useWeb3ProvidersStore } from '@/store'
 import { type InfoCardType } from '@/types'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+
+import { FormSuccessData } from '@/forms/ContractCreationForm/types'
 
 const { t } = useI18n()
+const web3ProvidersStore = useWeb3ProvidersStore()
+
+const data = ref<FormSuccessData | null>(null)
+const isInitializing = ref(false)
 
 const cards = computed<InfoCardType.Card[]>(() => [
   {
     title: t('mor20-ecosystem.main-page.info-card.token.title'),
     icon: ICON_NAMES.arbitrumAlt,
     description: t('mor20-ecosystem.main-page.info-card.token.description'),
-    address: '0xaFDE42318...363385bb23671aA8',
+    address: data.value?.tokenAddress || '',
     link: '#',
   },
   {
@@ -55,14 +72,14 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t(
       'mor20-ecosystem.main-page.info-card.distribution.description',
     ),
-    address: '0xaFDE42318...363385bb23671aA8',
+    address: data.value?.distributionAddress || '',
     link: '#',
   },
   {
     title: t('mor20-ecosystem.main-page.info-card.l1-sender.title'),
     icon: ICON_NAMES.ethereumAlt,
     description: t('mor20-ecosystem.main-page.info-card.l1-sender.description'),
-    address: '0xaFDE42318...363385bb23671aA8',
+    address: data.value?.l1SenderAddress || '',
     link: '#',
   },
   {
@@ -71,7 +88,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t(
       'mor20-ecosystem.main-page.info-card.l2-msg-receiver.description',
     ),
-    address: '0xaFDE42318...363385bb23671aA8',
+    address: data.value?.l2MessageReceiverAddress || '',
     link: '#',
   },
   {
@@ -80,12 +97,65 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t(
       'mor20-ecosystem.main-page.info-card.l2-token-receiver.description',
     ),
-    address: '0xaFDE42318...363385bb23671aA8',
+    address: data.value?.l2TokenReceiverAddress || '',
     link: '#',
   },
 ])
 
-const hasContractsMocked = ref(false)
+const init = async () => {
+  isInitializing.value = true
+
+  try {
+    const { address, l1FactoryContract, l2FactoryContract } = web3ProvidersStore
+
+    const [l1ProtocolsCount, l2ProtocolsCount] = await Promise.all([
+      l1FactoryContract.providerBased.value.countProtocols(address),
+      l2FactoryContract.providerBased.value.countProtocols(address),
+    ])
+
+    if (l1ProtocolsCount.isZero() && l2ProtocolsCount.isZero()) {
+      data.value = null
+      return
+    }
+
+    const [l1DeployedPools, l2DeployedPools] = await Promise.all([
+      l1FactoryContract.providerBased.value.getDeployedPools(
+        address,
+        l1ProtocolsCount.sub(1),
+        1,
+      ),
+      l2FactoryContract.providerBased.value.getDeployedPools(
+        address,
+        l2ProtocolsCount.sub(1),
+        1,
+      ),
+    ])
+
+    data.value = {
+      protocolName: l1DeployedPools[0].protocol,
+      distributionAddress: l1DeployedPools[0].distribution,
+      l1SenderAddress: l1DeployedPools[0].l1Sender,
+      l2MessageReceiverAddress: l2DeployedPools[0].l2MessageReceiver,
+      l2TokenReceiverAddress: l2DeployedPools[0].l2TokenReceiver,
+      tokenAddress: l2DeployedPools[0].mor20,
+    }
+  } catch (error) {
+    data.value = null
+    ErrorHandler.process(error)
+  } finally {
+    isInitializing.value = false
+  }
+}
+
+watch(
+  [
+    () => web3ProvidersStore.address,
+    () => router.currentRoute.value.query.network,
+  ],
+  init,
+)
+
+init()
 </script>
 
 <style lang="scss" scoped>
@@ -142,6 +212,16 @@ const hasContractsMocked = ref(false)
 
 .main-page__wrp {
   @include page-wrp;
+}
+
+.main-page__title {
+  max-width: max-content;
+
+  &--loading {
+    @include skeleton;
+
+    border-radius: 0;
+  }
 }
 
 .main-page__content-wrp {

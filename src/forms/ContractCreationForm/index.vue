@@ -55,6 +55,10 @@ import {
 import { STEP_IDS } from './enums'
 import type { Form, StepTab } from './types'
 
+const emit = defineEmits<{
+  (event: 'success'): void
+}>()
+
 const { t } = useI18n()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -71,35 +75,37 @@ const currentStepTab = computed<StepTab>(
     stepTabs.value.find(stepTab => stepTab.id === form.value.stepId) as StepTab,
 )
 
+const storageKey = computed<string>(
+  () =>
+    `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.contract-creation-form`,
+)
+
 const isSubmitting = ref(false)
 
-const form = useStorage<Form>(
-  `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.contract-creation-form`,
-  {
-    stepId: STEP_IDS.general,
-    generalConfig: {
-      projectName: '',
-    },
-    arbitrumConfig: {
-      tokenName: '',
-      tokenSymbol: '',
-      adminContractAddress: '',
-      settings: {
-        tokenInAddress: '',
-        tokenOutAddress: '',
-        firstSwapFee: '',
-        secondSwapFee: '',
-      },
-    },
-    ethereumConfig: {
-      tokenName: '',
-      tokenSymbol: '',
-      adminContractAddress: '',
-      isUpgradeable: true,
-      groups: [],
+const form = useStorage<Form>(storageKey.value, {
+  stepId: STEP_IDS.general,
+  generalConfig: {
+    projectName: '',
+  },
+  arbitrumConfig: {
+    tokenName: '',
+    tokenSymbol: '',
+    adminContractAddress: '',
+    settings: {
+      tokenInAddress: '',
+      tokenOutAddress: '',
+      firstSwapFee: '',
+      secondSwapFee: '',
     },
   },
-)
+  ethereumConfig: {
+    tokenName: '',
+    tokenSymbol: '',
+    adminContractAddress: '',
+    isUpgradeable: true,
+    groups: [],
+  },
+})
 
 const formValidation = useFormValidation(
   form,
@@ -210,7 +216,7 @@ const submitStep = async () => {
           poolsInfo: form.value.ethereumConfig.groups.map(group => ({
             payoutStart: group.payoutStartAt,
             decreaseInterval: group.decreaseInterval,
-            claimLockPeriod: Math.round(Number(group.claimLockPeriod) * 60),
+            claimLockPeriod: Math.round(Number(group.claimLockPeriod) / 3600),
             initialReward: parseUnits(group.initialReward, 'ether'),
             rewardDecrease: parseUnits(group.rewardDecrease, 'ether'),
             isPublic: group.isPublic,
@@ -251,7 +257,10 @@ const submitStep = async () => {
         break
       case STEP_IDS.arbitrum:
         form.value.stepId = STEP_IDS.ethereum
-      // case STEP_IDS.ethereum:
+        break
+      case STEP_IDS.ethereum:
+        localStorage.removeItem(storageKey.value)
+        emit('success')
     }
   } catch (error) {
     ErrorHandler.process(error)
