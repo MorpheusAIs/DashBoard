@@ -6,6 +6,7 @@
     :disabled="disabled"
     :class="{ 'datetime-field--open': isOpen }"
     class="datetime-field"
+    readonly
     @focus="isOpen = true"
     @keydown="onKeydown"
   >
@@ -137,8 +138,6 @@ const onKeydown = (event: KeyboardEvent) => {
       case 'Tab':
         isOpen.value = false
         break
-      default:
-        event.preventDefault()
     }
   }
 }
