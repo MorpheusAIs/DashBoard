@@ -20,11 +20,11 @@
         v-on="listeners"
         :value="modelValue"
         :placeholder="placeholder"
-        :tabindex="isDisabled || isReadonly ? -1 : ($attrs.tabindex as number)"
         :type="inputType"
         :min="min"
         :max="max"
-        :disabled="isDisabled || isReadonly"
+        :disabled="isDisabled"
+        :readonly="isReadonly"
       />
       <slot name="default" />
       <div
@@ -143,15 +143,16 @@ const listeners = computed(() => ({
 }))
 
 const inputClasses = computed(() => [
-  ...(props.modelValue ? ['input-field--filled'] : []),
-  ...(slots.nodeLeft ? ['input-field--node-left'] : []),
-  ...(slots.nodeRight || isPasswordType.value || props.errorMessage
-    ? ['input-field--node-right']
-    : []),
-  ...(isDisabled.value ? ['input-field--disabled'] : []),
-  ...(isReadonly.value ? ['input-field--readonly'] : []),
-  ...(props.errorMessage ? ['input-field--error'] : []),
-  ...(props.isLoading ? ['input-field--loading'] : []),
+  {
+    'input-field--filled': props.modelValue,
+    'input-field--node-left': slots.nodeLeft,
+    'input-field--node-right':
+      slots.nodeRight || isPasswordType.value || props.errorMessage,
+    'input-field--disabled': isDisabled.value,
+    'input-field--readonly': isReadonly.value,
+    'input-field--error': props.errorMessage,
+    'input-field--loading': props.isLoading,
+  },
   `input-field--${props.scheme}`,
 ])
 
@@ -259,8 +260,7 @@ $z-index-side-nodes: 1;
   transition: var(--field-transition-duration) var(--field-transition-timing);
   transition-property: color, box-shadow, border-color, background-color;
 
-  &:disabled,
-  &:read-only {
+  &:disabled {
     cursor: not-allowed;
     border-color: var(--field-border-disabled);
     background: var(--field-bg-primary-disabled);
