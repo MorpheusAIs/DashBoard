@@ -211,5 +211,5 @@ $z-index: 1;
 </style>
 
 <style lang="scss">
-@import '@/styles/flatpickr';
+@import './flatpickr';
 </style>
