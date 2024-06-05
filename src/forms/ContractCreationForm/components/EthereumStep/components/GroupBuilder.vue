@@ -173,13 +173,13 @@ watch(
 
 <style lang="scss" scoped>
 .group-builder__fields {
-  margin-top: toRem(32);
+  margin-top: toRem(16);
   display: grid;
-  grid-gap: toRem(40);
+  grid-gap: toRem(16);
 }
 
 .group-builder__build-btn {
-  margin: toRem(-24) 0 0 auto;
+  margin-left: auto;
 
   @include body-3-semi-bold;
 }

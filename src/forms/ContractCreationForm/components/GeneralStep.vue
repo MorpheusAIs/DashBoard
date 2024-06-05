@@ -50,11 +50,7 @@ const emitRootField = (
   max-width: toRem(560);
 }
 
-.general-step__instruction {
-  @include body-2-regular;
-}
-
 .general-step .general-step__project-name {
-  margin-top: toRem(30);
+  margin-top: toRem(20);
 }
 </style>

@@ -33,8 +33,6 @@ export type EthereumConfigGroup = {
 }
 
 export type EthereumConfig = {
-  tokenName: string
-  tokenSymbol: string
   adminContractAddress: string
   isUpgradeable: boolean
   groups: EthereumConfigGroup[]

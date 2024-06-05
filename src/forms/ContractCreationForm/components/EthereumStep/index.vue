@@ -2,28 +2,6 @@
   <div class="ethereum-step">
     <div class="ethereum-step__fields">
       <input-field
-        :model-value="form.ethereumConfig.tokenName"
-        :label="$t(`${I18N_KEY_PREFIX}.token-name-label`)"
-        :placeholder="$t(`${I18N_KEY_PREFIX}.token-name-placeholder`)"
-        :error-message="
-          formValidation.getFieldErrorMessage('ethereumConfig.tokenName')
-        "
-        :disabled="isSubmitting"
-        @blur="formValidation.touchField('ethereumConfig.tokenName')"
-        @update:model-value="emitRootField('tokenName', $event)"
-      />
-      <input-field
-        :model-value="form.ethereumConfig.tokenSymbol"
-        :label="$t(`${I18N_KEY_PREFIX}.token-symbol-label`)"
-        :placeholder="$t(`${I18N_KEY_PREFIX}.token-symbol-placeholder`)"
-        :error-message="
-          formValidation.getFieldErrorMessage('ethereumConfig.tokenSymbol')
-        "
-        :disabled="isSubmitting"
-        @blur="formValidation.touchField('ethereumConfig.tokenSymbol')"
-        @update:model-value="emitRootField('tokenSymbol', $event)"
-      />
-      <input-field
         :model-value="form.ethereumConfig.adminContractAddress"
         :label="$t(`${I18N_KEY_PREFIX}.admin-contract-address-label`)"
         :placeholder="
@@ -49,7 +27,7 @@
     <div class="ethereum-step__divider" />
     <div class="ethereum-step__groups">
       <h5 class="ethereum-step__group-title">
-        {{ `GROUP #${form.ethereumConfig.groups.length}` }}
+        {{ `Group #${form.ethereumConfig.groups.length}` }}
       </h5>
       <p class="ethereum-step__group-instruction">
         {{ $t(`${I18N_KEY_PREFIX}.group-instruction`) }}
@@ -198,7 +176,7 @@ const removeGroup = (idx: number) => {
 }
 
 .ethereum-step__groups {
-  margin-top: toRem(40);
+  margin-top: toRem(16);
 }
 
 .ethereum-step__group-title {
@@ -206,7 +184,7 @@ const removeGroup = (idx: number) => {
 }
 
 .ethereum-step__group-instruction {
-  margin-top: toRem(20);
+  margin-top: toRem(8);
 }
 
 .ethereum-step__groups-dashboard {
@@ -219,7 +197,7 @@ const removeGroup = (idx: number) => {
 .ethereum-step__groups-list-wrp {
   position: relative;
   overflow: auto;
-  margin-top: toRem(58);
+  margin-top: toRem(42);
 
   &::-webkit-scrollbar {
     height: 0;

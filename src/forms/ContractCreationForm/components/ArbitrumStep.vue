@@ -51,6 +51,15 @@
       <h5 class="arbitrum-step__settings-title">
         {{ $t(`${I18N_KEY_PREFIX}.settings.title`) }}
       </h5>
+      <p class="general-step__settings-description">
+        {{
+          $t(`${I18N_KEY_PREFIX}.settings.description`, {
+            token:
+              form.arbitrumConfig.tokenSymbol ||
+              $t(`${I18N_KEY_PREFIX}.settings.default-token`),
+          })
+        }}
+      </p>
       <div class="arbitrum-step__settings-fields">
         <input-field
           :model-value="form.arbitrumConfig.settings.tokenInAddress"
@@ -193,6 +202,10 @@ const emitSettingsField = (
 
 .arbitrum-step__settings-title {
   @include body-2-semi-bold;
+}
+
+.general-step__settings-description {
+  margin-top: toRem(8);
 }
 
 .arbitrum-step__settings-fields {

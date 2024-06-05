@@ -100,8 +100,6 @@ const form = useStorage<Form>(storageKey.value, {
     },
   },
   ethereumConfig: {
-    tokenName: '',
-    tokenSymbol: '',
     adminContractAddress: '',
     isUpgradeable: true,
     groups: [],
@@ -137,8 +135,6 @@ const formValidation = useFormValidation(
     }),
     ...(form.value.stepId === STEP_IDS.ethereum && {
       ethereumConfig: {
-        tokenName: { required },
-        tokenSymbol: { required },
         adminContractAddress: { required, address },
         // groups validation is delegated to GroupBuilder.vue
       },
