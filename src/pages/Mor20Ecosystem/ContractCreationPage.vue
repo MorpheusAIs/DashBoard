@@ -15,7 +15,7 @@
         />
       </transition>
     </div>
-    <basic-modal :is-shown="formSuccessData" @update:is-shown="handler">
+    <basic-modal :is-shown="!!formSuccessData" @update:is-shown="handler">
       <div class="contract-creation-page__modal-content-wrp">
         <svg class="contract-creation-page__modal-success-mark">
           <use href="/static/branding/success-mark.svg#id" />
@@ -25,29 +25,29 @@
         </p>
         <div class="contract-creation-page__fields-wrp">
           <input-field
-            :model-value="formSuccessData?.distributionAddress"
+            :model-value="formSuccessData?.distributionAddress || ''"
             :label="$t(`${I18N_KEY_PREFIX}.distribution-address-label`)"
-            disabled
+            readonly
           />
           <input-field
-            :model-value="formSuccessData?.l1SenderAddress"
+            :model-value="formSuccessData?.l1SenderAddress || ''"
             :label="$t(`${I18N_KEY_PREFIX}.l1-sender-address-label`)"
-            disabled
+            readonly
           />
           <input-field
-            :model-value="formSuccessData?.l2MessageReceiverAddress"
+            :model-value="formSuccessData?.l2MessageReceiverAddress || ''"
             :label="$t(`${I18N_KEY_PREFIX}.l2-message-receiver-address-label`)"
-            disabled
+            readonly
           />
           <input-field
-            :model-value="formSuccessData?.l2TokenReceiverAddress"
+            :model-value="formSuccessData?.l2TokenReceiverAddress || ''"
             :label="$t(`${I18N_KEY_PREFIX}.l2-token-receiver-address-label`)"
-            disabled
+            readonly
           />
           <input-field
-            :model-value="formSuccessData?.tokenAddress"
+            :model-value="formSuccessData?.tokenAddress || ''"
             :label="$t(`${I18N_KEY_PREFIX}.token-address-label`)"
-            disabled
+            readonly
           />
         </div>
       </div>
@@ -190,9 +190,9 @@ const handler = () => {
 }
 
 .contract-creation-page__fields-wrp {
-  margin-top: toRem(40);
+  margin-top: toRem(20);
   display: grid;
-  gap: toRem(24);
+  gap: toRem(16);
   width: 100%;
 }
 </style>
