@@ -43,6 +43,7 @@
 <script lang="ts" setup>
 import { AppButton, InfoCard } from '@/common'
 import { useI18n } from '@/composables'
+import { MAX_UINT_256 } from '@/const'
 import { ICON_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { router } from '@/router'
@@ -108,36 +109,55 @@ const init = async () => {
   try {
     const { address, l1FactoryContract, l2FactoryContract } = web3ProvidersStore
 
-    const [l1ProtocolsCount, l2ProtocolsCount] = await Promise.all([
-      l1FactoryContract.providerBased.value.countProtocols(address),
-      l2FactoryContract.providerBased.value.countProtocols(address),
+    const [l1DeployedPools, l2DeployedPools] = await Promise.all([
+      l1FactoryContract.providerBased.value.getDeployedPools(
+        address,
+        0,
+        MAX_UINT_256,
+      ),
+      l2FactoryContract.providerBased.value.getDeployedPools(
+        address,
+        0,
+        MAX_UINT_256,
+      ),
     ])
 
-    if (l1ProtocolsCount.isZero() && l2ProtocolsCount.isZero()) {
+    let lastFullyL1DeployedPoolIdx = -1
+    let lastFullyL2DeployedPoolIdx = -1
+    for (let i = l1DeployedPools.length - 1; i >= 0; i--) {
+      if (
+        lastFullyL1DeployedPoolIdx !== -1 &&
+        lastFullyL2DeployedPoolIdx !== -1
+      )
+        break
+
+      for (let j = l2DeployedPools.length - 1; j >= 0; j--) {
+        if (l1DeployedPools[i].protocol === l2DeployedPools[j].protocol) {
+          lastFullyL1DeployedPoolIdx = i
+          lastFullyL2DeployedPoolIdx = j
+          break
+        }
+      }
+    }
+
+    if (
+      lastFullyL1DeployedPoolIdx === -1 ||
+      lastFullyL2DeployedPoolIdx === -1
+    ) {
       data.value = null
       return
     }
 
-    const [l1DeployedPools, l2DeployedPools] = await Promise.all([
-      l1FactoryContract.providerBased.value.getDeployedPools(
-        address,
-        l1ProtocolsCount.sub(1),
-        1,
-      ),
-      l2FactoryContract.providerBased.value.getDeployedPools(
-        address,
-        l2ProtocolsCount.sub(1),
-        1,
-      ),
-    ])
-
     data.value = {
-      protocolName: l1DeployedPools[0].protocol,
-      distributionAddress: l1DeployedPools[0].distribution,
-      l1SenderAddress: l1DeployedPools[0].l1Sender,
-      l2MessageReceiverAddress: l2DeployedPools[0].l2MessageReceiver,
-      l2TokenReceiverAddress: l2DeployedPools[0].l2TokenReceiver,
-      tokenAddress: l2DeployedPools[0].mor20,
+      protocolName: l1DeployedPools[lastFullyL1DeployedPoolIdx].protocol,
+      distributionAddress:
+        l1DeployedPools[lastFullyL1DeployedPoolIdx].distribution,
+      l1SenderAddress: l1DeployedPools[lastFullyL1DeployedPoolIdx].l1Sender,
+      l2MessageReceiverAddress:
+        l2DeployedPools[lastFullyL2DeployedPoolIdx].l2MessageReceiver,
+      l2TokenReceiverAddress:
+        l2DeployedPools[lastFullyL2DeployedPoolIdx].l2TokenReceiver,
+      tokenAddress: l2DeployedPools[lastFullyL2DeployedPoolIdx].mor20,
     }
   } catch (error) {
     data.value = null
