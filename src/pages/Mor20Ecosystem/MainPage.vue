@@ -8,10 +8,10 @@
         class="main-page__title"
         :class="{ 'main-page__title--loading': isInitializing }"
       >
-        {{ data?.protocolName || $t('mor20-ecosystem.main-page.title') }}
+        {{ protocol?.name || $t('mor20-ecosystem.main-page.title') }}
       </h2>
       <div class="main-page__content-wrp">
-        <template v-if="(data && cards.length) || isInitializing">
+        <template v-if="(protocol && cards.length) || isInitializing">
           <ul class="main-page__cards">
             <li v-for="(card, idx) in cards" :key="idx">
               <info-card :card="card" :is-loading="isInitializing" />
@@ -48,15 +48,13 @@ import { ICON_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
 import { router } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
-import { type InfoCardType } from '@/types'
+import type { InfoCardType, Mor20EcosystemType } from '@/types'
 import { computed, ref, watch } from 'vue'
-
-import { FormSuccessData } from '@/forms/ContractCreationForm/types'
 
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const data = ref<FormSuccessData | null>(null)
+const protocol = ref<Mor20EcosystemType.Protocol | null>(null)
 const isInitializing = ref(false)
 
 const cards = computed<InfoCardType.Card[]>(() => [
@@ -64,7 +62,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     title: t('mor20-ecosystem.main-page.info-card.token.title'),
     icon: ICON_NAMES.arbitrumAlt,
     description: t('mor20-ecosystem.main-page.info-card.token.description'),
-    address: data.value?.tokenAddress || '',
+    address: protocol.value?.tokenAddress || '',
     link: '#',
   },
   {
@@ -73,14 +71,14 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t(
       'mor20-ecosystem.main-page.info-card.distribution.description',
     ),
-    address: data.value?.distributionAddress || '',
+    address: protocol.value?.distributionAddress || '',
     link: '#',
   },
   {
     title: t('mor20-ecosystem.main-page.info-card.l1-sender.title'),
     icon: ICON_NAMES.ethereumAlt,
     description: t('mor20-ecosystem.main-page.info-card.l1-sender.description'),
-    address: data.value?.l1SenderAddress || '',
+    address: protocol.value?.l1SenderAddress || '',
     link: '#',
   },
   {
@@ -89,7 +87,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t(
       'mor20-ecosystem.main-page.info-card.l2-msg-receiver.description',
     ),
-    address: data.value?.l2MessageReceiverAddress || '',
+    address: protocol.value?.l2MessageReceiverAddress || '',
     link: '#',
   },
   {
@@ -98,7 +96,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t(
       'mor20-ecosystem.main-page.info-card.l2-token-receiver.description',
     ),
-    address: data.value?.l2TokenReceiverAddress || '',
+    address: protocol.value?.l2TokenReceiverAddress || '',
     link: '#',
   },
 ])
@@ -144,12 +142,12 @@ const init = async () => {
       lastFullyL1DeployedPoolIdx === -1 ||
       lastFullyL2DeployedPoolIdx === -1
     ) {
-      data.value = null
+      protocol.value = null
       return
     }
 
-    data.value = {
-      protocolName: l1DeployedPools[lastFullyL1DeployedPoolIdx].protocol,
+    protocol.value = {
+      name: l1DeployedPools[lastFullyL1DeployedPoolIdx].protocol,
       distributionAddress:
         l1DeployedPools[lastFullyL1DeployedPoolIdx].distribution,
       l1SenderAddress: l1DeployedPools[lastFullyL1DeployedPoolIdx].l1Sender,
@@ -160,7 +158,7 @@ const init = async () => {
       tokenAddress: l2DeployedPools[lastFullyL2DeployedPoolIdx].mor20,
     }
   } catch (error) {
-    data.value = null
+    protocol.value = null
     ErrorHandler.process(error)
   } finally {
     isInitializing.value = false

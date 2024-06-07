@@ -5,6 +5,7 @@
     "community-website-link": "Community Website"
   },
   "contract-creation-form": {
+    "prev-step-btn": "Back",
     "title": "Protocol creation",
     "cancel-btn": "Cancel",
     "submit-btn": {
@@ -174,7 +175,6 @@
       }
     },
     "contract-creation-page": {
-     "back-link": "Back",
       "distribution-address-label": "Distribution address",
       "l1-sender-address-label": "L1 Sender address",
       "l2-message-receiver-address-label": "L2 Message Receiver address",

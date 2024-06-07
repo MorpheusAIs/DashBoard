@@ -1,21 +1,14 @@
 <template>
   <main class="contract-creation-page">
     <div class="contract-creation-page__wrp">
-      <app-button
-        scheme="link"
-        :route="{ name: $routes.appMor20EcosystemMain }"
-        :text="$t(`${I18N_KEY_PREFIX}.back-link`)"
-        :icon-left="$icons.arrowLeft"
-      />
       <transition name="fade" mode="out-in">
         <contract-creation-form
-          class="contract-creation-page__form"
           :key="`${$route.query.network}.${web3ProvidersStore.address}`"
           @success="onFormSuccess"
         />
       </transition>
     </div>
-    <basic-modal :is-shown="!!formSuccessData" @update:is-shown="handler">
+    <basic-modal :is-shown="!!inputFieldsData" @update:is-shown="handler">
       <div class="contract-creation-page__modal-content-wrp">
         <svg class="contract-creation-page__modal-success-mark">
           <use href="/static/branding/success-mark.svg#id" />
@@ -23,54 +16,104 @@
         <p class="contract-creation-page__modal-success-msg">
           {{ $t(`${I18N_KEY_PREFIX}.success-msg`) }}
         </p>
-        <div class="contract-creation-page__fields-wrp">
-          <input-field
-            :model-value="formSuccessData?.distributionAddress || ''"
-            :label="$t(`${I18N_KEY_PREFIX}.distribution-address-label`)"
-            readonly
-          />
-          <input-field
-            :model-value="formSuccessData?.l1SenderAddress || ''"
-            :label="$t(`${I18N_KEY_PREFIX}.l1-sender-address-label`)"
-            readonly
-          />
-          <input-field
-            :model-value="formSuccessData?.l2MessageReceiverAddress || ''"
-            :label="$t(`${I18N_KEY_PREFIX}.l2-message-receiver-address-label`)"
-            readonly
-          />
-          <input-field
-            :model-value="formSuccessData?.l2TokenReceiverAddress || ''"
-            :label="$t(`${I18N_KEY_PREFIX}.l2-token-receiver-address-label`)"
-            readonly
-          />
-          <input-field
-            :model-value="formSuccessData?.tokenAddress || ''"
-            :label="$t(`${I18N_KEY_PREFIX}.token-address-label`)"
-            readonly
-          />
-        </div>
+        <ul v-if="inputFieldsData" class="contract-creation-page__fields-wrp">
+          <li v-for="data in inputFieldsData" :key="data.address">
+            <input-field
+              :model-value="data.address"
+              :label="data.label"
+              readonly
+            >
+              <template #nodeRight>
+                <a
+                  class="contract-creation-page__field-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  tabindex="-1"
+                  :href="data.explorerUrl"
+                >
+                  <app-icon
+                    class="contract-creation-page__field-icon"
+                    :name="$icons.externalLink"
+                  />
+                </a>
+              </template>
+            </input-field>
+          </li>
+        </ul>
       </div>
     </basic-modal>
   </main>
 </template>
 
 <script lang="ts" setup>
-import { AppButton, BasicModal } from '@/common'
+import { AppIcon, BasicModal } from '@/common'
+import { useI18n } from '@/composables'
 import { ROUTE_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { ContractCreationForm } from '@/forms'
-import { type FormSuccessData } from '@/forms/ContractCreationForm/types'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
 import { router } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
-import { ref } from 'vue'
+import type { Mor20EcosystemType } from '@/types'
+import { config } from '@config'
+import { computed, ref } from 'vue'
 
 const I18N_KEY_PREFIX = 'mor20-ecosystem.contract-creation-page'
 
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const formSuccessData = ref<FormSuccessData | null>(null)
+const createdProtocol = ref<Mor20EcosystemType.Protocol | null>(null)
+
+const inputFieldsData = computed(() => {
+  if (!createdProtocol.value) return null
+
+  const { explorerUrl, extendedExplorerUrl } =
+    config.networks[web3ProvidersStore.networkId]
+
+  return {
+    distributionData: {
+      label: t(`${I18N_KEY_PREFIX}.distribution-address-label`),
+      address: createdProtocol.value.distributionAddress,
+      explorerUrl: getEthExplorerAddressUrl(
+        explorerUrl,
+        createdProtocol.value.distributionAddress,
+      ),
+    },
+    l1SenderData: {
+      label: t(`${I18N_KEY_PREFIX}.l1-sender-address-label`),
+      address: createdProtocol.value.l1SenderAddress,
+      explorerUrl: getEthExplorerAddressUrl(
+        explorerUrl,
+        createdProtocol.value.l1SenderAddress,
+      ),
+    },
+    l2MessageReceiverData: {
+      label: t(`${I18N_KEY_PREFIX}.l2-message-receiver-address-label`),
+      address: createdProtocol.value.l2MessageReceiverAddress,
+      explorerUrl: getEthExplorerAddressUrl(
+        extendedExplorerUrl,
+        createdProtocol.value.l2MessageReceiverAddress,
+      ),
+    },
+    l2TokenReceiverData: {
+      label: t(`${I18N_KEY_PREFIX}.l2-token-receiver-address-label`),
+      address: createdProtocol.value.l2TokenReceiverAddress,
+      explorerUrl: getEthExplorerAddressUrl(
+        extendedExplorerUrl,
+        createdProtocol.value.l2TokenReceiverAddress,
+      ),
+    },
+    tokenData: {
+      label: t(`${I18N_KEY_PREFIX}.token-address-label`),
+      address: createdProtocol.value.tokenAddress,
+      explorerUrl: getEthExplorerAddressUrl(
+        extendedExplorerUrl,
+        createdProtocol.value.tokenAddress,
+      ),
+    },
+  }
+})
 
 const onFormSuccess = async () => {
   try {
@@ -94,8 +137,8 @@ const onFormSuccess = async () => {
       ),
     ])
 
-    formSuccessData.value = {
-      protocolName: l1DeployedPools[0].protocol,
+    createdProtocol.value = {
+      name: l1DeployedPools[0].protocol,
       distributionAddress: l1DeployedPools[0].distribution,
       l1SenderAddress: l1DeployedPools[0].l1Sender,
       l2MessageReceiverAddress: l2DeployedPools[0].l2MessageReceiver,
@@ -168,10 +211,6 @@ const handler = () => {
   @include page-wrp;
 }
 
-.contract-creation-page__form {
-  margin-top: toRem(20);
-}
-
 .contract-creation-page__modal-content-wrp {
   display: flex;
   flex-direction: column;
@@ -194,5 +233,21 @@ const handler = () => {
   display: grid;
   gap: toRem(16);
   width: 100%;
+}
+
+.contract-creation-page__field-link {
+  color: var(--primary-main);
+  transition: color var(--transition-duration-fast)
+    var(--transition-timing-default);
+
+  &:hover,
+  &:focus {
+    color: var(--text-secondary-main);
+  }
+}
+
+.contract-creation-page__field-icon {
+  height: toRem(24);
+  width: toRem(24);
 }
 </style>

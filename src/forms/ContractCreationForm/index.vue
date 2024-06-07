@@ -1,5 +1,11 @@
 <template>
   <form class="contract-creation-form" @submit.prevent>
+    <app-button
+      scheme="link"
+      :route="{ name: $routes.appMor20EcosystemMain }"
+      :text="$t('contract-creation-form.prev-step-btn')"
+      :icon-left="$icons.arrowLeft"
+    />
     <div class="contract-creation-form__content">
       <h2>{{ $t('contract-creation-form.title') }}</h2>
       <step-tabs-20
@@ -278,6 +284,7 @@ const stepComponent = computed(
 
 <style lang="scss" scoped>
 .contract-creation-form__content {
+  margin-top: toRem(20);
   padding: toRem(40) toRem(38) toRem(28);
   border: toRem(1) solid;
   border-image-slice: 1;
