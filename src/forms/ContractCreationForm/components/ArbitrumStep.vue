@@ -95,8 +95,9 @@
           "
           @update:model-value="emitSettingsField('tokenOutAddress', $event)"
         />
-        <input-field
+        <select-field
           :model-value="form.arbitrumConfig.settings.firstSwapFee"
+          :value-options="UNISWAP_FEE_OPTIONS"
           :label="$t(`${I18N_KEY_PREFIX}.settings.first-swap-fee-label`)"
           :placeholder="
             $t(`${I18N_KEY_PREFIX}.settings.first-swap-fee-placeholder`)
@@ -112,8 +113,9 @@
           "
           @update:model-value="emitSettingsField('firstSwapFee', $event)"
         />
-        <input-field
+        <select-field
           :model-value="form.arbitrumConfig.settings.secondSwapFee"
+          :value-options="UNISWAP_FEE_OPTIONS"
           :label="$t(`${I18N_KEY_PREFIX}.settings.second-swap-fee-label`)"
           :placeholder="
             $t(`${I18N_KEY_PREFIX}.settings.second-swap-fee-placeholder`)
@@ -136,17 +138,11 @@
 
 <script lang="ts" setup>
 import { type FormValidation } from '@/composables'
-import { CheckboxField, InputField } from '@/fields'
+import { CheckboxField, InputField, SelectField } from '@/fields'
+import { UNISWAP_FEE_OPTIONS } from '../const'
 import { type Form } from '../types'
 
 const I18N_KEY_PREFIX = 'contract-creation-form.arbitrum-step'
-
-// const UNISWAP_FEE_OPTIONS: FieldOption<string>[] = [
-//   { title: '0.01%', value: '100' },
-//   { title: '0.05%', value: '500' },
-//   { title: '0.30%', value: '3000' },
-//   { title: '1.00%', value: '10000' },
-// ]
 
 const emit = defineEmits<{
   (event: 'update:form', value: Form): void

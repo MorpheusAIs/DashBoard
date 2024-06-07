@@ -1,3 +1,4 @@
+import type { FieldOption } from '@/types'
 import type { STEP_IDS } from './enums'
 
 export type GeneralConfig = {
@@ -7,8 +8,8 @@ export type GeneralConfig = {
 export type ArbitrumConfigSettings = {
   tokenInAddress: string
   tokenOutAddress: string
-  firstSwapFee: string
-  secondSwapFee: string
+  firstSwapFee: FieldOption<string>
+  secondSwapFee: FieldOption<string>
 }
 
 export type ArbitrumConfig = {

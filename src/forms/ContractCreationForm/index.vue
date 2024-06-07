@@ -48,7 +48,7 @@ import { useFormValidation, useI18n } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { parseUnits } from '@/utils'
-import { address, ether, maxEther, required } from '@/validators'
+import { address, required } from '@/validators'
 import { config } from '@config'
 import { useStorage } from '@vueuse/core'
 import { computed, ref } from 'vue'
@@ -58,6 +58,7 @@ import {
   GeneralStep,
   StepTabs20,
 } from './components'
+import { UNISWAP_FEE_OPTIONS } from './const'
 import { STEP_IDS } from './enums'
 import type { Form, StepTab } from './types'
 
@@ -101,8 +102,8 @@ const form = useStorage<Form>(storageKey.value, {
     settings: {
       tokenInAddress: '',
       tokenOutAddress: '',
-      firstSwapFee: '',
-      secondSwapFee: '',
+      firstSwapFee: UNISWAP_FEE_OPTIONS[2],
+      secondSwapFee: UNISWAP_FEE_OPTIONS[2],
     },
   },
   ethereumConfig: {
@@ -126,16 +127,8 @@ const formValidation = useFormValidation(
         settings: {
           tokenInAddress: { required, address },
           tokenOutAddress: { required, address },
-          firstSwapFee: {
-            required,
-            ether,
-            maxEther: maxEther('0.000000000016777215'),
-          },
-          secondSwapFee: {
-            required,
-            ether,
-            maxEther: maxEther('0.000000000016777215'),
-          },
+          firstSwapFee: { required },
+          secondSwapFee: { required },
         },
       },
     }),
@@ -180,15 +173,9 @@ const submitStep = async () => {
           firstSwapParams_: {
             tokenIn: form.value.arbitrumConfig.settings.tokenInAddress,
             tokenOut: form.value.arbitrumConfig.settings.tokenOutAddress,
-            fee: parseUnits(
-              form.value.arbitrumConfig.settings.firstSwapFee,
-              'ether',
-            ),
+            fee: form.value.arbitrumConfig.settings.firstSwapFee.value,
           },
-          secondSwapFee: parseUnits(
-            form.value.arbitrumConfig.settings.secondSwapFee,
-            'ether',
-          ),
+          secondSwapFee: form.value.arbitrumConfig.settings.secondSwapFee.value,
         })
 
         explorerTxUrl = getEthExplorerTxUrl(
