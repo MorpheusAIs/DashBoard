@@ -15,7 +15,6 @@
         :error-message="getFieldErrorMessage('balanceOptionIdx')"
         :is-loading="isInitializing"
         :disabled="isSubmitting"
-        class="deposit-form__select-field"
         @update:model-value="
           form.balanceOptionIdx = balanceOptions.indexOf($event)
         "
@@ -296,28 +295,6 @@ onMounted(() => {
     flex-direction: column;
     align-items: start;
     gap: toRem(4);
-  }
-}
-
-.deposit-form .deposit-form__select-field {
-  :deep(.select-field__select-head) {
-    background: transparent;
-    border: none;
-    padding: 0 toRem(28) 0 0;
-
-    @include body-1-semi-bold;
-  }
-
-  :deep(.select-field__select-head-indicator) {
-    right: 0;
-  }
-
-  :deep(.select-field__select-drop-menu) {
-    border: none;
-  }
-
-  :deep(.select-field__select-drop-menu-item) {
-    @include body-1-regular;
   }
 }
 
