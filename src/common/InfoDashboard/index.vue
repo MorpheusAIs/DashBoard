@@ -18,7 +18,11 @@
               {{ $t('info-dashboard.header-subtitle') }}
             </p>
           </div>
-          <select-field v-model="selectedMonth" :value-options="monthOptions" />
+          <select-field
+            v-model="selectedMonth"
+            scheme="text"
+            :value-options="monthOptions"
+          />
         </div>
         <div class="info-dashboard__app-chart-wrp">
           <app-chart
