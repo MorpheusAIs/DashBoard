@@ -1,8 +1,11 @@
 <template>
   <div class="group-info-card">
-    <div class="group-info-card__name-wrp">
-      <h5 class="group-info-card__name">
-        {{ group.name }}
+    <div class="group-info-card__status-wrp">
+      <h5
+        class="group-info-card__status"
+        :class="[`group-info-card__status--${status}`]"
+      >
+        {{ $t(`${I18N_KEY_PREFIX}.status.${status}`) }}
       </h5>
       <div class="group-info-card__controllers">
         <button
@@ -88,6 +91,10 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
+const status = computed<string>(() =>
+  props.group.isPublic ? 'public' : 'private',
+)
+
 const indicators = computed<Indicator[]>(() =>
   props.group.isPublic
     ? [
@@ -165,16 +172,27 @@ const indicators = computed<Indicator[]>(() =>
   );
 }
 
-.group-info-card__name-wrp {
+.group-info-card__status-wrp {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.group-info-card__name {
-  color: var(--primary-main);
+.group-info-card__status {
+  background: #515c57;
+  padding: toRem(2) toRem(18);
 
-  @include body-2-semi-bold;
+  &--public {
+    color: var(--primary-main);
+  }
+
+  &--private {
+    $color: #ffa011;
+
+    color: $color;
+  }
+
+  @include body-3-regular;
 }
 
 .group-info-card__controllers {

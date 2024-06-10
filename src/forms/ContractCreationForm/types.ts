@@ -22,7 +22,6 @@ export type ArbitrumConfig = {
 
 export type EthereumConfigGroup = {
   isPublic: boolean
-  name: string
   payoutStartAt: string
   decreaseInterval: string
   withdrawLockPeriod: string

@@ -6,13 +6,6 @@
       :disabled="disabled"
     />
     <div class="group-builder__fields">
-      <input-field
-        v-model="group.name"
-        :placeholder="$t(`${I18N_KEY_PREFIX}.name-placeholder`)"
-        :error-message="groupValidation.getFieldErrorMessage('name')"
-        :disabled="disabled"
-        @blur="groupValidation.touchField('name')"
-      />
       <datetime-field
         v-model="group.payoutStartAt"
         :placeholder="$t(`${I18N_KEY_PREFIX}.payout-start-placeholder`)"
@@ -105,7 +98,6 @@ const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step.group-builder'
 
 const DEFAULT_PRESET: Readonly<EthereumConfigGroup> = Object.freeze({
   isPublic: true,
-  name: '',
   payoutStartAt: '',
   decreaseInterval: '',
   withdrawLockPeriod: '',
@@ -138,7 +130,6 @@ const group = reactive<EthereumConfigGroup>({
 const groupValidation = useFormValidation(
   group,
   computed(() => ({
-    name: { required },
     payoutStartAt: { required, minValue: minValue(new Time().timestamp) },
     decreaseInterval: { required, integer },
     claimLockPeriod: { required, numeric },

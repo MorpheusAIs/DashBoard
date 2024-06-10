@@ -51,7 +51,6 @@
       "group-instruction": "Add the new distribution group to your protocol.",
       "group-builder": {
         "is-public-label": "Is Public",
-        "name-placeholder": "Group name",
         "payout-start-placeholder": "Payout start",
         "decrease-interval-placeholder": "Decrease interval (in seconds)",
         "withdraw-lock-period-placeholder": "Withdraw lock period (in hours)",
@@ -63,6 +62,10 @@
         "build-btn": "Save group"
       },
       "group-info-card": {
+        "status": {
+          "public": "Public",
+          "private": "Private"
+        },
         "payout-start-title": "Payout start",
         "decrease-interval-title": "Decrease Interval",
         "withdraw-lock-period-title": "Withdraw Locked Until",
