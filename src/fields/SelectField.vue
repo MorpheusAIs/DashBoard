@@ -106,7 +106,7 @@ const props = withDefaults(
     placeholder?: string
     errorMessage?: string
     note?: string
-    scheme?: 'primary'
+    scheme?: 'primary' | 'text'
     modification?: 'dropdown' | 'dropup'
     uid?: string
     isLoading?: boolean
@@ -240,10 +240,6 @@ $z-local-index: 2;
 
 .select-field__select-head {
   text-align: left;
-  background: var(--field-bg-primary);
-  padding: var(--field-padding-top)
-    calc(var(--field-padding-right) * 2 + toRem(24)) var(--field-padding-bottom)
-    var(--field-padding-right);
   height: 100%;
   width: 100%;
   transition: var(--field-transition-duration) var(--field-transition-timing);
@@ -251,6 +247,24 @@ $z-local-index: 2;
   &:disabled {
     cursor: not-allowed;
     color: var(--field-text-readonly);
+  }
+
+  .select-field--primary & {
+    background: var(--field-bg-primary);
+    padding: var(--field-padding-top)
+      calc(var(--field-padding-right) * 2 + toRem(24))
+      var(--field-padding-bottom) var(--field-padding-right);
+
+    @include field-text;
+
+    @include field-border;
+  }
+
+  .select-field--text & {
+    padding: 0 toRem(28) 0 0;
+    color: var(--field-text);
+
+    @include body-1-semi-bold;
   }
 
   .select-field--error & {
@@ -267,10 +281,6 @@ $z-local-index: 2;
       border-color: var(--field-border-hover);
     }
   }
-
-  @include field-text;
-
-  @include field-border;
 }
 
 .select-field__placeholder {
@@ -281,12 +291,16 @@ $z-local-index: 2;
   pointer-events: none;
   position: absolute;
   top: 50%;
-  right: toRem(20);
+  right: 0;
   transform: translateY(-50%);
   width: toRem(24);
   height: toRem(24);
   transition: var(--field-transition-duration) var(--field-transition-timing);
   color: inherit;
+
+  .select-field--primary & {
+    right: toRem(20);
+  }
 
   .select-field--dropup:not(.select-field--open) &,
   .select-field--dropdown.select-field--open & {
@@ -295,7 +309,9 @@ $z-local-index: 2;
 }
 
 .select-field__select-drop-menu {
-  @include field-border;
+  .select-field--primary & {
+    @include field-border;
+  }
 }
 
 .select-field__select-drop-menu-item {
@@ -308,6 +324,14 @@ $z-local-index: 2;
   background: var(--background-secondary-main);
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
+  .select-field--primary & {
+    @include field-text;
+  }
+
+  .select-field--text & {
+    @include body-1-regular;
+  }
+
   &:not([disabled]):hover {
     background: #515c57;
     box-shadow: $shadow-hover;
@@ -318,8 +342,6 @@ $z-local-index: 2;
     background: #515c57;
     box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
-
-  @include field-text;
 }
 
 .select-field__msg-wrp {
