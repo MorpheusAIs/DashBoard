@@ -206,17 +206,19 @@ const submitStep = async () => {
           poolsInfo: form.value.ethereumConfig.groups.map(group => ({
             payoutStart: group.payoutStartAt,
             decreaseInterval: group.decreaseInterval,
-            claimLockPeriod: Math.round(Number(group.claimLockPeriod) / 3600),
+            claimLockPeriod: Math.round(Number(group.claimLockPeriod) * 3600),
             initialReward: parseUnits(group.initialReward, 'ether'),
             rewardDecrease: parseUnits(group.rewardDecrease, 'ether'),
             isPublic: group.isPublic,
             withdrawLockPeriod: group.isPublic
-              ? Math.round(Number(group.withdrawLockPeriod) * 60)
+              ? Math.round(Number(group.withdrawLockPeriod) * 3600)
               : 0,
             withdrawLockPeriodAfterStake: group.isPublic
-              ? Math.round(Number(group.withdrawLockPeriodAfterStake) * 60)
+              ? Math.round(Number(group.withdrawLockPeriodAfterStake) * 3600)
               : 0,
-            minimalStake: group.isPublic ? group.minimalStake : 0,
+            minimalStake: group.isPublic
+              ? parseUnits(group.minimalStake, 'ether')
+              : 0,
           })),
         })
 
