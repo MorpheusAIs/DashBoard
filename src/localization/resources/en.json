@@ -29,7 +29,7 @@
       "token-symbol-placeholder": "Token symbol",
       "admin-contract-address-label": "Specify the address of the protocol administrator. The administrator will be able to change the settings after deployment on the networks.",
       "admin-contract-address-placeholder": "Contracts administrator address",
-      "is-upgradeable-label": "Keep upgreadability?",
+      "is-upgradeable-label": "Keep upgradability?",
       "settings": {
         "default-token": "Your token",
         "title":"Uniswap settings",
@@ -47,7 +47,7 @@
     "ethereum-step": {
       "admin-contract-address-label": "Specify the address of the protocol administrator. The administrator will be able to change the settings after deployment on the networks.",
       "admin-contract-address-placeholder": "Contracts administrator address",
-      "is-upgradeable-label": "Keep upgreadability?",
+      "is-upgradeable-label": "Keep upgradability?",
       "group-instruction": "Add the new distribution group to your protocol.",
       "group-builder": {
         "is-public-label": "Is Public",
