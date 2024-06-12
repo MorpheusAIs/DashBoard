@@ -31,7 +31,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   // Getters
   const networkId = computed<NETWORK_IDS>(() => {
     const { network } = _router.currentRoute.query
-    return network as NETWORK_IDS
+    return (network as NETWORK_IDS) || NETWORK_IDS.mainnet
   })
 
   const defaultProvider = computed<Provider>(() => {

@@ -1,4 +1,5 @@
 import {
+  onBeforeRouteUpdate,
   createRouter,
   createWebHashHistory,
   RouteRecordRaw,
@@ -35,6 +36,11 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/mor20-ecosystem',
+    // TODO: remove the condition when the page will have a mainnet contract
+    beforeEnter: to => {
+      if (to.query.network === NETWORK_IDS.mainnet)
+        return { name: ROUTE_NAMES.app }
+    },
     children: [
       {
         path: '',
@@ -65,4 +71,4 @@ router.beforeEach((to, from) => {
   }
 })
 
-export { router, useRouter, useRoute }
+export { onBeforeRouteUpdate, router, useRouter, useRoute }

@@ -28,11 +28,16 @@
             <p class="main-page__instruction">
               {{ $t('mor20-ecosystem.main-page.instruction') }}
             </p>
-            <app-button
-              class="main-page__btn"
-              :text="$t('mor20-ecosystem.main-page.create-contract-btn')"
-              :route="{ name: $routes.appMor20EcosystemProtocolCreation }"
-            />
+            <template v-if="web3ProvidersStore.provider.isConnected">
+              <app-button
+                class="main-page__btn"
+                :text="$t('mor20-ecosystem.main-page.create-contract-btn')"
+                :route="{ name: $routes.appMor20EcosystemProtocolCreation }"
+              />
+            </template>
+            <template v-else>
+              <connect-wallet-button class="main-page__btn" />
+            </template>
           </div>
         </template>
       </div>
@@ -41,15 +46,20 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton, InfoCard } from '@/common'
+import { AppButton, ConnectWalletButton, InfoCard } from '@/common'
 import { useI18n } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { ICON_NAMES } from '@/enums'
+import { ICON_NAMES, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
-import { router } from '@/router'
+import { onBeforeRouteUpdate, router } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
 import { computed, ref, watch } from 'vue'
+
+// TODO: remove the condition when the page will have a mainnet contract
+onBeforeRouteUpdate(to => {
+  if (to.query.network === NETWORK_IDS.mainnet) return { name: ROUTE_NAMES.app }
+})
 
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -102,6 +112,8 @@ const cards = computed<InfoCardType.Card[]>(() => [
 ])
 
 const init = async () => {
+  if (!web3ProvidersStore.provider.selectedAddress) return
+
   isInitializing.value = true
 
   try {

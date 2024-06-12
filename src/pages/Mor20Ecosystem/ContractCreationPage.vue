@@ -48,15 +48,20 @@
 <script lang="ts" setup>
 import { AppIcon, BasicModal } from '@/common'
 import { useI18n } from '@/composables'
-import { ROUTE_NAMES } from '@/enums'
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { ContractCreationForm } from '@/forms'
 import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
-import { router } from '@/router'
+import { onBeforeRouteUpdate, router } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { Mor20EcosystemType } from '@/types'
 import { config } from '@config'
 import { computed, ref } from 'vue'
+
+// TODO: remove the condition when the page will have a mainnet contract
+onBeforeRouteUpdate(to => {
+  if (to.query.network === NETWORK_IDS.mainnet) return { name: ROUTE_NAMES.app }
+})
 
 const I18N_KEY_PREFIX = 'mor20-ecosystem.contract-creation-page'
 
