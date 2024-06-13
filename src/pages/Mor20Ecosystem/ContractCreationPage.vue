@@ -60,7 +60,8 @@ import { computed, ref, watch } from 'vue'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
-  if (to.query.network === NETWORK_IDS.mainnet) return { name: ROUTE_NAMES.app }
+  if (to.query.network === NETWORK_IDS.mainnet)
+    return { ...to, name: ROUTE_NAMES.app }
 })
 
 const I18N_KEY_PREFIX = 'mor20-ecosystem.contract-creation-page'
