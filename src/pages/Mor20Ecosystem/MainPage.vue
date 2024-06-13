@@ -1,47 +1,54 @@
 <template>
-  <main
-    class="main-page"
-    :key="`${$route.query.network}.${web3ProvidersStore.address}`"
-  >
-    <div class="main-page__wrp">
-      <h2
-        class="main-page__title"
-        :class="{ 'main-page__title--loading': isInitializing }"
-      >
-        {{ protocol?.name || $t('mor20-ecosystem.main-page.title') }}
-      </h2>
-      <div class="main-page__content-wrp">
-        <template v-if="(protocol && cards.length) || isInitializing">
-          <ul class="main-page__cards">
-            <li v-for="(card, idx) in cards" :key="idx">
-              <info-card :card="card" :is-loading="isInitializing" />
-            </li>
-          </ul>
-        </template>
-        <template v-else>
-          <div class="main-page__content">
-            <img
-              class="main-page__logo"
-              src="/branding/mor20-ecosystem-logo.png"
-              alt="mor20-ecosystem-logo"
-            />
-            <p class="main-page__instruction">
-              {{ $t('mor20-ecosystem.main-page.instruction') }}
-            </p>
-            <template v-if="web3ProvidersStore.provider.isConnected">
-              <app-button
-                class="main-page__btn"
-                :text="$t('mor20-ecosystem.main-page.create-contract-btn')"
-                :route="{ name: $routes.appMor20EcosystemProtocolCreation }"
-              />
-            </template>
-            <template v-else>
-              <connect-wallet-button class="main-page__btn" />
-            </template>
+  <main class="main-page" :class="{ 'main-page--loading': isInitializing }">
+    <transition name="fade" mode="out-in">
+      <div class="main-page__wrp" :key="($route.query.network as string)">
+        <transition name="fade" mode="out-in">
+          <div v-if="(protocol && cards.length) || isInitializing">
+            <h2 class="main-page__title">
+              {{ protocol?.name || $t(`${I18N_KEY_PREFIX}.title`) }}
+            </h2>
+            <div class="main-page__content-wrp">
+              <ul class="main-page__cards">
+                <li v-for="(card, idx) in cards" :key="idx">
+                  <info-card :card="card" :is-loading="isInitializing" />
+                </li>
+              </ul>
+            </div>
           </div>
-        </template>
+          <div v-else>
+            <h2 class="main-page__title">
+              {{ $t(`${I18N_KEY_PREFIX}.title`) }}
+            </h2>
+            <div class="main-page__content-wrp">
+              <div class="main-page__content">
+                <img
+                  class="main-page__logo"
+                  src="/branding/mor20-ecosystem-logo.png"
+                  alt="mor20-ecosystem-logo"
+                />
+                <p class="main-page__instruction">
+                  {{ $t(`${I18N_KEY_PREFIX}.instruction`) }}
+                </p>
+                <transition name="fade" mode="out-in">
+                  <template v-if="web3ProvidersStore.provider.isConnected">
+                    <app-button
+                      class="main-page__btn"
+                      :text="$t(`${I18N_KEY_PREFIX}.create-contract-btn`)"
+                      :route="{
+                        name: $routes.appMor20EcosystemProtocolCreation,
+                      }"
+                    />
+                  </template>
+                  <template v-else>
+                    <connect-wallet-button class="main-page__btn" />
+                  </template>
+                </transition>
+              </div>
+            </div>
+          </div>
+        </transition>
       </div>
-    </div>
+    </transition>
   </main>
 </template>
 
@@ -51,7 +58,7 @@ import { useI18n } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
 import { ICON_NAMES, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { ErrorHandler } from '@/helpers'
-import { onBeforeRouteUpdate, router } from '@/router'
+import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
 import { computed, ref, watch } from 'vue'
@@ -61,7 +68,10 @@ onBeforeRouteUpdate(to => {
   if (to.query.network === NETWORK_IDS.mainnet) return { name: ROUTE_NAMES.app }
 })
 
+const I18N_KEY_PREFIX = 'mor20-ecosystem.main-page'
+
 const { t } = useI18n()
+const router = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const protocol = ref<Mor20EcosystemType.Protocol | null>(null)
@@ -112,7 +122,10 @@ const cards = computed<InfoCardType.Card[]>(() => [
 ])
 
 const init = async () => {
-  if (!web3ProvidersStore.provider.selectedAddress) return
+  if (!web3ProvidersStore.provider.selectedAddress) {
+    protocol.value = null
+    return
+  }
 
   isInitializing.value = true
 
@@ -247,7 +260,7 @@ init()
 .main-page__title {
   max-width: max-content;
 
-  &--loading {
+  .main-page--loading & {
     @include skeleton;
 
     border-radius: 0;

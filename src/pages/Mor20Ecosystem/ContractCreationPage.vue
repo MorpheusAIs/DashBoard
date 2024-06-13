@@ -52,11 +52,11 @@ import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { ContractCreationForm } from '@/forms'
 import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
-import { onBeforeRouteUpdate, router } from '@/router'
+import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { Mor20EcosystemType } from '@/types'
 import { config } from '@config'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
@@ -66,6 +66,7 @@ onBeforeRouteUpdate(to => {
 const I18N_KEY_PREFIX = 'mor20-ecosystem.contract-creation-page'
 
 const { t } = useI18n()
+const router = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const createdProtocol = ref<Mor20EcosystemType.Protocol | null>(null)
@@ -158,6 +159,14 @@ const onFormSuccess = async () => {
 const handler = () => {
   router.push({ name: ROUTE_NAMES.appMor20EcosystemMain })
 }
+
+watch(
+  () => web3ProvidersStore.provider.isConnected,
+  newIsConnected => {
+    if (!newIsConnected)
+      router.push({ name: ROUTE_NAMES.appMor20EcosystemMain })
+  },
+)
 </script>
 
 <style lang="scss" scoped>

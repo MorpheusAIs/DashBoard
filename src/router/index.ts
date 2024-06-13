@@ -8,6 +8,7 @@ import {
 } from 'vue-router'
 
 import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { useWeb3ProvidersStore } from '@/store'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -52,6 +53,11 @@ const routes: RouteRecordRaw[] = [
         name: ROUTE_NAMES.appMor20EcosystemProtocolCreation,
         component: () =>
           import('@/pages/Mor20Ecosystem/ContractCreationPage.vue'),
+        beforeEnter: to => {
+          const { provider } = useWeb3ProvidersStore()
+          if (!provider.isConnected)
+            return { ...to, name: ROUTE_NAMES.appMor20EcosystemMain }
+        },
       },
     ],
   },
