@@ -1,5 +1,5 @@
 <template>
-  <form class="contract-creation-form" @submit.prevent="onSubmit">
+  <form class="contract-creation-form" @submit.prevent>
     <app-button
       scheme="link"
       :route="
@@ -41,6 +41,7 @@
         class="contract-creation-form__btn"
         type="submit"
         :disabled="!formValidation.isFieldsValid.value || isSubmitting"
+        @click="onSubmitBtnClick"
       >
         <transition name="fade" mode="out-in">
           <span class="contract-creation-form__btn-text" :key="submitBtnText">
@@ -167,7 +168,7 @@ const formValidation = useFormValidation(
   })),
 )
 
-const onSubmit = async () => {
+const onSubmitBtnClick = async () => {
   if (currentStep.value.isSubmitted) {
     currentStepIdx.value++
     return
