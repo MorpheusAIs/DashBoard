@@ -11,7 +11,8 @@
     "submit-btn": {
       "general": "Next",
       "arbitrum": "Deploy on the Arbitrum",
-      "ethereum": "Deploy on the Ethereum"
+      "ethereum": "Deploy on the Ethereum",
+      "next": "Next"
     },
     "step-title": {
       "general": "General configs",

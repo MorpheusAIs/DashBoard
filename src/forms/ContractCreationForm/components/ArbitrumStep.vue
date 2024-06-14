@@ -8,7 +8,7 @@
         :error-message="
           formValidation.getFieldErrorMessage('arbitrumConfig.tokenName')
         "
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || isSubmitted"
         @blur="formValidation.touchField('arbitrumConfig.tokenName')"
         @update:model-value="emitRootField('tokenName', $event)"
       />
@@ -19,7 +19,7 @@
         :error-message="
           formValidation.getFieldErrorMessage('arbitrumConfig.tokenSymbol')
         "
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || isSubmitted"
         @blur="formValidation.touchField('arbitrumConfig.tokenSymbol')"
         @update:model-value="emitRootField('tokenSymbol', $event)"
       />
@@ -34,14 +34,14 @@
             'arbitrumConfig.adminContractAddress',
           )
         "
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || isSubmitted"
         @blur="formValidation.touchField('arbitrumConfig.adminContractAddress')"
         @update:model-value="emitRootField('adminContractAddress', $event)"
       />
       <checkbox-field
         :model-value="form.arbitrumConfig.isUpgradeable"
         :label="$t(`${I18N_KEY_PREFIX}.is-upgradeable-label`)"
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || isSubmitted"
         class="arbitrum-step__is-upgradeable-checkbox"
         @update:model-value="emitRootField('isUpgradeable', $event)"
       />
@@ -72,7 +72,7 @@
               'arbitrumConfig.settings.tokenInAddress',
             )
           "
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || isSubmitted"
           @blur="
             formValidation.touchField('arbitrumConfig.settings.tokenInAddress')
           "
@@ -89,7 +89,7 @@
               'arbitrumConfig.settings.tokenOutAddress',
             )
           "
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || isSubmitted"
           @blur="
             formValidation.touchField('arbitrumConfig.settings.tokenOutAddress')
           "
@@ -107,7 +107,7 @@
               'arbitrumConfig.settings.firstSwapFee',
             )
           "
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || isSubmitted"
           @blur="
             formValidation.touchField('arbitrumConfig.settings.firstSwapFee')
           "
@@ -125,7 +125,7 @@
               'arbitrumConfig.settings.secondSwapFee',
             )
           "
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || isSubmitted"
           @blur="
             formValidation.touchField('arbitrumConfig.settings.secondSwapFee')
           "
@@ -152,12 +152,10 @@ const props = defineProps<{
   form: Form
   formValidation: FormValidation
   isSubmitting: boolean
+  isSubmitted: boolean
 }>()
 
-const emitRootField = (
-  field: keyof Form['arbitrumConfig'],
-  value: string | number,
-) => {
+const emitRootField = (field: keyof Form['arbitrumConfig'], value: unknown) => {
   emit('update:form', {
     ...props.form,
     arbitrumConfig: { ...props.form.arbitrumConfig, [field]: value },
@@ -166,7 +164,7 @@ const emitRootField = (
 
 const emitSettingsField = (
   field: keyof Form['arbitrumConfig']['settings'],
-  value: string | number,
+  value: unknown,
 ) => {
   emit('update:form', {
     ...props.form,

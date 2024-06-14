@@ -1,16 +1,21 @@
 <template>
-  <form class="contract-creation-form" @submit.prevent>
+  <form class="contract-creation-form" @submit.prevent="onSubmit">
     <app-button
       scheme="link"
-      :route="{ name: $routes.appMor20EcosystemMain }"
+      :route="
+        currentStep.id === STEP_IDS.general
+          ? { name: $routes.appMor20EcosystemMain }
+          : undefined
+      "
       :text="$t('contract-creation-form.prev-step-btn')"
       :icon-left="$icons.arrowLeft"
+      @click="onBackBtnClick"
     />
     <div class="contract-creation-form__content">
       <h2>{{ $t('contract-creation-form.title') }}</h2>
-      <step-tabs-20
-        v-model:current-step-tab="currentStepTab"
-        :step-tabs="stepTabs"
+      <step-tabs
+        :current-step="currentStep"
+        :steps="steps"
         class="contract-creation-form__step-tabs"
       />
       <div class="contract-creation-form__divider" />
@@ -19,7 +24,8 @@
           v-model:form="form"
           :form-validation="formValidation"
           :is-submitting="isSubmitting"
-          :is="stepComponent"
+          :is-submitted="currentStep.isSubmitted"
+          :is="currentStepComponent"
           class="contract-creation-form__step"
         />
       </transition>
@@ -34,10 +40,14 @@
       <app-button
         class="contract-creation-form__btn"
         type="submit"
-        :text="$t(`contract-creation-form.submit-btn.${form.stepId}`)"
         :disabled="!formValidation.isFieldsValid.value || isSubmitting"
-        @click="submitStep"
-      />
+      >
+        <transition name="fade" mode="out-in">
+          <span class="contract-creation-form__btn-text" :key="submitBtnText">
+            {{ submitBtnText }}
+          </span>
+        </transition>
+      </app-button>
     </div>
   </form>
 </template>
@@ -52,15 +62,10 @@ import { address, required } from '@/validators'
 import { config } from '@config'
 import { useStorage } from '@vueuse/core'
 import { computed, ref } from 'vue'
-import {
-  ArbitrumStep,
-  EthereumStep,
-  GeneralStep,
-  StepTabs20,
-} from './components'
+import { ArbitrumStep, EthereumStep, GeneralStep, StepTabs } from './components'
 import { UNISWAP_FEE_OPTIONS } from './const'
 import { STEP_IDS } from './enums'
-import type { Form, StepTab } from './types'
+import type { Form, Step } from './types'
 
 const emit = defineEmits<{
   (event: 'success'): void
@@ -69,18 +74,6 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
-
-const stepTabs = computed<StepTab[]>(() =>
-  Object.values(STEP_IDS).map(stepId => ({
-    id: stepId,
-    title: t(`contract-creation-form.step-title.${stepId}`),
-  })),
-)
-
-const currentStepTab = computed<StepTab>(
-  () =>
-    stepTabs.value.find(stepTab => stepTab.id === form.value.stepId) as StepTab,
-)
 
 const storageKey = computed<string>(
   () =>
@@ -113,13 +106,46 @@ const form = useStorage<Form>(storageKey.value, {
   },
 })
 
+const steps = computed<Step[]>(() => {
+  const stepIds = Object.values(STEP_IDS)
+
+  const formStepIdx = stepIds.findIndex(id => form.value.stepId === id)
+
+  return stepIds.map((stepId, idx) => ({
+    id: stepId,
+    title: t(`contract-creation-form.step-title.${stepId}`),
+    isSubmitted: formStepIdx > idx,
+  }))
+})
+
+const currentStepIdx = ref(
+  steps.value.findIndex(stepTab => form.value.stepId === stepTab.id),
+)
+
+const currentStep = computed<Step>(() => steps.value[currentStepIdx.value])
+
+const currentStepComponent = computed(
+  () =>
+    ({
+      [STEP_IDS.general]: GeneralStep,
+      [STEP_IDS.arbitrum]: ArbitrumStep,
+      [STEP_IDS.ethereum]: EthereumStep,
+    }[currentStep.value.id]),
+)
+
+const submitBtnText = computed<string>(() =>
+  !currentStep.value.isSubmitted
+    ? t(`contract-creation-form.submit-btn.${currentStep.value.id}`)
+    : t('contract-creation-form.submit-btn.next'),
+)
+
 const formValidation = useFormValidation(
   form,
   computed(() => ({
-    ...(form.value.stepId === STEP_IDS.general && {
+    ...(currentStep.value.id === STEP_IDS.general && {
       generalConfig: { projectName: { required } },
     }),
-    ...(form.value.stepId === STEP_IDS.arbitrum && {
+    ...(currentStep.value.id === STEP_IDS.arbitrum && {
       arbitrumConfig: {
         tokenName: { required },
         tokenSymbol: { required },
@@ -132,7 +158,7 @@ const formValidation = useFormValidation(
         },
       },
     }),
-    ...(form.value.stepId === STEP_IDS.ethereum && {
+    ...(currentStep.value.id === STEP_IDS.ethereum && {
       ethereumConfig: {
         adminContractAddress: { required, address },
         // groups validation is delegated to GroupBuilder.vue
@@ -141,7 +167,12 @@ const formValidation = useFormValidation(
   })),
 )
 
-const submitStep = async () => {
+const onSubmit = async () => {
+  if (currentStep.value.isSubmitted) {
+    currentStepIdx.value++
+    return
+  }
+
   if (!formValidation.isFormValid()) return
 
   isSubmitting.value = true
@@ -246,9 +277,11 @@ const submitStep = async () => {
     switch (form.value.stepId) {
       case STEP_IDS.general:
         form.value.stepId = STEP_IDS.arbitrum
+        currentStepIdx.value++
         break
       case STEP_IDS.arbitrum:
         form.value.stepId = STEP_IDS.ethereum
+        currentStepIdx.value++
         break
       case STEP_IDS.ethereum:
         localStorage.removeItem(storageKey.value)
@@ -261,14 +294,10 @@ const submitStep = async () => {
   isSubmitting.value = false
 }
 
-const stepComponent = computed(
-  () =>
-    ({
-      [STEP_IDS.general]: GeneralStep,
-      [STEP_IDS.arbitrum]: ArbitrumStep,
-      [STEP_IDS.ethereum]: EthereumStep,
-    }[form.value.stepId] || null),
-)
+const onBackBtnClick = () => {
+  if (currentStep.value.id === STEP_IDS.general) return
+  currentStepIdx.value--
+}
 </script>
 
 <style lang="scss" scoped>
@@ -311,5 +340,10 @@ const stepComponent = computed(
 .contract-creation-form__btn {
   width: 100%;
   max-width: toRem(272);
+}
+
+.contract-creation-form__btn-text {
+  font: inherit;
+  color: inherit;
 }
 </style>

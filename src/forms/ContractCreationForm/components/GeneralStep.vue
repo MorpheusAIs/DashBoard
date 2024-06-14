@@ -9,10 +9,10 @@
       :error-message="
         formValidation.getFieldErrorMessage('generalConfig.projectName')
       "
-      :disabled="isSubmitting"
+      :disabled="isSubmitting || isSubmitted"
       class="general-step__project-name"
       @blur="formValidation.touchField('generalConfig.projectName')"
-      @update:model-value="emitRootField('projectName', $event)"
+      @update:model-value="emitRootField('projectName', $event as string)"
     />
   </div>
 </template>
@@ -32,12 +32,10 @@ const props = defineProps<{
   form: Form
   formValidation: FormValidation
   isSubmitting: boolean
+  isSubmitted: boolean
 }>()
 
-const emitRootField = (
-  field: keyof Form['generalConfig'],
-  value: string | number,
-) => {
+const emitRootField = (field: keyof Form['generalConfig'], value: string) => {
   emit('update:form', {
     ...props.form,
     generalConfig: { ...props.form.generalConfig, [field]: value },

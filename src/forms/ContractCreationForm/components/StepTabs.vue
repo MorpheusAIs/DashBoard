@@ -1,40 +1,35 @@
 <template>
   <ol class="step-tabs">
     <li
-      v-for="(stepTab, idx) in stepTabs"
-      :key="stepTab.id"
+      v-for="(step, idx) in steps"
+      :key="step.id"
       :class="{
-        'step-tabs__step--current': currentStepTab.id === stepTab.id,
-        'step-tabs__step--passed': idx < currentStepTabIdx,
+        'step-tabs__step--current': currentStep.id === step.id,
+        'step-tabs__step--submitted': step.isSubmitted,
       }"
       class="step-tabs__step"
     >
       <transition name="fade" mode="out-in">
-        <template v-if="idx < currentStepTabIdx">
+        <template v-if="step.isSubmitted">
           <app-icon class="step-tabs__step-icon" :name="$icons.checkCircle" />
         </template>
         <template v-else>
           <span class="step-tabs__step-order"> {{ `${idx + 1}.` }}</span>
         </template>
       </transition>
-      {{ stepTab.title }}
+      {{ step.title }}
     </li>
   </ol>
 </template>
 
 <script lang="ts" setup>
 import { AppIcon } from '@/common'
-import { computed } from 'vue'
-import { type StepTab } from '../types'
+import { type Step } from '../types'
 
-const props = defineProps<{
-  currentStepTab: StepTab
-  stepTabs: StepTab[]
+defineProps<{
+  currentStep: Step
+  steps: Step[]
 }>()
-
-const currentStepTabIdx = computed<number>(() =>
-  props.stepTabs.findIndex(step => step.id === props.currentStepTab.id),
-)
 </script>
 
 <style lang="scss" scoped>
@@ -71,10 +66,13 @@ const currentStepTabIdx = computed<number>(() =>
     border-image-source: var(--primary-main);
   }
 
-  &--passed {
+  &--submitted {
     color: var(--primary-main);
     border-image-source: var(--primary-main);
-    opacity: 0.4;
+
+    &:not(.step-tabs__step--current) {
+      opacity: 0.4;
+    }
   }
 
   @include body-3-medium;

@@ -12,14 +12,14 @@
             'ethereumConfig.adminContractAddress',
           )
         "
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || isSubmitted"
         @blur="formValidation.touchField('ethereumConfig.adminContractAddress')"
         @update:model-value="emitRootField('adminContractAddress', $event)"
       />
       <checkbox-field
         :model-value="form.ethereumConfig.isUpgradeable"
         :label="$t('contract-creation-form.ethereum-step.is-upgradeable-label')"
-        :disabled="isSubmitting"
+        :disabled="isSubmitting || isSubmitted"
         class="ethereum-step__is-upgradeable-checkbox"
         @update:model-value="emitRootField('isUpgradeable', $event)"
       />
@@ -35,7 +35,7 @@
       <div class="ethereum-step__groups-dashboard">
         <group-builder
           :preset="form.ethereumConfig.groups[editableGroupIdx]"
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || isSubmitted"
           @build="onGroupBuild"
         />
         <div ref="groupsListWrpElement" class="ethereum-step__groups-list-wrp">
@@ -48,7 +48,9 @@
             <li v-for="(group, idx) in form.ethereumConfig.groups" :key="idx">
               <group-info-card
                 :group="group"
-                :disabled="isSubmitting"
+                :disabled="
+                  isSubmitting || isSubmitted || editableGroupIdx !== -1
+                "
                 @edit="editGroup(idx)"
                 @remove="removeGroup(idx)"
               />
@@ -77,6 +79,7 @@ const props = defineProps<{
   form: Form
   formValidation: FormValidation
   isSubmitting: boolean
+  isSubmitted: boolean
 }>()
 
 const groupsListWrpElement = ref<HTMLDivElement | null>(null)
@@ -95,10 +98,7 @@ watch(
   },
 )
 
-const emitRootField = (
-  field: keyof Form['ethereumConfig'],
-  value: string | number,
-) => {
+const emitRootField = (field: keyof Form['ethereumConfig'], value: unknown) => {
   emit('update:form', {
     ...props.form,
     ethereumConfig: { ...props.form.ethereumConfig, [field]: value },

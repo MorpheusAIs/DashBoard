@@ -45,7 +45,8 @@ export type Form = {
   ethereumConfig: EthereumConfig
 }
 
-export type StepTab = {
-  id: string
+export type Step = {
+  id: STEP_IDS
   title: string
+  isSubmitted: boolean
 }
