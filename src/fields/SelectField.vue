@@ -255,6 +255,10 @@ $z-local-index: 2;
       calc(var(--field-padding-right) * 2 + toRem(24))
       var(--field-padding-bottom) var(--field-padding-right);
 
+    &[disabled] {
+      border-color: var(--field-border-disabled);
+    }
+
     @include field-text;
 
     @include field-border;
