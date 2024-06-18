@@ -100,6 +100,10 @@ withDefaults(
   display: flex;
   flex-direction: column;
   padding: toRem(20) toRem(20) toRem(24);
+
+  @include respond-to(medium) {
+    padding: toRem(16) toRem(16) toRem(20);
+  }
 }
 
 .info-card__title-wrp {
@@ -131,6 +135,11 @@ withDefaults(
 .info-card__title-icon {
   height: toRem(28);
   width: toRem(28);
+
+  @include respond-to(medium) {
+    height: toRem(24);
+    width: toRem(24);
+  }
 }
 
 .info-card__description {
@@ -141,11 +150,12 @@ withDefaults(
   white-space: pre-line;
 }
 
-.info-card__address {
+.info-card .info-card__address {
   display: grid;
   width: 100%;
   grid-auto-flow: column;
   margin-top: auto;
+  justify-content: start;
 
   @include body-3-semi-bold;
 }
@@ -158,7 +168,7 @@ withDefaults(
 
 .info-card .info-card__show-more-btn {
   height: toRem(48);
-  flex-basis: toRem(286);
+  flex: 1 toRem(286);
 }
 
 .info-card__edit-btn-wrp {

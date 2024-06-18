@@ -298,7 +298,18 @@ init()
 .main-page__cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: toRem(314);
   grid-gap: toRem(20);
+
+  @include respond-to(xmedium) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(medium) {
+    grid-gap: toRem(12);
+  }
+
+  @include respond-to(tablet) {
+    grid-template-columns: unset;
+  }
 }
 </style>
