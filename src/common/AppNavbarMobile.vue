@@ -98,8 +98,8 @@ $z-index: 1000;
 }
 
 .app-navbar-mobile__burger-icon {
-  height: toRem(24);
-  width: toRem(24);
+  height: toRem(30);
+  width: toRem(30);
   color: var(--text-secondary-light);
   transition: var(--transition-duration-fast) var(--transition-timing-default);
 
@@ -107,6 +107,11 @@ $z-index: 1000;
   .app-navbar-mobile__burger-btn:not([disabled]):focus &,
   .app-navbar-mobile__burger-btn:not([disabled]):active & {
     color: var(--primary-main);
+  }
+
+  @include respond-to(medium) {
+    height: toRem(24);
+    width: toRem(24);
   }
 }
 

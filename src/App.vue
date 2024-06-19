@@ -69,7 +69,7 @@ init()
 
 .app .app__navbar {
   &--desktop {
-    @include respond-to(medium) {
+    @include respond-to(large) {
       display: none;
     }
   }
@@ -77,7 +77,7 @@ init()
   &--mobile {
     display: none;
 
-    @include respond-to(medium) {
+    @include respond-to(large) {
       display: flex;
     }
   }
