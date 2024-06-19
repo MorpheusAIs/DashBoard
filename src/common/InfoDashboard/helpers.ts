@@ -38,7 +38,7 @@ function _generateTotalStakedPerDayGraphqlQuery(
         totalStaked
       }`
 
-  const monthTime = new Time(String(month), 'M')
+  const monthTime = new Time(String(month + 1), 'M')
   const currentTime = new Time()
   const poolStartedAtTime = new Time(poolStartedAt.toNumber())
 

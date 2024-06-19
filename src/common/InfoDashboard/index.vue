@@ -78,7 +78,7 @@ import type {
   InfoDashboardType,
 } from '@/types'
 import { Time, formatEther } from '@/utils'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { CHART_CONFIG } from './const'
 import { getChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
@@ -102,44 +102,37 @@ const { t } = useI18n()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const monthOptions: FieldOption<number>[] = [
-  {
-    title: t('months.february'),
-    value: 2,
-  },
-  {
-    title: t('months.march'),
-    value: 3,
-  },
-  {
-    title: t('months.april'),
-    value: 4,
-  },
-  {
-    title: t('months.may'),
-    value: 5,
-  },
-]
+const monthOptions = computed<FieldOption<number>[]>(() => {
+  const allMonthOptions = Array.from({ length: 12 }).map((_, idx) => ({
+    title: t(`months.${idx}`),
+    value: idx,
+  }))
 
-const selectedMonth = ref(monthOptions[monthOptions.length - 1])
+  const currentTime = new Time()
+  const month = currentTime.get('month')
+
+  return allMonthOptions.slice(1, month + 1)
+})
+
+const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
 
 const isChartDataUpdating = ref(false)
 
 const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
 
 const updateChartData = async (month: number) => {
-  if (!props.poolData) throw new Error('poolData unavailable')
-
   isChartDataUpdating.value = true
 
   try {
+    if (!props.poolData) throw new Error('poolData unavailable')
+
     const chartData = await getChartData(
       props.poolId,
       props.poolData.payoutStart,
       month,
     )
 
-    const monthTime = new Time(month.toString(), 'M')
+    const monthTime = new Time(String(month + 1), 'M')
 
     chartConfig.data.labels = Object.keys(chartData).map(
       day => `${monthTime.format('MMMM')} ${day}`,
