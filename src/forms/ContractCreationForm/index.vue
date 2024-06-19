@@ -30,7 +30,7 @@
         />
       </transition>
     </div>
-    <div class="contract-creation-form__controllers">
+    <div class="contract-creation-form__buttons">
       <app-button
         class="contract-creation-form__btn"
         color="secondary"
@@ -309,10 +309,18 @@ const onBackBtnClick = () => {
   border-image-slice: 1;
   border-image-source: linear-gradient(180deg, #7c7c7d 0%, #cacaca 100%);
   background: linear-gradient(180deg, #222322 0%, #1d201c 100%);
+
+  @include respond-to(medium) {
+    padding: toRem(20) toRem(16) toRem(14);
+  }
 }
 
 .contract-creation-form__step-tabs {
   margin-top: toRem(24);
+
+  @include respond-to(medium) {
+    margin-top: toRem(16);
+  }
 }
 
 .contract-creation-form__divider {
@@ -323,24 +331,44 @@ const onBackBtnClick = () => {
     rgba(255, 255, 255, 0.48) 0%,
     rgba(255, 255, 255, 0.08) 100%
   );
+
+  @include respond-to(medium) {
+    margin-top: toRem(16);
+  }
 }
 
 .contract-creation-form__step {
   margin-top: toRem(24);
+
+  @include respond-to(medium) {
+    margin-top: toRem(16);
+  }
 }
 
-.contract-creation-form__controllers {
+.contract-creation-form__buttons {
   margin-top: toRem(32);
   margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: end;
   gap: toRem(16);
+
+  @include respond-to(medium) {
+    margin-top: toRem(24);
+  }
+
+  @include respond-to(xsmall) {
+    flex-direction: column-reverse;
+  }
 }
 
 .contract-creation-form__btn {
   width: 100%;
   max-width: toRem(272);
+
+  @include respond-to(medium) {
+    max-width: unset;
+  }
 }
 
 .contract-creation-form__btn-text {

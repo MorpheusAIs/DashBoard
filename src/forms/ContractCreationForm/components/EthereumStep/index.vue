@@ -25,7 +25,7 @@
       />
     </div>
     <div class="ethereum-step__divider" />
-    <div class="ethereum-step__groups">
+    <div ref="groupsElement" class="ethereum-step__groups">
       <h5 class="ethereum-step__group-title">
         {{ `Group #${form.ethereumConfig.groups.length}` }}
       </h5>
@@ -82,6 +82,7 @@ const props = defineProps<{
   isSubmitted: boolean
 }>()
 
+const groupsElement = ref<HTMLDivElement | null>(null)
 const groupsListWrpElement = ref<HTMLDivElement | null>(null)
 const editableGroupIdx = ref(-1)
 
@@ -97,6 +98,14 @@ watch(
     })
   },
 )
+
+watch(editableGroupIdx, newIdx => {
+  if (!groupsElement.value || newIdx === -1) return
+  window.scrollTo({
+    top: groupsElement.value.offsetTop,
+    behavior: 'smooth',
+  })
+})
 
 const emitRootField = (field: keyof Form['ethereumConfig'], value: unknown) => {
   emit('update:form', {
@@ -159,6 +168,14 @@ const removeGroup = (idx: number) => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16) toRem(32);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(16) toRem(20);
+  }
+
+  @include respond-to(tablet) {
+    grid-template-columns: unset;
+  }
 }
 
 .ethereum-step__is-upgradeable-checkbox {
@@ -192,6 +209,15 @@ const removeGroup = (idx: number) => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16) toRem(32);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(16) toRem(20);
+  }
+
+  @include respond-to(tablet) {
+    grid-template-columns: unset;
+    grid-gap: toRem(24);
+  }
 }
 
 .ethereum-step__groups-list-wrp {
@@ -203,6 +229,10 @@ const removeGroup = (idx: number) => {
     height: 0;
     width: 0;
   }
+
+  @include respond-to(tablet) {
+    margin-top: unset;
+  }
 }
 
 .ethereum-step__groups-list {
@@ -210,6 +240,10 @@ const removeGroup = (idx: number) => {
   width: 100%;
   display: grid;
   grid-auto-rows: max-content;
-  gap: toRem(32);
+  gap: toRem(16);
+
+  @include respond-to(tablet) {
+    position: static;
+  }
 }
 </style>

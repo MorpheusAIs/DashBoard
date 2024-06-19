@@ -180,6 +180,7 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: toRem(100);
 
   &:before {
     $z-index: -1;

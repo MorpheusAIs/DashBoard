@@ -45,10 +45,20 @@ const emitRootField = (field: keyof Form['generalConfig'], value: string) => {
 
 <style lang="scss" scoped>
 .general-step {
-  max-width: toRem(560);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: toRem(20) toRem(32);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(20);
+  }
+
+  @include respond-to(tablet) {
+    grid-template-columns: unset;
+  }
 }
 
-.general-step .general-step__project-name {
-  margin-top: toRem(20);
+.general-step__project-name {
+  grid-column: 1;
 }
 </style>

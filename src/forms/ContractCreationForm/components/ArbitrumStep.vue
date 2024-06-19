@@ -181,6 +181,14 @@ const emitSettingsField = (
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16) toRem(32);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(16) toRem(20);
+  }
+
+  @include respond-to(tablet) {
+    grid-template-columns: unset;
+  }
 }
 
 .arbitrum-step__is-upgradeable-checkbox {
@@ -214,5 +222,13 @@ const emitSettingsField = (
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: toRem(16) toRem(32);
+
+  @include respond-to(medium) {
+    grid-gap: toRem(16) toRem(20);
+  }
+
+  @include respond-to(tablet) {
+    grid-template-columns: unset;
+  }
 }
 </style>

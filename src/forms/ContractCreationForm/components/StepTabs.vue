@@ -37,6 +37,15 @@ defineProps<{
   display: flex;
   align-items: center;
   gap: toRem(12);
+
+  @include respond-to(tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(xsmall) {
+    grid-template-columns: unset;
+  }
 }
 
 .step-tabs__step {
@@ -76,6 +85,22 @@ defineProps<{
   }
 
   @include body-3-medium;
+
+  @include respond-to(medium) {
+    max-width: unset;
+  }
+
+  @include respond-to(tablet) {
+    &:nth-child(3) {
+      grid-column: 1/3;
+    }
+  }
+
+  @include respond-to(xsmall) {
+    &:nth-child(3) {
+      grid-column: unset;
+    }
+  }
 }
 
 .step-tabs__step-order {

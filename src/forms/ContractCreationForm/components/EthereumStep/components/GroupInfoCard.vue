@@ -24,7 +24,11 @@
       </div>
     </div>
     <ul class="group-info-card__indicators">
-      <li v-for="(indicator, idx) in indicators" :key="idx">
+      <li
+        v-for="(indicator, idx) in indicators"
+        :key="idx"
+        class="group-info-card__indicator"
+      >
         <h5 class="group-info-card__indicator-title">
           {{ indicator.title }}
         </h5>
@@ -199,6 +203,10 @@ const indicators = computed<Indicator[]>(() =>
   display: flex;
   align-items: center;
   gap: toRem(24);
+
+  @include respond-to(medium) {
+    gap: toRem(12);
+  }
 }
 
 .group-info-card__controller {
@@ -227,18 +235,29 @@ const indicators = computed<Indicator[]>(() =>
 .group-info-card__controller-icon {
   height: toRem(30);
   width: toRem(30);
+
+  @include respond-to(medium) {
+    height: toRem(24);
+    width: toRem(24s);
+  }
 }
 
 .group-info-card__indicators {
   margin: toRem(20) toRem(36) 0 0;
   display: grid;
-  grid-template-columns: repeat(2, max-content);
-  grid-gap: toRem(20);
+  grid-template-columns: repeat(2, auto);
+  grid-gap: toRem(20) toRem(32);
   justify-content: space-between;
+}
+
+.group-info-card__indicator {
+  display: grid;
 }
 
 .group-info-card__indicator-title {
   color: var(--text-secondary-main);
+
+  @include text-ellipsis;
 }
 
 .group-info-card__indicator-value {
