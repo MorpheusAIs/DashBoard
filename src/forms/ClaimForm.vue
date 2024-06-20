@@ -65,10 +65,12 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    await provider.value.selectChain(config.networks[networkId.value].chainId)
+    await provider.value.selectChain(
+      config.networksMap[networkId.value].l1.chainId,
+    )
 
     const fees = await endpointContract.value.providerBased.value.estimateFees(
-      config.networks[networkId.value].extendedChainLayerZeroEndpoint,
+      config.networksMap[networkId.value].l2.layerZeroEndpointId,
       await erc1967ProxyContract.value.providerBased.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
@@ -82,7 +84,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networks[networkId.value].explorerUrl,
+      config.networksMap[networkId.value].l1.explorerUrl,
       tx.hash,
     )
 
