@@ -1,8 +1,8 @@
 import {
-  ETHEREUM_CHAINS,
+  ETHEREUM_CHAIN_IDS,
   ETHEREUM_EXPLORER_URLS,
   ETHEREUM_RPC_URLS,
-  LAYER_ZERO_ENDPOINTS,
+  LAYER_ZERO_ENDPOINT_IDS,
 } from '@/enums'
 import type { EthereumType, Provider } from '@/types'
 import {
@@ -30,16 +30,17 @@ export enum NETWORK_IDS {
   testnet = 'testnet',
 }
 
-interface Network {
-  chainId: ETHEREUM_CHAINS
+type NetworkLayer = {
+  chainId: ETHEREUM_CHAIN_IDS
   chainTitle: string
+  layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS
   provider: Provider
   explorerUrl: ETHEREUM_EXPLORER_URLS
-  extendedChainId: ETHEREUM_CHAINS
-  extendedChainTitle: string
-  extendedChainProvider: Provider
-  extendedExplorerUrl: ETHEREUM_EXPLORER_URLS
-  extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS
+}
+
+interface Network {
+  l1: NetworkLayer
+  l2: NetworkLayer
   contractAddressesMap: Record<CONTRACT_IDS, string>
 }
 
@@ -104,9 +105,9 @@ export const config = {
 
   metadata: {} as Metadata,
 
-  networks: {} as Record<NETWORK_IDS, Network>,
+  networksMap: {} as Record<NETWORK_IDS, Network>,
 
-  chainsMap: {} as Record<ETHEREUM_CHAINS, EthereumType.Chain>,
+  chainsMap: {} as Record<ETHEREUM_CHAIN_IDS, EthereumType.Chain>,
 
   apolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
@@ -121,32 +122,35 @@ config.metadata = {
   icons: [`${config.URL}/branding/logo.svg`],
 }
 
-config.networks = {
+config.networksMap = {
   [NETWORK_IDS.mainnet]: {
-    chainId: ETHEREUM_CHAINS.ethereum,
-    chainTitle: 'Ethereum',
-    provider: new providers.FallbackProvider(
-      [
-        'https://eth.llamarpc.com',
-        'https://rpc.mevblocker.io',
-        'https://eth-pokt.nodies.app',
-        'https://eth.drpc.org',
-        'https://rpc.payload.de',
-        'https://eth.merkle.io',
-      ].map((rpcUrl, idx) => ({
-        provider: new providers.StaticJsonRpcProvider(rpcUrl),
-        priority: idx,
-      })),
-      1,
-    ),
-    explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
-    extendedChainId: ETHEREUM_CHAINS.arbitrum,
-    extendedChainTitle: 'Arbitrum',
-    extendedChainProvider: new providers.StaticJsonRpcProvider(
-      ETHEREUM_RPC_URLS.arbitrum,
-    ),
-    extendedExplorerUrl: ETHEREUM_EXPLORER_URLS.arbitrum,
-    extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrum,
+    l1: {
+      chainId: ETHEREUM_CHAIN_IDS.ethereum,
+      chainTitle: 'Ethereum',
+      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.ethereum,
+      provider: new providers.FallbackProvider(
+        [
+          'https://eth.llamarpc.com',
+          'https://rpc.mevblocker.io',
+          'https://eth-pokt.nodies.app',
+          'https://eth.drpc.org',
+          'https://rpc.payload.de',
+          'https://eth.merkle.io',
+        ].map((rpcUrl, idx) => ({
+          provider: new providers.StaticJsonRpcProvider(rpcUrl),
+          priority: idx,
+        })),
+        1,
+      ),
+      explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
+    },
+    l2: {
+      chainId: ETHEREUM_CHAIN_IDS.arbitrum,
+      chainTitle: 'Arbitrum',
+      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.arbitrum,
+      provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.arbitrum),
+      explorerUrl: ETHEREUM_EXPLORER_URLS.arbitrum,
+    },
     contractAddressesMap: {
       [CONTRACT_IDS.erc1967Proxy]:
         config.ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
@@ -158,17 +162,22 @@ config.networks = {
     },
   },
   [NETWORK_IDS.testnet]: {
-    chainId: ETHEREUM_CHAINS.sepolia,
-    chainTitle: 'Ethereum Sepolia',
-    provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
-    explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
-    extendedChainId: ETHEREUM_CHAINS.arbitrumSepolia,
-    extendedChainTitle: 'Arbitrum Sepolia',
-    extendedChainProvider: new providers.StaticJsonRpcProvider(
-      ETHEREUM_RPC_URLS.arbitrumSepolia,
-    ),
-    extendedExplorerUrl: ETHEREUM_EXPLORER_URLS.arbitrumSepolia,
-    extendedChainLayerZeroEndpoint: LAYER_ZERO_ENDPOINTS.arbitrumSepolia,
+    l1: {
+      chainId: ETHEREUM_CHAIN_IDS.sepolia,
+      chainTitle: 'Ethereum Sepolia',
+      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.sepolia,
+      provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
+      explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
+    },
+    l2: {
+      chainId: ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+      chainTitle: 'Arbitrum Sepolia',
+      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.arbitrumSepolia,
+      provider: new providers.StaticJsonRpcProvider(
+        ETHEREUM_RPC_URLS.arbitrumSepolia,
+      ),
+      explorerUrl: ETHEREUM_EXPLORER_URLS.arbitrumSepolia,
+    },
     contractAddressesMap: {
       [CONTRACT_IDS.erc1967Proxy]:
         config.ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
@@ -182,8 +191,8 @@ config.networks = {
 }
 
 config.chainsMap = {
-  [ETHEREUM_CHAINS.arbitrum]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrum)),
+  [ETHEREUM_CHAIN_IDS.arbitrum]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.arbitrum)),
     chainName: 'Arbitrum One',
     nativeCurrency: {
       name: 'ETH',
@@ -193,8 +202,8 @@ config.chainsMap = {
     rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
     blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrum],
   },
-  [ETHEREUM_CHAINS.arbitrumSepolia]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.arbitrumSepolia)),
+  [ETHEREUM_CHAIN_IDS.arbitrumSepolia]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.arbitrumSepolia)),
     chainName: 'Arbitrum Sepolia (Testnet)',
     nativeCurrency: {
       name: 'ETH',
@@ -204,8 +213,8 @@ config.chainsMap = {
     rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
     blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrumSepolia],
   },
-  [ETHEREUM_CHAINS.ethereum]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.ethereum)),
+  [ETHEREUM_CHAIN_IDS.ethereum]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.ethereum)),
     chainName: 'Ethereum',
     nativeCurrency: {
       name: 'ETH',
@@ -215,8 +224,8 @@ config.chainsMap = {
     rpcUrls: [ETHEREUM_RPC_URLS.ethereum],
     blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.ethereum],
   },
-  [ETHEREUM_CHAINS.sepolia]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAINS.sepolia)),
+  [ETHEREUM_CHAIN_IDS.sepolia]: {
+    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.sepolia)),
     chainName: 'Sepolia',
     nativeCurrency: {
       name: 'ETH',

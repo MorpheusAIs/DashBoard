@@ -1,4 +1,4 @@
-import { type ETHEREUM_CHAINS } from '@/enums'
+import { type ETHEREUM_CHAIN_IDS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
 import { type EthereumType } from '@/types'
@@ -94,7 +94,7 @@ export const useProvider = (): IUseProvider => {
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
-      await addChain(config.chainsMap[chainId as ETHEREUM_CHAINS])
+      await addChain(config.chainsMap[chainId as ETHEREUM_CHAIN_IDS])
 
       // onChainChanged provider event needs time for execute
       await sleep(1000)

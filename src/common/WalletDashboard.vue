@@ -75,7 +75,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networks[web3ProvidersStore.networkId].extendedChainId,
+      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -84,18 +84,14 @@ const addToken = async () => {
         type: 'ERC20',
         options: {
           address:
-            config.networks[web3ProvidersStore.networkId].contractAddressesMap
-              .mor,
+            config.networksMap[web3ProvidersStore.networkId]
+              .contractAddressesMap.mor,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),
         },
       },
     })
-
-    await web3ProvidersStore.provider.selectChain(
-      config.networks[web3ProvidersStore.networkId].chainId,
-    )
   } catch (error) {
     ErrorHandler.process(error)
   }
