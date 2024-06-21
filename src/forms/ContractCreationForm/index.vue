@@ -192,7 +192,7 @@ const onSubmitBtnClick = async () => {
           )
 
         await web3ProvidersStore.provider.selectChain(
-          config.networks[web3ProvidersStore.networkId].extendedChainId,
+          config.networksMap[web3ProvidersStore.networkId].l2.chainId,
         )
 
         tx = await l2FactoryContract.signerBased.value.deploy({
@@ -211,7 +211,7 @@ const onSubmitBtnClick = async () => {
         })
 
         explorerTxUrl = getEthExplorerTxUrl(
-          config.networks[web3ProvidersStore.networkId].extendedExplorerUrl,
+          config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
           tx.hash,
         )
 
@@ -226,7 +226,7 @@ const onSubmitBtnClick = async () => {
           )
 
         await web3ProvidersStore.provider.selectChain(
-          config.networks[web3ProvidersStore.networkId].chainId,
+          config.networksMap[web3ProvidersStore.networkId].l1.chainId,
         )
 
         tx = await l1FactoryContract.signerBased.value.deploy({
@@ -255,7 +255,7 @@ const onSubmitBtnClick = async () => {
         })
 
         explorerTxUrl = getEthExplorerTxUrl(
-          config.networks[web3ProvidersStore.networkId].explorerUrl,
+          config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
           tx.hash,
         )
       }

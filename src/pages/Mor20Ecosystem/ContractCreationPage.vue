@@ -75,15 +75,12 @@ const createdProtocol = ref<Mor20EcosystemType.Protocol | null>(null)
 const inputFieldsData = computed(() => {
   if (!createdProtocol.value) return null
 
-  const { explorerUrl, extendedExplorerUrl } =
-    config.networks[web3ProvidersStore.networkId]
-
   return {
     distributionData: {
       label: t(`${I18N_KEY_PREFIX}.distribution-address-label`),
       address: createdProtocol.value.distributionAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        explorerUrl,
+        config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
         createdProtocol.value.distributionAddress,
       ),
     },
@@ -91,7 +88,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l1-sender-address-label`),
       address: createdProtocol.value.l1SenderAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        explorerUrl,
+        config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
         createdProtocol.value.l1SenderAddress,
       ),
     },
@@ -99,7 +96,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l2-message-receiver-address-label`),
       address: createdProtocol.value.l2MessageReceiverAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        extendedExplorerUrl,
+        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
         createdProtocol.value.l2MessageReceiverAddress,
       ),
     },
@@ -107,7 +104,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l2-token-receiver-address-label`),
       address: createdProtocol.value.l2TokenReceiverAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        extendedExplorerUrl,
+        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
         createdProtocol.value.l2TokenReceiverAddress,
       ),
     },
@@ -115,7 +112,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.token-address-label`),
       address: createdProtocol.value.tokenAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        extendedExplorerUrl,
+        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
         createdProtocol.value.tokenAddress,
       ),
     },
