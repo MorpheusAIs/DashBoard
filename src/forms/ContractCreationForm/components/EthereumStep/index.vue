@@ -48,6 +48,7 @@
             <li v-for="(group, idx) in form.ethereumConfig.groups" :key="idx">
               <group-info-card
                 :group="group"
+                :token-symbol="form.arbitrumConfig.tokenSymbol"
                 :disabled="
                   isSubmitting || isSubmitted || editableGroupIdx !== -1
                 "

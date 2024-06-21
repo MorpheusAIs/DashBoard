@@ -81,6 +81,7 @@ const CONTROLLERS: Controller[] = [
 const props = withDefaults(
   defineProps<{
     group: EthereumConfigGroup
+    tokenSymbol: string
     disabled?: boolean
   }>(),
   {
@@ -127,15 +128,15 @@ const indicators = computed<Indicator[]>(() =>
         },
         {
           title: t(`${I18N_KEY_PREFIX}.initial-reward-title`),
-          value: `${props.group.initialReward} MOR`,
+          value: `${props.group.initialReward} ${props.tokenSymbol}`,
         },
         {
           title: t(`${I18N_KEY_PREFIX}.reward-decrease-title`),
-          value: `${props.group.rewardDecrease} MOR`,
+          value: `${props.group.rewardDecrease} ${props.tokenSymbol}`,
         },
         {
           title: t(`${I18N_KEY_PREFIX}.minimal-stake-title`),
-          value: `${props.group.minimalStake} MOR`,
+          value: `${props.group.minimalStake} ${props.tokenSymbol}`,
         },
       ]
     : [
@@ -149,7 +150,7 @@ const indicators = computed<Indicator[]>(() =>
         },
         {
           title: t(`${I18N_KEY_PREFIX}.initial-reward-title`),
-          value: `${props.group.initialReward} MOR`,
+          value: `${props.group.initialReward} ${props.tokenSymbol}`,
         },
         {
           title: t(`${I18N_KEY_PREFIX}.claim-lock-period-title`),
@@ -157,7 +158,7 @@ const indicators = computed<Indicator[]>(() =>
         },
         {
           title: t(`${I18N_KEY_PREFIX}.reward-decrease-title`),
-          value: `${props.group.rewardDecrease} MOR`,
+          value: `${props.group.rewardDecrease} ${props.tokenSymbol}`,
         },
       ],
 )
