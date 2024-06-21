@@ -57,7 +57,7 @@
 import { AppButton } from '@/common'
 import { useFormValidation, useI18n } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
-import { useWeb3ProvidersStore } from '@/store'
+import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { parseUnits } from '@/utils'
 import { address, required } from '@/validators'
 import { config } from '@config'
@@ -179,14 +179,16 @@ const onSubmitBtnClick = async () => {
   isSubmitting.value = true
 
   try {
-    const { l1FactoryContract, l2FactoryContract } = web3ProvidersStore
+    const { l1FactoryContract, l2FactoryContract } =
+      storeToRefs(web3ProvidersStore)
+
     let tx
     let explorerTxUrl
 
     switch (form.value.stepId) {
       case STEP_IDS.arbitrum: {
         const predictedAddresses =
-          await l1FactoryContract.providerBased.value.predictAddresses(
+          await l1FactoryContract.value.providerBased.value.predictAddresses(
             web3ProvidersStore.provider.selectedAddress,
             form.value.generalConfig.projectName,
           )
@@ -195,7 +197,7 @@ const onSubmitBtnClick = async () => {
           config.networksMap[web3ProvidersStore.networkId].l2.chainId,
         )
 
-        tx = await l2FactoryContract.signerBased.value.deploy({
+        tx = await l2FactoryContract.value.signerBased.value.deploy({
           isUpgradeable: form.value.arbitrumConfig.isUpgradeable,
           owner: form.value.arbitrumConfig.adminContractAddress,
           protocolName: form.value.generalConfig.projectName,
@@ -220,7 +222,7 @@ const onSubmitBtnClick = async () => {
 
       case STEP_IDS.ethereum: {
         const predictedAddresses =
-          await l2FactoryContract.providerBased.value.predictAddresses(
+          await l2FactoryContract.value.providerBased.value.predictAddresses(
             web3ProvidersStore.provider.selectedAddress,
             form.value.generalConfig.projectName,
           )
@@ -229,7 +231,7 @@ const onSubmitBtnClick = async () => {
           config.networksMap[web3ProvidersStore.networkId].l1.chainId,
         )
 
-        tx = await l1FactoryContract.signerBased.value.deploy({
+        tx = await l1FactoryContract.value.signerBased.value.deploy({
           isUpgradeable: form.value.ethereumConfig.isUpgradeable,
           owner: form.value.ethereumConfig.adminContractAddress,
           protocolName: form.value.generalConfig.projectName,
