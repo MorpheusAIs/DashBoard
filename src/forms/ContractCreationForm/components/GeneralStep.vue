@@ -9,7 +9,10 @@
       :error-message="
         formValidation.getFieldErrorMessage('generalConfig.projectName')
       "
-      :disabled="isSubmitting || isSubmitted"
+      :disabled="
+        isSubmitting ||
+        (form.stepId === STEP_IDS.arbitrum ? false : isSubmitted)
+      "
       class="general-step__project-name"
       @blur="formValidation.touchField('generalConfig.projectName')"
       @update:model-value="emitRootField('projectName', $event as string)"
@@ -20,6 +23,7 @@
 <script lang="ts" setup>
 import { type FormValidation } from '@/composables'
 import { InputField } from '@/fields'
+import { STEP_IDS } from '../enums'
 import { type Form } from '../types'
 
 const I18N_KEY_PREFIX = 'contract-creation-form.general-step'
