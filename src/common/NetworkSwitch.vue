@@ -143,16 +143,22 @@ onMounted(() => {
 }
 
 .network-switch__link {
+  $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
+
   padding: toRem(12) toRem(16);
   color: var(--text-secondary-light);
   transition: var(--transition-duration-fast) var(--transition-timing-default);
   text-align: left;
 
-  &:not([disabled]):hover,
+  &:not([disabled]):hover {
+    background: #515c57;
+    box-shadow: $shadow-hover;
+  }
+
   &:not([disabled]):focus,
   &:not([disabled]):active {
-    background: var(--primary-main);
-    color: var(--text-primary-dark);
+    background: #515c57;
+    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 
   @include text-ellipsis;
