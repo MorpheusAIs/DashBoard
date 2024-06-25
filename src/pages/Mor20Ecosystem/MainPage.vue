@@ -138,6 +138,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
   },
 ])
 
+// TODO: optimize
 const getUsersLastFullyDeployedProtocol =
   async (): Promise<Mor20EcosystemType.Protocol | null> => {
     const { address, l1FactoryContract, l2FactoryContract } = web3ProvidersStore
