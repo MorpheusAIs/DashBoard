@@ -139,7 +139,7 @@ $z-index: 1000;
 
 .app-navbar-mobile .app-navbar-mobile__link {
   &.router-link-active {
-    @include respond-to(medium) {
+    @include respond-to(large) {
       font-family: var(--app-font-family);
       font-size: toRem(18);
       font-weight: 600;
@@ -148,7 +148,7 @@ $z-index: 1000;
     }
   }
 
-  @include respond-to(medium) {
+  @include respond-to(large) {
     font-family: var(--app-font-family);
     font-size: toRem(18);
     font-weight: 400;

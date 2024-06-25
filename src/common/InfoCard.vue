@@ -30,8 +30,8 @@
         color="none"
         target="_blank"
         rel="noopener noreferrer"
-        text="Show more"
         href="#"
+        :text="$t('info-card.show-more')"
       />
       <div class="info-card__edit-btn-wrp">
         <app-button
@@ -40,8 +40,8 @@
           color="none"
           target="_blank"
           rel="noopener noreferrer"
-          :icon-right="$icons.edit"
           href="#"
+          :icon-right="$icons.edit"
         />
       </div>
     </div>
@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { InfoCardType } from '@/types'
+import { type InfoCardType } from '@/types'
 import AppButton from './AppButton.vue'
 import AppIcon from './AppIcon.vue'
 

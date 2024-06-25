@@ -1,3 +1,5 @@
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { useWeb3ProvidersStore } from '@/store'
 import {
   onBeforeRouteUpdate,
   createRouter,
@@ -6,9 +8,6 @@ import {
   useRoute,
   useRouter,
 } from 'vue-router'
-
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
-import { useWeb3ProvidersStore } from '@/store'
 
 const routes: RouteRecordRaw[] = [
   {

@@ -197,6 +197,9 @@
     "status--public": "Automated",
     "status--private": "Non-Automated"
   },
+  "info-card": {
+    "show-more": "Show more"
+  },
   "network-switch": {
     "mainnet": "Ethereum Mainnet",
     "testnet": "Ethereum Sepolia"

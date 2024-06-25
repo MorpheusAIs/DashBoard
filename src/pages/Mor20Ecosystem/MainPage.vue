@@ -57,10 +57,11 @@ import { AppButton, ConnectWalletButton, InfoCard } from '@/common'
 import { useI18n } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
 import { ICON_NAMES, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
+import { config } from '@config'
 import { computed, ref, watch } from 'vue'
 
 // TODO: remove the condition when the page will have a mainnet contract
@@ -84,7 +85,10 @@ const cards = computed<InfoCardType.Card[]>(() => [
     icon: ICON_NAMES.arbitrumAlt,
     description: t('mor20-ecosystem.main-page.info-card.token.description'),
     address: protocol.value?.tokenAddress || '',
-    link: '#',
+    link: getEthExplorerAddressUrl(
+      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      protocol.value?.tokenAddress || '',
+    ),
   },
   {
     title: t('mor20-ecosystem.main-page.info-card.distribution.title'),
@@ -93,14 +97,20 @@ const cards = computed<InfoCardType.Card[]>(() => [
       'mor20-ecosystem.main-page.info-card.distribution.description',
     ),
     address: protocol.value?.distributionAddress || '',
-    link: '#',
+    link: getEthExplorerAddressUrl(
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      protocol.value?.distributionAddress || '',
+    ),
   },
   {
     title: t('mor20-ecosystem.main-page.info-card.l1-sender.title'),
     icon: ICON_NAMES.ethereumAlt,
     description: t('mor20-ecosystem.main-page.info-card.l1-sender.description'),
     address: protocol.value?.l1SenderAddress || '',
-    link: '#',
+    link: getEthExplorerAddressUrl(
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      protocol.value?.l1SenderAddress || '',
+    ),
   },
   {
     title: t('mor20-ecosystem.main-page.info-card.l2-msg-receiver.title'),
@@ -109,7 +119,10 @@ const cards = computed<InfoCardType.Card[]>(() => [
       'mor20-ecosystem.main-page.info-card.l2-msg-receiver.description',
     ),
     address: protocol.value?.l2MessageReceiverAddress || '',
-    link: '#',
+    link: getEthExplorerAddressUrl(
+      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      protocol.value?.l2MessageReceiverAddress || '',
+    ),
   },
   {
     title: t('mor20-ecosystem.main-page.info-card.l2-token-receiver.title'),
@@ -118,19 +131,16 @@ const cards = computed<InfoCardType.Card[]>(() => [
       'mor20-ecosystem.main-page.info-card.l2-token-receiver.description',
     ),
     address: protocol.value?.l2TokenReceiverAddress || '',
-    link: '#',
+    link: getEthExplorerAddressUrl(
+      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      protocol.value?.l2TokenReceiverAddress || '',
+    ),
   },
 ])
 
-const init = async () => {
-  if (!web3ProvidersStore.provider.selectedAddress) {
-    protocol.value = null
-    return
-  }
-
-  isInitializing.value = true
-
-  try {
+// TODO: optimize
+const getUsersLastFullyDeployedProtocol =
+  async (): Promise<Mor20EcosystemType.Protocol | null> => {
     const { address, l1FactoryContract, l2FactoryContract } = web3ProvidersStore
 
     const [l1DeployedPools, l2DeployedPools] = await Promise.all([
@@ -168,11 +178,10 @@ const init = async () => {
       lastFullyL1DeployedPoolIdx === -1 ||
       lastFullyL2DeployedPoolIdx === -1
     ) {
-      protocol.value = null
-      return
+      return null
     }
 
-    protocol.value = {
+    return {
       name: l1DeployedPools[lastFullyL1DeployedPoolIdx].protocol,
       distributionAddress:
         l1DeployedPools[lastFullyL1DeployedPoolIdx].distribution,
@@ -183,12 +192,24 @@ const init = async () => {
         l2DeployedPools[lastFullyL2DeployedPoolIdx].l2TokenReceiver,
       tokenAddress: l2DeployedPools[lastFullyL2DeployedPoolIdx].mor20,
     }
+  }
+
+const init = async () => {
+  if (!web3ProvidersStore.provider.selectedAddress) {
+    protocol.value = null
+    return
+  }
+
+  isInitializing.value = true
+
+  try {
+    protocol.value = await getUsersLastFullyDeployedProtocol()
   } catch (error) {
     protocol.value = null
     ErrorHandler.process(error)
-  } finally {
-    isInitializing.value = false
   }
+
+  isInitializing.value = false
 }
 
 watch(
