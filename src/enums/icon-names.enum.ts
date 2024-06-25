@@ -5,6 +5,7 @@ export enum ICON_NAMES {
   check = 'check',
   chevronDown = 'chevron-down',
   copy = 'copy',
+  edit = 'edit',
   ethereum = 'ethereum',
   exclamationCircle = 'exclamation-circle',
   externalLink = 'external-link',
