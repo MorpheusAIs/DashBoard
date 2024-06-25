@@ -1,5 +1,5 @@
 import { useContract, useProvider } from '@/composables'
-import { CONTRACT_IDS, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { CONTRACT_IDS, NETWORK_IDS } from '@/enums'
 import { sleep } from '@/helpers'
 import { useRouter } from '@/router'
 import { type BigNumber, type Provider } from '@/types'
@@ -30,14 +30,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
   // Getters
   const networkId = computed<NETWORK_IDS>(() => {
-    if (
-      _router.currentRoute.matched.find(
-        route => route.name === ROUTE_NAMES.appMainnet,
-      )
-    )
-      return NETWORK_IDS.mainnet
-
-    return NETWORK_IDS.testnet
+    const { network } = _router.currentRoute.query
+    return (network as NETWORK_IDS) || NETWORK_IDS.mainnet
   })
 
   const l1Provider = computed<Provider>(() => {

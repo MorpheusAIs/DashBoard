@@ -32,8 +32,7 @@
 
 <script lang="ts" setup>
 import { useI18n } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
-import { useRouter } from '@/router'
+import { NETWORK_IDS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { Route } from '@/types'
 import { onClickOutside } from '@vueuse/core'
@@ -46,37 +45,20 @@ type Link = {
   route: Route
 }
 
-const MAINNET_ROUTES_MAP: Partial<Record<ROUTE_NAMES, ROUTE_NAMES>> = {
-  [ROUTE_NAMES.appTestnetCapital]: ROUTE_NAMES.appMainnetCapital,
-}
-
-const TESTNET_ROUTES_MAP: Partial<Record<ROUTE_NAMES, ROUTE_NAMES>> = {
-  [ROUTE_NAMES.appMainnetCapital]: ROUTE_NAMES.appTestnetCapital,
-}
-
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
 
 const { t } = useI18n()
-const { currentRoute } = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const links = computed<Link[]>(() => [
   {
     title: t('network-switch.mainnet'),
-    route: {
-      name:
-        MAINNET_ROUTES_MAP[currentRoute.value.name as ROUTE_NAMES] ||
-        ROUTE_NAMES.appMainnet,
-    },
+    route: { query: { network: NETWORK_IDS.mainnet } } as Route,
   },
   {
     title: t('network-switch.testnet'),
-    route: {
-      name:
-        TESTNET_ROUTES_MAP[currentRoute.value.name as ROUTE_NAMES] ||
-        ROUTE_NAMES.appTestnet,
-    },
+    route: { query: { network: NETWORK_IDS.testnet } } as Route,
   },
 ])
 
