@@ -16,7 +16,7 @@ export interface FormValidation {
 
 export const useFormValidation = (
   state: UnwrapNestedRefs<ChildStateLeafs>,
-  rules: ValidationArgs | ComputedRef<ValidationArgs>,
+  rules?: ValidationArgs | ComputedRef<ValidationArgs>,
   globalConfig?: GlobalConfig,
 ): FormValidation => {
   const validationRules = computed(() => unref(rules))

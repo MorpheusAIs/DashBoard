@@ -21,11 +21,9 @@
       <div class="mor20-creation-form__divider" />
       <transition name="fade" mode="out-in">
         <component
-          v-model:form="form"
-          :form-validation="formValidation"
+          :is="currentStepComponent"
           :is-submitting="isSubmitting"
           :is-submitted="currentStep.isSubmitted"
-          :is="currentStepComponent"
           class="mor20-creation-form__step"
         />
       </transition>
@@ -40,7 +38,7 @@
       <app-button
         class="mor20-creation-form__btn"
         type="submit"
-        :disabled="!formValidation.isFieldsValid.value || isSubmitting"
+        :disabled="!isFieldsValid || isSubmitting"
         @click="onSubmitBtnClick"
       >
         <transition name="fade" mode="out-in">
@@ -59,7 +57,6 @@ import { useFormValidation, useI18n } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { parseUnits } from '@/utils'
-import { address, required } from '@/validators'
 import { config } from '@config'
 import { computed, ref } from 'vue'
 import { ArbitrumStep, EthereumStep, GeneralStep, StepTabs } from './components'
@@ -111,17 +108,7 @@ const submitBtnText = computed<string>(() =>
     : t('mor20-creation-form.submit-btn.next'),
 )
 
-const formValidation = useFormValidation(
-  form,
-  computed(() => ({
-    ...(currentStep.value.id === STEP_IDS.ethereum && {
-      ethereumConfig: {
-        adminContractAddress: { required, address },
-        // groups validation is delegated to GroupBuilder.vue
-      },
-    }),
-  })),
-)
+const { isFieldsValid, isFormValid } = useFormValidation(form)
 
 const onSubmitBtnClick = async () => {
   if (currentStep.value.isSubmitted) {
@@ -129,7 +116,7 @@ const onSubmitBtnClick = async () => {
     return
   }
 
-  if (!formValidation.isFormValid()) return
+  if (!isFormValid()) return
 
   isSubmitting.value = true
 

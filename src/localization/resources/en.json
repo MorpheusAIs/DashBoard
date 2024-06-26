@@ -49,6 +49,7 @@
       "admin-contract-address-label": "Specify the address of the protocol administrator. The administrator will be able to change the settings after deployment on the networks.",
       "admin-contract-address-placeholder": "Contracts administrator address",
       "is-upgradeable-label": "Keep upgradability?",
+      "group-title": "Group #{idx}",
       "group-instruction": "Add the new distribution group to your protocol.",
       "group-builder": {
         "is-public-label": "Is Public",

@@ -2,32 +2,32 @@
   <div class="ethereum-step">
     <div class="ethereum-step__fields">
       <input-field
-        :model-value="form.ethereumConfig.adminContractAddress"
+        v-model="form.ethereumConfig.adminContractAddress"
         :label="$t(`${I18N_KEY_PREFIX}.admin-contract-address-label`)"
         :placeholder="
           $t(`${I18N_KEY_PREFIX}.admin-contract-address-placeholder`)
         "
         :error-message="
-          formValidation.getFieldErrorMessage(
-            'ethereumConfig.adminContractAddress',
-          )
+          getFieldErrorMessage('ethereumConfig.adminContractAddress')
         "
         :disabled="isSubmitting || isSubmitted"
-        @blur="formValidation.touchField('ethereumConfig.adminContractAddress')"
-        @update:model-value="emitRootField('adminContractAddress', $event)"
+        @blur="touchField('ethereumConfig.adminContractAddress')"
       />
       <checkbox-field
-        :model-value="form.ethereumConfig.isUpgradeable"
+        v-model="form.ethereumConfig.isUpgradeable"
+        class="ethereum-step__is-upgradeable-checkbox"
         :label="$t(`${I18N_KEY_PREFIX}.is-upgradeable-label`)"
         :disabled="isSubmitting || isSubmitted"
-        class="ethereum-step__is-upgradeable-checkbox"
-        @update:model-value="emitRootField('isUpgradeable', $event)"
       />
     </div>
     <div class="ethereum-step__divider" />
     <div ref="groupsElement" class="ethereum-step__groups">
       <h5 class="ethereum-step__group-title">
-        {{ `Group #${form.ethereumConfig.groups.length}` }}
+        {{
+          $t(`${I18N_KEY_PREFIX}.group-title`, {
+            idx: form.ethereumConfig.groups.length,
+          })
+        }}
       </h5>
       <p class="ethereum-step__group-instruction">
         {{ $t(`${I18N_KEY_PREFIX}.group-instruction`) }}
@@ -52,8 +52,8 @@
                 :disabled="
                   isSubmitting || isSubmitted || editableGroupIdx !== -1
                 "
-                @edit="editGroup(idx)"
-                @remove="removeGroup(idx)"
+                @edit="editableGroupIdx = idx"
+                @remove="form.ethereumConfig.groups.splice(idx, 1)"
               />
             </li>
           </transition-group>
@@ -64,21 +64,18 @@
 </template>
 
 <script lang="ts" setup>
-import { type FormValidation } from '@/composables'
+import { useFormValidation } from '@/composables'
 import { CheckboxField, InputField } from '@/fields'
+import { storeToRefs } from '@/store'
+import { address, required } from '@/validators'
 import { nextTick, ref, watch } from 'vue'
 import { GroupBuilder, GroupInfoCard } from './components'
-import type { EthereumConfigGroup, Form } from '../../types'
+import { useStore } from '../../store'
+import { type EthereumConfigGroup } from '../../types'
 
 const I18N_KEY_PREFIX = 'mor20-creation-form.ethereum-step'
 
-const emit = defineEmits<{
-  (event: 'update:form', value: Form): void
-}>()
-
-const props = defineProps<{
-  form: Form
-  formValidation: FormValidation
+defineProps<{
   isSubmitting: boolean
   isSubmitted: boolean
 }>()
@@ -87,8 +84,27 @@ const groupsElement = ref<HTMLDivElement | null>(null)
 const groupsListWrpElement = ref<HTMLDivElement | null>(null)
 const editableGroupIdx = ref(-1)
 
+const { form } = storeToRefs(useStore())
+
+const { getFieldErrorMessage, touchField } = useFormValidation(form, {
+  ethereumConfig: {
+    adminContractAddress: { required, address },
+    // groups validation is delegated to GroupBuilder.vue
+  },
+})
+
+const onGroupBuild = (group: EthereumConfigGroup) => {
+  if (editableGroupIdx.value !== -1) {
+    form.value.ethereumConfig.groups.splice(editableGroupIdx.value, 1, group)
+    editableGroupIdx.value = -1
+    return
+  }
+
+  form.value.ethereumConfig.groups.push(group)
+}
+
 watch(
-  () => props.form.ethereumConfig.groups.length,
+  () => form.value.ethereumConfig.groups.length,
   function scrollToBottom() {
     nextTick(() => {
       if (!groupsListWrpElement.value) return
@@ -107,61 +123,6 @@ watch(editableGroupIdx, newIdx => {
     behavior: 'smooth',
   })
 })
-
-const emitRootField = (field: keyof Form['ethereumConfig'], value: unknown) => {
-  emit('update:form', {
-    ...props.form,
-    ethereumConfig: { ...props.form.ethereumConfig, [field]: value },
-  })
-}
-
-const emitNewGroup = (group: EthereumConfigGroup) => {
-  emit('update:form', {
-    ...props.form,
-    ethereumConfig: {
-      ...props.form.ethereumConfig,
-      groups: [...props.form.ethereumConfig.groups, group],
-    },
-  })
-}
-
-const emitEditedGroup = (group: EthereumConfigGroup) => {
-  emit('update:form', {
-    ...props.form,
-    ethereumConfig: {
-      ...props.form.ethereumConfig,
-      groups: props.form.ethereumConfig.groups.toSpliced(
-        editableGroupIdx.value,
-        1,
-        group,
-      ),
-    },
-  })
-}
-
-const onGroupBuild = (group: EthereumConfigGroup) => {
-  if (editableGroupIdx.value !== -1) {
-    emitEditedGroup(group)
-    editableGroupIdx.value = -1
-    return
-  }
-
-  emitNewGroup(group)
-}
-
-const editGroup = (idx: number) => {
-  editableGroupIdx.value = idx
-}
-
-const removeGroup = (idx: number) => {
-  emit('update:form', {
-    ...props.form,
-    ethereumConfig: {
-      ...props.form.ethereumConfig,
-      groups: props.form.ethereumConfig.groups.filter((_, i) => i !== idx),
-    },
-  })
-}
 </script>
 
 <style lang="scss" scoped>
