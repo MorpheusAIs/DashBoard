@@ -159,10 +159,9 @@ const handler = () => {
 }
 
 watch(
-  () => web3ProvidersStore.provider.isConnected,
-  newIsConnected => {
-    if (!newIsConnected)
-      router.push({ name: ROUTE_NAMES.appMor20EcosystemMain })
+  () => web3ProvidersStore.provider.selectedAddress,
+  () => {
+    router.push({ name: ROUTE_NAMES.appMor20EcosystemMain })
   },
 )
 </script>
