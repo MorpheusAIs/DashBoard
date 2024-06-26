@@ -60,7 +60,7 @@ export const useFormValidation = (
       return errorMessage
     }
 
-  const resetValidation = () => {
+  const resetValidation: FormValidation['resetValidation'] = () => {
     validationController.value.$reset()
   }
 
