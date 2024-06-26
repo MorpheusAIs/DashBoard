@@ -48,10 +48,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/Mor20Ecosystem/MainPage.vue'),
       },
       {
-        path: 'contract-creation',
+        path: 'protocol-creation',
         name: ROUTE_NAMES.appMor20EcosystemProtocolCreation,
         component: () =>
-          import('@/pages/Mor20Ecosystem/ContractCreationPage.vue'),
+          import('@/pages/Mor20Ecosystem/ProtocolCreationPage.vue'),
         beforeEnter: to => {
           const { provider } = useWeb3ProvidersStore()
           if (!provider.isConnected)
