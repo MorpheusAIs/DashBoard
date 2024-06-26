@@ -1,6 +1,6 @@
 <template>
-  <main class="contract-creation-page">
-    <div class="contract-creation-page__wrp">
+  <main class="protocol-creation-page">
+    <div class="protocol-creation-page__wrp">
       <transition name="fade" mode="out-in">
         <mor20-creation-form
           :key="`${$route.query.network}.${web3ProvidersStore.address}`"
@@ -9,14 +9,14 @@
       </transition>
     </div>
     <basic-modal :is-shown="!!inputFieldsData" @update:is-shown="handler">
-      <div class="contract-creation-page__modal-content-wrp">
-        <svg class="contract-creation-page__modal-success-mark">
+      <div class="protocol-creation-page__modal-content-wrp">
+        <svg class="protocol-creation-page__modal-success-mark">
           <use href="/static/branding/success-mark.svg#id" />
         </svg>
-        <p class="contract-creation-page__modal-success-msg">
+        <p class="protocol-creation-page__modal-success-msg">
           {{ $t(`${I18N_KEY_PREFIX}.success-msg`) }}
         </p>
-        <ul v-if="inputFieldsData" class="contract-creation-page__fields-wrp">
+        <ul v-if="inputFieldsData" class="protocol-creation-page__fields-wrp">
           <li v-for="data in inputFieldsData" :key="data.address">
             <input-field
               :model-value="data.address"
@@ -25,14 +25,14 @@
             >
               <template #nodeRight>
                 <a
-                  class="contract-creation-page__field-link"
+                  class="protocol-creation-page__field-link"
                   target="_blank"
                   rel="noopener noreferrer"
                   tabindex="-1"
                   :href="data.explorerUrl"
                 >
                   <app-icon
-                    class="contract-creation-page__field-icon"
+                    class="protocol-creation-page__field-icon"
                     :name="$icons.externalLink"
                   />
                 </a>
@@ -64,7 +64,7 @@ onBeforeRouteUpdate(to => {
     return { ...to, name: ROUTE_NAMES.app }
 })
 
-const I18N_KEY_PREFIX = 'mor20-ecosystem.contract-creation-page'
+const I18N_KEY_PREFIX = 'mor20-ecosystem.protocol-creation-page'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -168,7 +168,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.contract-creation-page {
+.protocol-creation-page {
   $z-index: 1;
 
   position: relative;
@@ -220,35 +220,35 @@ watch(
   }
 }
 
-.contract-creation-page__wrp {
+.protocol-creation-page__wrp {
   @include page-wrp;
 }
 
-.contract-creation-page__modal-content-wrp {
+.protocol-creation-page__modal-content-wrp {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.contract-creation-page__modal-success-mark {
+.protocol-creation-page__modal-success-mark {
   height: toRem(86);
   width: toRem(84);
 }
 
-.contract-creation-page__modal-success-msg {
+.protocol-creation-page__modal-success-msg {
   margin-top: toRem(24);
 
   @include body-1-regular;
 }
 
-.contract-creation-page__fields-wrp {
+.protocol-creation-page__fields-wrp {
   margin-top: toRem(20);
   display: grid;
   gap: toRem(16);
   width: 100%;
 }
 
-.contract-creation-page__field-link {
+.protocol-creation-page__field-link {
   color: var(--primary-main);
   transition: color var(--transition-duration-fast)
     var(--transition-timing-default);
@@ -259,7 +259,7 @@ watch(
   }
 }
 
-.contract-creation-page__field-icon {
+.protocol-creation-page__field-icon {
   height: toRem(24);
   width: toRem(24);
 }

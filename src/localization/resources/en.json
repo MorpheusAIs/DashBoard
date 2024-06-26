@@ -179,7 +179,7 @@
         }
       }
     },
-    "contract-creation-page": {
+    "protocol-creation-page": {
       "distribution-address-label": "Distribution address",
       "l1-sender-address-label": "L1 Sender address",
       "l2-message-receiver-address-label": "L2 Message Receiver address",
