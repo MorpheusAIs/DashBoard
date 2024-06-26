@@ -10,7 +10,7 @@ export interface FormValidation {
   getFieldErrorMessage: (fieldPath: string) => string
   isFieldsValid: ComputedRef<boolean>
   isFormValid: () => boolean
-  reset: () => void
+  resetValidation: () => void
   touchField: (fieldPath: string) => void
 }
 
@@ -60,7 +60,7 @@ export const useFormValidation = (
       return errorMessage
     }
 
-  const reset = () => {
+  const resetValidation = () => {
     validationController.value.$reset()
   }
 
@@ -74,7 +74,7 @@ export const useFormValidation = (
   return {
     isFieldsValid,
     getFieldErrorMessage,
-    reset,
+    resetValidation,
     touchField,
     isFormValid,
   }

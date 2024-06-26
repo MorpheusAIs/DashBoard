@@ -85,7 +85,7 @@ import { useFormValidation } from '@/composables'
 import { CheckboxField, DatetimeField, InputField } from '@/fields'
 import { Time } from '@/utils'
 import { ether, integer, minValue, numeric, required } from '@/validators'
-import { computed, reactive, watch } from 'vue'
+import { computed, nextTick, reactive, watch } from 'vue'
 import { type EthereumConfigGroup } from '../../../types'
 
 const I18N_KEY_PREFIX = 'mor20-creation-form.ethereum-step.group-builder'
@@ -121,23 +121,28 @@ const group = reactive<EthereumConfigGroup>({
   ...(props.preset || DEFAULT_PRESET),
 })
 
-const { getFieldErrorMessage, isFieldsValid, isFormValid, reset, touchField } =
-  useFormValidation(
-    group,
-    computed(() => ({
-      payoutStartAt: { required, minValue: minValue(new Time().timestamp) },
-      decreaseInterval: { required, integer },
-      claimLockPeriod: { required, numeric },
-      initialReward: { required, ether },
-      rewardDecrease: { required, ether },
-      ...(group.isPublic && {
-        withdrawLockPeriod: { required, numeric },
-        withdrawLockPeriodAfterStake: { required, numeric },
-        minimalStake: { required, ether },
-      }),
-    })),
-    { $scope: false },
-  )
+const {
+  getFieldErrorMessage,
+  isFieldsValid,
+  isFormValid,
+  resetValidation,
+  touchField,
+} = useFormValidation(
+  group,
+  computed(() => ({
+    payoutStartAt: { required, minValue: minValue(new Time().timestamp) },
+    decreaseInterval: { required, integer },
+    claimLockPeriod: { required, numeric },
+    initialReward: { required, ether },
+    rewardDecrease: { required, ether },
+    ...(group.isPublic && {
+      withdrawLockPeriod: { required, numeric },
+      withdrawLockPeriodAfterStake: { required, numeric },
+      minimalStake: { required, ether },
+    }),
+  })),
+  { $scope: false },
+)
 
 const build = () => {
   if (!isFormValid()) {
@@ -146,7 +151,7 @@ const build = () => {
 
   emit('build', { ...group })
   Object.assign(group, DEFAULT_PRESET)
-  reset()
+  nextTick(resetValidation)
 }
 
 watch(
