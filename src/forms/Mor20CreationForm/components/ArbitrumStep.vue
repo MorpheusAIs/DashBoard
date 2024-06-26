@@ -2,48 +2,38 @@
   <div class="arbitrum-step">
     <div class="arbitrum-step__fields">
       <input-field
-        :model-value="form.arbitrumConfig.tokenName"
+        v-model="form.arbitrumConfig.tokenName"
         :label="$t(`${I18N_KEY_PREFIX}.token-name-label`)"
         :placeholder="$t(`${I18N_KEY_PREFIX}.token-name-placeholder`)"
-        :error-message="
-          formValidation.getFieldErrorMessage('arbitrumConfig.tokenName')
-        "
+        :error-message="getFieldErrorMessage('arbitrumConfig.tokenName')"
         :disabled="isSubmitting || isSubmitted"
-        @blur="formValidation.touchField('arbitrumConfig.tokenName')"
-        @update:model-value="emitRootField('tokenName', $event)"
+        @blur="touchField('arbitrumConfig.tokenName')"
       />
       <input-field
-        :model-value="form.arbitrumConfig.tokenSymbol"
+        v-model="form.arbitrumConfig.tokenSymbol"
         :label="$t(`${I18N_KEY_PREFIX}.token-symbol-label`)"
         :placeholder="$t(`${I18N_KEY_PREFIX}.token-symbol-placeholder`)"
-        :error-message="
-          formValidation.getFieldErrorMessage('arbitrumConfig.tokenSymbol')
-        "
+        :error-message="getFieldErrorMessage('arbitrumConfig.tokenSymbol')"
         :disabled="isSubmitting || isSubmitted"
-        @blur="formValidation.touchField('arbitrumConfig.tokenSymbol')"
-        @update:model-value="emitRootField('tokenSymbol', $event)"
+        @blur="touchField('arbitrumConfig.tokenSymbol')"
       />
       <input-field
-        :model-value="form.arbitrumConfig.adminContractAddress"
+        v-model="form.arbitrumConfig.adminContractAddress"
         :label="$t(`${I18N_KEY_PREFIX}.admin-contract-address-label`)"
         :placeholder="
           $t(`${I18N_KEY_PREFIX}.admin-contract-address-placeholder`)
         "
         :error-message="
-          formValidation.getFieldErrorMessage(
-            'arbitrumConfig.adminContractAddress',
-          )
+          getFieldErrorMessage('arbitrumConfig.adminContractAddress')
         "
         :disabled="isSubmitting || isSubmitted"
-        @blur="formValidation.touchField('arbitrumConfig.adminContractAddress')"
-        @update:model-value="emitRootField('adminContractAddress', $event)"
+        @blur="touchField('arbitrumConfig.adminContractAddress')"
       />
       <checkbox-field
-        :model-value="form.arbitrumConfig.isUpgradeable"
+        v-model="form.arbitrumConfig.isUpgradeable"
+        class="arbitrum-step__is-upgradeable-checkbox"
         :label="$t(`${I18N_KEY_PREFIX}.is-upgradeable-label`)"
         :disabled="isSubmitting || isSubmitted"
-        class="arbitrum-step__is-upgradeable-checkbox"
-        @update:model-value="emitRootField('isUpgradeable', $event)"
       />
     </div>
     <div class="arbitrum-step__divider" />
@@ -62,74 +52,54 @@
       </p>
       <div class="arbitrum-step__settings-fields">
         <input-field
-          :model-value="form.arbitrumConfig.settings.tokenInAddress"
+          v-model="form.arbitrumConfig.settings.tokenInAddress"
           :label="$t(`${I18N_KEY_PREFIX}.settings.token-in-address-label`)"
           :placeholder="
             $t(`${I18N_KEY_PREFIX}.settings.token-in-address-placeholder`)
           "
           :error-message="
-            formValidation.getFieldErrorMessage(
-              'arbitrumConfig.settings.tokenInAddress',
-            )
+            getFieldErrorMessage('arbitrumConfig.settings.tokenInAddress')
           "
           :disabled="isSubmitting || isSubmitted"
-          @blur="
-            formValidation.touchField('arbitrumConfig.settings.tokenInAddress')
-          "
-          @update:model-value="emitSettingsField('tokenInAddress', $event)"
+          @blur="touchField('arbitrumConfig.settings.tokenInAddress')"
         />
         <input-field
-          :model-value="form.arbitrumConfig.settings.tokenOutAddress"
+          v-model="form.arbitrumConfig.settings.tokenOutAddress"
           :label="$t(`${I18N_KEY_PREFIX}.settings.token-out-address-label`)"
           :placeholder="
             $t(`${I18N_KEY_PREFIX}.settings.token-out-address-placeholder`)
           "
           :error-message="
-            formValidation.getFieldErrorMessage(
-              'arbitrumConfig.settings.tokenOutAddress',
-            )
+            getFieldErrorMessage('arbitrumConfig.settings.tokenOutAddress')
           "
           :disabled="isSubmitting || isSubmitted"
-          @blur="
-            formValidation.touchField('arbitrumConfig.settings.tokenOutAddress')
-          "
-          @update:model-value="emitSettingsField('tokenOutAddress', $event)"
+          @blur="touchField('arbitrumConfig.settings.tokenOutAddress')"
         />
         <select-field
-          :model-value="form.arbitrumConfig.settings.firstSwapFee"
+          v-model="form.arbitrumConfig.settings.firstSwapFee"
           :value-options="UNISWAP_FEE_OPTIONS"
           :label="$t(`${I18N_KEY_PREFIX}.settings.first-swap-fee-label`)"
           :placeholder="
             $t(`${I18N_KEY_PREFIX}.settings.first-swap-fee-placeholder`)
           "
           :error-message="
-            formValidation.getFieldErrorMessage(
-              'arbitrumConfig.settings.firstSwapFee',
-            )
+            getFieldErrorMessage('arbitrumConfig.settings.firstSwapFee')
           "
           :disabled="isSubmitting || isSubmitted"
-          @blur="
-            formValidation.touchField('arbitrumConfig.settings.firstSwapFee')
-          "
-          @update:model-value="emitSettingsField('firstSwapFee', $event)"
+          @blur="touchField('arbitrumConfig.settings.firstSwapFee')"
         />
         <select-field
-          :model-value="form.arbitrumConfig.settings.secondSwapFee"
+          v-model="form.arbitrumConfig.settings.secondSwapFee"
           :value-options="UNISWAP_FEE_OPTIONS"
           :label="$t(`${I18N_KEY_PREFIX}.settings.second-swap-fee-label`)"
           :placeholder="
             $t(`${I18N_KEY_PREFIX}.settings.second-swap-fee-placeholder`)
           "
           :error-message="
-            formValidation.getFieldErrorMessage(
-              'arbitrumConfig.settings.secondSwapFee',
-            )
+            getFieldErrorMessage('arbitrumConfig.settings.secondSwapFee')
           "
           :disabled="isSubmitting || isSubmitted"
-          @blur="
-            formValidation.touchField('arbitrumConfig.settings.secondSwapFee')
-          "
-          @update:model-value="emitSettingsField('secondSwapFee', $event)"
+          @blur="touchField('arbitrumConfig.settings.secondSwapFee')"
         />
       </div>
     </div>
@@ -137,43 +107,35 @@
 </template>
 
 <script lang="ts" setup>
-import { type FormValidation } from '@/composables'
+import { useFormValidation } from '@/composables'
 import { CheckboxField, InputField, SelectField } from '@/fields'
+import { storeToRefs } from '@/store'
+import { address, required } from '@/validators'
 import { UNISWAP_FEE_OPTIONS } from '../const'
-import { type Form } from '../types'
+import { useStore } from '../store'
 
 const I18N_KEY_PREFIX = 'mor20-creation-form.arbitrum-step'
 
-const emit = defineEmits<{
-  (event: 'update:form', value: Form): void
-}>()
-
-const props = defineProps<{
-  form: Form
-  formValidation: FormValidation
+defineProps<{
   isSubmitting: boolean
   isSubmitted: boolean
 }>()
 
-const emitRootField = (field: keyof Form['arbitrumConfig'], value: unknown) => {
-  emit('update:form', {
-    ...props.form,
-    arbitrumConfig: { ...props.form.arbitrumConfig, [field]: value },
-  })
-}
+const { form } = storeToRefs(useStore())
 
-const emitSettingsField = (
-  field: keyof Form['arbitrumConfig']['settings'],
-  value: unknown,
-) => {
-  emit('update:form', {
-    ...props.form,
-    arbitrumConfig: {
-      ...props.form.arbitrumConfig,
-      settings: { ...props.form.arbitrumConfig.settings, [field]: value },
+const { getFieldErrorMessage, touchField } = useFormValidation(form, {
+  arbitrumConfig: {
+    tokenName: { required },
+    tokenSymbol: { required },
+    adminContractAddress: { required, address },
+    settings: {
+      tokenInAddress: { required, address },
+      tokenOutAddress: { required, address },
+      firstSwapFee: { required },
+      secondSwapFee: { required },
     },
-  })
-}
+  },
+})
 </script>
 
 <style lang="scss" scoped>

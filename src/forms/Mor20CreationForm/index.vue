@@ -114,19 +114,6 @@ const submitBtnText = computed<string>(() =>
 const formValidation = useFormValidation(
   form,
   computed(() => ({
-    ...(currentStep.value.id === STEP_IDS.arbitrum && {
-      arbitrumConfig: {
-        tokenName: { required },
-        tokenSymbol: { required },
-        adminContractAddress: { required, address },
-        settings: {
-          tokenInAddress: { required, address },
-          tokenOutAddress: { required, address },
-          firstSwapFee: { required },
-          secondSwapFee: { required },
-        },
-      },
-    }),
     ...(currentStep.value.id === STEP_IDS.ethereum && {
       ethereumConfig: {
         adminContractAddress: { required, address },
