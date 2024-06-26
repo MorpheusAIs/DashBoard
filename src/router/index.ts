@@ -1,4 +1,5 @@
 import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { sleep } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import {
   onBeforeRouteUpdate,
@@ -52,9 +53,15 @@ const routes: RouteRecordRaw[] = [
         name: ROUTE_NAMES.appMor20EcosystemProtocolCreation,
         component: () =>
           import('@/pages/Mor20Ecosystem/ProtocolCreationPage.vue'),
-        beforeEnter: to => {
+        beforeEnter: async to => {
           const { provider } = useWeb3ProvidersStore()
-          if (!provider.isConnected)
+
+          // waiting for the web3 provider to be initialized on page reload
+          if (!provider.selectedAddress) {
+            await sleep(1000)
+          }
+
+          if (!provider.selectedAddress)
             return { ...to, name: ROUTE_NAMES.appMor20EcosystemMain }
         },
       },
