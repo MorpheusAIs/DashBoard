@@ -71,7 +71,7 @@ import { AppIcon } from '@/common'
 import { ICON_NAMES } from '@/enums'
 import { BN, DECIMALS } from '@distributedlab/tools'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, ref, useAttrs, useSlots } from 'vue'
+import { computed, nextTick, onMounted, ref, useAttrs, useSlots } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -167,21 +167,25 @@ onMounted(() => {
   if (!inputEl.value) return
 
   if (slots?.nodeLeft && nodeLeftWrp.value) {
-    inputEl.value?.style.setProperty(
-      'padding-left',
-      `calc(${
-        nodeLeftWrp.value?.offsetWidth || 0
-      }px + var(--field-padding-left) * 2)`,
-    )
+    nextTick(() => {
+      inputEl.value?.style.setProperty(
+        'padding-left',
+        `calc(${
+          nodeLeftWrp.value?.offsetWidth || 0
+        }px + var(--field-padding-left) * 2)`,
+      )
+    })
   }
 
   if (slots?.nodeRight && nodeRightWrp.value) {
-    inputEl.value?.style.setProperty(
-      'padding-right',
-      `calc(${
-        nodeRightWrp.value?.offsetWidth || 0
-      }px + var(--field-padding-right) * 2)`,
-    )
+    nextTick(() => {
+      inputEl.value?.style.setProperty(
+        'padding-right',
+        `calc(${
+          nodeRightWrp.value?.offsetWidth || 0
+        }px + var(--field-padding-right) * 2)`,
+      )
+    })
   }
 })
 

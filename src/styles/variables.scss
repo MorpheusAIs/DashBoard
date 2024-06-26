@@ -130,6 +130,11 @@
   --field-label: var(--text-secondary-main);
   --field-label-margin-bottom: #{toRem(6)};
 
+  @include respond-to(medium) {
+    --field-label-font-size: #{toRem(14)};
+    --field-label-line-height: #{toRem(20)};
+  }
+
   /* text */
   --field-text-font-family: var(--app-font-family);
   --field-text-font-size: #{toRem(18)};

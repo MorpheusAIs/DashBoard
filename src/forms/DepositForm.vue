@@ -15,6 +15,7 @@
         :error-message="getFieldErrorMessage('balanceOptionIdx')"
         :is-loading="isInitializing"
         :disabled="isSubmitting"
+        scheme="text"
         @update:model-value="
           form.balanceOptionIdx = balanceOptions.indexOf($event)
         "

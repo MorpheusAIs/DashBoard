@@ -1,14 +1,14 @@
 <template>
-  <select-field
-    v-model="selectedIdx"
+  <div
+    ref="rootElement"
     class="wallet-balances"
-    :is-loading="isInitializing"
+    :class="{
+      'wallet-balances--open': isDropMenuShown,
+      'wallet-balances--loading': isInitializing,
+    }"
   >
-    <template v-if="selectedBalance" #head>
-      <div
-        v-tooltip="selectedBalance.value"
-        class="wallet-balances__selected-balance"
-      >
+    <div v-tooltip="selectedBalance?.value" class="wallet-balances__head-wrp">
+      <template v-if="selectedBalance">
         <app-icon
           class="wallet-balances__balance-logo"
           :class="[
@@ -19,14 +19,22 @@
         <span class="wallet-balances__balance-value">
           {{ selectedBalance.value }}
         </span>
-      </div>
-    </template>
-    <template #default="{ selectField }">
+      </template>
+      <app-icon
+        class="wallet-balances__head-indicator"
+        :name="$icons.chevronDown"
+      />
+      <button
+        class="wallet-balances__head-btn"
+        @click="isDropMenuShown = !isDropMenuShown"
+      />
+    </div>
+    <drop-menu v-model:is-shown="isDropMenuShown">
       <button
         v-for="(balance, idx) in balances"
         :key="idx"
         class="wallet-balances__balance"
-        @click="selectField.select(idx)"
+        @click="onSelectBtnClick(idx)"
       >
         <app-icon
           class="wallet-balances__balance-logo"
@@ -37,20 +45,21 @@
           {{ balance.value }}
         </span>
         <app-icon
-          class="wallet-balances__balance-token-icon"
+          class="wallet-balances__balance-network-icon"
           :name="balance.tokenIconName"
         />
       </button>
-    </template>
-  </select-field>
+    </drop-menu>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import { DropMenu } from '@/common'
 import { ICON_NAMES } from '@/enums'
-import { SelectField } from '@/fields'
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
+import { onClickOutside } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 
@@ -62,8 +71,9 @@ type Balance = {
 
 let _morUpdateIntervalId: Parameters<typeof clearInterval>[0]
 
+const rootElement = ref<HTMLDivElement | null>(null)
+const isDropMenuShown = ref(false)
 const isInitializing = ref(true)
-const selectedIdx = ref(0)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -84,9 +94,15 @@ const balances = computed<Balance[]>(() => [
   },
 ])
 
+const selectedBalanceIdx = ref(0)
 const selectedBalance = computed<Balance | null>(
-  () => balances.value[selectedIdx.value] || null,
+  () => balances.value[selectedBalanceIdx.value] || null,
 )
+
+const onSelectBtnClick = (balanceIdx: number) => {
+  selectedBalanceIdx.value = balanceIdx
+  isDropMenuShown.value = false
+}
 
 const updateBalances = async (): Promise<void> => {
   if (!web3ProvidersStore.provider.selectedAddress)
@@ -130,6 +146,10 @@ const onChangeBalances = async () => {
   }
 }
 
+onClickOutside(rootElement, () => {
+  isDropMenuShown.value = false
+})
+
 onMounted(() => {
   init()
   bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
@@ -172,6 +192,18 @@ watch(() => web3ProvidersStore.networkId, init)
   background: var(--background-secondary-main);
   width: toRem(160);
 
+  &--loading {
+    &:before {
+      $z-index: 2;
+
+      z-index: $z-index;
+    }
+
+    @include skeleton;
+
+    border-radius: 0;
+  }
+
   :deep(.select-field__select-head-indicator) {
     right: toRem(10);
   }
@@ -181,26 +213,33 @@ watch(() => web3ProvidersStore.networkId, init)
   }
 }
 
-.wallet-balances__selected-balance {
+.wallet-balances__head-wrp {
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 0 toRem(6) 0 toRem(16);
-  color: var(--text-secondary-light);
+  padding: 0 toRem(34) 0 toRem(16);
   height: 100%;
+  color: var(--text-secondary-light);
 }
 
 .wallet-balances__balance {
+  $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
+
   display: flex;
   align-items: center;
   padding: toRem(12) toRem(16);
   color: var(--text-secondary-light);
   transition: var(--transition-duration-fast) var(--transition-timing-default);
 
-  &:not([disabled]):hover,
+  &:not([disabled]):hover {
+    background: #515c57;
+    box-shadow: $shadow-hover;
+  }
+
   &:not([disabled]):focus,
   &:not([disabled]):active {
-    background: var(--primary-main);
-    color: var(--text-primary-dark);
+    background: #515c57;
+    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 }
 
@@ -241,7 +280,29 @@ watch(() => web3ProvidersStore.networkId, init)
   }
 }
 
-.wallet-balances .wallet-balances__balance-token-icon {
+.wallet-balances__head-indicator {
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  right: toRem(10);
+  transform: translateY(-50%);
+  width: toRem(24);
+  height: toRem(24);
+  transition: var(--field-transition-duration) var(--field-transition-timing);
+  color: inherit;
+
+  .wallet-balances--open & {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.wallet-balances__head-btn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+}
+
+.wallet-balances__balance-network-icon {
   margin-left: toRem(6);
   height: toRem(20);
   width: toRem(20);
