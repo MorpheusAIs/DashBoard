@@ -4,47 +4,43 @@
       {{ $t(`${I18N_KEY_PREFIX}.instruction`) }}
     </p>
     <input-field
-      :model-value="form.generalConfig.projectName"
+      v-model="form.generalConfig.projectName"
       :placeholder="$t(`${I18N_KEY_PREFIX}.project-name-placeholder`)"
-      :error-message="
-        formValidation.getFieldErrorMessage('generalConfig.projectName')
-      "
-      :disabled="
-        isSubmitting ||
-        (form.stepId === STEP_IDS.arbitrum ? false : isSubmitted)
-      "
+      :error-message="getFieldErrorMessage('generalConfig.projectName')"
+      :disabled="isDisabled"
       class="general-step__project-name"
-      @blur="formValidation.touchField('generalConfig.projectName')"
-      @update:model-value="emitRootField('projectName', $event as string)"
+      @blur="touchField('generalConfig.projectName')"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { type FormValidation } from '@/composables'
+import { useFormValidation } from '@/composables'
 import { InputField } from '@/fields'
+import { storeToRefs } from '@/store'
+import { required } from '@/validators'
+import { computed } from 'vue'
 import { STEP_IDS } from '../enums'
-import { type Form } from '../types'
+import { useStore } from '../store'
 
 const I18N_KEY_PREFIX = 'mor20-creation-form.general-step'
 
-const emit = defineEmits<{
-  (event: 'update:form', value: Form): void
-}>()
-
 const props = defineProps<{
-  form: Form
-  formValidation: FormValidation
   isSubmitting: boolean
   isSubmitted: boolean
 }>()
 
-const emitRootField = (field: keyof Form['generalConfig'], value: string) => {
-  emit('update:form', {
-    ...props.form,
-    generalConfig: { ...props.form.generalConfig, [field]: value },
-  })
-}
+const { form } = storeToRefs(useStore())
+
+const { getFieldErrorMessage, touchField } = useFormValidation(form, {
+  generalConfig: { projectName: { required } },
+})
+
+const isDisabled = computed(
+  () =>
+    props.isSubmitting ||
+    (form.value.stepId === STEP_IDS.arbitrum ? false : props.isSubmitted),
+)
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
-import { defineStore, useWeb3ProvidersStore } from '@/store'
-import { useStorage } from '@vueuse/core'
+import { defineStore, storeToRefs, useWeb3ProvidersStore } from '@/store'
+import { useLocalStorage } from '@vueuse/core'
 import { computed } from 'vue'
 import { UNISWAP_FEE_OPTIONS } from './const'
 import { STEP_IDS } from './enums'
@@ -8,14 +8,13 @@ import { type Form } from './types'
 const STORE_NAME = 'mor20-creation-store'
 
 export const useStore = defineStore(STORE_NAME, () => {
-  const web3ProvidersStore = useWeb3ProvidersStore()
+  const { address, networkId } = storeToRefs(useWeb3ProvidersStore())
 
   const formStorageKey = computed<string>(
-    () =>
-      `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.mor20-creation-form`,
+    () => `${address.value}.${networkId.value}.mor20-creation-form`,
   )
 
-  const form = useStorage<Form>(formStorageKey.value, {
+  const form = useLocalStorage<Form>(formStorageKey.value, {
     stepId: STEP_IDS.general,
     generalConfig: {
       projectName: '',

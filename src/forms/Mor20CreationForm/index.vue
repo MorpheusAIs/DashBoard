@@ -114,9 +114,6 @@ const submitBtnText = computed<string>(() =>
 const formValidation = useFormValidation(
   form,
   computed(() => ({
-    ...(currentStep.value.id === STEP_IDS.general && {
-      generalConfig: { projectName: { required } },
-    }),
     ...(currentStep.value.id === STEP_IDS.arbitrum && {
       arbitrumConfig: {
         tokenName: { required },
