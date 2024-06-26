@@ -61,12 +61,11 @@ import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { parseUnits } from '@/utils'
 import { address, required } from '@/validators'
 import { config } from '@config'
-import { useStorage } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { ArbitrumStep, EthereumStep, GeneralStep, StepTabs } from './components'
-import { UNISWAP_FEE_OPTIONS } from './const'
 import { STEP_IDS } from './enums'
-import type { Form, Step } from './types'
+import { useStore } from './store'
+import { type Step } from './types'
 
 const emit = defineEmits<{
   (event: 'success'): void
@@ -74,38 +73,10 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
+const { form, formStorageKey } = storeToRefs(useStore())
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const storageKey = computed<string>(
-  () =>
-    `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.mor20-creation-form`,
-)
-
 const isSubmitting = ref(false)
-
-const form = useStorage<Form>(storageKey.value, {
-  stepId: STEP_IDS.general,
-  generalConfig: {
-    projectName: '',
-  },
-  arbitrumConfig: {
-    tokenName: '',
-    tokenSymbol: '',
-    adminContractAddress: '',
-    isUpgradeable: true,
-    settings: {
-      tokenInAddress: '',
-      tokenOutAddress: '',
-      firstSwapFee: UNISWAP_FEE_OPTIONS[2],
-      secondSwapFee: UNISWAP_FEE_OPTIONS[2],
-    },
-  },
-  ethereumConfig: {
-    adminContractAddress: '',
-    isUpgradeable: true,
-    groups: [],
-  },
-})
 
 const steps = computed<Step[]>(() => {
   const stepIds = Object.values(STEP_IDS)
@@ -287,7 +258,7 @@ const onSubmitBtnClick = async () => {
         currentStepIdx.value++
         break
       case STEP_IDS.ethereum:
-        localStorage.removeItem(storageKey.value)
+        localStorage.removeItem(formStorageKey.value)
         emit('success')
     }
   } catch (error) {
