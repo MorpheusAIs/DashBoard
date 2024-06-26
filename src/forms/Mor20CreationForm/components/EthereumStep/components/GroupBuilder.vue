@@ -94,7 +94,7 @@ import { ether, integer, minValue, numeric, required } from '@/validators'
 import { computed, reactive, watch } from 'vue'
 import { type EthereumConfigGroup } from '../../../types'
 
-const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step.group-builder'
+const I18N_KEY_PREFIX = 'mor20-creation-form.ethereum-step.group-builder'
 
 const DEFAULT_PRESET: Readonly<EthereumConfigGroup> = Object.freeze({
   isPublic: true,

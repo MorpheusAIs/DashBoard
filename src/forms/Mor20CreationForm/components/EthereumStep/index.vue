@@ -18,7 +18,7 @@
       />
       <checkbox-field
         :model-value="form.ethereumConfig.isUpgradeable"
-        :label="$t('contract-creation-form.ethereum-step.is-upgradeable-label')"
+        :label="$t(`${I18N_KEY_PREFIX}.is-upgradeable-label`)"
         :disabled="isSubmitting || isSubmitted"
         class="ethereum-step__is-upgradeable-checkbox"
         @update:model-value="emitRootField('isUpgradeable', $event)"
@@ -70,7 +70,7 @@ import { nextTick, ref, watch } from 'vue'
 import { GroupBuilder, GroupInfoCard } from './components'
 import type { EthereumConfigGroup, Form } from '../../types'
 
-const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step'
+const I18N_KEY_PREFIX = 'mor20-creation-form.ethereum-step'
 
 const emit = defineEmits<{
   (event: 'update:form', value: Form): void

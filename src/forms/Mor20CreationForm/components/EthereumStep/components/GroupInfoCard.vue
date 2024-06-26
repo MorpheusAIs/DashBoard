@@ -59,7 +59,7 @@ type Controller = {
   onClick: () => void
 }
 
-const I18N_KEY_PREFIX = 'contract-creation-form.ethereum-step.group-info-card'
+const I18N_KEY_PREFIX = 'mor20-creation-form.ethereum-step.group-info-card'
 const TIME_FORMAT = 'MMM DD, YYYY h:mmA'
 const CONTROLLERS: Controller[] = [
   {

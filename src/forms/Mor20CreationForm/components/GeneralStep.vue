@@ -26,7 +26,7 @@ import { InputField } from '@/fields'
 import { STEP_IDS } from '../enums'
 import { type Form } from '../types'
 
-const I18N_KEY_PREFIX = 'contract-creation-form.general-step'
+const I18N_KEY_PREFIX = 'mor20-creation-form.general-step'
 
 const emit = defineEmits<{
   (event: 'update:form', value: Form): void

@@ -1,5 +1,5 @@
 <template>
-  <form class="contract-creation-form" @submit.prevent>
+  <form class="mor20-creation-form" @submit.prevent>
     <app-button
       scheme="link"
       :route="
@@ -7,18 +7,18 @@
           ? { name: $routes.appMor20EcosystemMain }
           : undefined
       "
-      :text="$t('contract-creation-form.prev-step-btn')"
+      :text="$t('mor20-creation-form.prev-step-btn')"
       :icon-left="$icons.arrowLeft"
       @click="onBackBtnClick"
     />
-    <div class="contract-creation-form__content">
-      <h2>{{ $t('contract-creation-form.title') }}</h2>
+    <div class="mor20-creation-form__content">
+      <h2>{{ $t('mor20-creation-form.title') }}</h2>
       <step-tabs
         :current-step="currentStep"
         :steps="steps"
-        class="contract-creation-form__step-tabs"
+        class="mor20-creation-form__step-tabs"
       />
-      <div class="contract-creation-form__divider" />
+      <div class="mor20-creation-form__divider" />
       <transition name="fade" mode="out-in">
         <component
           v-model:form="form"
@@ -26,25 +26,25 @@
           :is-submitting="isSubmitting"
           :is-submitted="currentStep.isSubmitted"
           :is="currentStepComponent"
-          class="contract-creation-form__step"
+          class="mor20-creation-form__step"
         />
       </transition>
     </div>
-    <div class="contract-creation-form__buttons">
+    <div class="mor20-creation-form__buttons">
       <app-button
-        class="contract-creation-form__btn"
+        class="mor20-creation-form__btn"
         color="secondary"
-        :text="$t('contract-creation-form.cancel-btn')"
+        :text="$t('mor20-creation-form.cancel-btn')"
         :route="{ name: $routes.appMor20EcosystemMain }"
       />
       <app-button
-        class="contract-creation-form__btn"
+        class="mor20-creation-form__btn"
         type="submit"
         :disabled="!formValidation.isFieldsValid.value || isSubmitting"
         @click="onSubmitBtnClick"
       >
         <transition name="fade" mode="out-in">
-          <span class="contract-creation-form__btn-text" :key="submitBtnText">
+          <span class="mor20-creation-form__btn-text" :key="submitBtnText">
             {{ submitBtnText }}
           </span>
         </transition>
@@ -78,7 +78,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const storageKey = computed<string>(
   () =>
-    `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.contract-creation-form`,
+    `${web3ProvidersStore.provider.selectedAddress}.${web3ProvidersStore.networkId}.mor20-creation-form`,
 )
 
 const isSubmitting = ref(false)
@@ -114,7 +114,7 @@ const steps = computed<Step[]>(() => {
 
   return stepIds.map((stepId, idx) => ({
     id: stepId,
-    title: t(`contract-creation-form.step-title.${stepId}`),
+    title: t(`mor20-creation-form.step-title.${stepId}`),
     isSubmitted: formStepIdx > idx,
   }))
 })
@@ -136,8 +136,8 @@ const currentStepComponent = computed(
 
 const submitBtnText = computed<string>(() =>
   !currentStep.value.isSubmitted
-    ? t(`contract-creation-form.submit-btn.${currentStep.value.id}`)
-    : t('contract-creation-form.submit-btn.next'),
+    ? t(`mor20-creation-form.submit-btn.${currentStep.value.id}`)
+    : t('mor20-creation-form.submit-btn.next'),
 )
 
 const formValidation = useFormValidation(
@@ -266,14 +266,14 @@ const onSubmitBtnClick = async () => {
     if (tx && explorerTxUrl) {
       bus.emit(
         BUS_EVENTS.info,
-        t('contract-creation-form.tx-sent-message', { explorerTxUrl }),
+        t('mor20-creation-form.tx-sent-message', { explorerTxUrl }),
       )
 
       await tx.wait()
 
       bus.emit(
         BUS_EVENTS.success,
-        t('contract-creation-form.success-message', { explorerTxUrl }),
+        t('mor20-creation-form.success-message', { explorerTxUrl }),
       )
     }
 
@@ -304,7 +304,7 @@ const onBackBtnClick = () => {
 </script>
 
 <style lang="scss" scoped>
-.contract-creation-form__content {
+.mor20-creation-form__content {
   margin-top: toRem(20);
   padding: toRem(40) toRem(38) toRem(28);
   border: toRem(1) solid;
@@ -317,7 +317,7 @@ const onBackBtnClick = () => {
   }
 }
 
-.contract-creation-form__step-tabs {
+.mor20-creation-form__step-tabs {
   margin-top: toRem(24);
 
   @include respond-to(medium) {
@@ -325,7 +325,7 @@ const onBackBtnClick = () => {
   }
 }
 
-.contract-creation-form__divider {
+.mor20-creation-form__divider {
   margin-top: toRem(24);
   height: toRem(1);
   background: linear-gradient(
@@ -339,7 +339,7 @@ const onBackBtnClick = () => {
   }
 }
 
-.contract-creation-form__step {
+.mor20-creation-form__step {
   margin-top: toRem(24);
 
   @include respond-to(medium) {
@@ -347,7 +347,7 @@ const onBackBtnClick = () => {
   }
 }
 
-.contract-creation-form__buttons {
+.mor20-creation-form__buttons {
   margin-top: toRem(32);
   margin-left: auto;
   display: flex;
@@ -364,7 +364,7 @@ const onBackBtnClick = () => {
   }
 }
 
-.contract-creation-form__btn {
+.mor20-creation-form__btn {
   width: 100%;
   max-width: toRem(272);
 
@@ -373,7 +373,7 @@ const onBackBtnClick = () => {
   }
 }
 
-.contract-creation-form__btn-text {
+.mor20-creation-form__btn-text {
   font: inherit;
   color: inherit;
 }

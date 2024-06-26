@@ -2,7 +2,7 @@
   <main class="contract-creation-page">
     <div class="contract-creation-page__wrp">
       <transition name="fade" mode="out-in">
-        <contract-creation-form
+        <mor20-creation-form
           :key="`${$route.query.network}.${web3ProvidersStore.address}`"
           @success="onFormSuccess"
         />
@@ -50,7 +50,7 @@ import { AppIcon, BasicModal } from '@/common'
 import { useI18n } from '@/composables'
 import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { InputField } from '@/fields'
-import { ContractCreationForm } from '@/forms'
+import { Mor20CreationForm } from '@/forms'
 import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'

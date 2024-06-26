@@ -142,7 +142,7 @@ import { CheckboxField, InputField, SelectField } from '@/fields'
 import { UNISWAP_FEE_OPTIONS } from '../const'
 import { type Form } from '../types'
 
-const I18N_KEY_PREFIX = 'contract-creation-form.arbitrum-step'
+const I18N_KEY_PREFIX = 'mor20-creation-form.arbitrum-step'
 
 const emit = defineEmits<{
   (event: 'update:form', value: Form): void
