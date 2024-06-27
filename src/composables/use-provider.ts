@@ -91,6 +91,9 @@ export const useProvider = (): IUseProvider => {
 
     try {
       await switchChain(chainId)
+
+      // onChainChanged provider event needs time for execute
+      await sleep(1000)
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
@@ -101,9 +104,9 @@ export const useProvider = (): IUseProvider => {
       // it's being used in case if user has added chain, but hasn't switched
       if (_providerReactiveState.chainId !== chainId)
         throw new errors.ProviderUserRejectedRequest()
-    } finally {
-      isChainSelecting.value = false
     }
+
+    isChainSelecting.value = false
   }
 
   const request: I['request'] = async body => {

@@ -3,6 +3,7 @@ on:
     branches:
       - "dev"
       - "main"
+      - "feature/mor20-ecosystem"
 
 permissions:
   packages: write
