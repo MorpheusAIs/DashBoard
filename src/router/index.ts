@@ -37,11 +37,6 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/mor20-ecosystem',
-    // TODO: remove the condition when the page will have a mainnet contract
-    beforeEnter: to => {
-      if (to.query.network === NETWORK_IDS.mainnet)
-        return { name: ROUTE_NAMES.app }
-    },
     children: [
       {
         path: '',
