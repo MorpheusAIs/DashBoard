@@ -83,5 +83,8 @@
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-eslint-parser": "^9.0.2",
     "yorkie": "^2.0.0"
+  },
+  "engines": {
+    "node": "18"
   }
 }
