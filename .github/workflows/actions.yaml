@@ -3,10 +3,11 @@ on:
     branches:
       - "dev"
       - "main"
+      - "feature/arbitrum-factory-deploy"
 
 permissions:
   packages: write
-  
+
 jobs:
   converge:
     name: Converge
@@ -33,7 +34,7 @@ jobs:
 
       - name: Run Build
         run: |
-          . $(werf ci-env github --as-file) 
+          . $(werf ci-env github --as-file)
           werf export web --tag ghcr.io/morpheusais/dashboard:$GITHUB_SHA --dev
 
   deploy:

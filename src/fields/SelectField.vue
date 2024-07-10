@@ -40,7 +40,10 @@
             :name="$icons.chevronDown"
           />
         </button>
-        <drop-menu v-model:is-shown="isDropMenuOpen">
+        <drop-menu
+          v-model:is-shown="isDropMenuOpen"
+          class="select-field__select-drop-menu"
+        >
           <template v-if="$slots.default">
             <slot
               :select-field="{
@@ -55,7 +58,7 @@
           <template v-else-if="valueOptions?.length">
             <button
               v-for="(option, idx) in valueOptions"
-              :key="`${idx}-${option.value}`"
+              :key="idx"
               :disabled="isDisabled || isReadonly"
               class="select-field__select-drop-menu-item"
               @click="select(option)"
@@ -103,7 +106,7 @@ const props = withDefaults(
     placeholder?: string
     errorMessage?: string
     note?: string
-    scheme?: 'primary'
+    scheme?: 'primary' | 'text'
     modification?: 'dropdown' | 'dropup'
     uid?: string
     isLoading?: boolean
@@ -231,14 +234,12 @@ $z-local-index: 2;
 
 .select-field__select-head-wrp {
   position: relative;
-  height: 100%;
+  height: max-content;
   width: 100%;
 }
 
 .select-field__select-head {
-  text-align: right;
-  color: var(--field-text);
-  padding-right: toRem(28);
+  text-align: left;
   height: 100%;
   width: 100%;
   transition: var(--field-transition-duration) var(--field-transition-timing);
@@ -248,11 +249,42 @@ $z-local-index: 2;
     color: var(--field-text-readonly);
   }
 
+  .select-field--primary & {
+    background: var(--field-bg-primary);
+    padding: var(--field-padding-top)
+      calc(var(--field-padding-right) * 2 + toRem(24))
+      var(--field-padding-bottom) var(--field-padding-right);
+
+    &[disabled] {
+      border-color: var(--field-border-disabled);
+    }
+
+    @include field-text;
+
+    @include field-border;
+  }
+
+  .select-field--text & {
+    padding: 0 toRem(28) 0 0;
+    color: var(--field-text);
+
+    @include body-1-semi-bold;
+  }
+
   .select-field--error & {
     border-color: var(--field-border-error);
   }
 
-  @include body-1-semi-bold;
+  .select-field--open &,
+  &:not([disabled]):focus {
+    border-color: var(--field-border-focus);
+  }
+
+  .select-field:not(.select-field--error) & {
+    &:not([disabled]):not(:focus):hover {
+      border-color: var(--field-border-hover);
+    }
+  }
 }
 
 .select-field__placeholder {
@@ -270,9 +302,19 @@ $z-local-index: 2;
   transition: var(--field-transition-duration) var(--field-transition-timing);
   color: inherit;
 
+  .select-field--primary & {
+    right: toRem(20);
+  }
+
   .select-field--dropup:not(.select-field--open) &,
   .select-field--dropdown.select-field--open & {
     transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.select-field__select-drop-menu {
+  .select-field--primary & {
+    @include field-border;
   }
 }
 
@@ -286,18 +328,24 @@ $z-local-index: 2;
   background: var(--background-secondary-main);
   transition: var(--field-transition-duration) var(--field-transition-timing);
 
+  .select-field--primary & {
+    @include field-text;
+  }
+
+  .select-field--text & {
+    @include body-1-regular;
+  }
+
   &:not([disabled]):hover {
-    background: var(--primary-main);
-    color: var(--text-primary-dark);
+    background: #515c57;
     box-shadow: $shadow-hover;
   }
 
   &:not([disabled]):focus,
   &:not([disabled]):active {
+    background: #515c57;
     box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
-
-  @include body-1-regular;
 }
 
 .select-field__msg-wrp {

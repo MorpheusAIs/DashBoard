@@ -4,7 +4,7 @@
       <app-tabs :tabs="tabs" />
       <router-view v-slot="{ Component }" class="home-page__view">
         <keep-alive>
-          <component :is="Component" :key="$route.name" />
+          <component :is="Component" :key="$route.fullPath" />
         </keep-alive>
       </router-view>
     </div>
@@ -23,59 +23,35 @@ import { computed } from 'vue'
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const tabs = computed<Tab[]>(() => {
-  switch (web3ProvidersStore.networkId) {
-    case NETWORK_IDS.mainnet:
-      return [
-        {
-          title: t('home-page.capital-tab'),
-          id: 'capital',
-          route: { name: ROUTE_NAMES.appMainnetCapital },
-        },
-        {
-          title: t('home-page.coders-tab'),
-          id: 'coders',
-          href: config.CODE_CONTRIBUTION_URL,
-        },
-        {
-          title: t('home-page.compute-tab'),
-          id: 'compute',
-          href: config.COMPUTE_CONTRIBUTION_URL,
-        },
-        {
-          title: t('home-page.community-tab'),
-          id: 'community',
-          href: config.COMMUNITY_CONTRIBUTION_URL,
-        },
-      ]
-
-    case NETWORK_IDS.testnet:
-      return [
-        {
-          title: t('home-page.capital-tab'),
-          id: 'capital',
-          route: { name: ROUTE_NAMES.appTestnetCapital },
-        },
-        {
-          title: t('home-page.coders-tab'),
-          id: 'coders',
-          href: config.CODE_CONTRIBUTION_URL,
-        },
-        {
-          title: t('home-page.compute-tab'),
-          id: 'compute',
-          href: config.COMPUTE_CONTRIBUTION_URL,
-        },
-        {
-          title: t('home-page.community-tab'),
-          id: 'community',
-          route: { name: ROUTE_NAMES.appTestnetCommunity },
-        },
-      ]
-  }
-
-  return []
-})
+const tabs = computed<Tab[]>(() => [
+  {
+    title: t('home-page.capital-tab'),
+    id: 'capital',
+    route: { name: ROUTE_NAMES.appCapital },
+  },
+  {
+    title: t('home-page.coders-tab'),
+    id: 'coders',
+    href: config.CODE_CONTRIBUTION_URL,
+  },
+  {
+    title: t('home-page.compute-tab'),
+    id: 'compute',
+    href: config.COMPUTE_CONTRIBUTION_URL,
+  },
+  {
+    title: t('home-page.community-tab'),
+    id: 'community',
+    ...{
+      [NETWORK_IDS.mainnet]: {
+        href: config.COMMUNITY_CONTRIBUTION_URL,
+      },
+      [NETWORK_IDS.testnet]: {
+        route: { name: ROUTE_NAMES.appCommunity },
+      },
+    }[web3ProvidersStore.networkId],
+  },
+])
 </script>
 
 <style lang="scss" scoped>
@@ -131,12 +107,7 @@ const tabs = computed<Tab[]>(() => {
 }
 
 .home-page__content-wrp {
-  width: 100%;
-  max-width: toRem(1240);
-
-  @include respond-to(medium) {
-    max-width: unset;
-  }
+  @include page-wrp;
 }
 
 .home-page .home-page__view {

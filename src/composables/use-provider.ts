@@ -1,4 +1,4 @@
-import { type ETHEREUM_CHAINS } from '@/enums'
+import { type ETHEREUM_CHAIN_IDS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
 import { type EthereumType } from '@/types'
@@ -91,19 +91,22 @@ export const useProvider = (): IUseProvider => {
 
     try {
       await switchChain(chainId)
+
+      // onChainChanged provider event needs time for execute
+      await sleep(1000)
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
-      await addChain(config.chainsMap[chainId as ETHEREUM_CHAINS])
+      await addChain(config.chainsMap[chainId as ETHEREUM_CHAIN_IDS])
 
       // onChainChanged provider event needs time for execute
       await sleep(1000)
       // it's being used in case if user has added chain, but hasn't switched
       if (_providerReactiveState.chainId !== chainId)
         throw new errors.ProviderUserRejectedRequest()
-    } finally {
-      isChainSelecting.value = false
     }
+
+    isChainSelecting.value = false
   }
 
   const request: I['request'] = async body => {

@@ -1,4 +1,4 @@
-export enum ETHEREUM_CHAINS {
+export enum ETHEREUM_CHAIN_IDS {
   ethereum = '1',
   sepolia = '11155111',
   arbitrum = '42161',
