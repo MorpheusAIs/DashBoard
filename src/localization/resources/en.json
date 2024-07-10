@@ -1,7 +1,85 @@
 {
   "app-navbar": {
+    "mor20-ecosystem-link": "MOR20",
     "contract-faq-link": "Contract FAQ",
     "community-website-link": "Community Website"
+  },
+  "mor20-creation-form": {
+    "prev-step-btn": "Back",
+    "title": "Protocol creation",
+    "cancel-btn": "Cancel",
+    "submit-btn": {
+      "general": "Next",
+      "arbitrum": "Deploy on the Arbitrum",
+      "ethereum": "Deploy on the Ethereum",
+      "next": "Next"
+    },
+    "step-title": {
+      "general": "General configs",
+      "arbitrum": "Arbitrum configs",
+      "ethereum": "Ethereum configs"
+    },
+    "general-step": {
+      "instruction": "Please provide the required protocol details across three main sections of the form.",
+      "project-name-placeholder": "Project name"
+    },
+    "arbitrum-step": {
+      "token-name-label": "The name of the token for your protocol.",
+      "token-name-placeholder": "Token name",
+      "token-symbol-label": "The symbol of the token for your protocol.",
+      "token-symbol-placeholder": "Token symbol",
+      "admin-contract-address-label": "Specify the address of the protocol administrator. The administrator will be able to change the settings after deployment on the networks.",
+      "admin-contract-address-placeholder": "Contracts administrator address",
+      "is-upgradeable-label": "Keep upgradability?",
+      "settings": {
+        "default-token": "Your token",
+        "title":"Uniswap settings",
+        "description": "This section configures the parameters for exchanging yield for the project token.\nBy default, the exchange for the project token is done in 2 swaps. For example wstETH -> wETH and wETH -> {token}.",
+        "token-in-address-label": "The address of the token on which yield is generated, on the Arbitrum network (e.g. wstETH).",
+        "token-in-address-placeholder": "Yield token",
+        "token-out-address-label": "The yield token will be exchanged for the current token. For example (wETH).",
+        "token-out-address-placeholder": "Intermediate token",
+        "first-swap-fee-label": "Uniswap fee to swap yield token to intermediate token. It is specified as a percentage, usually it is 0.3%.",
+        "first-swap-fee-placeholder": "Swap fee for yield token",
+        "second-swap-fee-label": "Uniswap fee to swap intermediate token to project token. It is specified as a percentage, usually it is 0.3%.",
+        "second-swap-fee-placeholder": "Swap fee for project token"
+      }
+    },
+    "ethereum-step": {
+      "admin-contract-address-label": "Specify the address of the protocol administrator. The administrator will be able to change the settings after deployment on the networks.",
+      "admin-contract-address-placeholder": "Contracts administrator address",
+      "is-upgradeable-label": "Keep upgradability?",
+      "group-title": "Group #{idx}",
+      "group-instruction": "Add the new distribution group to your protocol.",
+      "group-builder": {
+        "is-public-label": "Is Public",
+        "payout-start-placeholder": "Payout start",
+        "decrease-interval-placeholder": "Decrease interval (in seconds)",
+        "withdraw-lock-period-placeholder": "Withdraw lock period (in hours)",
+        "claim-lock-period-placeholder": "Сlaim lock period (in hours)",
+        "withdraw-lock-period-after-stake-placeholder": "Withdraw lock period after stake (in hours)",
+        "initial-reward-placeholder": "Initial reward",
+        "reward-decrease-placeholder": "Reward decrease",
+        "minimal-stake-placeholder": "Minimal stake",
+        "build-btn": "Save group"
+      },
+      "group-info-card": {
+        "status": {
+          "public": "Public",
+          "private": "Private"
+        },
+        "payout-start-title": "Payout start",
+        "decrease-interval-title": "Decrease Interval",
+        "withdraw-lock-period-title": "Withdraw Locked Until",
+        "claim-lock-period-title": "Сlaim Lock Period",
+        "withdraw-lock-period-after-stake-title": "Withdraw Lock Period After Stake",
+        "initial-reward-title": "Initial Reward",
+        "reward-decrease-title": "Reward Decrease",
+        "minimal-stake-title": "Minimal Stake"
+      }
+    },
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "claim-form": {
     "address-placeholder": "Enter address",
@@ -73,6 +151,43 @@
       "dashboard-note--0": "Note: You can withdraw your stETH {daysCount} days after deposit."
     }
   },
+  "mor20-ecosystem": {
+    "main-page": {
+      "title": "MOR20 Ecosystem",
+      "instruction": "It looks like you don't have a MOR20 ecosystem yet. If you want to create one, click the button below.",
+      "create-contract-btn": "Create Contract",
+      "info-card": {
+        "token": {
+          "title": "Token",
+          "description": "The MOR20 Network Token with integrated LayerZero OFT (Omnichain Fungible Token) standard."
+        },
+        "distribution": {
+          "title": "Distribution",
+          "description": "The contract that distributes the\n\"Token\" to the depositors and the team members."
+        },
+        "l1-sender": {
+          "title": "L1 Sender",
+          "description": "A contract that allows to communicate between L1 and L2. It is used to send a minting request to the L2 using the Layer Zero. It is also used to transfer deposited tokens from the L1 to the L2."
+        },
+        "l2-msg-receiver": {
+          "title": "L2 Message Receiver",
+          "description": "A contract that receives Layer Zero messages from the \"L1Sender\" contract."
+        },
+        "l2-token-receiver": {
+          "title": "L2 Token Receiver V2",
+          "description": "A contract that receives tokens from the L1Sender contract and used for Uniswap market making with extended functionality."
+        }
+      }
+    },
+    "protocol-creation-page": {
+      "distribution-address-label": "Distribution address",
+      "l1-sender-address-label": "L1 Sender address",
+      "l2-message-receiver-address-label": "L2 Message Receiver address",
+      "l2-token-receiver-address-label": "L2 Token Receiver address",
+      "token-address-label": "Token address",
+      "success-msg": "Your protocol has been successfully deployed."
+    }
+  },
   "info-dashboard": {
     "header-title": "Amount of deposited stETH",
     "header-note": "Note: Amount of deposited stETH",
@@ -83,6 +198,9 @@
     "status--public": "Automated",
     "status--private": "Non-Automated"
   },
+  "info-card": {
+    "show-more": "Show more"
+  },
   "network-switch": {
     "mainnet": "Ethereum Mainnet",
     "testnet": "Ethereum Sepolia"
@@ -90,9 +208,12 @@
   "validations": {
     "field-error_address": "Field must be a valid address with prefix \"0x\"",
     "field-error_required": "Field must be filled in",
-    "field-error_ether": "Please enter an amount of stETH",
-    "field-error_maxEther": "Insufficient amount of stETH",
-    "field-error_minEther": "Field must be greater than or equal to {min}"
+    "field-error_ether": "Field must contain the amount of tokens",
+    "field-error_integer": "Field must be integer",
+    "field-error_numeric": "Field must be numeric",
+    "field-error_maxEther": "Insufficient amount of tokens",
+    "field-error_minEther": "Field must be greater than or equal to {min}",
+    "field-error_minValue": "The entered value is less than the minimum value"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",

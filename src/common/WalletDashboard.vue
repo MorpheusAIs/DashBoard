@@ -75,7 +75,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networks[web3ProvidersStore.networkId].extendedChainId,
+      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -84,18 +84,14 @@ const addToken = async () => {
         type: 'ERC20',
         options: {
           address:
-            config.networks[web3ProvidersStore.networkId].contractAddressesMap
-              .mor,
+            config.networksMap[web3ProvidersStore.networkId]
+              .contractAddressesMap.mor,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),
         },
       },
     })
-
-    await web3ProvidersStore.provider.selectChain(
-      config.networks[web3ProvidersStore.networkId].chainId,
-    )
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -214,6 +210,8 @@ onMounted(() => {
 }
 
 .wallet-dashboard__option {
+  $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
+
   display: flex;
   align-items: center;
   height: toRem(48);
@@ -228,12 +226,21 @@ onMounted(() => {
     border-color: $border-color;
   }
 
-  &:not([disabled]):hover,
+  &:not([disabled]):hover {
+    $background-color: #515c57;
+
+    background: $background-color;
+    border-color: $background-color;
+    box-shadow: $shadow-hover;
+  }
+
   &:not([disabled]):focus,
   &:not([disabled]):active {
-    background: var(--primary-main);
-    border-color: var(--primary-main);
-    color: var(--text-primary-dark);
+    $background-color: #515c57;
+
+    background: $background-color;
+    border-color: $background-color;
+    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 }
 

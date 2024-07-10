@@ -15,6 +15,7 @@
         :error-message="getFieldErrorMessage('balanceOptionIdx')"
         :is-loading="isInitializing"
         :disabled="isSubmitting"
+        scheme="text"
         @update:model-value="
           form.balanceOptionIdx = balanceOptions.indexOf($event)
         "
@@ -185,7 +186,7 @@ const fetchAllowanceByCurrency = async (
 
   return contract.providerBased.value.allowance(
     web3ProvidersStore.provider.selectedAddress,
-    config.networks[web3ProvidersStore.networkId].contractAddressesMap
+    config.networksMap[web3ProvidersStore.networkId].contractAddressesMap
       .erc1967Proxy,
   )
 }
@@ -201,7 +202,7 @@ const approveByCurrency = async (currency: CURRENCIES) => {
   }
 
   return contract.signerBased.value.approve(
-    config.networks[web3ProvidersStore.networkId].contractAddressesMap
+    config.networksMap[web3ProvidersStore.networkId].contractAddressesMap
       .erc1967Proxy,
     MAX_UINT_256,
   )
@@ -213,7 +214,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networks[web3ProvidersStore.networkId].chainId,
+      config.networksMap[web3ProvidersStore.networkId].l1.chainId,
     )
 
     let tx
@@ -230,7 +231,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networks[web3ProvidersStore.networkId].explorerUrl,
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
       tx.hash,
     )
 

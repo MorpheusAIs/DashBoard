@@ -1,5 +1,5 @@
 <template>
-  <transition name="drop-menu">
+  <transition name="drop">
     <div
       v-show="isShown"
       ref="dropMenuElement"
@@ -80,27 +80,6 @@ $z-index: 2;
 
   &--dropup {
     bottom: 120%;
-  }
-}
-
-.drop-menu-enter-active {
-  animation: drop-menu var(--field-transition-duration)
-    var(--transition-timing-default);
-}
-
-.drop-menu-leave-active {
-  animation: drop-menu var(--field-transition-duration)
-    var(--transition-timing-default) reverse;
-}
-
-@keyframes drop-menu {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  to {
-    opacity: 1;
   }
 }
 </style>

@@ -20,12 +20,13 @@
         v-on="listeners"
         :value="modelValue"
         :placeholder="placeholder"
-        :tabindex="isDisabled || isReadonly ? -1 : ($attrs.tabindex as number)"
         :type="inputType"
         :min="min"
         :max="max"
-        :disabled="isDisabled || isReadonly"
+        :disabled="isDisabled"
+        :readonly="isReadonly"
       />
+      <slot name="default" />
       <div
         v-if="$slots.nodeRight || isPasswordType"
         ref="nodeRightWrp"
@@ -70,7 +71,7 @@ import { AppIcon } from '@/common'
 import { ICON_NAMES } from '@/enums'
 import { BN, DECIMALS } from '@distributedlab/tools'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, ref, useAttrs, useSlots } from 'vue'
+import { computed, nextTick, onMounted, ref, useAttrs, useSlots } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -142,14 +143,16 @@ const listeners = computed(() => ({
 }))
 
 const inputClasses = computed(() => [
-  ...(slots.nodeLeft ? ['input-field--node-left'] : []),
-  ...(slots.nodeRight || isPasswordType.value || props.errorMessage
-    ? ['input-field--node-right']
-    : []),
-  ...(isDisabled.value ? ['input-field--disabled'] : []),
-  ...(isReadonly.value ? ['input-field--readonly'] : []),
-  ...(props.errorMessage ? ['input-field--error'] : []),
-  ...(props.isLoading ? ['input-field--loading'] : []),
+  {
+    'input-field--filled': props.modelValue,
+    'input-field--node-left': slots.nodeLeft,
+    'input-field--node-right':
+      slots.nodeRight || isPasswordType.value || props.errorMessage,
+    'input-field--disabled': isDisabled.value,
+    'input-field--readonly': isReadonly.value,
+    'input-field--error': props.errorMessage,
+    'input-field--loading': props.isLoading,
+  },
   `input-field--${props.scheme}`,
 ])
 
@@ -164,21 +167,25 @@ onMounted(() => {
   if (!inputEl.value) return
 
   if (slots?.nodeLeft && nodeLeftWrp.value) {
-    inputEl.value?.style.setProperty(
-      'padding-left',
-      `calc(${
-        nodeLeftWrp.value?.offsetWidth || 0
-      }px + var(--field-padding-left) * 2)`,
-    )
+    nextTick(() => {
+      inputEl.value?.style.setProperty(
+        'padding-left',
+        `calc(${
+          nodeLeftWrp.value?.offsetWidth || 0
+        }px + var(--field-padding-left) * 2)`,
+      )
+    })
   }
 
   if (slots?.nodeRight && nodeRightWrp.value) {
-    inputEl.value?.style.setProperty(
-      'padding-right',
-      `calc(${
-        nodeRightWrp.value?.offsetWidth || 0
-      }px + var(--field-padding-right) * 2)`,
-    )
+    nextTick(() => {
+      inputEl.value?.style.setProperty(
+        'padding-right',
+        `calc(${
+          nodeRightWrp.value?.offsetWidth || 0
+        }px + var(--field-padding-right) * 2)`,
+      )
+    })
   }
 })
 
@@ -243,6 +250,11 @@ $z-index-side-nodes: 1;
   display: flex;
   flex-direction: column;
   position: relative;
+  color: var(--field-placeholder);
+
+  .input-field--filled & {
+    color: var(--field-text);
+  }
 }
 
 .input-field__input {
@@ -252,8 +264,7 @@ $z-index-side-nodes: 1;
   transition: var(--field-transition-duration) var(--field-transition-timing);
   transition-property: color, box-shadow, border-color, background-color;
 
-  &:disabled,
-  &:read-only {
+  &:disabled {
     cursor: not-allowed;
     border-color: var(--field-border-disabled);
     background: var(--field-bg-primary-disabled);
@@ -300,8 +311,10 @@ $z-index-side-nodes: 1;
     border-color: var(--field-border-focus);
   }
 
-  .input-field--error &:not([disabled]):not(:focus):hover {
-    border-color: var(--field-border-error);
+  .input-field__input-wrp:hover &:not([disabled]):not(:focus) {
+    .input-field--error & {
+      border-color: var(--field-border-error);
+    }
   }
 
   // Hide number arrows
@@ -339,7 +352,6 @@ $z-index-side-nodes: 1;
   transform: translateY(-50%);
   color: inherit;
   z-index: $z-index-side-nodes;
-  padding-right: toRem(12);
 }
 
 .input-field__password-icon {

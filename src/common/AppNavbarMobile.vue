@@ -14,17 +14,18 @@
       </transition>
     </button>
     <transition name="fade" appear>
-      <div v-if="isExtShown" class="app-navbar-mobile__ext-wrp">
-        <transition name="slide" appear>
-          <div class="app-navbar-mobile__ext">
+      <div v-show="isExtShown" class="app-navbar-mobile__ext-wrp">
+        <transition name="slide">
+          <div v-show="isExtShown" class="app-navbar-mobile__ext">
             <nav class="app-navbar-mobile__nav">
               <app-button
                 v-for="(link, idx) in links"
                 :key="idx"
-                :text="link.text"
+                :route="link.route"
                 :href="link.href"
-                target="_blank"
-                rel="noopener noreferrer"
+                :text="link.text"
+                :target="link.href ? '_blank' : undefined"
+                :rel="link.href ? 'noopener noreferrer' : undefined"
                 scheme="link"
                 color="none"
                 class="app-navbar-mobile__link"
@@ -97,8 +98,8 @@ $z-index: 1000;
 }
 
 .app-navbar-mobile__burger-icon {
-  height: toRem(24);
-  width: toRem(24);
+  height: toRem(30);
+  width: toRem(30);
   color: var(--text-secondary-light);
   transition: var(--transition-duration-fast) var(--transition-timing-default);
 
@@ -106,6 +107,11 @@ $z-index: 1000;
   .app-navbar-mobile__burger-btn:not([disabled]):focus &,
   .app-navbar-mobile__burger-btn:not([disabled]):active & {
     color: var(--primary-main);
+  }
+
+  @include respond-to(medium) {
+    height: toRem(24);
+    width: toRem(24);
   }
 }
 
@@ -133,7 +139,7 @@ $z-index: 1000;
 
 .app-navbar-mobile .app-navbar-mobile__link {
   &.router-link-active {
-    @include respond-to(medium) {
+    @include respond-to(large) {
       font-family: var(--app-font-family);
       font-size: toRem(18);
       font-weight: 600;
@@ -142,7 +148,7 @@ $z-index: 1000;
     }
   }
 
-  @include respond-to(medium) {
+  @include respond-to(large) {
     font-family: var(--app-font-family);
     font-size: toRem(18);
     font-weight: 400;

@@ -1,4 +1,4 @@
-import { utils, BigNumber } from 'ethers'
+import { utils, BigNumber, type BigNumberish } from 'ethers'
 import { Time } from '@distributedlab/tools'
 
 const {
@@ -18,12 +18,14 @@ const formatEther: typeof toEther = (...params) => {
 }
 
 export {
+  BigNumber,
+  Time,
   formatEther,
   formatUnits,
   hexlify,
   isAddress,
   parseUnits,
   toEther,
-  Time,
-  BigNumber,
 }
+
+export type { BigNumberish }

@@ -32,8 +32,7 @@
 
 <script lang="ts" setup>
 import { useI18n } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
-import { useRouter } from '@/router'
+import { NETWORK_IDS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { Route } from '@/types'
 import { onClickOutside } from '@vueuse/core'
@@ -46,37 +45,20 @@ type Link = {
   route: Route
 }
 
-const MAINNET_ROUTES_MAP: Partial<Record<ROUTE_NAMES, ROUTE_NAMES>> = {
-  [ROUTE_NAMES.appTestnetCapital]: ROUTE_NAMES.appMainnetCapital,
-}
-
-const TESTNET_ROUTES_MAP: Partial<Record<ROUTE_NAMES, ROUTE_NAMES>> = {
-  [ROUTE_NAMES.appMainnetCapital]: ROUTE_NAMES.appTestnetCapital,
-}
-
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
 
 const { t } = useI18n()
-const { currentRoute } = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const links = computed<Link[]>(() => [
   {
     title: t('network-switch.mainnet'),
-    route: {
-      name:
-        MAINNET_ROUTES_MAP[currentRoute.value.name as ROUTE_NAMES] ||
-        ROUTE_NAMES.appMainnet,
-    },
+    route: { query: { network: NETWORK_IDS.mainnet } } as Route,
   },
   {
     title: t('network-switch.testnet'),
-    route: {
-      name:
-        TESTNET_ROUTES_MAP[currentRoute.value.name as ROUTE_NAMES] ||
-        ROUTE_NAMES.appTestnet,
-    },
+    route: { query: { network: NETWORK_IDS.testnet } } as Route,
   },
 ])
 
@@ -161,16 +143,22 @@ onMounted(() => {
 }
 
 .network-switch__link {
+  $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
+
   padding: toRem(12) toRem(16);
   color: var(--text-secondary-light);
   transition: var(--transition-duration-fast) var(--transition-timing-default);
   text-align: left;
 
-  &:not([disabled]):hover,
+  &:not([disabled]):hover {
+    background: #515c57;
+    box-shadow: $shadow-hover;
+  }
+
   &:not([disabled]):focus,
   &:not([disabled]):active {
-    background: var(--primary-main);
-    color: var(--text-primary-dark);
+    background: #515c57;
+    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 
   @include text-ellipsis;
