@@ -1,0 +1,8 @@
+.timer {
+    display: flex;
+    align-items: center;
+}
+
+.timer-part {
+    margin-right: 15px; /* Adjust this value to increase/decrease space */
+}

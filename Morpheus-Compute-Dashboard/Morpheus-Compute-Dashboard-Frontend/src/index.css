@@ -1,0 +1,39 @@
+/* src/index.css */
+
+/* Import the Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  --primary-color: #01FF85;
+  --app-font-family: 'Inter', 'Arial', sans-serif;
+  --background-color: #0b0a0a;
+  --gradient-start-color: #0b0a0a; /* Starting color for the gradient */
+  --gradient-end-color: #16382E;   /* Ending color for the gradient */
+  --font-family-body: 'Open Sans', sans-serif;
+  --font-family-heading: 'Nunito', sans-serif;
+  --link-color: #01FF85;
+  --hover-border-color: #01FF85;
+  --border-color: #494949;
+  --text-color:#FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--app-font-family);
+  background-color: var(--main-bg-color);
+  color: var(--text-color);
+  background: linear-gradient(to bottom right, var(--gradient-end-color), var(--gradient-start-color) 35%);
+  /* height: 100vh;  */
+  /* 100% of the viewport height */
+
+}
+
+#root {
+  background: transparent;
+}
+/* Additional global styles can go here */

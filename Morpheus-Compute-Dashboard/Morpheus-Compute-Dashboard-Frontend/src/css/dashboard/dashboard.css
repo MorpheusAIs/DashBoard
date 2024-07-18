@@ -1,0 +1,36 @@
+
+
+.chart_background{
+    
+    background: linear-gradient(to top right, var(--gradient-end-color), var(--gradient-start-color) 50%);
+    border-color: #767E7C;
+    border-right-style: solid;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-image: linear-gradient(to right, black, var(--border-color)) 1; 
+}
+
+.chartheading{
+    font-size: 24px;
+    margin-left: 10px;
+    font-weight: 600;
+    color: var(--text-color);;
+}
+
+
+.table_background{
+    
+    background: linear-gradient(to right, var(--gradient-end-color), var(--gradient-start-color) 50%);
+    border-color: #767E7C;
+    border-right-style: solid;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-image: linear-gradient(to right, black, var(--border-color)) 1; 
+}
+
+.tableheading{
+    font-size: 24px;
+    margin-left: 10px;
+    font-weight: 600;
+    color: var(--text-color);;
+}

@@ -1,0 +1,192 @@
+/* hosted_model.css */
+
+@import './../../index.css';
+
+.table_main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+main.table {
+  width: 82vw;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 .4rem .8rem #0005;
+  border-radius: .8rem;
+  overflow: hidden;
+  margin-left: 10px;
+}
+
+.table__body {
+  width: 100%;
+  border-image: linear-gradient(to right, transparent, var(--border-color)) 1; 
+  overflow: auto;
+  overflow: overlay;
+}
+
+.table__body::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.table__body::-webkit-scrollbar-thumb {
+  border-radius: .5rem;
+  visibility: hidden;
+}
+
+.table__body:hover::-webkit-scrollbar-thumb { 
+  visibility: visible;
+}
+
+.link {
+  display: contents;
+  color: white;
+}
+
+table {
+  width: 100%;
+}
+
+.model-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.model-name {
+  font-weight: 700;
+  margin-bottom: 5px; 
+  text-align: left;
+}
+
+.model-balance {
+  font-size: 0.9rem;
+  color: lightgray;
+}
+
+.model-count {
+  background-color: #01FF85;
+  color: black;
+  border-radius: 50%; /* Make the background circular */
+  padding: 2px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px; /* Ensure the circle has equal width and height */
+}
+
+table, th, td {
+  border-collapse: collapse;
+  padding: 1rem;
+  text-align: center;
+}
+
+table .cell_design {
+  border-collapse: collapse;
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+table tr {
+  cursor: pointer;
+}
+
+/* thead th {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: black;
+  cursor: pointer;
+  text-transform: capitalize;
+  color: var(--primary-color);
+  border-radius: 8px 8px 0 0; 
+  overflow: hidden;
+}
+*/
+
+.hosted-model-table thead th {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: black;
+  cursor: pointer;
+  text-transform: capitalize;
+  color: var(--primary-color);
+  border-radius: 8px 8px 0 0; /* Add border-radius to the top-left and top-right corners */
+  overflow: hidden; /* Ensure the radius is applied correctly */
+}
+
+tbody tr:nth-child(even) {
+  background: linear-gradient(to right, black, var(--gradient-end-color));
+}
+
+tbody tr:nth-child(odd) {
+  background: linear-gradient(to right, var(--gradient-end-color), black);
+}
+
+tbody tr:hover:nth-child(even) {
+  background-color: var(--primary-color) !important;
+  background: linear-gradient(to right, black, var(--primary-color));
+}
+
+tbody tr:hover {
+  background-color: var(--primary-color) !important;
+  background: linear-gradient(to right, var(--primary-color), black);
+}
+
+tbody tr.active:nth-child(odd) {
+  cursor: pointer;
+  background: linear-gradient(to right, #C1610f, black);
+  color: white; /* Change text color to white */
+}
+
+tbody tr.active:nth-child(even) {
+  cursor: pointer;
+  background: linear-gradient(to right, black, #C1610f);
+  color: white; /* Change text color to white */
+}
+
+@media (max-width: 1000px) {
+  td:not(:first-of-type) {
+    min-width: 12.1rem;
+  }
+}
+
+thead th:hover {
+  color: #C1610F;
+  border: 1.4px solid #C1610F;
+}
+
+/* Claimable Balance Card Styles */
+.claimable-card {
+  background-color: var(--primary-color);
+  backdrop-filter: blur(10px);
+  border: 1px solid;
+  border-image: linear-gradient(to right, black, var(--border-color)) 1; 
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  color: black !important;
+  transition: all ease 0.3s;
+}
+
+.claimable-card:hover {
+  box-shadow: 0px 0px 20px 1px var(--primary-color);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.claimable-card-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  font-weight: bolder;
+}
+
+.claimable-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}

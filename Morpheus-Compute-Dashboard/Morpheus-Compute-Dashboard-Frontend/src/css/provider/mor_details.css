@@ -1,0 +1,32 @@
+@import './../../index.css';
+
+.mmor-card{
+    backdrop-filter: blur(10px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+    border-image: linear-gradient(to right, transparent, var(--border-color)) 1;
+    background: linear-gradient(to right, var(--gradient-end-color),black  );
+    margin-left: 10px;
+    margin-top: 20px;
+    height: 220px;
+}
+
+.mmor-card-title{
+    color: #ffffff;
+    font-size: x-large;
+    font-weight: bold;
+    margin-left: 20px;
+    margin-top: 20px;
+
+}
+
+.mmor-amount{
+    color: #01FF85;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+    position: absolute;
+    font-weight: bolder;
+    font-size: large;
+}
