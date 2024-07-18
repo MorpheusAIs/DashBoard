@@ -1,0 +1,76 @@
+@import './../../index.css';
+
+.claimable-card{
+    backdrop-filter: blur(10px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+    border-image: linear-gradient(to right, transparent, var(--border-color)) 1;
+    background: linear-gradient(to right, var(--gradient-end-color),black  );
+    margin-left: 10px;
+    border: none;
+}
+
+.claimable-card-title{
+    color: #ffffff;
+
+}
+
+.claimable-amount{
+    color: #01FF85;
+}
+
+/* Claim Button */
+.claim-button {
+    --color: #01FF85;
+    padding: 0.8em 1.7em;
+    background-color: transparent;
+    border-radius: .3em;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: .5s;
+    font-weight: 400;
+    font-size: 17px;
+    border: 1px solid;
+    font-family: inherit;
+    text-transform: uppercase;
+    color: #01FF85;
+    z-index: 1;
+    }
+    
+    .claim-button::before, .claim-button::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 50px;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+    background-color:#01FF85;
+    transition: 1s ease;
+    }
+    
+    .claim-button::before {
+    top: -1em;
+    left: -1em;
+    }
+    
+    .claim-button::after {
+    left: calc(100% + 1em);
+    top: calc(100% + 1em);
+    }
+    
+    .claim-button:hover::before, .claim-button:hover::after {
+    height: 410px;
+    width: 410px;
+    }
+    
+    .claim-button:hover {
+    color: black;
+    }
+    
+    .claim-button:active {
+    filter: brightness(.8);
+    }

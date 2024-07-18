@@ -1,0 +1,80 @@
+/* 
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+  } */
+  
+  .navbar {
+    /* position: fixed; */
+    top: 0;
+    width: 100%;
+    background-color: #010201; /* Translucent background color */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    z-index: 1000; /* Ensure the navbar is on top of other elements */
+    border-bottom: 2px solid #444449;
+    height: 85px;
+  }
+  
+  .navbar-brand .logo {
+    height: 50px; /* Adjust logo size */
+    width: 100px;
+  }
+
+  .logo:hover{
+    filter: grayscale(100%)
+  }
+  
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar-links li {
+    margin: 0 15px;
+  }
+  
+  .navbar-links a {
+    text-decoration: none;
+    color: var(--text-color); /* Set the text color */
+    font-weight: bold;
+  }
+  
+  .navbar-links a:hover {
+    color: var(--primary-color); /* Set hover color */
+  }
+  
+
+/* Button Styles */
+.wallet-button, .connect-wallet {
+  padding: 0.8em 1.7em;
+  background-color: #313A36;
+  cursor: pointer;
+  transition: 0.5s;
+  font-weight: 400;
+  font-size: 14px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  color: var(--text-color);
+  width: 180px;
+}
+
+.wallet-button:hover, .connect-wallet:hover {
+  border: 2px solid var(--primary-color);
+}
+
+.wallet-button:active, .connect-wallet:active {
+  filter: brightness(0.8);
+}
+
+.content {
+  margin-top: 80px;
+  padding: 20px;
+  width: 50px;
+}

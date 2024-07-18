@@ -1,0 +1,62 @@
+@import './../../index.css';
+
+.card_main {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Ensures each column takes up equal space */
+    grid-gap: 1em;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.card {
+    border: 2px solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* This will ensure sharp edges by default */
+    border-radius: 0;
+}
+
+/* Add this new class to target the bottom row of cards */
+.card_bottom {
+    border-radius: 10px; /* Only bottom row cards will have rounded edges */
+}
+
+.card_head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; /* Aligns items vertically center */
+}
+
+.card-title {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.card-label {
+    color: var(--text-color);
+    font-size: large;
+    cursor: pointer;
+}
+
+.card-text {
+    color: var(--text-color);
+    font-weight: 400;
+    font-size: xx-large;
+}
+
+.card_icon {
+    color: var(--text-color);
+    margin-right: 5%;
+}
+
+.link_icon {
+    margin-left: 10px;
+}
+
+.card-label:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
