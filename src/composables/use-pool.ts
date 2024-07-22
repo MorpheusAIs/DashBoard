@@ -2,10 +2,13 @@ import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { type BigNumber, type Erc1967ProxyType } from '@/types'
 import { useTimestamp } from '@vueuse/core'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-export const usePool = (poolId: number) => {
+export const usePool = (poolId: Ref<number>) => {
   let _currentUserRewardUpdateIntervalId: Parameters<typeof clearInterval>[0]
+
+  const route = useRoute()
 
   const currentUserReward = ref<BigNumber | null>(null)
   const dailyReward = ref<BigNumber | null>(null)
@@ -34,8 +37,8 @@ export const usePool = (poolId: number) => {
   })
 
   const isDepositDisabled = computed<boolean>(() => {
-    if (!web3ProvidersStore.balances.stEth) return true
-    return web3ProvidersStore.balances.stEth.isZero()
+    if (!web3ProvidersStore.balances.depositToken) return true
+    return web3ProvidersStore.balances.depositToken.isZero()
   })
 
   const isWithdrawDisabled = computed<boolean>(() => {
@@ -70,7 +73,7 @@ export const usePool = (poolId: number) => {
       throw new Error('user address unavailable')
 
     return erc1967ProxyContract.value.providerBased.value.getCurrentUserReward(
-      poolId,
+      poolId.value,
       web3ProvidersStore.provider.selectedAddress,
     )
   }
@@ -95,8 +98,8 @@ export const usePool = (poolId: number) => {
 
   const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
     const poolDataResponses = await Promise.all([
-      erc1967ProxyContract.value.providerBased.value.poolsData(poolId),
-      erc1967ProxyContract.value.providerBased.value.pools(poolId),
+      erc1967ProxyContract.value.providerBased.value.poolsData(poolId.value),
+      erc1967ProxyContract.value.providerBased.value.pools(poolId.value),
     ])
 
     return {
@@ -123,7 +126,7 @@ export const usePool = (poolId: number) => {
     const response =
       await erc1967ProxyContract.value.providerBased.value.usersData(
         web3ProvidersStore.provider.selectedAddress,
-        poolId,
+        poolId.value,
       )
 
     return {
@@ -204,16 +207,22 @@ export const usePool = (poolId: number) => {
     }
   }
 
+  watch(() => [poolId, web3ProvidersStore.dashboardInfo], init, { deep: true })
+
   watch(
     () => [
       web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.isConnected,
+      web3ProvidersStore.dashboardInfo,
     ],
-    async ([newAddress, isConnected]) => {
+    async () => {
       currentUserReward.value = null
       userPoolData.value = null
 
-      if (newAddress && isConnected) {
+      if (
+        (route.query.address || web3ProvidersStore.provider.selectedAddress) &&
+        web3ProvidersStore.isConnected
+      ) {
         try {
           await updateUserData()
         } catch (error) {

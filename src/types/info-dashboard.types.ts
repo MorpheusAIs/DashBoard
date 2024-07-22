@@ -5,3 +5,12 @@ export type Indicator = {
   title: string
   value: string
 }
+
+export type DashboardInfo = {
+  name: string
+  distributionAddress: string
+  l1SenderAddress: string
+  l2MessageReceiverAddress: string
+  l2TokenReceiverAddress: string
+  tokenAddress: string
+}

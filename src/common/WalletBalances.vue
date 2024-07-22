@@ -68,7 +68,6 @@ type Balance = {
   value: string
   tokenIconName: ICON_NAMES
 }
-
 let _morUpdateIntervalId: Parameters<typeof clearInterval>[0]
 
 const rootElement = ref<HTMLDivElement | null>(null)
@@ -80,15 +79,19 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const balances = computed<Balance[]>(() => [
   {
     logoIconName: ICON_NAMES.steth,
-    value: web3ProvidersStore.balances.stEth
-      ? `${formatEther(web3ProvidersStore.balances.stEth)} stETH`
+    value: web3ProvidersStore.balances.depositToken?._isBigNumber
+      ? `${formatEther(web3ProvidersStore.balances.depositToken)} ${
+          web3ProvidersStore.depositTokenSymbol
+        }`
       : '',
     tokenIconName: ICON_NAMES.ethereum,
   },
   {
     logoIconName: ICON_NAMES.morpheus,
-    value: web3ProvidersStore.balances.mor
-      ? `${formatEther(web3ProvidersStore.balances.mor)} MOR`
+    value: web3ProvidersStore.balances.rewardsToken?._isBigNumber
+      ? `${formatEther(web3ProvidersStore.balances.rewardsToken)} ${
+          web3ProvidersStore.rewardsTokenSymbol
+        }`
       : '',
     tokenIconName: ICON_NAMES.arbitrum,
   },
@@ -104,19 +107,20 @@ const onSelectBtnClick = (balanceIdx: number) => {
   isDropMenuShown.value = false
 }
 
-const updateBalances = async (): Promise<void> => {
-  if (!web3ProvidersStore.provider.selectedAddress)
-    throw new Error('user address unavailable')
-
-  const address = web3ProvidersStore.provider.selectedAddress
+const updateBalances = async () => {
+  if (!web3ProvidersStore.provider.selectedAddress) throw new Error('user address unavailable')
 
   const [stEthValue, morValue] = await Promise.all([
-    web3ProvidersStore.stEthContract.providerBased.value.balanceOf(address),
-    web3ProvidersStore.morContract.providerBased.value.balanceOf(address),
+    web3ProvidersStore.depositContract.providerBased.value.balanceOf(
+      web3ProvidersStore.provider.selectedAddress,
+    ),
+    web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
+      web3ProvidersStore.provider.selectedAddress,
+    ),
   ])
 
-  web3ProvidersStore.balances.stEth = stEthValue
-  web3ProvidersStore.balances.mor = morValue
+  web3ProvidersStore.balances.depositToken = stEthValue
+  web3ProvidersStore.balances.rewardsToken = morValue
 }
 
 const init = async (): Promise<void> => {
@@ -164,8 +168,8 @@ onMounted(() => {
     const address = web3ProvidersStore.provider.selectedAddress
 
     try {
-      web3ProvidersStore.balances.mor =
-        await web3ProvidersStore.morContract.providerBased.value.balanceOf(
+      web3ProvidersStore.balances.rewardsToken =
+        await web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
           address,
         )
     } catch (error) {
@@ -181,7 +185,6 @@ onBeforeUnmount(() => {
   clearInterval(_morUpdateIntervalId)
 })
 
-watch(() => web3ProvidersStore.provider.selectedAddress, onChangeBalances)
 watch(() => web3ProvidersStore.networkId, init)
 </script>
 

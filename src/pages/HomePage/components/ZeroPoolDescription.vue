@@ -9,7 +9,10 @@
         {{ item }}
       </li>
     </ul>
-    <p class="zero-pool-description__details">
+    <p
+      v-if="!web3ProvidersStore.dashboardInfo.distributionAddress"
+      class="zero-pool-description__details"
+    >
       {{ $t('zero-pool-description.details') }}
       <app-button
         class="zero-pool-description__details-link"
@@ -26,15 +29,40 @@
 <script lang="ts" setup>
 import { AppButton } from '@/common'
 import { useI18n } from '@/composables'
-import { computed } from 'vue'
+import { computed, defineProps } from 'vue'
+import { useWeb3ProvidersStore } from '@/store'
+import { Time } from '@distributedlab/tools'
+import { DAY_MONTH_TIME_FORMAT } from '@/const'
+
+const props = defineProps<{
+  withdrawAfter: '' | Time
+  claimAfter: '' | Time
+}>()
 
 const { t } = useI18n()
 
+const web3ProvidersStore = useWeb3ProvidersStore()
+
 const listItems = computed<string[]>(() => [
-  t('zero-pool-description.list.1'),
-  t('zero-pool-description.list.2'),
-  t('zero-pool-description.list.3'),
-  t('zero-pool-description.list.4'),
+  t('zero-pool-description.list.1', {
+    deposit: web3ProvidersStore.depositTokenSymbol,
+    reward: web3ProvidersStore.rewardsTokenSymbol,
+  }),
+  t('zero-pool-description.list.2', {
+    deposit: web3ProvidersStore.depositTokenSymbol,
+    time: props.withdrawAfter
+      ? props.withdrawAfter.format(DAY_MONTH_TIME_FORMAT)
+      : '',
+  }),
+  t('zero-pool-description.list.3', {
+    reward: web3ProvidersStore.rewardsTokenSymbol,
+    time: props.claimAfter
+      ? props.claimAfter.format(DAY_MONTH_TIME_FORMAT)
+      : '',
+  }),
+  t('zero-pool-description.list.4', {
+    reward: web3ProvidersStore.rewardsTokenSymbol,
+  }),
 ])
 </script>
 
