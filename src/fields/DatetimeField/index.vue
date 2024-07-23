@@ -34,7 +34,10 @@
           <div
             v-show="isOpen"
             ref="flatpickrWrpElement"
-            class="datetime-field__flatpickr-wrp"
+            :class="[
+              'datetime-field__flatpickr-wrp',
+              `datetime-field__flatpickr-wrp--${props.position}`,
+            ]"
           />
         </transition>
       </template>
@@ -55,6 +58,11 @@ import type { Options } from 'flatpickr/dist/types/options'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import arrowIconHTML from '@/assets/icons/chevron-down-icon.svg?raw'
 
+enum POSITION {
+  bottom = 'bottom',
+  leftBottom = 'bottom-left',
+}
+
 const emit = defineEmits<{
   (event: 'update:model-value', value: string): void
 }>()
@@ -64,9 +72,11 @@ const props = withDefaults(
     /** Unix timestamp (seconds) */
     modelValue: string
     disabled?: boolean
+    position?: POSITION
   }>(),
   {
     disabled: false,
+    position: POSITION.leftBottom,
   },
 )
 
@@ -206,6 +216,18 @@ $z-index: 1;
 
   @include respond-to(small) {
     position: static;
+  }
+
+  &--bottom {
+    top: 120%;
+    right: 50%;
+    transform: translateX(50%);
+  }
+
+  &--bottom-left {
+    top: 120%;
+    left: 0;
+    right: auto;
   }
 }
 </style>

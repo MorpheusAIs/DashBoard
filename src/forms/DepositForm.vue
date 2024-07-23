@@ -22,29 +22,39 @@
         @blur="touchField('balanceOptionIdx')"
       />
     </div>
-    <input-field
-      v-model="form.amount"
-      class="deposit-form__input-field"
-      :placeholder="
-        $t('deposit-form.amount-placeholder', {
-          currency: balanceOfForm?.value.currency || CURRENCIES.stEth,
-        })
-      "
-      :error-message="getFieldErrorMessage('amount')"
-      :is-loading="isInitializing"
-      :disabled="isSubmitting"
-      @blur="touchField('amount')"
-    >
-      <template #nodeRight>
-        <app-button
-          class="deposit-form__input-field-btn"
-          scheme="link"
-          text="max"
-          :disabled="isSubmitting || !balanceOfForm"
-          @click="form.amount = balanceOfForm?.value.amount || ''"
-        />
-      </template>
-    </input-field>
+    <div class="deposit-form__form-data">
+      <input-field
+        v-model="form.amount"
+        class="deposit-form__input-field"
+        :placeholder="
+          $t('deposit-form.amount-placeholder', {
+            currency: balanceOfForm?.value.currency || CURRENCIES.stEth,
+          })
+        "
+        :error-message="getFieldErrorMessage('amount')"
+        :is-loading="isInitializing"
+        :disabled="isSubmitting"
+        @blur="touchField('amount')"
+      >
+        <template #nodeRight>
+          <app-button
+            class="deposit-form__input-field-btn"
+            scheme="link"
+            text="max"
+            :disabled="isSubmitting || !balanceOfForm"
+            @click="form.amount = balanceOfForm?.value.amount || ''"
+          />
+        </template>
+      </input-field>
+      <datetime-field
+        v-model="form.lockPeriod"
+        :placeholder="$t(`deposit-form.lock-period-placeholder`)"
+        :error-message="getFieldErrorMessage('lockPeriod')"
+        :is-loading="isInitializing"
+        :disabled="isSubmitting"
+        @blur="touchField('payoutStartAt')"
+      />
+    </div>
     <div class="deposit-form__buttons-wrp">
       <app-button
         class="deposit-form__btn"
@@ -68,12 +78,12 @@
 import { AppButton } from '@/common'
 import { useFormValidation, useI18n } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { InputField, SelectField } from '@/fields'
+import { DatetimeField, InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type FieldOption } from '@/types'
-import { BigNumber, formatEther, parseUnits, toEther } from '@/utils'
-import { ether, maxEther, minEther, required } from '@/validators'
+import { BigNumber, formatEther, parseUnits, Time, toEther } from '@/utils'
+import { ether, maxEther, minEther, minValue, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted, reactive, ref } from 'vue'
@@ -145,6 +155,7 @@ const balanceOptions = computed<FieldOption<BalanceOptionValue>[]>(() => [
 const form = reactive({
   balanceOptionIdx: 0,
   amount: '',
+  lockPeriod: '',
 })
 
 const balanceOfForm = computed<FieldOption<BalanceOptionValue> | null>(
@@ -160,6 +171,9 @@ const validationRules = computed(() => ({
     ...(balanceOfForm.value?.value && {
       maxEther: maxEther(balanceOfForm.value.value.amount),
     }),
+  },
+  lockPeriod: {
+    minValue: minValue(new Time().timestamp),
   },
 }))
 
@@ -226,6 +240,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
         await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
           props.poolId,
           amountInDecimals,
+          form.lockPeriod || 0,
         )
       emit('stake-tx-sent')
     }
@@ -305,6 +320,12 @@ onMounted(() => {
   }
 
   @include body-1-regular;
+}
+
+.deposit-form__form-data {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(16);
 }
 
 .deposit-form .deposit-form__input-field {

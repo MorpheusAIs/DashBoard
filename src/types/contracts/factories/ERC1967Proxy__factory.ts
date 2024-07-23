@@ -153,7 +153,7 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IDistribution.Pool",
+        internalType: "struct IDistributionV2.Pool",
         name: "pool",
         type: "tuple",
       },
@@ -219,7 +219,7 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IDistribution.Pool",
+        internalType: "struct IDistributionV2.Pool",
         name: "pool",
         type: "tuple",
       },
@@ -238,6 +238,37 @@ const _abi = [
       },
     ],
     name: "Upgraded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "poolId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "claimLockStart",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "claimLockEnd",
+        type: "uint128",
+      },
+    ],
+    name: "UserClaimLocked",
     type: "event",
   },
   {
@@ -381,7 +412,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct IDistribution.Pool[]",
+        internalType: "struct IDistributionV2.Pool[]",
         name: "poolsInfo_",
         type: "tuple[]",
       },
@@ -488,7 +519,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct IDistribution.Pool",
+        internalType: "struct IDistributionV2.Pool",
         name: "pool_",
         type: "tuple",
       },
@@ -566,7 +597,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct IDistribution.Pool",
+        internalType: "struct IDistributionV2.Pool",
         name: "pool_",
         type: "tuple",
       },
@@ -574,6 +605,59 @@ const _abi = [
     name: "editPool",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "poolId_",
+        type: "uint256",
+      },
+      {
+        internalType: "uint128",
+        name: "claimLockStart_",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "claimLockEnd_",
+        type: "uint128",
+      },
+    ],
+    name: "getClaimLockPeriodMultiplier",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "poolId_",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "user_",
+        type: "address",
+      },
+    ],
+    name: "getCurrentUserMultiplier",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -663,6 +747,24 @@ const _abi = [
         type: "uint256",
       },
       {
+        internalType: "uint128",
+        name: "claimLockEnd_",
+        type: "uint128",
+      },
+    ],
+    name: "lockClaim",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "poolId_",
+        type: "uint256",
+      },
+      {
         internalType: "address[]",
         name: "users_",
         type: "address[]",
@@ -671,6 +773,11 @@ const _abi = [
         internalType: "uint256[]",
         name: "amounts_",
         type: "uint256[]",
+      },
+      {
+        internalType: "uint128[]",
+        name: "lockEnds_",
+        type: "uint128[]",
       },
     ],
     name: "manageUsersInPrivatePool",
@@ -785,7 +892,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "totalDeposited",
+        name: "totalVirtualDeposited",
         type: "uint256",
       },
     ],
@@ -830,6 +937,11 @@ const _abi = [
         internalType: "uint256",
         name: "amount_",
         type: "uint256",
+      },
+      {
+        internalType: "uint128",
+        name: "claimLockEnd_",
+        type: "uint128",
       },
     ],
     name: "stake",
@@ -929,8 +1041,36 @@ const _abi = [
         name: "pendingRewards",
         type: "uint256",
       },
+      {
+        internalType: "uint128",
+        name: "claimLockStart",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "claimLockEnd",
+        type: "uint128",
+      },
+      {
+        internalType: "uint256",
+        name: "virtualDeposited",
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "version",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {
