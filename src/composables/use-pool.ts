@@ -8,7 +8,7 @@ import { ethers } from 'ethers'
 const MULTIPLIER_SCALE = 25 //digits
 
 export const usePool = (poolId: number) => {
-  let _currentUserRewardUpdateIntervalId: Parameters<typeof clearInterval>[0]
+  let _currentUserRewardUpdateIntervalId: NodeJS.Timeout
 
   const currentUserReward = ref<BigNumber | null>(null)
   const dailyReward = ref<BigNumber | null>(null)
