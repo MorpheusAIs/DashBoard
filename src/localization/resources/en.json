@@ -99,6 +99,7 @@
   "deposit-form": {
     "balance-label": "Available to deposit",
     "amount-placeholder": "Enter {currency} amount",
+    "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
     "submit-btn": {
       "deposit": "Deposit",
@@ -134,6 +135,7 @@
         "title--0": "Capital",
         "subtitle--0": "Group 1"
       },
+      "multiplier-title": "Your reward multiplier",
       "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
       "started-at-title": "Started at",

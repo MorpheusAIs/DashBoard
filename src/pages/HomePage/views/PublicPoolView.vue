@@ -135,6 +135,7 @@ const {
   isClaimDisabled,
   isDepositDisabled,
   isWithdrawDisabled,
+  rewardsMultiplier,
 
   isInitializing,
   isUserDataUpdating,
@@ -163,7 +164,11 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
   {
     title: t('home-page.public-pool-view.withdraw-at-title'),
-    value: poolData.value
+    value: userPoolData.value?.claimLockEnd
+      ? new Time(userPoolData.value?.claimLockEnd.toNumber()).format(
+          DEFAULT_TIME_FORMAT,
+        )
+      : poolData.value
       ? new Time(
           userPoolData.value && !userPoolData.value.lastStake.isZero()
             ? userPoolData.value.lastStake
@@ -203,6 +208,10 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
     value: currentUserReward.value
       ? `${formatEther(currentUserReward.value)} MOR`
       : '',
+  },
+  {
+    title: t('home-page.public-pool-view.multiplier-title'),
+    value: `${rewardsMultiplier.value}X`,
   },
 ])
 </script>
