@@ -142,6 +142,7 @@
       "withdraw-at-note": "Note: Withdraw is locked until the specified time",
       "claim-at-note": "Note: Claim is locked until the specified time",
       "deposit-btn": "Deposit stETH",
+      "no-sth-eth-to-deposit": "You don't have any stETH",
       "external-link": "How to receive stETH?",
       "withdraw-btn": "Withdraw stETH",
       "user-deposit-title": "Your deposit",

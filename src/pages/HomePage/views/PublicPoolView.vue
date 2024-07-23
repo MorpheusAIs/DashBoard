@@ -25,6 +25,10 @@
                 :text="$t('home-page.public-pool-view.deposit-btn')"
                 :is-loading="isInitializing"
                 :disabled="isDepositDisabled"
+                :title="
+                  !hasAnyStEthToDeposit &&
+                  $t('home-page.public-pool-view.no-sth-eth-to-deposit')
+                "
                 @click="isDepositModalShown = true"
               />
               <app-button
@@ -131,6 +135,7 @@ const {
   dailyReward,
   poolData,
   userPoolData,
+  hasAnyStEthToDeposit,
 
   isClaimDisabled,
   isDepositDisabled,
