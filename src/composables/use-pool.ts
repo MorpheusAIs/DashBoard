@@ -31,6 +31,12 @@ export const usePool = (poolId: number) => {
     )
       return true
 
+    if (userPoolData.value?.claimLockEnd) {
+      return (
+        currentTimestamp.value <= userPoolData.value.claimLockEnd.toNumber()
+      )
+    }
+
     return (
       currentTimestamp.value <=
       poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber()
@@ -52,12 +58,6 @@ export const usePool = (poolId: number) => {
 
     if (currentTimestamp.value < poolData.value.payoutStart.toNumber())
       return false
-
-    if (userPoolData.value.claimLockEnd) {
-      return (
-        currentTimestamp.value <= userPoolData.value.claimLockEnd.toNumber()
-      )
-    }
 
     return userPoolData.value.lastStake.isZero()
       ? currentTimestamp.value <=
