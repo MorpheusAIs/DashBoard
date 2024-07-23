@@ -173,7 +173,6 @@ const validationRules = computed(() => ({
     }),
   },
   lockPeriod: {
-    // TODO: ASK ABOUT VALIDATION
     minValue: minValue(new Time().timestamp),
   },
 }))

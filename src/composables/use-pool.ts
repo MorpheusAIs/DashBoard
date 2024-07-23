@@ -119,8 +119,7 @@ export const usePool = (poolId: number) => {
       rate: poolDataResponses[0].rate,
       payoutStart: poolDataResponses[1].payoutStart,
       rewardDecrease: poolDataResponses[1].rewardDecrease,
-      // totalDeposited: poolDataResponses[0].totalDeposited,
-      totalDeposited: 0 as unknown as BigNumber,
+      totalDeposited: poolDataResponses[0].totalVirtualDeposited,
       withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
       withdrawLockPeriodAfterStake:
         poolDataResponses[1].withdrawLockPeriodAfterStake,
@@ -181,9 +180,10 @@ export const usePool = (poolId: number) => {
       rewardsMultiplier.value = Number(
         parseFloat(scaledNumber.toString()).toFixed(2),
       )
-    } finally {
-      isUserDataUpdating.value = false
+    } catch (e) {
+      ErrorHandler.processWithoutFeedback(e)
     }
+    isUserDataUpdating.value = false
   }
 
   const init = async () => {
