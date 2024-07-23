@@ -108,7 +108,8 @@ const onSelectBtnClick = (balanceIdx: number) => {
 }
 
 const updateBalances = async () => {
-  if (!web3ProvidersStore.provider.selectedAddress) throw new Error('user address unavailable')
+  if (!web3ProvidersStore.provider.selectedAddress)
+    throw new Error('user address unavailable')
 
   const [stEthValue, morValue] = await Promise.all([
     web3ProvidersStore.depositContract.providerBased.value.balanceOf(
