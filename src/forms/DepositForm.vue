@@ -27,7 +27,7 @@
       class="deposit-form__input-field"
       :placeholder="
         $t('deposit-form.amount-placeholder', {
-          currency: balanceOfForm?.value.currency || CURRENCIES.stEth,
+          currency: web3ProvidersStore.depositTokenSymbol,
         })
       "
       :error-message="getFieldErrorMessage('amount')"
@@ -84,7 +84,7 @@ enum ACTIONS {
 }
 
 enum CURRENCIES {
-  stEth = 'stETH',
+  depositToken = 'depositToken',
 }
 
 type BalanceOptionValue = {
@@ -107,7 +107,7 @@ const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
 const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
-  [CURRENCIES.stEth]: null,
+  [CURRENCIES.depositToken]: null,
 })
 
 const { t } = useI18n()
@@ -129,13 +129,15 @@ const action = computed<ACTIONS>(() => {
 })
 
 const balanceOptions = computed<FieldOption<BalanceOptionValue>[]>(() => [
-  ...(web3ProvidersStore.balances.stEth
+  ...(web3ProvidersStore.balances.depositToken
     ? [
         {
-          title: `${formatEther(web3ProvidersStore.balances.stEth)} stETH`,
+          title: `${formatEther(web3ProvidersStore.balances.depositToken)} ${
+            web3ProvidersStore.depositTokenSymbol
+          }`,
           value: {
-            amount: toEther(web3ProvidersStore.balances.stEth),
-            currency: CURRENCIES.stEth,
+            amount: toEther(web3ProvidersStore.balances.depositToken),
+            currency: CURRENCIES.depositToken,
           },
         },
       ]
@@ -177,8 +179,8 @@ const fetchAllowanceByCurrency = async (
 ): Promise<BigNumber> => {
   let contract
   switch (currency) {
-    case CURRENCIES.stEth:
-      contract = web3ProvidersStore.stEthContract
+    case CURRENCIES.depositToken:
+      contract = web3ProvidersStore.depositContract
       break
     default:
       throw new Error('unknown currency')
@@ -186,24 +188,22 @@ const fetchAllowanceByCurrency = async (
 
   return contract.providerBased.value.allowance(
     web3ProvidersStore.provider.selectedAddress,
-    config.networksMap[web3ProvidersStore.networkId].contractAddressesMap
-      .erc1967Proxy,
+    web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
   )
 }
 
 const approveByCurrency = async (currency: CURRENCIES) => {
   let contract
   switch (currency) {
-    case CURRENCIES.stEth:
-      contract = web3ProvidersStore.stEthContract
+    case CURRENCIES.depositToken:
+      contract = web3ProvidersStore.depositContract
       break
     default:
       throw new Error('unknown currency')
   }
 
   return contract.signerBased.value.approve(
-    config.networksMap[web3ProvidersStore.networkId].contractAddressesMap
-      .erc1967Proxy,
+    web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
     MAX_UINT_256,
   )
 }
@@ -269,8 +269,8 @@ const init = async (): Promise<void> => {
   isInitializing.value = true
 
   try {
-    allowances[CURRENCIES.stEth] = await fetchAllowanceByCurrency(
-      CURRENCIES.stEth,
+    allowances[CURRENCIES.depositToken] = await fetchAllowanceByCurrency(
+      CURRENCIES.depositToken,
     )
   } catch (error) {
     emit('cancel')

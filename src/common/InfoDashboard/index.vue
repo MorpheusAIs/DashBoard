@@ -2,35 +2,37 @@
   <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
-        <div class="info-dashboard__header">
-          <div>
-            <div class="info-dashboard__header-title-wrp">
-              <h5 class="info-dashboard__header-title">
-                {{ $t('info-dashboard.header-title') }}
-              </h5>
-              <app-icon
-                v-tooltip="$t('info-dashboard.header-note')"
-                class="info-dashboard__header-title-icon"
-                :name="$icons.exclamationCircle"
-              />
+        <template v-if="isChartShown">
+          <div class="info-dashboard__header">
+            <div>
+              <div class="info-dashboard__header-title-wrp">
+                <h5 class="info-dashboard__header-title">
+                  {{ $t('info-dashboard.header-title') }}
+                </h5>
+                <app-icon
+                  v-tooltip="$t('info-dashboard.header-note')"
+                  class="info-dashboard__header-title-icon"
+                  :name="$icons.exclamationCircle"
+                />
+              </div>
+              <p class="info-dashboard__header-subtitle">
+                {{ $t('info-dashboard.header-subtitle') }}
+              </p>
             </div>
-            <p class="info-dashboard__header-subtitle">
-              {{ $t('info-dashboard.header-subtitle') }}
-            </p>
+            <select-field
+              v-model="selectedMonth"
+              scheme="text"
+              :value-options="monthOptions"
+            />
           </div>
-          <select-field
-            v-model="selectedMonth"
-            scheme="text"
-            :value-options="monthOptions"
-          />
-        </div>
-        <div class="info-dashboard__app-chart-wrp">
-          <app-chart
-            class="info-dashboard__app-chart"
-            :config="chartConfig"
-            :is-loading="isLoading || isChartDataUpdating"
-          />
-        </div>
+          <div class="info-dashboard__app-chart-wrp">
+            <app-chart
+              class="info-dashboard__app-chart"
+              :config="chartConfig"
+              :is-loading="isLoading || isChartDataUpdating"
+            />
+          </div>
+        </template>
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
             v-for="(indicator, idx) in indicators"
@@ -88,6 +90,8 @@ import { getChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
 import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
+import { ROUTE_NAMES } from '@/enums'
+import { useRoute } from 'vue-router'
 
 const props = withDefaults(
   defineProps<{
@@ -103,6 +107,7 @@ const props = withDefaults(
 )
 
 const { t } = useI18n()
+const route = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -123,6 +128,10 @@ const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
 const isChartDataUpdating = ref(false)
 
 const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
+
+const isChartShown = computed(
+  () => route.name !== ROUTE_NAMES.appDashboardCapital,
+)
 
 const updateChartData = async (month: number) => {
   isChartDataUpdating.value = true

@@ -59,7 +59,7 @@ const {
 
   isInitializing,
   isUserDataUpdating,
-} = usePool(poolId.value)
+} = usePool(poolId)
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {

@@ -1,7 +1,7 @@
 <template>
   <main class="home-page">
     <div class="home-page__content-wrp">
-      <app-tabs :tabs="tabs" />
+      <app-tabs v-if="isTabsShown" :tabs="tabs" />
       <router-view v-slot="{ Component }" class="home-page__view">
         <keep-alive>
           <component :is="Component" :key="$route.fullPath" />
@@ -19,7 +19,9 @@ import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
 import { config } from '@config'
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -52,6 +54,10 @@ const tabs = computed<Tab[]>(() => [
     }[web3ProvidersStore.networkId],
   },
 ])
+
+const isTabsShown = computed(
+  () => route.name !== ROUTE_NAMES.appDashboardCapital,
+)
 </script>
 
 <style lang="scss" scoped>

@@ -36,6 +36,21 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/dashboard',
+    name: ROUTE_NAMES.appDashboard,
+    component: () => import('@/pages/HomePage/index.vue'),
+    redirect: () =>
+      router.resolve({ name: ROUTE_NAMES.appDashboardCapital }).path,
+    children: [
+      {
+        path: 'capital',
+        name: ROUTE_NAMES.appDashboardCapital,
+        component: () => import('@/pages/HomePage/views/PublicPoolView.vue'),
+        props: { poolId: 0 },
+      },
+    ],
+  },
+  {
     path: '/mor20-ecosystem',
     children: [
       {
