@@ -58,10 +58,7 @@ import type { Options } from 'flatpickr/dist/types/options'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import arrowIconHTML from '@/assets/icons/chevron-down-icon.svg?raw'
 
-enum POSITION {
-  bottom = 'bottom',
-  leftBottom = 'bottom-left',
-}
+type POSITION = 'bottom' | 'bottom-left' | 'bottom-right' | 'top'
 
 const emit = defineEmits<{
   (event: 'update:model-value', value: string): void
@@ -76,7 +73,7 @@ const props = withDefaults(
   }>(),
   {
     disabled: false,
-    position: POSITION.leftBottom,
+    position: 'bottom-right',
   },
 )
 
@@ -116,6 +113,7 @@ const initFlatpickr = (): void => {
     onChange: dates => {
       if (!dates.length) return
       emit('update:model-value', String(dates[0].getTime() / 1000))
+      isOpen.value = false
     },
   }
 
@@ -216,6 +214,13 @@ $z-index: 1;
 
   @include respond-to(small) {
     position: static;
+  }
+
+  &--top {
+    bottom: 120%;
+    top: auto;
+    right: 50%;
+    transform: translateX(50%);
   }
 
   &--bottom {

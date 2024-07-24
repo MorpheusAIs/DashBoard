@@ -158,7 +158,7 @@ const claimLockTime = computed(() => {
         : poolData.value.payoutStart
             .add(poolData.value.withdrawLockPeriod)
             .toNumber(),
-    )
+    ).format(DEFAULT_TIME_FORMAT)
   }
   return ''
 })
@@ -184,18 +184,22 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
   {
     title: t('home-page.public-pool-view.withdraw-at-title'),
-    value: claimLockTime.value.toString(),
+    value: poolData.value
+      ? new Time(
+          userPoolData.value && !userPoolData.value.lastStake.isZero()
+            ? userPoolData.value.lastStake
+                .add(poolData.value.withdrawLockPeriodAfterStake)
+                .toNumber()
+            : poolData.value.payoutStart
+                .add(poolData.value.withdrawLockPeriod)
+                .toNumber(),
+        ).format(DEFAULT_TIME_FORMAT)
+      : '',
     note: t('home-page.public-pool-view.withdraw-at-note'),
   },
   {
     title: t('home-page.public-pool-view.claim-at-title'),
-    value: poolData.value
-      ? new Time(
-          poolData.value.payoutStart
-            .add(poolData.value.claimLockPeriod)
-            .toNumber(),
-        ).format(DEFAULT_TIME_FORMAT)
-      : '',
+    value: claimLockTime.value.toString(),
     note: t('home-page.public-pool-view.claim-at-note'),
   },
 ])
@@ -217,7 +221,7 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
   },
   {
     title: t('home-page.public-pool-view.multiplier-title'),
-    value: `${rewardsMultiplier.value}X`,
+    value: `x${rewardsMultiplier.value}`,
   },
 ])
 </script>
