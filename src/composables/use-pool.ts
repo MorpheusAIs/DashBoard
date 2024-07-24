@@ -5,8 +5,8 @@ import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ethers } from 'ethers'
 
-const MULTIPLIER_SCALE = 25 //digits
-
+const MULTIPLIER_SCALE = 21 //digits
+const REWARDS_DIVIDER = 10000
 export const usePool = (poolId: number) => {
   let _currentUserRewardUpdateIntervalId: NodeJS.Timeout
 
@@ -14,7 +14,7 @@ export const usePool = (poolId: number) => {
   const dailyReward = ref<BigNumber | null>(null)
   const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
   const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
-  const rewardsMultiplier = ref(1)
+  const rewardsMultiplier = ref('1')
 
   const isInitializing = ref(false)
   const isUserDataUpdating = ref(false)
@@ -177,9 +177,9 @@ export const usePool = (poolId: number) => {
       const scaleFactor = ethers.BigNumber.from(10).pow(MULTIPLIER_SCALE)
       const scaledNumber = response.div(scaleFactor)
 
-      rewardsMultiplier.value = Number(
-        parseFloat(scaledNumber.toString()).toFixed(2),
-      )
+      rewardsMultiplier.value = (
+        scaledNumber.toNumber() / REWARDS_DIVIDER
+      ).toFixed(4)
     } catch (e) {
       ErrorHandler.processWithoutFeedback(e)
     }

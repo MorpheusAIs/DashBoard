@@ -48,6 +48,7 @@
       </input-field>
       <datetime-field
         v-model="form.lockPeriod"
+        position="top"
         :placeholder="$t(`deposit-form.lock-period-placeholder`)"
         :error-message="getFieldErrorMessage('lockPeriod')"
         :is-loading="isInitializing"
