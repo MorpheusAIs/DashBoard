@@ -125,7 +125,6 @@ const submit = async () => {
   }
   try {
     const tx =
-      // eslint-disable-next-line max-len
       await web3ProvidersStore.erc1967ProxyContract.signerBased.value.lockClaim(
         props.poolId,
         form.lockPeriod,
