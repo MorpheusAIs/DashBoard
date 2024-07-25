@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { fileURLToPath } from "node:url";
 
 /**
  * @description Enable import if you need polyfills
@@ -93,6 +94,7 @@ export default defineConfig(({ mode }) => {
         '@static': `${root}/../static`,
       },
     },
+
     /**
      * @description Enable configuration for polyfills
      *
