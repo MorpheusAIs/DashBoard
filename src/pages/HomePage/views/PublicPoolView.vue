@@ -72,17 +72,15 @@
           @click="isClaimModalShown = true"
         />
       </div>
-      <!--      TODO: UNCOMMENT-->
-      <!--      <app-button-->
-      <!--        :class="[-->
-      <!--          'public-pool-view__dashboard-button',-->
-      <!--          'public-pool-view__change-lock-button',-->
-      <!--        ]"-->
-      <!--        :text="$t('home-page.public-pool-view.change-lock-btn')"-->
-      <!--        :is-loading="isInitializing || isUserDataUpdating"-->
-      <!--        :disabled="isClaimDisabled"-->
-      <!--        @click="isClaimModalShown = true"-->
-      <!--      />-->
+      <app-button
+        :class="[
+          'public-pool-view__dashboard-button',
+          'public-pool-view__change-lock-button',
+        ]"
+        :text="$t('home-page.public-pool-view.change-lock-btn')"
+        :is-loading="isInitializing || isUserDataUpdating"
+        @click="isChangeLockModalShown = true"
+      />
       <p class="public-pool-view__dashboard-description">
         {{ $t(`home-page.public-pool-view.dashboard-description--${poolId}`) }}
       </p>

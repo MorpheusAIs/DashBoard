@@ -3,41 +3,45 @@
     class="change-lock-modal"
     :is-shown="isShown"
     :is-close-by-click-outside="isCloseByClickOutside"
-    :title="$t('claim-modal.title')"
+    :title="$t('change-lock-modal.title')"
     @update:is-shown="emit('update:is-shown', $event)"
   >
     <template #subtitle>
-      <i18n-t
-        class="change-lock-modal__subtitle"
-        keypath="change-lock-modal.subtitle"
-        tag="p"
-      >
-        <template #reward>
-          <span class="change-lock-modal__reward">
-            {{ $t('claim-modal.reward') }}
-          </span>
-        </template>
-      </i18n-t>
+      <span class="change-lock-modal__subtitle">
+        {{ $t('change-lock-modal.subtitle') }}
+      </span>
+      <div class="change-lock-modal__expected-multiplier-wrapper">
+        <span class="change-lock-modal__expected-multiplier-text">
+          {{ $t('change-lock-modal.expected-multiplier-title') }}
+        </span>
+        <p class="change-lock-modal__expected-multiplier">
+          {{ `x${userMultiplier}` }}
+        </p>
+      </div>
     </template>
     <template #default="{ modal }">
-      <datetime-field
-        v-model="form.lockPeriod"
-        position="top"
-        :placeholder="$t(`deposit-form.lock-period-placeholder`)"
-        :error-message="getFieldErrorMessage('lockPeriod')"
-        @blur="touchField('payoutStartAt')"
-      />
+      <div class="change-lock-modal__fields-wrapper">
+        <datetime-field
+          v-model="form.lockPeriod"
+          position="top"
+          :placeholder="$t(`change-lock-modal.lock-period-placeholder`)"
+          :error-message="getFieldErrorMessage('lockPeriod')"
+          :disabled="isSubmitting"
+          @blur="touchField('payoutStartAt')"
+        />
+      </div>
       <div class="deposit-form__buttons-wrp">
         <app-button
           class="deposit-form__btn"
           color="secondary"
-          :text="$t('deposit-form.cancel-btn')"
+          :text="$t('change-lock-modal.cancel-btn')"
+          :disabled="isSubmitting"
           @click="modal.close()"
         />
         <app-button
           class="deposit-form__btn"
-          :text="$t('deposit-form.cancel-btn')"
-          :disabled="!isFieldsValid"
+          :text="$t('change-lock-modal.submit-btn')"
+          :disabled="!isFieldsValid || isSubmitting || !form.lockPeriod"
           @click="submit"
         />
       </div>
@@ -48,17 +52,22 @@
 <script lang="ts" setup>
 import BasicModal from '../BasicModal.vue'
 import { DatetimeField } from '@/fields'
-import { computed, reactive } from 'vue'
+import { computed, reactive, watch, ref } from 'vue'
 import { minValue } from '@/validators'
 import { Time } from '@/utils'
 import { useFormValidation } from '@/composables'
 import { AppButton } from '@/common'
+import { usePool } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
+import { bus, BUS_EVENTS, getEthExplorerTxUrl, ErrorHandler } from '@/helpers'
+import { config } from '@config'
+import { useI18n } from '@/composables'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isShown: boolean
     poolId: number
@@ -69,13 +78,37 @@ withDefaults(
   },
 )
 
+const { t } = useI18n()
+const {
+  rewardsMultiplier,
+  expectedRewardsMultiplier,
+  userPoolData,
+  fetchExpectedMultiplier,
+} = usePool(props.poolId)
+
+const web3ProvidersStore = useWeb3ProvidersStore()
+
+const isSubmitting = ref(false)
+
 const form = reactive({
   lockPeriod: '',
 })
 
+const userMultiplier = computed(() =>
+  Number(rewardsMultiplier.value) > Number(expectedRewardsMultiplier.value)
+    ? rewardsMultiplier.value
+    : expectedRewardsMultiplier.value,
+)
+
+const minLockTime = computed(() => {
+  const claimLockTimestamp = userPoolData.value?.claimLockEnd?.toNumber() ?? 0
+  const timeNow = new Time().timestamp
+  return claimLockTimestamp > timeNow ? claimLockTimestamp : timeNow
+})
+
 const validationRules = computed(() => ({
   lockPeriod: {
-    minValue: minValue(new Time().timestamp),
+    minValue: minValue(minLockTime.value),
   },
 }))
 
@@ -85,16 +118,63 @@ const { getFieldErrorMessage, isFieldsValid, touchField } = useFormValidation(
 )
 
 const submit = async () => {
+  isSubmitting.value = true
+
   if (!isFieldsValid.value) {
     return
   }
-  emit('update:is-shown', false)
+  try {
+    const tx =
+      await web3ProvidersStore.erc1967ProxyContract.signerBased.value.lockClaim(
+        props.poolId,
+        form.lockPeriod,
+      )
+
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      t('change-lock-modal.tx-sent-message', { explorerTxUrl }),
+    )
+
+    emit('update:is-shown', false)
+
+    await tx.wait()
+
+    bus.emit(
+      BUS_EVENTS.success,
+      t('claim-form.success-message', { explorerTxUrl }),
+    )
+
+    bus.emit(BUS_EVENTS.changedPoolData)
+  } catch (e) {
+    ErrorHandler.process(e)
+  }
+  isSubmitting.value = false
 }
+
+watch(
+  () => [
+    props.poolId,
+    form.lockPeriod,
+    web3ProvidersStore.provider.selectedAddress,
+    web3ProvidersStore.provider.chainId,
+  ],
+  () => fetchExpectedMultiplier(form.lockPeriod),
+  { immediate: true },
+)
 </script>
 
 <style lang="scss" scoped>
 .change-lock-modal__subtitle {
   font: inherit;
+}
+
+.change-lock-modal__fields-wrapper {
+  margin-top: toRem(40);
 }
 
 .change-lock-modal__reward {
@@ -130,5 +210,30 @@ const submit = async () => {
     min-width: min-content;
     width: 100%;
   }
+}
+
+.change-lock-modal__expected-multiplier-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: toRem(40);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+    gap: toRem(4);
+  }
+}
+
+.change-lock-modal__expected-multiplier-text,
+.change-lock-modal__expected-multiplier {
+  font-size: toRem(22);
+
+  @include respond-to(medium) {
+    font-size: toRem(18);
+  }
+}
+
+.change-lock-modal__expected-multiplier {
+  font-weight: 600;
 }
 </style>
