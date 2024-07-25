@@ -72,6 +72,17 @@
           @click="isClaimModalShown = true"
         />
       </div>
+      <!--      TODO: UNCOMMENT-->
+      <!--      <app-button-->
+      <!--        :class="[-->
+      <!--          'public-pool-view__dashboard-button',-->
+      <!--          'public-pool-view__change-lock-button',-->
+      <!--        ]"-->
+      <!--        :text="$t('home-page.public-pool-view.change-lock-btn')"-->
+      <!--        :is-loading="isInitializing || isUserDataUpdating"-->
+      <!--        :disabled="isClaimDisabled"-->
+      <!--        @click="isClaimModalShown = true"-->
+      <!--      />-->
       <p class="public-pool-view__dashboard-description">
         {{ $t(`home-page.public-pool-view.dashboard-description--${poolId}`) }}
       </p>
@@ -90,8 +101,12 @@
       />
       <claim-modal
         v-if="!isClaimDisabled && currentUserReward"
-        v-model:is-shown="isClaimModalShown"
+        v-model:is-shown="isChangeLockModalShown"
         :amount="formatEther(currentUserReward)"
+        :pool-id="poolId"
+      />
+      <change-lock-modal
+        v-model:is-shown="isClaimModalShown"
         :pool-id="poolId"
       />
     </info-dashboard>
@@ -106,6 +121,7 @@ import {
   InfoBar,
   InfoDashboard,
   WithdrawModal,
+  ChangeLockModal,
 } from '@/common'
 import { useI18n, usePool } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
@@ -119,6 +135,7 @@ import { ZeroPoolDescription } from '../components'
 const props = defineProps<{ poolId: number }>()
 
 const isClaimModalShown = ref(false)
+const isChangeLockModalShown = ref(false)
 const isDepositModalShown = ref(false)
 const isWithdrawModalShown = ref(false)
 
@@ -247,6 +264,10 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
     flex-direction: column;
     gap: toRem(8);
   }
+}
+
+.public-pool-view__change-lock-button {
+  margin-top: toRem(16);
 }
 
 .public-pool-view__bar-button {
