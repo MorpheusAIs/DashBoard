@@ -79,6 +79,7 @@
         ]"
         :text="$t('home-page.public-pool-view.change-lock-btn')"
         :is-loading="isInitializing || isUserDataUpdating"
+        :disabled="userPoolData?.deposited?.isZero()"
         @click="isChangeLockModalShown = true"
       />
       <p class="public-pool-view__dashboard-description">
