@@ -101,7 +101,7 @@
     "amount-placeholder": "Enter {currency} amount",
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
-    "expected-multiplier-lbl": "Expected multiplier:",
+    "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",
       "approve": "Approve"
@@ -137,7 +137,7 @@
         "subtitle--0": "Group 1"
       },
       "change-lock-btn": "Set lock period",
-      "multiplier-title": "Your reward multiplier",
+      "multiplier-title": "Your Power Factor",
       "total-deposits-title": "Total deposits",
       "daily-reward-title": "Current daily reward",
       "started-at-title": "Started at",
@@ -294,9 +294,9 @@
   },
   "change-lock-modal": {
     "title": "Lock Claim",
-    "subtitle": "You can postpone the claim of MOR tokens for a period of your choice and get increased yield. The longer the period, the higher the yield multiplier.",
+    "subtitle": "You can postpone the claim of MOR tokens for a period of your choice and get increased yield. The longer the period, the higher the yield power factor.",
     "lock-period-placeholder": "Lock your claim until",
-    "expected-multiplier-title": "Expected reward multiplier:",
+    "expected-multiplier-title": "Expected Power Factor:",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "cancel-btn": "Cancel",
