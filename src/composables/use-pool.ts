@@ -7,6 +7,7 @@ import { ethers } from 'ethers'
 
 const MULTIPLIER_SCALE = 21 //digits
 const REWARDS_DIVIDER = 10000
+
 export const usePool = (poolId: number) => {
   let _currentUserRewardUpdateIntervalId: NodeJS.Timeout
 
@@ -15,6 +16,7 @@ export const usePool = (poolId: number) => {
   const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
   const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
   const rewardsMultiplier = ref('1')
+  const expectedRewardsMultiplier = ref('1')
 
   const isInitializing = ref(false)
   const isUserDataUpdating = ref(false)
@@ -147,6 +149,28 @@ export const usePool = (poolId: number) => {
     }
   }
 
+  const humanizeRewards = (reward: BigNumber) => {
+    const scaleFactor = ethers.BigNumber.from(10).pow(MULTIPLIER_SCALE)
+    const scaledNumber = reward.div(scaleFactor)
+    return (scaledNumber.toNumber() / REWARDS_DIVIDER).toFixed(4)
+  }
+
+  const fetchExpectedMultiplier = async (lockPeriod: string) => {
+    try {
+      const multiplier =
+        // eslint-disable-next-line max-len
+        await web3ProvidersStore.erc1967ProxyContract.providerBased.value.getClaimLockPeriodMultiplier(
+          poolId,
+          0,
+          lockPeriod || 0,
+        )
+
+      expectedRewardsMultiplier.value = humanizeRewards(multiplier)
+    } catch (error) {
+      ErrorHandler.processWithoutFeedback(error)
+    }
+  }
+
   const updateUserData = async (): Promise<void> => {
     isUserDataUpdating.value = true
 
@@ -174,12 +198,7 @@ export const usePool = (poolId: number) => {
           web3ProvidersStore.provider.selectedAddress,
         )
 
-      const scaleFactor = ethers.BigNumber.from(10).pow(MULTIPLIER_SCALE)
-      const scaledNumber = response.div(scaleFactor)
-
-      rewardsMultiplier.value = (
-        scaledNumber.toNumber() / REWARDS_DIVIDER
-      ).toFixed(4)
+      rewardsMultiplier.value = humanizeRewards(response)
     } catch (e) {
       ErrorHandler.processWithoutFeedback(e)
     }
@@ -294,6 +313,7 @@ export const usePool = (poolId: number) => {
     poolData,
     userPoolData,
     rewardsMultiplier,
+    expectedRewardsMultiplier,
 
     isClaimDisabled,
     isDepositDisabled,
@@ -301,5 +321,7 @@ export const usePool = (poolId: number) => {
 
     isInitializing,
     isUserDataUpdating,
+
+    fetchExpectedMultiplier,
   }
 }

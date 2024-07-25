@@ -22,6 +22,14 @@
         @blur="touchField('balanceOptionIdx')"
       />
     </div>
+    <div class="deposit-form__multiplier-wrp">
+      <span class="deposit-form__label">
+        {{ $t('deposit-form.expected-multiplier-lbl') }}
+      </span>
+      <span class="deposit-form__value">
+        {{ `x${expectedRewardsMultiplier}` }}
+      </span>
+    </div>
     <div class="deposit-form__form-data">
       <input-field
         v-model="form.amount"
@@ -77,7 +85,7 @@
 
 <script lang="ts" setup>
 import { AppButton } from '@/common'
-import { useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n, usePool } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
 import { DatetimeField, InputField, SelectField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
@@ -87,7 +95,7 @@ import { BigNumber, formatEther, parseUnits, Time, toEther } from '@/utils'
 import { ether, maxEther, minEther, minValue, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 enum ACTIONS {
   approve = 'approve',
@@ -122,6 +130,9 @@ const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
 })
 
 const { t } = useI18n()
+const { expectedRewardsMultiplier, fetchExpectedMultiplier } = usePool(
+  props.poolId,
+)
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
@@ -296,6 +307,17 @@ const init = async (): Promise<void> => {
   isInitializing.value = false
 }
 
+watch(
+  () => [
+    props.poolId,
+    web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
+    web3ProvidersStore.provider.selectedAddress,
+    form.lockPeriod,
+  ],
+  () => fetchExpectedMultiplier(form.lockPeriod),
+  { immediate: true },
+)
+
 onMounted(() => {
   init()
 })
@@ -334,6 +356,27 @@ onMounted(() => {
 
   @include respond-to(medium) {
     margin-top: toRem(20);
+  }
+}
+
+.deposit-form__multiplier-wrp {
+  display: flex;
+  justify-content: space-between;
+  margin-top: toRem(16);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+    gap: toRem(4);
+  }
+}
+
+.deposit-form__value {
+  font-size: toRem(22);
+  font-weight: 600;
+  padding-right: toRem(28);
+
+  @include respond-to(medium) {
+    font-size: toRem(18);
   }
 }
 
