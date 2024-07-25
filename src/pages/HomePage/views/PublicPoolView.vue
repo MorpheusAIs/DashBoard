@@ -101,12 +101,12 @@
       />
       <claim-modal
         v-if="!isClaimDisabled && currentUserReward"
-        v-model:is-shown="isChangeLockModalShown"
+        v-model:is-shown="isClaimModalShown"
         :amount="formatEther(currentUserReward)"
         :pool-id="poolId"
       />
       <change-lock-modal
-        v-model:is-shown="isClaimModalShown"
+        v-model:is-shown="isChangeLockModalShown"
         :pool-id="poolId"
       />
     </info-dashboard>
