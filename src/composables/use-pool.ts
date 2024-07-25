@@ -149,7 +149,7 @@ export const usePool = (poolId: number) => {
     }
   }
 
-  const humanize_rewards = (reward: BigNumber) => {
+  const humanizeRewards = (reward: BigNumber) => {
     const scaleFactor = ethers.BigNumber.from(10).pow(MULTIPLIER_SCALE)
     const scaledNumber = reward.div(scaleFactor)
     return (scaledNumber.toNumber() / REWARDS_DIVIDER).toFixed(4)
@@ -165,7 +165,7 @@ export const usePool = (poolId: number) => {
           lockPeriod || 0,
         )
 
-      expectedRewardsMultiplier.value = humanize_rewards(multiplier)
+      expectedRewardsMultiplier.value = humanizeRewards(multiplier)
     } catch (error) {
       ErrorHandler.processWithoutFeedback(error)
     }
@@ -198,7 +198,7 @@ export const usePool = (poolId: number) => {
           web3ProvidersStore.provider.selectedAddress,
         )
 
-      rewardsMultiplier.value = humanize_rewards(response)
+      rewardsMultiplier.value = humanizeRewards(response)
     } catch (e) {
       ErrorHandler.processWithoutFeedback(e)
     }
