@@ -33,7 +33,8 @@ const { t } = useI18n()
 const listItems = computed<string[]>(() => [
   t('zero-pool-description.list.1'),
   t('zero-pool-description.list.2'),
-  t('zero-pool-description.list.3'),
+  // TODO: HIDDEN BEFORE PROD
+  // t('zero-pool-description.list.3'),
   t('zero-pool-description.list.4'),
 ])
 </script>
