@@ -30,16 +30,16 @@
           @blur="touchField('payoutStartAt')"
         />
       </div>
-      <div class="deposit-form__buttons-wrp">
+      <div class="change-lock-modal__buttons-wrp">
         <app-button
-          class="deposit-form__btn"
+          class="change-lock-modal__btn"
           color="secondary"
           :text="$t('change-lock-modal.cancel-btn')"
           :disabled="isSubmitting"
           @click="modal.close()"
         />
         <app-button
-          class="deposit-form__btn"
+          class="change-lock-modal__btn"
           :text="$t('change-lock-modal.submit-btn')"
           :disabled="!isFieldsValid || isSubmitting || !form.lockPeriod"
           @click="submit"
@@ -52,16 +52,16 @@
 <script lang="ts" setup>
 import BasicModal from '../BasicModal.vue'
 import { DatetimeField } from '@/fields'
-import { computed, reactive, watch, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { minValue } from '@/validators'
 import { Time } from '@/utils'
-import { useFormValidation } from '@/composables'
+import { useFormValidation, useI18n, usePool } from '@/composables'
 import { AppButton } from '@/common'
-import { usePool } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
-import { bus, BUS_EVENTS, getEthExplorerTxUrl, ErrorHandler } from '@/helpers'
-import { config } from '@config'
-import { useI18n } from '@/composables'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import { config, NETWORK_IDS } from '@config'
+import { ETHEREUM_CHAIN_IDS } from '@/enums'
+import { sleep } from '@/helpers'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -124,6 +124,12 @@ const submit = async () => {
     return
   }
   try {
+    await web3ProvidersStore.provider.switchChain(
+      web3ProvidersStore.networkId === NETWORK_IDS.mainnet
+        ? ETHEREUM_CHAIN_IDS.ethereum
+        : ETHEREUM_CHAIN_IDS.sepolia,
+    )
+    await sleep(500)
     const tx =
       await web3ProvidersStore.erc1967ProxyContract.signerBased.value.lockClaim(
         props.poolId,
@@ -191,7 +197,7 @@ watch(
   }
 }
 
-.deposit-form__buttons-wrp {
+.change-lock-modal__buttons-wrp {
   margin-top: toRem(40);
   display: flex;
   align-items: center;
@@ -203,7 +209,7 @@ watch(
   }
 }
 
-.deposit-form .deposit-form__btn {
+.change-lock-modal .change-lock-modal__btn {
   min-width: toRem(200);
 
   @include respond-to(medium) {

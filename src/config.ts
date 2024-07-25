@@ -11,7 +11,7 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client/core'
-import { providers, utils } from 'ethers'
+import { ethers, providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
 import packageJson from '../package.json'
@@ -130,14 +130,17 @@ config.networksMap = {
       layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.ethereum,
       provider: new providers.FallbackProvider(
         [
-          'https://eth.llamarpc.com',
+          'https://rpc.mevblocker.io',
           'https://rpc.mevblocker.io',
           'https://eth-pokt.nodies.app',
           'https://eth.drpc.org',
           'https://rpc.payload.de',
           'https://eth.merkle.io',
         ].map((rpcUrl, idx) => ({
-          provider: new providers.StaticJsonRpcProvider(rpcUrl),
+          provider: new providers.StaticJsonRpcProvider(
+            rpcUrl,
+            ethers.providers.getNetwork(Number(ETHEREUM_CHAIN_IDS.ethereum)),
+          ),
           priority: idx,
         })),
         1,
@@ -166,7 +169,10 @@ config.networksMap = {
       chainId: ETHEREUM_CHAIN_IDS.sepolia,
       chainTitle: 'Ethereum Sepolia',
       layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.sepolia,
-      provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
+      provider: new providers.StaticJsonRpcProvider(
+        ETHEREUM_RPC_URLS.sepolia,
+        ethers.providers.getNetwork(Number(ETHEREUM_CHAIN_IDS.sepolia)),
+      ),
       explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
     },
     l2: {

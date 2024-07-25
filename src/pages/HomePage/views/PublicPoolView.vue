@@ -79,6 +79,7 @@
         ]"
         :text="$t('home-page.public-pool-view.change-lock-btn')"
         :is-loading="isInitializing || isUserDataUpdating"
+        :disabled="userPoolData?.deposited?.isZero()"
         @click="isChangeLockModalShown = true"
       />
       <p class="public-pool-view__dashboard-description">
@@ -165,7 +166,7 @@ const claimLockTime = computed(() => {
     )
   }
   if (poolData.value) {
-    return new Time(
+    const lockTime = new Time(
       userPoolData.value && !userPoolData.value.lastStake.isZero()
         ? userPoolData.value.lastStake
             .add(poolData.value.withdrawLockPeriodAfterStake)
@@ -174,8 +175,26 @@ const claimLockTime = computed(() => {
             .add(poolData.value.withdrawLockPeriod)
             .toNumber(),
     ).format(DEFAULT_TIME_FORMAT)
+
+    return new Time().isAfter(lockTime) ? '-' : lockTime
   }
   return ''
+})
+
+const withdrawAtTime = computed(() => {
+  if (poolData.value) {
+    const withdrawTime = new Time(
+      userPoolData.value && !userPoolData.value.lastStake.isZero()
+        ? userPoolData.value.lastStake
+            .add(poolData.value.withdrawLockPeriodAfterStake)
+            .toNumber()
+        : poolData.value.payoutStart
+            .add(poolData.value.withdrawLockPeriod)
+            .toNumber(),
+    ).format(DEFAULT_TIME_FORMAT)
+    return new Time().isAfter(withdrawTime) ? '-' : withdrawTime
+  }
+  return '-'
 })
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
@@ -199,17 +218,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
   {
     title: t('home-page.public-pool-view.withdraw-at-title'),
-    value: poolData.value
-      ? new Time(
-          userPoolData.value && !userPoolData.value.lastStake.isZero()
-            ? userPoolData.value.lastStake
-                .add(poolData.value.withdrawLockPeriodAfterStake)
-                .toNumber()
-            : poolData.value.payoutStart
-                .add(poolData.value.withdrawLockPeriod)
-                .toNumber(),
-        ).format(DEFAULT_TIME_FORMAT)
-      : '',
+    value: withdrawAtTime.value,
     note: t('home-page.public-pool-view.withdraw-at-note'),
   },
   {

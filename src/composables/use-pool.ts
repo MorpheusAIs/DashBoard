@@ -158,13 +158,12 @@ export const usePool = (poolId: number) => {
   const fetchExpectedMultiplier = async (lockPeriod: string) => {
     try {
       const multiplier =
-        // eslint-disable-next-line max-len
+        //eslint-disable-next-line max-len
         await web3ProvidersStore.erc1967ProxyContract.providerBased.value.getClaimLockPeriodMultiplier(
           poolId,
           0,
           lockPeriod || 0,
         )
-
       expectedRewardsMultiplier.value = humanizeRewards(multiplier)
     } catch (error) {
       ErrorHandler.processWithoutFeedback(error)
@@ -265,6 +264,7 @@ export const usePool = (poolId: number) => {
     () => [
       web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.isConnected,
+      web3ProvidersStore.networkId,
     ],
     async ([newAddress, isConnected]) => {
       currentUserReward.value = null
@@ -272,7 +272,7 @@ export const usePool = (poolId: number) => {
 
       if (newAddress && isConnected) {
         try {
-          await Promise.all([updateUserReward(), updateUserData()])
+          await Promise.all([updateUserData(), updateUserReward()])
         } catch (error) {
           ErrorHandler.process(error)
         }
