@@ -72,6 +72,15 @@
           @click="isClaimModalShown = true"
         />
       </div>
+      <app-button
+        :class="[
+          'public-pool-view__dashboard-button',
+          'public-pool-view__change-lock-button',
+        ]"
+        :text="$t('home-page.public-pool-view.change-lock-btn')"
+        :is-loading="isInitializing || isUserDataUpdating"
+        @click="isChangeLockModalShown = true"
+      />
       <p class="public-pool-view__dashboard-description">
         {{ $t(`home-page.public-pool-view.dashboard-description--${poolId}`) }}
       </p>
@@ -94,6 +103,10 @@
         :amount="formatEther(currentUserReward)"
         :pool-id="poolId"
       />
+      <change-lock-modal
+        v-model:is-shown="isChangeLockModalShown"
+        :pool-id="poolId"
+      />
     </info-dashboard>
   </div>
 </template>
@@ -106,6 +119,7 @@ import {
   InfoBar,
   InfoDashboard,
   WithdrawModal,
+  ChangeLockModal,
 } from '@/common'
 import { useI18n, usePool } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
@@ -119,6 +133,7 @@ import { ZeroPoolDescription } from '../components'
 const props = defineProps<{ poolId: number }>()
 
 const isClaimModalShown = ref(false)
+const isChangeLockModalShown = ref(false)
 const isDepositModalShown = ref(false)
 const isWithdrawModalShown = ref(false)
 
@@ -135,12 +150,33 @@ const {
   isClaimDisabled,
   isDepositDisabled,
   isWithdrawDisabled,
+  rewardsMultiplier,
 
   isInitializing,
   isUserDataUpdating,
 } = usePool(poolId.value)
 
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const claimLockTime = computed(() => {
+  if (userPoolData.value?.claimLockEnd) {
+    return new Time(userPoolData.value?.claimLockEnd.toNumber()).format(
+      DEFAULT_TIME_FORMAT,
+    )
+  }
+  if (poolData.value) {
+    return new Time(
+      userPoolData.value && !userPoolData.value.lastStake.isZero()
+        ? userPoolData.value.lastStake
+            .add(poolData.value.withdrawLockPeriodAfterStake)
+            .toNumber()
+        : poolData.value.payoutStart
+            .add(poolData.value.withdrawLockPeriod)
+            .toNumber(),
+    ).format(DEFAULT_TIME_FORMAT)
+  }
+  return ''
+})
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
@@ -178,13 +214,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
   {
     title: t('home-page.public-pool-view.claim-at-title'),
-    value: poolData.value
-      ? new Time(
-          poolData.value.payoutStart
-            .add(poolData.value.claimLockPeriod)
-            .toNumber(),
-        ).format(DEFAULT_TIME_FORMAT)
-      : '',
+    value: claimLockTime.value.toString(),
     note: t('home-page.public-pool-view.claim-at-note'),
   },
 ])
@@ -203,6 +233,10 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
     value: currentUserReward.value
       ? `${formatEther(currentUserReward.value)} MOR`
       : '',
+  },
+  {
+    title: t('home-page.public-pool-view.multiplier-title'),
+    value: `x${rewardsMultiplier.value}`,
   },
 ])
 </script>
@@ -228,6 +262,10 @@ const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
     flex-direction: column;
     gap: toRem(8);
   }
+}
+
+.public-pool-view__change-lock-button {
+  margin-top: toRem(16);
 }
 
 .public-pool-view__bar-button {

@@ -3,14 +3,20 @@ import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { type BigNumber, type Erc1967ProxyType } from '@/types'
 import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { ethers } from 'ethers'
+
+const MULTIPLIER_SCALE = 21 //digits
+const REWARDS_DIVIDER = 10000
 
 export const usePool = (poolId: number) => {
-  let _currentUserRewardUpdateIntervalId: Parameters<typeof clearInterval>[0]
+  let _currentUserRewardUpdateIntervalId: NodeJS.Timeout
 
   const currentUserReward = ref<BigNumber | null>(null)
   const dailyReward = ref<BigNumber | null>(null)
   const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
   const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
+  const rewardsMultiplier = ref('1')
+  const expectedRewardsMultiplier = ref('1')
 
   const isInitializing = ref(false)
   const isUserDataUpdating = ref(false)
@@ -26,6 +32,12 @@ export const usePool = (poolId: number) => {
       currentUserReward.value.isZero()
     )
       return true
+
+    if (userPoolData.value?.claimLockEnd) {
+      return (
+        currentTimestamp.value <= userPoolData.value.claimLockEnd.toNumber()
+      )
+    }
 
     return (
       currentTimestamp.value <=
@@ -109,7 +121,7 @@ export const usePool = (poolId: number) => {
       rate: poolDataResponses[0].rate,
       payoutStart: poolDataResponses[1].payoutStart,
       rewardDecrease: poolDataResponses[1].rewardDecrease,
-      totalDeposited: poolDataResponses[0].totalDeposited,
+      totalDeposited: poolDataResponses[0].totalVirtualDeposited,
       withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
       withdrawLockPeriodAfterStake:
         poolDataResponses[1].withdrawLockPeriodAfterStake,
@@ -127,10 +139,35 @@ export const usePool = (poolId: number) => {
       )
 
     return {
-      lastStake: response.lastStake,
+      claimLockEnd: response.claimLockEnd,
+      claimLockStart: response.claimLockStart,
       deposited: response.deposited,
-      rate: response.rate,
+      lastStake: response.lastStake,
       pendingRewards: response.pendingRewards,
+      rate: response.rate,
+      virtualDeposited: response.virtualDeposited,
+    }
+  }
+
+  const humanizeRewards = (reward: BigNumber) => {
+    const scaleFactor = ethers.BigNumber.from(10).pow(MULTIPLIER_SCALE)
+    const scaledNumber = reward.div(scaleFactor)
+    return (scaledNumber.toNumber() / REWARDS_DIVIDER).toFixed(4)
+  }
+
+  const fetchExpectedMultiplier = async (lockPeriod: string) => {
+    try {
+      const multiplier =
+        // eslint-disable-next-line max-len
+        await web3ProvidersStore.erc1967ProxyContract.providerBased.value.getClaimLockPeriodMultiplier(
+          poolId,
+          0,
+          lockPeriod || 0,
+        )
+
+      expectedRewardsMultiplier.value = humanizeRewards(multiplier)
+    } catch (error) {
+      ErrorHandler.processWithoutFeedback(error)
     }
   }
 
@@ -150,6 +187,24 @@ export const usePool = (poolId: number) => {
     }
   }
 
+  const updateUserReward = async (): Promise<void> => {
+    isUserDataUpdating.value = true
+
+    try {
+      const response =
+        // eslint-disable-next-line max-len
+        await erc1967ProxyContract.value.providerBased.value.getCurrentUserMultiplier(
+          poolId,
+          web3ProvidersStore.provider.selectedAddress,
+        )
+
+      rewardsMultiplier.value = humanizeRewards(response)
+    } catch (e) {
+      ErrorHandler.processWithoutFeedback(e)
+    }
+    isUserDataUpdating.value = false
+  }
+
   const init = async () => {
     isInitializing.value = true
 
@@ -161,6 +216,7 @@ export const usePool = (poolId: number) => {
         const [pooDataResponse] = await Promise.all([
           fetchPoolData(),
           updateUserData(),
+          updateUserReward(),
         ])
 
         poolData.value = pooDataResponse
@@ -192,6 +248,7 @@ export const usePool = (poolId: number) => {
         const [pooDataResponse] = await Promise.all([
           fetchPoolData(),
           updateUserData(),
+          updateUserReward(),
         ])
 
         poolData.value = pooDataResponse
@@ -215,7 +272,7 @@ export const usePool = (poolId: number) => {
 
       if (newAddress && isConnected) {
         try {
-          await updateUserData()
+          await Promise.all([updateUserReward(), updateUserData()])
         } catch (error) {
           ErrorHandler.process(error)
         }
@@ -255,6 +312,8 @@ export const usePool = (poolId: number) => {
     dailyReward,
     poolData,
     userPoolData,
+    rewardsMultiplier,
+    expectedRewardsMultiplier,
 
     isClaimDisabled,
     isDepositDisabled,
@@ -262,5 +321,7 @@ export const usePool = (poolId: number) => {
 
     isInitializing,
     isUserDataUpdating,
+
+    fetchExpectedMultiplier,
   }
 }
