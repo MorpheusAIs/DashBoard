@@ -294,7 +294,7 @@
   },
   "change-lock-modal": {
     "title": "Stake MOR Rewards",
-    "subtitle": "You can postpone the claim of MOR tokens for a period of your choice and get increased MOR rewards. The longer the period, the higher the Power factor.",
+    "subtitle": "You can postpone the claim of MOR tokens for a period of your choice and get increased MOR rewards. The longer the period, the higher the Power factor, up to 6 years.",
     "lock-period-placeholder": "Lock your claim until",
     "expected-multiplier-title": "Expected Power Factor:",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
