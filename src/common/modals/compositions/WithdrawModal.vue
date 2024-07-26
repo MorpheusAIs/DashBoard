@@ -27,13 +27,16 @@
           </p>
         </div>
       </div>
-      <withdraw-form
-        class="withdraw-modal__form"
-        :pool-id="poolId"
-        :available-amount="availableAmount"
-        @cancel="modal.close"
-        @tx-sent="modal.close"
-      />
+      <transition name="fade">
+        <withdraw-form
+          v-if="isShown"
+          class="withdraw-modal__form"
+          :pool-id="poolId"
+          :available-amount="availableAmount"
+          @cancel="modal.close"
+          @tx-sent="modal.close"
+        />
+      </transition>
     </template>
   </basic-modal>
 </template>

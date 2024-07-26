@@ -85,7 +85,10 @@
       <p class="public-pool-view__dashboard-description">
         {{ $t(`home-page.public-pool-view.dashboard-description--${poolId}`) }}
       </p>
-      <p v-if="poolData" class="public-pool-view__dashboard-note">
+      <p
+        v-if="poolData?.withdrawLockPeriod"
+        class="public-pool-view__dashboard-note"
+      >
         {{
           $t(`home-page.public-pool-view.dashboard-note--${poolId}`, {
             daysCount: poolData.withdrawLockPeriod.div(24 * 60 * 60),
@@ -161,9 +164,10 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const claimLockTime = computed(() => {
   if (userPoolData.value?.claimLockEnd) {
-    return new Time(userPoolData.value?.claimLockEnd.toNumber()).format(
-      DEFAULT_TIME_FORMAT,
-    )
+    const lockEnd = new Time(userPoolData.value?.claimLockEnd.toNumber())
+    return new Time().isAfter(lockEnd)
+      ? '-'
+      : lockEnd.format(DEFAULT_TIME_FORMAT)
   }
   if (poolData.value) {
     const lockTime = new Time(
@@ -174,9 +178,10 @@ const claimLockTime = computed(() => {
         : poolData.value.payoutStart
             .add(poolData.value.withdrawLockPeriod)
             .toNumber(),
-    ).format(DEFAULT_TIME_FORMAT)
-
-    return new Time().isAfter(lockTime) ? '-' : lockTime
+    )
+    return new Time().isAfter(lockTime)
+      ? '-'
+      : lockTime.format(DEFAULT_TIME_FORMAT)
   }
   return ''
 })
@@ -191,8 +196,10 @@ const withdrawAtTime = computed(() => {
         : poolData.value.payoutStart
             .add(poolData.value.withdrawLockPeriod)
             .toNumber(),
-    ).format(DEFAULT_TIME_FORMAT)
-    return new Time().isAfter(withdrawTime) ? '-' : withdrawTime
+    )
+    return new Time().isAfter(withdrawTime)
+      ? '-'
+      : withdrawTime.format(DEFAULT_TIME_FORMAT)
   }
   return '-'
 })
