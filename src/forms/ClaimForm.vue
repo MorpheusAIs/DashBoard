@@ -13,7 +13,7 @@
         class="claim-form__btn"
         color="secondary"
         :text="$t('claim-form.cancel-btn')"
-        @click="emit('cancel')"
+        @click="cancel"
       />
       <app-button
         class="claim-form__btn"
@@ -33,7 +33,7 @@ import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
 import { config } from '@config'
-import { reactive, ref } from 'vue'
+import {reactive, ref, watch} from 'vue'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
@@ -95,6 +95,8 @@ const submit = async (): Promise<void> => {
 
     emit('tx-sent')
 
+    clearFields()
+
     await tx.wait()
 
     bus.emit(
@@ -108,6 +110,15 @@ const submit = async (): Promise<void> => {
   }
 
   isSubmitting.value = false
+}
+
+const cancel = (): void => {
+  clearFields()
+  emit('cancel')
+}
+
+const clearFields = () => {
+  form.address = ''
 }
 </script>
 
