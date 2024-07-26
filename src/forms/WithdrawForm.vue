@@ -23,7 +23,7 @@
         class="withdraw-form__btn"
         color="secondary"
         :text="$t('withdraw-form.cancel-btn')"
-        @click="emit('cancel')"
+        @click="cancel"
       />
       <app-button
         class="withdraw-form__btn"
@@ -98,6 +98,7 @@ const submit = async (): Promise<void> => {
     )
 
     emit('tx-sent')
+    clearFields()
 
     await tx.wait()
 
@@ -112,6 +113,15 @@ const submit = async (): Promise<void> => {
   }
 
   isSubmitting.value = false
+}
+
+const cancel = () => {
+  clearFields()
+  emit('cancel')
+}
+
+const clearFields = () => {
+  form.amount = ''
 }
 </script>
 
