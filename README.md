@@ -1,4 +1,4 @@
-# Dash Boards For Morpheus Contributors and Users
+# Dashboards For Morpheus Contributors and Users
 
 ## List of Dashboards:
 
