@@ -1,7 +1,5 @@
 # Dashboards For Morpheus Contributors and Users
 
-## List of Dashboards:
-
 ## Capital
 - 1A. Capital Dashboard Deposit, Stake, Claim (existing): https://dashboard.mor.org/#/capital?network=mainnet
 - 1B. Capital MOR20 Smart Contract Factory: https://morpheus-dev.206.189.243.3.nip.io/#/mor20-ecosystem?network=testnet
