@@ -18,7 +18,7 @@
 
 ## Builders
 - 4A. Builders Dashboard Registering Smart Agents (existing): https://mor.software/
-- 4B. Builders Dashboard Checking Rewards, Staking MOR (In Development): https://morpheus-dev.206.189.243.3.nip.io/#/community?network=testnet
+- 4B. Builders Dashboard MOR Rewards & Staking (Development): https://morpheus-dev.206.189.243.3.nip.io/#/community?network=testnet
 
 ## Different Branches Dashboards on Github:
 - Builder: https://github.com/MorpheusAIs/DashBoard/tree/Builder-Dashboard
