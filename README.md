@@ -14,7 +14,7 @@
 
 ## Compute
 - 3A. Compute Dashboard For Testnet Stats (new): https://nirmaan-morpheous-dashboard.pages.dev
-- 3B. Register for as a Compute Provider (on Discord for testnet): https://discord.com/channels/1151741790408429580/1167520834139738289
+- 3B. Register Compute Provider (for testnet): https://discord.com/channels/1151741790408429580/1167520834139738289
 
 ## Builders
 - 4A. Builders Dashboard Registering Smart Agents (existing): https://mor.software/
