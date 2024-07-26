@@ -4,7 +4,7 @@
 
 ## Capital
 - 1A. Capital Dashboard Deposit, Stake, Claim (existing): https://dashboard.mor.org/#/capital?network=mainnet
-- 1B. Capital Buying / Selling MOR Uniswap Pool: https://app.uniswap.org/explore/pools/arbitrum/0xE5Cf22EE4988d54141B77050967E1052Bd9c7F7A
+- 1B. Capital Buying / Selling MOR: https://app.uniswap.org/explore/pools/arbitrum/0xE5Cf22EE4988d54141B77050967E1052Bd9c7F7A
 - 1C. Capital MOR20 Smart Contract Factory: https://morpheus-dev.206.189.243.3.nip.io/#/mor20-ecosystem?network=testnet
 
 ## Code
