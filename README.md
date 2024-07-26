@@ -32,9 +32,9 @@
 - **Builder:** https://github.com/MorpheusAIs/DashBoard/tree/Builder-Dashboard
 
 ## Community Info, Stats, & Charts:
-- Board Morpheus Stats & Toosl: https://morlord.com/
-- https://morstats.info/
-- https://dune.com/netherman/morpheus-ai-dashboard
+- Board Morpheus Stats & Tools: https://morlord.com/
+- Stats on Token Distribution: https://morstats.info/
+- Charts showing Token Stats: https://dune.com/netherman/morpheus-ai-dashboard
 
 # Project Setup Instructions For Running A Dashboard
 ```
