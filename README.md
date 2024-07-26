@@ -20,11 +20,11 @@
 - 4A. Builders Dashboard Registering Smart Agents (existing): https://mor.software/
 - 4B. Builders Dashboard MOR Rewards & Staking (Development): https://morpheus-dev.206.189.243.3.nip.io/#/community?network=testnet
 
-## Different Branches Dashboards on Github:
-- Builder: https://github.com/MorpheusAIs/DashBoard/tree/Builder-Dashboard
-- Capital: https://github.com/MorpheusAIs/DashBoard/tree/Capital-Dashboard
-- Code: https://github.com/MorpheusAIs/DashBoard/tree/Code-Dashboard
-- Compute: https://github.com/MorpheusAIs/DashBoard/tree/Compute-Dashboard
+## Different Branches For Dashboards on Github:
+- **Capital:** https://github.com/MorpheusAIs/DashBoard/tree/Capital-Dashboard
+- **Code:** https://github.com/MorpheusAIs/DashBoard/tree/Code-Dashboard
+- **Compute:** https://github.com/MorpheusAIs/DashBoard/tree/Compute-Dashboard
+- **Builder:** https://github.com/MorpheusAIs/DashBoard/tree/Builder-Dashboard
 
 ## Community Info, Stats, & Charts:
 - https://dune.com/netherman/morpheus-ai-dashboard
