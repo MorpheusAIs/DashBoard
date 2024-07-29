@@ -67,7 +67,7 @@ export const config = {
   LANDING_URL: 'https://mor.org/',
   CODE_CONTRIBUTION_URL: 'https://mor.software/',
   COMPUTE_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Morpheus-Lumerin-Node',
+    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
   COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
   HOW_GET_STETH_URL: 'https://stake.lido.fi/',
   WALLET_INSTALL_URL: 'https://metamask.io/download/',
