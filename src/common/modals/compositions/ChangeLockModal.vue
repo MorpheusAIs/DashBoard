@@ -19,7 +19,7 @@
         </p>
       </div>
     </template>
-    <template #default="{ modal }">
+    <template #default>
       <div class="change-lock-modal__fields-wrapper">
         <datetime-field
           v-model="form.lockPeriod"
