@@ -63,16 +63,13 @@ export const config = {
   GITHUB_URL:
     'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
   CONTRACT_FAQ_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
+    'https://github.com/MorpheusAIs/Docs/blob/main/!KEYDOCS%20README%20FIRST!/FAQs%20%26%20Guides/Capital%20Providers%20FAQ.md',
   LANDING_URL: 'https://mor.org/',
-  CODE_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+  CODE_CONTRIBUTION_URL: 'https://mor.software/',
   COMPUTE_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
-  COMMUNITY_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
-  HOW_GET_STETH_URL:
-    'https://help.lido.fi/en/articles/5232811-how-do-i-get-steth',
+    'https://github.com/MorpheusAIs/Morpheus-Lumerin-Node',
+  COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
+  HOW_GET_STETH_URL: 'https://stake.lido.fi/',
   WALLET_INSTALL_URL: 'https://metamask.io/download/',
 
   // Testnet
