@@ -13,7 +13,7 @@
         class="claim-form__btn"
         color="secondary"
         :text="$t('claim-form.cancel-btn')"
-        @click="emit('cancel')"
+        @click="cancel"
       />
       <app-button
         class="claim-form__btn"
@@ -95,6 +95,8 @@ const submit = async (): Promise<void> => {
 
     emit('tx-sent')
 
+    clearFields()
+
     await tx.wait()
 
     bus.emit(
@@ -108,6 +110,15 @@ const submit = async (): Promise<void> => {
   }
 
   isSubmitting.value = false
+}
+
+const cancel = (): void => {
+  clearFields()
+  emit('cancel')
+}
+
+const clearFields = () => {
+  form.address = ''
 }
 </script>
 

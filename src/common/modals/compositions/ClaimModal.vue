@@ -20,12 +20,15 @@
       </i18n-t>
     </template>
     <template #default="{ modal }">
-      <claim-form
-        class="claim-modal__form"
-        :pool-id="poolId"
-        @cancel="modal.close"
-        @tx-sent="modal.close"
-      />
+      <transition name="fade">
+        <claim-form
+          v-if="isShown"
+          class="claim-modal__form"
+          :pool-id="poolId"
+          @cancel="modal.close"
+          @tx-sent="modal.close"
+        />
+      </transition>
     </template>
   </basic-modal>
 </template>

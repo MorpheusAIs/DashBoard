@@ -19,7 +19,7 @@
         </p>
       </div>
     </template>
-    <template #default="{ modal }">
+    <template #default>
       <div class="change-lock-modal__fields-wrapper">
         <datetime-field
           v-model="form.lockPeriod"
@@ -36,7 +36,7 @@
           color="secondary"
           :text="$t('change-lock-modal.cancel-btn')"
           :disabled="isSubmitting"
-          @click="modal.close()"
+          @click="cancel"
         />
         <app-button
           class="change-lock-modal__btn"
@@ -147,6 +147,7 @@ const submit = async () => {
     )
 
     emit('update:is-shown', false)
+    form.lockPeriod = ''
 
     await tx.wait()
 
@@ -172,6 +173,15 @@ watch(
   () => fetchExpectedMultiplier(form.lockPeriod),
   { immediate: true },
 )
+
+const cancel = () => {
+  clearFields()
+  emit('update:is-shown', false)
+}
+
+const clearFields = () => {
+  form.lockPeriod = ''
+}
 </script>
 
 <style lang="scss" scoped>
