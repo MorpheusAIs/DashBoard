@@ -69,8 +69,7 @@ export const config = {
     'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
   COMPUTE_CONTRIBUTION_URL:
     'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
-  COMMUNITY_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
+  COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
   HOW_GET_STETH_URL:
     'https://help.lido.fi/en/articles/5232811-how-do-i-get-steth',
   WALLET_INSTALL_URL: 'https://metamask.io/download/',

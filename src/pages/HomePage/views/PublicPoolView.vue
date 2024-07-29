@@ -86,12 +86,14 @@
         {{ $t(`home-page.public-pool-view.dashboard-description--${poolId}`) }}
       </p>
       <p
-        v-if="poolData?.withdrawLockPeriod"
+        v-if="
+          poolData?.withdrawLockPeriod && !poolData?.withdrawLockPeriod.isZero()
+        "
         class="public-pool-view__dashboard-note"
       >
         {{
           $t(`home-page.public-pool-view.dashboard-note--${poolId}`, {
-            daysCount: poolData.withdrawLockPeriod.div(24 * 60 * 60),
+            time: lockPeriod,
           })
         }}
       </p>
@@ -133,6 +135,7 @@ import type { InfoBarType, InfoDashboardType } from '@/types'
 import { formatEther, Time } from '@/utils'
 import { computed, ref } from 'vue'
 import { ZeroPoolDescription } from '../components'
+import { humanizeTime } from '@/helpers'
 
 const props = defineProps<{ poolId: number }>()
 
@@ -203,6 +206,10 @@ const withdrawAtTime = computed(() => {
   }
   return '-'
 })
+
+const lockPeriod = computed(() =>
+  humanizeTime(poolData.value?.withdrawLockPeriod?.toNumber() ?? 0),
+)
 
 const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   {
