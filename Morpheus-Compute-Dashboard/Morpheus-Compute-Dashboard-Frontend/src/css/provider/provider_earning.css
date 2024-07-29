@@ -1,0 +1,157 @@
+@import './../../index.css';
+
+.table_main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main.table {
+    width: 95vw;
+    max-width: 78vw;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+}
+
+.table__body {
+    width: 100%;
+    border-image: linear-gradient(to right, transparent, var(--border-color)) 1; 
+    overflow: auto;
+}
+
+.table__body::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.table__body::-webkit-scrollbar-thumb {
+    border-radius: .5rem;
+    visibility: hidden;
+}
+
+.table__body:hover::-webkit-scrollbar-thumb { 
+    visibility: visible;
+}
+
+.link {
+    display: contents;
+    color: white;
+}
+
+table {
+    width: 100%;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    padding: 1rem;
+    text-align: center;
+}
+
+table tr {
+    cursor: pointer;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: black;
+    cursor: pointer;
+    text-transform: capitalize;
+    color: var(--primary-color);
+}
+
+tbody tr:nth-child(even) {
+    background: linear-gradient(to right, black , var(--gradient-end-color));
+}
+
+tbody tr:nth-child(odd) {
+    background: linear-gradient(to right, var(--gradient-end-color), black);
+}
+
+tbody tr:hover:nth-child(even) {
+    background-color: var(--primary-color) !important;
+    background: linear-gradient(to right, black , var(--primary-color));
+}
+
+tbody tr:hover {
+    background-color: var(--primary-color) !important;
+    background: linear-gradient(to right, var(--primary-color), black);
+}
+
+tbody tr.active:nth-child(odd) {
+    cursor: pointer;
+    background: linear-gradient(to right, #C1610f, black);
+    color: black;
+}
+
+tbody tr.active:nth-child(even) {
+    cursor: pointer;
+    background: linear-gradient(to right, black, #C1610f);
+    color: black;
+}
+
+thead th:hover {
+    color: #C1610F;
+    border: 1.4px solid #C1610F;
+}
+
+/* Media Queries for Responsiveness */
+
+@media screen and (max-width: 1000px) {
+    main.table {
+        max-width: 95vw;
+    }
+
+    td:not(:first-of-type) {
+        min-width: 12.1rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    main.table {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    table, th, td {
+        padding: 0.5rem;
+    }
+
+    thead th {
+        font-size: 0.9rem;
+    }
+
+    tbody td {
+        font-size: 0.8rem;
+    }
+
+    table tr {
+        cursor: default; /* Disable pointer on touch devices */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .table__body {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 480px;
+    }
+
+    table, th, td {
+        padding: 0.3rem;
+    }
+
+    thead th {
+        font-size: 0.8rem;
+    }
+
+    tbody td {
+        font-size: 0.7rem;
+    }
+}

@@ -1,0 +1,24 @@
+.main2 {
+  margin: 30px 100px 100px 100px;
+}
+
+/* For tablets and smaller desktops */
+@media screen and (max-width: 1024px) {
+  .main2 {
+    margin: 20px 50px 50px 50px;
+  }
+}
+
+/* For mobile phones */
+@media screen and (max-width: 768px) {
+  .main2 {
+    margin: 10px 20px 20px 20px;
+  }
+}
+
+/* For very small devices */
+@media screen and (max-width: 480px) {
+  .main2 {
+    margin: 10px;
+  }
+}

@@ -1,0 +1,154 @@
+@import './../../index.css';
+
+.claimable-card {
+    backdrop-filter: blur(10px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+    overflow: hidden;
+    border-image: linear-gradient(to right, transparent, var(--border-color)) 1;
+    background: linear-gradient(to right, var(--gradient-end-color), black);
+    margin-left: 10px;
+    border: none;
+    padding: 20px;
+}
+
+.claimable-card-title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.claimable-amount {
+    color: #01FF85;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* Claim Button */
+.claim-button {
+    --color: #01FF85;
+    padding: 0.8em 1.7em;
+    background-color: transparent;
+    border-radius: .3em;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: .5s;
+    font-weight: 400;
+    font-size: 17px;
+    border: 1px solid;
+    font-family: inherit;
+    text-transform: uppercase;
+    color: #01FF85;
+    z-index: 1;
+}
+
+.claim-button::before, .claim-button::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 50px;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+    background-color: #01FF85;
+    transition: 1s ease;
+}
+
+.claim-button::before {
+    top: -1em;
+    left: -1em;
+}
+
+.claim-button::after {
+    left: calc(100% + 1em);
+    top: calc(100% + 1em);
+}
+
+.claim-button:hover::before, .claim-button:hover::after {
+    height: 410px;
+    width: 410px;
+}
+
+.claim-button:hover {
+    color: black;
+}
+
+.claim-button:active {
+    filter: brightness(.8);
+}
+
+/* Media Queries for Responsiveness */
+
+@media screen and (max-width: 1024px) {
+    .claimable-card {
+        margin-left: 5px;
+        padding: 15px;
+    }
+
+    .claimable-card-title {
+        font-size: 1.1rem;
+    }
+
+    .claimable-amount {
+        font-size: 1.3rem;
+    }
+
+    .claim-button {
+        font-size: 15px;
+        padding: 0.7em 1.5em;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .claimable-card {
+        margin-left: 0;
+        border-radius: .5rem;
+    }
+
+    .claimable-card-title {
+        font-size: 1rem;
+    }
+
+    .claimable-amount {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .claim-button {
+        font-size: 14px;
+        padding: 0.6em 1.3em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .claimable-card {
+        padding: 10px;
+    }
+
+    .claimable-card-title {
+        font-size: 0.9rem;
+    }
+
+    .claimable-amount {
+        font-size: 1.1rem;
+    }
+
+    .claim-button {
+        font-size: 12px;
+        padding: 0.5em 1em;
+    }
+
+    .claim-button::before, .claim-button::after {
+        width: 30px;
+        height: 30px;
+    }
+
+    .claim-button:hover::before, .claim-button:hover::after {
+        height: 300px;
+        width: 300px;
+    }
+}

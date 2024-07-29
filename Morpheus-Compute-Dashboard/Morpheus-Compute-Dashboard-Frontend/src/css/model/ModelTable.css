@@ -1,0 +1,56 @@
+.model-table-container {
+    overflow-x: auto;
+}
+
+.model-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.model-table th,
+.model-table td {
+    padding: 12px;
+    text-align: left;
+    /* border-bottom: 1px solid var(--border-color); // This line adds the grey separation lines */
+    border-bottom: none; /* This will remove the grey separation lines */
+}
+
+.model-table th {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.model-table tr:hover {
+    background-color: rgba(1, 255, 133, 0.1);
+}
+
+.model-table-address {
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .model-table {
+        font-size: 14px;
+    }
+
+    .model-table th,
+    .model-table td {
+        padding: 8px;
+    }
+
+    .model-table-address {
+        cursor: default;
+    }
+}
+
+@media (max-width: 480px) {
+    .model-table {
+        font-size: 12px;
+    }
+
+    .model-table th,
+    .model-table td {
+        padding: 6px;
+    }
+}
