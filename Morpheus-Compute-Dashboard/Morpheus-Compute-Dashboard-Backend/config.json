@@ -1,0 +1,14 @@
+{
+  "DiamondRouter": "0x437e71b8fc341bafb2687ad6935476231c49928f",
+  "MOR_ADDRESS": "0xc1664f994Fd3991f98aE944bC16B9aED673eF5fD",
+  "DiamondInit": "0x3f3212f193dd7980ed57878fa5a3fbae0797dce4",
+  "DiamondCutFacet": "0x33133b9acedbe3b014275fb24553724218e81a70",
+  "DiamondLoupeFacet": "0x547db0445a19dcb59fd469aadba1fd9129d418bf",
+  "OwnershipFacet": "0x86c0ca6e5724913d5776447ceea505bc692d1e64",
+  "ModelRegistry": "0x72b9d44110b2a15fc35512a617c2a0f28284e05a",
+  "ProviderRegistry": "0x1342b73b76b5ecc400118185b6546c2a6a978c5a",
+  "Marketplace": "0x577eb8829c1e225ef220d32bc9045c050265c4d3",
+  "SessionRouter": "0x906f8bf61a4710ef51e31435fa8eecdd0b532bc0",
+  "chainID": 421614,
+  "FrontendDomain": "https://nirmaan-morpheous-dashboard.pages.dev"
+}
