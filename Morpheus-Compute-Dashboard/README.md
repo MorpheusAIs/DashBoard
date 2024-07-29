@@ -11,5 +11,3 @@
 
 ### Other Details:
 - Each of the subfolders for the backend and frontend contain README files on how to run the project, Please follow the guides to the set the project up.
-- Backend: [Compute Backend](https://github.com/NirmaanAI/DashBoard/tree/Compute-Dashboard/Morpheus-Compute-Dashboard/Morpheus-Compute-Dashboard-Backend)
-- Frontend: [Compute Frontend](https://github.com/NirmaanAI/DashBoard/tree/Compute-Dashboard/Morpheus-Compute-Dashboard/Morpheus-Compute-Dashboard-Frontend)
