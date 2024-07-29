@@ -163,6 +163,26 @@ const submit = async () => {
   isSubmitting.value = false
 }
 
+const cancel = () => {
+  clearFields()
+  emit('update:is-shown', false)
+}
+
+const clearFields = () => {
+  form.lockPeriod = ''
+}
+
+const init = () => {
+  if (!props.isShown) {
+    return
+  }
+  form.lockPeriod = new Time().isAfter(
+    userPoolData.value?.claimLockEnd?.toString() ?? 0,
+  )
+    ? ''
+    : userPoolData.value?.claimLockEnd?.toString() ?? ''
+}
+
 watch(
   () => [
     props.poolId,
@@ -174,14 +194,7 @@ watch(
   { immediate: true },
 )
 
-const cancel = () => {
-  clearFields()
-  emit('update:is-shown', false)
-}
-
-const clearFields = () => {
-  form.lockPeriod = ''
-}
+watch(() => props.isShown, init)
 </script>
 
 <style lang="scss" scoped>
