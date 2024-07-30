@@ -44,6 +44,7 @@
               v-model:is-shown="isDepositModalShown"
               :pool-id="poolId"
               :min-stake="poolData.minimalStake"
+              :claim-lock-end="userPoolData?.claimLockEnd?.toString() ?? ''"
             />
           </div>
         </transition>
