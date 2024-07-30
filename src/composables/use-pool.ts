@@ -4,6 +4,7 @@ import { type BigNumber, type Erc1967ProxyType } from '@/types'
 import { useTimestamp } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ethers } from 'ethers'
+import { Time } from '@distributedlab/tools'
 
 const MULTIPLIER_SCALE = 21 //digits
 const REWARDS_DIVIDER = 10000
@@ -157,11 +158,16 @@ export const usePool = (poolId: number) => {
 
   const fetchExpectedMultiplier = async (lockPeriod: string) => {
     try {
+      const lockStart = new Time().isAfter(
+        userPoolData.value?.claimLockStart.toString(),
+      )
+        ? new Time().timestamp
+        : userPoolData.value?.claimLockStart.toString() ?? 0
       const multiplier =
         //eslint-disable-next-line max-len
         await web3ProvidersStore.erc1967ProxyContract.providerBased.value.getClaimLockPeriodMultiplier(
           poolId,
-          0,
+          lockStart,
           lockPeriod || 0,
         )
       expectedRewardsMultiplier.value = humanizeRewards(multiplier)
