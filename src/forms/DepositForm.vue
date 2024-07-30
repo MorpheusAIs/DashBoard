@@ -119,7 +119,6 @@ const emit = defineEmits<{
 const props = defineProps<{
   poolId: number
   minStake: BigNumber
-  lockEnd: string
 }>()
 
 const uid = uuidv4()
@@ -315,17 +314,17 @@ watch(
     web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
     web3ProvidersStore.provider.selectedAddress,
     form.lockPeriod,
+    userPoolData.value?.claimLockEnd,
   ],
   () => fetchExpectedMultiplier(form.lockPeriod),
   { immediate: true },
 )
 
 watch(
-  () => props.lockEnd,
+  () => userPoolData.value?.claimLockEnd,
   () => {
-    form.lockPeriod = props.lockEnd
+    form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
   },
-  { immediate: true },
 )
 
 onMounted(() => {
