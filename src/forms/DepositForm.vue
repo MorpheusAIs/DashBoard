@@ -130,9 +130,8 @@ const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
 })
 
 const { t } = useI18n()
-const { expectedRewardsMultiplier, fetchExpectedMultiplier } = usePool(
-  props.poolId,
-)
+const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
+  usePool(props.poolId)
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
@@ -304,18 +303,26 @@ const init = async (): Promise<void> => {
     ErrorHandler.process(error)
   }
 
+  form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
+
   isInitializing.value = false
 }
 
 watch(
   () => [
     props.poolId,
-    web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
     web3ProvidersStore.provider.selectedAddress,
     form.lockPeriod,
+    userPoolData.value?.claimLockEnd,
   ],
-  () => fetchExpectedMultiplier(form.lockPeriod),
-  { immediate: true },
+  async () => {
+    if (!form.lockPeriod) {
+      form.lockPeriod = String(
+        userPoolData.value?.claimLockEnd.toNumber() || '',
+      )
+    }
+    await fetchExpectedMultiplier(form.lockPeriod)
+  },
 )
 
 onMounted(() => {

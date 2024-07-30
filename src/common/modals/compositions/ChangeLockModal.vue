@@ -172,29 +172,24 @@ const clearFields = () => {
   form.lockPeriod = ''
 }
 
-const init = () => {
-  if (!props.isShown) {
-    return
-  }
-  form.lockPeriod = new Time().isAfter(
-    userPoolData.value?.claimLockEnd?.toString() ?? 0,
-  )
-    ? ''
-    : userPoolData.value?.claimLockEnd?.toString() ?? ''
-}
-
 watch(
   () => [
     props.poolId,
     form.lockPeriod,
     web3ProvidersStore.provider.selectedAddress,
     web3ProvidersStore.provider.chainId,
+    userPoolData.value?.claimLockEnd,
   ],
   () => fetchExpectedMultiplier(form.lockPeriod),
   { immediate: true },
 )
 
-watch(() => props.isShown, init)
+watch(
+  () => [props.isShown, userPoolData.value?.claimLockEnd],
+  () => {
+    form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
+  },
+)
 </script>
 
 <style lang="scss" scoped>

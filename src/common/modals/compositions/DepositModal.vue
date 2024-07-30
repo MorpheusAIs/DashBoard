@@ -36,6 +36,7 @@ withDefaults(
     isShown: boolean
     poolId: number
     minStake: BigNumber
+    claimLockEnd: string
     isCloseByClickOutside?: boolean
   }>(),
   {
