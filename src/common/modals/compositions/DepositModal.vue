@@ -14,7 +14,6 @@
           class="deposit-modal__form"
           :pool-id="poolId"
           :min-stake="minStake"
-          :lock-end="claimLockEnd"
           @cancel="modal.close"
           @stake-tx-sent="modal.close"
         />
