@@ -314,9 +314,17 @@ watch(
     web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
     web3ProvidersStore.provider.selectedAddress,
     form.lockPeriod,
+    userPoolData.value?.claimLockEnd,
   ],
   () => fetchExpectedMultiplier(form.lockPeriod),
   { immediate: true },
+)
+
+watch(
+  () => userPoolData.value?.claimLockEnd,
+  () => {
+    form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
+  },
 )
 
 onMounted(() => {

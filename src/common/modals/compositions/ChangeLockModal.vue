@@ -178,13 +178,14 @@ watch(
     form.lockPeriod,
     web3ProvidersStore.provider.selectedAddress,
     web3ProvidersStore.provider.chainId,
+    userPoolData.value?.claimLockEnd,
   ],
   () => fetchExpectedMultiplier(form.lockPeriod),
   { immediate: true },
 )
 
 watch(
-  () => props.isShown,
+  () => [props.isShown, userPoolData.value?.claimLockEnd],
   () => {
     form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
   },
