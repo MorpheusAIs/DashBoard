@@ -119,6 +119,7 @@ const emit = defineEmits<{
 const props = defineProps<{
   poolId: number
   minStake: BigNumber
+  lockEnd: string
 }>()
 
 const uid = uuidv4()
@@ -315,6 +316,14 @@ watch(
     form.lockPeriod,
   ],
   () => fetchExpectedMultiplier(form.lockPeriod),
+  { immediate: true },
+)
+
+watch(
+  () => props.lockEnd,
+  () => {
+    form.lockPeriod = props.lockEnd
+  },
   { immediate: true },
 )
 
