@@ -172,17 +172,6 @@ const clearFields = () => {
   form.lockPeriod = ''
 }
 
-const init = () => {
-  if (!props.isShown) {
-    return
-  }
-  form.lockPeriod = new Time().isAfter(
-    userPoolData.value?.claimLockEnd?.toString() ?? 0,
-  )
-    ? ''
-    : userPoolData.value?.claimLockEnd?.toString() ?? ''
-}
-
 watch(
   () => [
     props.poolId,
@@ -194,7 +183,12 @@ watch(
   { immediate: true },
 )
 
-watch(() => props.isShown, init)
+watch(
+  () => props.isShown,
+  () => {
+    form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
+  },
+)
 </script>
 
 <style lang="scss" scoped>
