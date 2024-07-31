@@ -110,6 +110,8 @@ export const usePool = (poolId: number) => {
     const poolDataResponses = await Promise.all([
       erc1967ProxyContract.value.providerBased.value.poolsData(poolId),
       erc1967ProxyContract.value.providerBased.value.pools(poolId),
+      // eslint-disable-next-line max-len
+      erc1967ProxyContract.value.providerBased.value.totalDepositedInPublicPools(),
     ])
 
     return {
@@ -122,7 +124,7 @@ export const usePool = (poolId: number) => {
       rate: poolDataResponses[0].rate,
       payoutStart: poolDataResponses[1].payoutStart,
       rewardDecrease: poolDataResponses[1].rewardDecrease,
-      totalDeposited: poolDataResponses[0].totalVirtualDeposited,
+      totalDeposited: poolDataResponses[2],
       withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
       withdrawLockPeriodAfterStake:
         poolDataResponses[1].withdrawLockPeriodAfterStake,
