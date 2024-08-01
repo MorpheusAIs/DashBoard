@@ -1,0 +1,191 @@
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-top: 50px;
+}
+
+.login-box {
+  width: 30%;
+  padding: 40px;
+  background: rgba(24, 20, 20, 0.987);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.login-box .user-box {
+  position: relative;
+}
+
+/* Input and select elements styling */
+.login-box .user-box input,
+.login-box .user-box select {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+
+.login-box .user-box label {
+  margin-top: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+
+/* Focused input and select styling */
+.login-box .user-box input:focus ~ label,
+.login-box .user-box input:valid ~ label,
+.login-box .user-box select:focus ~ label,
+.login-box .user-box select:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: #bdb8b8;
+  font-size: 12px;
+}
+
+/* Dropdown styling */
+.login-box .user-box select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #2d2d2d;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ffffff;
+}
+
+/* Option styling */
+.login-box .user-box select option {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+
+.codepen-button {
+  display: block;
+  cursor: pointer;
+  color: white;
+  margin: 0 auto;
+  position: relative;
+  text-decoration: none;
+  font-weight: 60;
+  border-radius: 50px;
+  overflow: hidden;
+  padding: 1px;
+  isolation: isolate;
+}
+
+.codepen-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400%;
+  height: 100%;
+  background: linear-gradient(115deg, #d1d1d1, #11831e, #a7bfde);
+  background-size: 25% 100%;
+  animation: an-at-keyframe-css-at-rule-that-translates-via-the-transform-property-the-background-by-negative-25-percent-of-its-width-so-that-it-gives-a-nice-border-animation_-We-use-the-translate-property-to-have-a-nice-transition-so-it_s-not-a-jerk-of-a-start-or-stop
+    0.75s linear infinite;
+  animation-play-state: running;
+  translate: -5% 0%;
+  transition: translate 0.25s ease-out;
+}
+
+.codepen-button:hover::before {
+  animation-play-state: running;
+  transition-duration: 0.75s;
+  translate: 0% 0%;
+}
+
+@keyframes an-at-keyframe-css-at-rule-that-translates-via-the-transform-property-the-background-by-negative-25-percent-of-its-width-so-that-it-gives-a-nice-border-animation_-We-use-the-translate-property-to-have-a-nice-transition-so-it_s-not-a-jerk-of-a-start-or-stop {
+  to {
+    transform: translateX(-25%);
+  }
+}
+
+.codepen-button span {
+  position: relative;
+  display: block;
+  padding: 1rem 2rem; /* Adjusted to reduce size */
+  font-size: 1rem; /* Adjusted to reduce size */
+  background: #0aa45a;
+  border-radius: 50px; /* Adjusted to reduce size */
+  height: 100%;
+}
+
+.card {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.card.error {
+  border-left: 4px solid #ff4c4c;
+}
+
+.card.success {
+  border-left: 4px solid #4caf50;
+}
+
+.notification {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  background-color: #181414;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-bottom: 50px;
+}
+
+.notification.show {
+  display: block;
+}
+
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .login-box {
+    width: 90%;
+    margin: 10px 0;
+  }
+
+  .codepen-button span {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+

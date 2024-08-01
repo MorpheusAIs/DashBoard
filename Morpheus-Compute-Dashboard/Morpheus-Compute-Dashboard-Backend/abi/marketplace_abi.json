@@ -1,0 +1,502 @@
+[
+    {
+        "inputs": [],
+        "name": "ActiveBidNotFound",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "BidNotFound",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "BidTaken",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "KeyExists",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "KeyNotFound",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ModelOrAgentNotFound",
+        "type": "error"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_user",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_contractOwner",
+                "type": "address"
+            }
+        ],
+        "name": "NotContractOwner",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "NotEnoughBalance",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "NotSenderOrOwner",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ProviderNotFound",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "ZeroKey",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "provider",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "modelAgentId",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "nonce",
+                "type": "uint256"
+            }
+        ],
+        "name": "BidDeleted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "provider",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "modelAgentId",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "nonce",
+                "type": "uint256"
+            }
+        ],
+        "name": "BidPosted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "bidFee",
+                "type": "uint256"
+            }
+        ],
+        "name": "FeeUpdated",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "bidFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "bidId",
+                "type": "bytes32"
+            }
+        ],
+        "name": "bidMap",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "provider",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "modelAgentId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pricePerSecond",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "nonce",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "createdAt",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "deletedAt",
+                        "type": "uint128"
+                    }
+                ],
+                "internalType": "struct Bid",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "bidId",
+                "type": "bytes32"
+            }
+        ],
+        "name": "deleteModelAgentBid",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "modelAgentId",
+                "type": "bytes32"
+            }
+        ],
+        "name": "getActiveBidsByModelAgent",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "provider",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "modelAgentId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pricePerSecond",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "nonce",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "createdAt",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "deletedAt",
+                        "type": "uint128"
+                    }
+                ],
+                "internalType": "struct Bid[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "provider",
+                "type": "address"
+            }
+        ],
+        "name": "getActiveBidsByProvider",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "provider",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "modelAgentId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pricePerSecond",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "nonce",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "createdAt",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "deletedAt",
+                        "type": "uint128"
+                    }
+                ],
+                "internalType": "struct Bid[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "modelAgentId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint256",
+                "name": "offset",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint8",
+                "name": "limit",
+                "type": "uint8"
+            }
+        ],
+        "name": "getBidsByModelAgent",
+        "outputs": [
+            {
+                "internalType": "bytes32[]",
+                "name": "",
+                "type": "bytes32[]"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "provider",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "modelAgentId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pricePerSecond",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "nonce",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "createdAt",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "deletedAt",
+                        "type": "uint128"
+                    }
+                ],
+                "internalType": "struct Bid[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "provider",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "offset",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint8",
+                "name": "limit",
+                "type": "uint8"
+            }
+        ],
+        "name": "getBidsByProvider",
+        "outputs": [
+            {
+                "internalType": "bytes32[]",
+                "name": "",
+                "type": "bytes32[]"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "provider",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "modelAgentId",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "pricePerSecond",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "nonce",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "createdAt",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "deletedAt",
+                        "type": "uint128"
+                    }
+                ],
+                "internalType": "struct Bid[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "providerAddr",
+                "type": "address"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "modelId",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pricePerSecond",
+                "type": "uint256"
+            }
+        ],
+        "name": "postModelBid",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "bidId",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_bidFee",
+                "type": "uint256"
+            }
+        ],
+        "name": "setBidFee",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "addr",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]

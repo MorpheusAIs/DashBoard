@@ -1,0 +1,363 @@
+.reward-claim-process {
+  display: flex;
+  align-items: flex-start;
+  color: white;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 0;
+}
+
+.left-text {
+  margin-right: 30px; /* Space between the text and form */
+}
+
+.left-text h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.step-indicator {
+  font-size: 18px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.process-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: -20px;  /* Adjust this value as needed */
+}
+
+.reward-image {
+  width: 100%; /* Adjust the size as needed */
+  max-width: 1000px; /* Maintain aspect ratio */
+  margin-top: 40px; /* Space below the image */
+}
+
+
+.step-content {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Common styles for form elements */
+.step-content input,
+.step-content select,
+.step-content button {
+  width: 100%;
+  padding: 12px; /* Increased padding */
+  margin-bottom: 15px;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+}
+
+.step-content button {
+  background-color: #00a86b;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: none;
+}
+
+.step-content button:hover {
+  background-color: #008c5a;
+}
+
+.step-content button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+/* Specific styles for the address input container */
+.address-input-container {
+  display: flex;
+  align-items: stretch;
+}
+
+.address-input-container input {
+  flex-grow: 1;
+  margin-bottom: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.address-input-container button {
+  width: auto;
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Style for labels */
+.step-content label {
+  display: block;
+  margin-bottom: 8px;
+  color: #888;
+}
+
+/* Style for the balance result */
+.balance-result {
+  background-color: #2d2d2d;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.balance-result h4 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.balance-result p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00a86b;
+}
+
+/* Simulation button styling */
+.simulate-claim-button {
+  background-color: #4a4a4a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 0px;
+}
+
+.simulate-claim-button:hover {
+  background-color: #5a5a5a;
+}
+
+.notification-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.notification-content {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 450px;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border-left: 6px solid #4caf50;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-content h3 {
+  color: #4caf50;
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.notification-content p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.notification-content a {
+  color: #00a86b;
+}
+
+.notification-content button {
+  background-color: #00a86b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  align-self: flex-end;
+}
+
+.notification-content button:hover {
+  background-color: #008c5a;
+}
+
+.balance-update-container {
+  background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-update-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0.5;
+  animation: shine 15s infinite linear;
+}
+
+@keyframes shine {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.balance-card {
+  background-color: rgba(30, 30, 30, 0.8);
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  color: #fff;
+  backdrop-filter: blur(5px);
+  transition: transform 0.3s ease;
+}
+
+.balance-card:hover {
+  transform: translateY(-5px);
+}
+
+.balance-card h3 {
+  color: #00a86b;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.balance-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.balance-result {
+  background-color: rgba(45, 45, 45, 0.8);
+  border-radius: 5px;
+  padding: 15px;
+  width: 48%;
+  transition: background-color 0.3s ease;
+}
+
+.balance-result:hover {
+  background-color: rgba(50, 50, 50, 0.8);
+}
+
+.balance-result h4 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #888;
+}
+
+.balance-result p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00a86b;
+}
+
+.balance-result i {
+  margin-right: 5px;
+  font-size: 20px;
+}
+
+.simulation-note {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+}
+
+.follow-transaction {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  color: #0ac882;
+  font-size: 16px;
+  transition: color 0.3s ease;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.follow-transaction:hover {
+  color: #008c5a;
+}
+
+
+.follow-transaction i {
+  margin-left: 5px;
+}
+
+.balance-card h3 {
+  color: #00a86b;
+  margin-top: 0;
+  margin-bottom: 15px;  /* Reduced bottom margin */
+  font-size: 24px;
+  text-align: center;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;  /* Add space between spinner and balance info */
+}
+
+@media (max-width: 768px) {
+  .reward-claim-process {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .left-text {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .step-content {
+    padding: 20px;
+  }
+
+  .balance-update-container {
+    padding: 20px;
+  }
+
+  .balance-info {
+    flex-direction: column;
+  }
+
+  .balance-result {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reward-image,
+  .token-image {
+    display: none;
+  }
+}

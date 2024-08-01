@@ -1,0 +1,103 @@
+.get-current-user-reward {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .get-current-user-reward h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .pool-selection {
+    margin-bottom: 20px;
+  }
+  
+  .pool-selection label {
+    display: block;
+    margin-bottom: 5px;
+    color: #888;
+  }
+  
+  .pool-selection select {
+    width: 100%;
+    padding: 10px;
+    background-color: #2d2d2d;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .get-reward-button {
+    background-color: #00a86b;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: center;
+  }
+  
+  .get-reward-button:hover {
+    background-color: #008c5a;
+  }
+  
+  .get-reward-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+  }
+
+  .current-address,
+.network-status-container {
+  margin-bottom: 20px;
+}
+
+.current-address input {
+  width: 100%;
+  padding: 10px;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  border-radius: 5px;
+  color: #888;
+  font-size: 14px;
+}
+
+.network-status {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #2d2d2d;
+  width: 100%;
+}
+
+.network-status.not-connected {
+  color: #888;
+}
+
+.network-status.wrong-network {
+  color: #ff4c4c;
+}
+
+.network-status.connected {
+  color: #4caf50;
+}
+
+@media (max-width: 768px) {
+  .get-current-user-reward h3 {
+    font-size: 20px;
+  }
+
+  .pool-selection select,
+  .current-address input,
+  .network-status {
+    font-size: 14px;
+  }
+
+  .get-reward-button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,178 @@
+.check-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  color: white;
+}
+
+.check-balance h3 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #888;
+}
+
+.address-input-container {
+  display: flex;
+  align-items: stretch;
+  width: 400px;
+}
+
+.address-input-container input {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  border-right: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: white;
+}
+
+.fetch-button {
+  background-color: #00a86b;
+  color: white;
+  border: none;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 0 15px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.fetch-button:hover {
+  background-color: #008c5a;
+}
+
+.check-button {
+  background-color: #00a86b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: center;
+  margin-bottom: 20px;
+}
+
+.check-button:hover {
+  background-color: #008c5a;
+}
+
+.check-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.balance-result {
+  background-color: #2d2d2d;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.balance-result h4 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.balance-result p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #00a86b;
+}
+
+.balance-card {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  max-width: 450px; /* Adjust this value as needed */
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.balance-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.balance-card p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.balance-card.error {
+  border-left: 5px solid #ff4c4c;
+}
+
+.balance-card.success {
+  border-left: 5px solid #4caf50;
+}
+
+.notification {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  background-color: #181414;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-bottom: 50px;
+}
+
+.notification.show {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .check-balance {
+    padding: 15px;
+  }
+
+  .address-input-container {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .address-input-container input {
+    border-right: 1px solid #444;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .fetch-button {
+    border-radius: 0 0 5px 5px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .balance-card {
+    max-width: 100%;
+  }
+}

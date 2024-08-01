@@ -1,0 +1,14 @@
+
+.main2{
+  margin: 30px 100px 100px 100px;
+}
+
+.main2 {
+  margin: 30px 5%;
+}
+
+@media (max-width: 768px) {
+  .main2 {
+    margin: 20px 3%;
+  }
+}

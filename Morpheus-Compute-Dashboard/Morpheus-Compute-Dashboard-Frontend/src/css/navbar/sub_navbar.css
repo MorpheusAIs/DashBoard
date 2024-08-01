@@ -1,0 +1,66 @@
+@import './../../index.css';
+
+.sub_navbar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(70px, auto);
+    grid-gap: 1em;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.sub_navbar .menu_text {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.3em;
+    text-align: center;
+}
+
+.sub_card {
+    border: 2px solid var(--border-color);
+    text-align: center;
+    padding: 1em;
+    color: var(--text-color);
+    text-decoration: none;
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.sub_card:hover {
+    border: 2px solid var(--hover-border-color);
+    color: var(--primary-color);
+}
+
+.sub_card.active {
+    border: 2.5px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Media Queries for Responsiveness */
+
+@media screen and (max-width: 768px) {
+    .sub_navbar {
+        grid-template-columns: 1fr;
+        grid-gap: 0.5em;
+    }
+
+    .sub_navbar .menu_text {
+        font-size: 1.1em;
+    }
+
+    .sub_card {
+        padding: 0.8em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .sub_navbar .menu_text {
+        font-size: 1em;
+    }
+
+    .sub_card {
+        padding: 0.6em;
+    }
+}

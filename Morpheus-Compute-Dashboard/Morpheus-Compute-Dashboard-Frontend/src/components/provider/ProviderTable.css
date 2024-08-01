@@ -1,0 +1,33 @@
+.provider-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.provider-table table {
+    width: 100%;
+    min-width: 600px; /* Adjust this value based on your content */
+    border-collapse: collapse;
+}
+
+.provider-table th,
+.provider-table td {
+    padding: 0.5rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .provider-table th,
+    .provider-table td {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .provider-table th,
+    .provider-table td {
+        font-size: 0.8rem;
+        padding: 0.3rem;
+    }
+}

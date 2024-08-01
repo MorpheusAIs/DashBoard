@@ -1,0 +1,60 @@
+.lock-display-background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.lock-display-container {
+    text-align: center;
+    width: 100%;
+}
+
+.lock-display-card {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 18px;
+}
+
+.error-message {
+    border-left: 5px solid #01FF85;
+    padding-left: 15px;
+}
+
+.loading-message {
+    border-left: 5px solid #2196f3;
+    padding-left: 15px;
+}
+
+@media screen and (max-width: 768px) {
+    .lock-display-card {
+        padding: 15px;
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .lock-display-background {
+        padding: 10px;
+    }
+
+    .lock-display-card {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .error-message,
+    .loading-message {
+        padding-left: 10px;
+    }
+}
