@@ -91,7 +91,7 @@ import type {
 import { Time, formatEther } from '@/utils'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { CHART_CONFIG } from './const'
-import { getChartData } from './helpers'
+import { getChartData, getUserYieldPerDayChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
 import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
@@ -131,25 +131,50 @@ const isChartDataUpdating = ref(false)
 
 const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
 
+// const updateChartData = async (month: number) => {
+//   isChartDataUpdating.value = true
+
+//   try {
+//     if (!props.poolData) throw new Error('poolData unavailable')
+
+//     const chartData = await getChartData(
+//       props.poolId,
+//       props.poolData.payoutStart,
+//       month,
+//     )
+
+//     const monthTime = new Time(String(month + 1), 'M')
+
+//     chartConfig.data.labels = Object.keys(chartData).map(
+//       day => `${monthTime.format('MMMM')} ${day}`,
+//     )
+//     chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
+//       Math.ceil(Number(formatEther(amount))),
+//     )
+//   } catch (error) {
+//     ErrorHandler.process(error)
+//   }
+
+//   isChartDataUpdating.value = false
+// }
+
 const updateChartData = async (month: number) => {
   isChartDataUpdating.value = true
 
   try {
     if (!props.poolData) throw new Error('poolData unavailable')
 
-    const chartData = await getChartData(
+    const chartData = await getUserYieldPerDayChartData(
       props.poolId,
-      props.poolData.payoutStart,
+      web3ProvidersStore.address,
       month,
     )
 
-    const monthTime = new Time(String(month + 1), 'M')
-
-    chartConfig.data.labels = Object.keys(chartData).map(
-      day => `${monthTime.format('MMMM')} ${day}`,
+    chartConfig.data.labels = Object.keys(chartData).map(timestamp =>
+      new Time(timestamp).format('DD MMMM'),
     )
     chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
-      Math.ceil(Number(formatEther(amount))),
+      Number(formatEther(amount)),
     )
   } catch (error) {
     ErrorHandler.process(error)
