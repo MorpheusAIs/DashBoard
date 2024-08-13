@@ -4,45 +4,13 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { ERC1967Proxy, ERC1967ProxyInterface } from "../ERC1967Proxy";
+import type { MOR1967, MOR1967Interface } from "../MOR1967";
 
 const _abi = [
   {
     inputs: [],
     stateMutability: "nonpayable",
     type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "previousAdmin",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newAdmin",
-        type: "address",
-      },
-    ],
-    name: "AdminChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "beacon",
-        type: "address",
-      },
-    ],
-    name: "BeaconUpgraded",
-    type: "event",
   },
   {
     anonymous: false,
@@ -153,7 +121,7 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IDistributionV2.Pool",
+        internalType: "struct IDistribution.Pool",
         name: "pool",
         type: "tuple",
       },
@@ -219,56 +187,12 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IDistributionV2.Pool",
+        internalType: "struct IDistribution.Pool",
         name: "pool",
         type: "tuple",
       },
     ],
     name: "PoolEdited",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "Upgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "poolId",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint128",
-        name: "claimLockStart",
-        type: "uint128",
-      },
-      {
-        indexed: false,
-        internalType: "uint128",
-        name: "claimLockEnd",
-        type: "uint128",
-      },
-    ],
-    name: "UserClaimLocked",
     type: "event",
   },
   {
@@ -365,6 +289,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "address",
+        name: "feeConfig_",
+        type: "address",
+      },
+      {
         components: [
           {
             internalType: "uint128",
@@ -412,7 +341,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct IDistributionV2.Pool[]",
+        internalType: "struct IDistribution.Pool[]",
         name: "poolsInfo_",
         type: "tuple[]",
       },
@@ -519,7 +448,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct IDistributionV2.Pool",
+        internalType: "struct IDistribution.Pool",
         name: "pool_",
         type: "tuple",
       },
@@ -597,7 +526,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct IDistributionV2.Pool",
+        internalType: "struct IDistribution.Pool",
         name: "pool_",
         type: "tuple",
       },
@@ -608,53 +537,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "poolId_",
-        type: "uint256",
-      },
-      {
-        internalType: "uint128",
-        name: "claimLockStart_",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "claimLockEnd_",
-        type: "uint128",
-      },
-    ],
-    name: "getClaimLockPeriodMultiplier",
+    inputs: [],
+    name: "feeConfig",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "poolId_",
-        type: "uint256",
-      },
       {
         internalType: "address",
-        name: "user_",
-        type: "address",
-      },
-    ],
-    name: "getCurrentUserMultiplier",
-    outputs: [
-      {
-        internalType: "uint256",
         name: "",
-        type: "uint256",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -715,19 +604,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "isNotUpgradeable",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "l1Sender",
     outputs: [
       {
@@ -747,24 +623,6 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "uint128",
-        name: "claimLockEnd_",
-        type: "uint128",
-      },
-    ],
-    name: "lockClaim",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "poolId_",
-        type: "uint256",
-      },
-      {
         internalType: "address[]",
         name: "users_",
         type: "address[]",
@@ -773,11 +631,6 @@ const _abi = [
         internalType: "uint256[]",
         name: "amounts_",
         type: "uint256[]",
-      },
-      {
-        internalType: "uint128[]",
-        name: "lockEnds_",
-        type: "uint128[]",
       },
     ],
     name: "manageUsersInPrivatePool",
@@ -892,31 +745,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "totalVirtualDeposited",
+        name: "totalDeposited",
         type: "uint256",
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "proxiableUUID",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "removeUpgradeability",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -937,11 +770,6 @@ const _abi = [
         internalType: "uint256",
         name: "amount_",
         type: "uint256",
-      },
-      {
-        internalType: "uint128",
-        name: "claimLockEnd_",
-        type: "uint128",
       },
     ],
     name: "stake",
@@ -979,37 +807,6 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeTo",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-    ],
-    name: "upgradeToAndCall",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "",
         type: "address",
       },
@@ -1041,36 +838,8 @@ const _abi = [
         name: "pendingRewards",
         type: "uint256",
       },
-      {
-        internalType: "uint128",
-        name: "claimLockStart",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "claimLockEnd",
-        type: "uint128",
-      },
-      {
-        internalType: "uint256",
-        name: "virtualDeposited",
-        type: "uint256",
-      },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "version",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "pure",
     type: "function",
   },
   {
@@ -1093,15 +862,15 @@ const _abi = [
   },
 ] as const;
 
-export class ERC1967Proxy__factory {
+export class MOR1967__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC1967ProxyInterface {
-    return new utils.Interface(_abi) as ERC1967ProxyInterface;
+  static createInterface(): MOR1967Interface {
+    return new utils.Interface(_abi) as MOR1967Interface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC1967Proxy {
-    return new Contract(address, _abi, signerOrProvider) as ERC1967Proxy;
+  ): MOR1967 {
+    return new Contract(address, _abi, signerOrProvider) as MOR1967;
   }
 }

@@ -41,10 +41,17 @@
           >
             <div class="info-dashboard__indicator-title-wrp">
               <app-icon
+                v-if="indicator.iconName"
                 class="info-dashboard__indicator-icon"
                 :name="indicator.iconName"
               />
-              <h5 class="info-dashboard__indicator-title">
+              <h5
+                class="info-dashboard__indicator-title"
+                :class="{
+                  'info-dashboard__indicator-title--margin':
+                    !indicator.iconName,
+                }"
+              >
                 {{ indicator.title }}
               </h5>
             </div>
@@ -302,6 +309,10 @@ watch([selectedMonth, () => props.poolData], async ([newSelectedMonth]) => {
 
 .info-dashboard__indicator-title {
   @include body-3-regular;
+
+  &--margin {
+    margin-left: toRem(32);
+  }
 }
 
 .info-dashboard__indicator-value {

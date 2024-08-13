@@ -42,8 +42,8 @@ const tabs = computed<Tab[]>(() => [
     href: config.COMPUTE_CONTRIBUTION_URL,
   },
   {
-    title: t('home-page.community-tab'),
-    id: 'community',
+    title: t('home-page.builders-tab'),
+    id: 'builders',
     ...{
       [NETWORK_IDS.mainnet]: {
         href: config.COMMUNITY_CONTRIBUTION_URL,

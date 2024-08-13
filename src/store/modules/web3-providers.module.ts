@@ -87,7 +87,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
   const erc1967ProxyContract = computed(() => {
     return useContract(
-      'ERC1967Proxy__factory',
+      dashboardInfo.distributionAddress
+        ? 'MOR1967__factory'
+        : 'ERC1967Proxy__factory',
       dashboardInfo.distributionAddress ||
         config.networksMap[networkId.value].contractAddressesMap[
           CONTRACT_IDS.erc1967Proxy

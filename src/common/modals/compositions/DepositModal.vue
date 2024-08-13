@@ -8,13 +8,16 @@
     @update:is-shown="emit('update:is-shown', $event)"
   >
     <template #default="{ modal }">
-      <deposit-form
-        class="deposit-modal__form"
-        :pool-id="poolId"
-        :min-stake="minStake"
-        @cancel="modal.close"
-        @stake-tx-sent="modal.close"
-      />
+      <transition name="fade">
+        <deposit-form
+          v-if="isShown"
+          class="deposit-modal__form"
+          :pool-id="poolId"
+          :min-stake="minStake"
+          @cancel="modal.close"
+          @stake-tx-sent="modal.close"
+        />
+      </transition>
     </template>
   </basic-modal>
 </template>
@@ -33,6 +36,7 @@ withDefaults(
     isShown: boolean
     poolId: number
     minStake: BigNumber
+    claimLockEnd: string
     isCloseByClickOutside?: boolean
   }>(),
   {

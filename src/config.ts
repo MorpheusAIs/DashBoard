@@ -11,7 +11,7 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client/core'
-import { providers, utils } from 'ethers'
+import { ethers, providers, utils } from 'ethers'
 import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
 import packageJson from '../package.json'
@@ -63,16 +63,13 @@ export const config = {
   GITHUB_URL:
     'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
   CONTRACT_FAQ_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Guides/Morpheus%20Capital%20Providers%20Contract%20Guide.md',
+    'https://github.com/MorpheusAIs/Docs/blob/main/!KEYDOCS%20README%20FIRST!/FAQs%20%26%20Guides/Capital%20Providers%20FAQ.md',
   LANDING_URL: 'https://mor.org/',
-  CODE_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Code%20-%20Proof_Of_Contribution.md',
+  CODE_CONTRIBUTION_URL: 'https://mor.software/',
   COMPUTE_CONTRIBUTION_URL:
     'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
-  COMMUNITY_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Community%20-%20Proof%20of%20Contribution.md',
-  HOW_GET_STETH_URL:
-    'https://help.lido.fi/en/articles/5232811-how-do-i-get-steth',
+  COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
+  HOW_GET_STETH_URL: 'https://stake.lido.fi/',
   WALLET_INSTALL_URL: 'https://metamask.io/download/',
 
   // Testnet
@@ -130,14 +127,17 @@ config.networksMap = {
       layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.ethereum,
       provider: new providers.FallbackProvider(
         [
-          'https://eth.llamarpc.com',
+          'https://rpc.mevblocker.io',
           'https://rpc.mevblocker.io',
           'https://eth-pokt.nodies.app',
           'https://eth.drpc.org',
           'https://rpc.payload.de',
           'https://eth.merkle.io',
         ].map((rpcUrl, idx) => ({
-          provider: new providers.StaticJsonRpcProvider(rpcUrl),
+          provider: new providers.StaticJsonRpcProvider(
+            rpcUrl,
+            ethers.providers.getNetwork(Number(ETHEREUM_CHAIN_IDS.ethereum)),
+          ),
           priority: idx,
         })),
         1,
@@ -166,7 +166,10 @@ config.networksMap = {
       chainId: ETHEREUM_CHAIN_IDS.sepolia,
       chainTitle: 'Ethereum Sepolia',
       layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.sepolia,
-      provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.sepolia),
+      provider: new providers.StaticJsonRpcProvider(
+        ETHEREUM_RPC_URLS.sepolia,
+        ethers.providers.getNetwork(Number(ETHEREUM_CHAIN_IDS.sepolia)),
+      ),
       explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
     },
     l2: {
