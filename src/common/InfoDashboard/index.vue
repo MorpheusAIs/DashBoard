@@ -3,7 +3,7 @@
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
         <template v-if="isChartShown">
-          <div class="info-dashboard__header">
+          <header class="info-dashboard__header">
             <div>
               <div class="info-dashboard__header-title-wrp">
                 <h5 class="info-dashboard__header-title">
@@ -24,7 +24,7 @@
               scheme="text"
               :value-options="monthOptions"
             />
-          </div>
+          </header>
           <div class="info-dashboard__app-chart-wrp">
             <app-chart
               class="info-dashboard__app-chart"
@@ -99,6 +99,7 @@ import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
+import { errors } from '@/errors'
 
 const props = withDefaults(
   defineProps<{
@@ -144,7 +145,7 @@ const updateChartData = async (month: number) => {
   isChartDataUpdating.value = true
 
   try {
-    if (!props.poolData) throw new Error('poolData unavailable')
+    if (!props.poolData) throw new errors.PoolDataNotFoundError()
 
     const chartData = await getChartData(
       props.poolId,

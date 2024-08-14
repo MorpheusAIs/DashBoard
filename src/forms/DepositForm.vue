@@ -95,9 +95,10 @@ import { BigNumber, formatEther, parseUnits, Time, toEther } from '@/utils'
 import { ether, maxEther, minEther, minValue, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
+import { computed, reactive, ref, toRef, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
+import { errors } from '@/errors'
 
 enum ACTIONS {
   approve = 'approve',
@@ -216,7 +217,7 @@ const fetchAllowanceByCurrency = async (
       contract = web3ProvidersStore.depositContract
       break
     default:
-      throw new Error('unknown currency')
+      throw new errors.UnknownCurrencyError()
   }
 
   return contract.providerBased.value.allowance(
@@ -232,7 +233,7 @@ const approveByCurrency = async (currency: CURRENCIES) => {
       contract = web3ProvidersStore.depositContract
       break
     default:
-      throw new Error('unknown currency')
+      throw new errors.UnknownCurrencyError()
   }
 
   return contract.signerBased.value.approve(
@@ -335,9 +336,7 @@ watch(
   },
 )
 
-onMounted(() => {
-  init()
-})
+init()
 </script>
 
 <style lang="scss" scoped>

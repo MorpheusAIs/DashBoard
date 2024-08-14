@@ -158,6 +158,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     await sleep(1000)
   }
 
+  // TODO: SIMPLIFY
   const getUsersLastFullyDeployedProtocol = async (): Promise<void> => {
     const [l1DeployedPools, l2DeployedPools] = await Promise.all([
       l1FactoryContract.value.providerBased.value.getDeployedPools(

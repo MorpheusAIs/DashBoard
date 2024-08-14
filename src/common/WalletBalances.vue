@@ -61,6 +61,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
 import { onClickOutside } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { errors } from '@/errors'
 import AppIcon from './AppIcon.vue'
 
 type Balance = {
@@ -68,7 +69,7 @@ type Balance = {
   value: string
   tokenIconName: ICON_NAMES
 }
-let _morUpdateIntervalId: Parameters<typeof clearInterval>[0]
+let _morUpdateIntervalId: NodeJS.Timeout
 
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
@@ -79,7 +80,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const balances = computed<Balance[]>(() => [
   {
     logoIconName: ICON_NAMES.steth,
-    value: web3ProvidersStore.balances.depositToken?._isBigNumber
+    value: web3ProvidersStore.balances.depositToken
       ? `${formatEther(web3ProvidersStore.balances.depositToken)} ${
           web3ProvidersStore.depositTokenSymbol
         }`
@@ -88,7 +89,7 @@ const balances = computed<Balance[]>(() => [
   },
   {
     logoIconName: ICON_NAMES.morpheus,
-    value: web3ProvidersStore.balances.rewardsToken?._isBigNumber
+    value: web3ProvidersStore.balances.rewardsToken
       ? `${formatEther(web3ProvidersStore.balances.rewardsToken)} ${
           web3ProvidersStore.rewardsTokenSymbol
         }`
@@ -109,7 +110,7 @@ const onSelectBtnClick = (balanceIdx: number) => {
 
 const updateBalances = async () => {
   if (!web3ProvidersStore.provider.selectedAddress)
-    throw new Error('user address unavailable')
+    throw new errors.UserAddressError()
 
   const [stEthValue, morValue] = await Promise.all([
     web3ProvidersStore.depositContract.providerBased.value.balanceOf(

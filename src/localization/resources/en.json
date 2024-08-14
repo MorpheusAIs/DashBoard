@@ -264,7 +264,12 @@
     "provider-method-not-supported": "Method is not implemented",
     "provider-limit-exceeded": "Request exceeds defined limit",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported",
-    "provider-wrapper-method-not-found": "Provider does not exist or method not supported"
+    "provider-wrapper-method-not-found": "Provider does not exist or method not supported",
+    "unknown-currency": "Unknown currency",
+    "field-not-found": "Cannot find Vuelidate field",
+    "user-address": "User address unavailable",
+    "fallback-provider": "FallbackProvider does not have a signer",
+    "pool-data-not-found": "Pool data not found"
   },
   "notification": {
     "default-title-success": "Success",

@@ -1,4 +1,5 @@
 <template>
+  <!--  TODO: SIMPLIFY WHOLE COMPONENT-->
   <div class="public-pool-view">
     <info-bar
       status="public"
@@ -275,37 +276,58 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
 ])
 
-const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => {
-  const indicators: InfoDashboardType.Indicator[] = [
-    {
-      iconName: ICON_NAMES.ethereum,
-      title: t('home-page.public-pool-view.user-deposit-title'),
-      value: userPoolData.value
-        ? `${formatEther(userPoolData.value.deposited)} ${
-            web3ProvidersStore.depositTokenSymbol
-          }`
-        : '',
-    },
-    {
-      iconName: ICON_NAMES.arbitrum,
-      title: t('home-page.public-pool-view.available-to-claim-title'),
-      value: currentUserReward.value
-        ? `${formatEther(currentUserReward.value)} ${
-            web3ProvidersStore.rewardsTokenSymbol
-          }`
-        : '',
-    },
-  ]
-
-  if (isChangeLockEnabled.value) {
-    indicators.push({
-      title: t('home-page.public-pool-view.multiplier-title'),
-      value: `x${rewardsMultiplier.value}`,
-    })
+const withdrawAfterTime = computed(() => {
+  if (poolData.value) {
+    return new Time(
+      userPoolData.value && !userPoolData.value.lastStake.isZero()
+        ? userPoolData.value.lastStake
+            .add(poolData.value.withdrawLockPeriodAfterStake)
+            .toNumber()
+        : poolData.value.payoutStart
+            .add(poolData.value.withdrawLockPeriod)
+            .toNumber(),
+    )
   }
-
-  return indicators
+  return ''
 })
+
+const claimAfterTime = computed(() => {
+  if (poolData.value) {
+    return new Time(
+      poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber(),
+    )
+  }
+  return ''
+})
+
+const dashboardIndicators = computed<InfoDashboardType.Indicator[]>(() => [
+  {
+    iconName: ICON_NAMES.ethereum,
+    title: t('home-page.public-pool-view.user-deposit-title'),
+    value: userPoolData.value
+      ? `${formatEther(userPoolData.value.deposited)} ${
+          web3ProvidersStore.depositTokenSymbol
+        }`
+      : '',
+  },
+  {
+    iconName: ICON_NAMES.arbitrum,
+    title: t('home-page.public-pool-view.available-to-claim-title'),
+    value: currentUserReward.value
+      ? `${formatEther(currentUserReward.value)} ${
+          web3ProvidersStore.rewardsTokenSymbol
+        }`
+      : '',
+  },
+  ...(isChangeLockEnabled.value
+    ? [
+        {
+          title: t('home-page.public-pool-view.multiplier-title'),
+          value: `x${rewardsMultiplier.value}`,
+        },
+      ]
+    : []),
+])
 
 const dashboardTitle = computed(
   () =>
