@@ -91,7 +91,7 @@ import type {
 import { Time, formatEther } from '@/utils'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { CHART_CONFIG } from './const'
-import { getChartData, getUserYieldPerDayChartData } from './helpers'
+import { getUserYieldPerDayChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
 import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
@@ -148,8 +148,8 @@ const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
 //     chartConfig.data.labels = Object.keys(chartData).map(
 //       day => `${monthTime.format('MMMM')} ${day}`,
 //     )
-//     chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
-//       Math.ceil(Number(formatEther(amount))),
+//     chartConfig.data.datasets[0].data = Object.values(chartData).map(
+//      amount => Math.ceil(Number(formatEther(amount))),
 //     )
 //   } catch (error) {
 //     ErrorHandler.process(error)
@@ -170,9 +170,9 @@ const updateChartData = async (month: number) => {
       month,
     )
 
-    chartConfig.data.labels = Object.keys(chartData).map(timestamp =>
-      new Time(timestamp).format('DD MMMM'),
-    )
+    chartConfig.data.labels = Object.keys(chartData).map(timestamp => {
+      return new Time(Number(timestamp)).format('DD MMMM')
+    })
     chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
       Number(formatEther(amount)),
     )
