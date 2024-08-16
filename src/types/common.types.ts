@@ -35,4 +35,10 @@ export type Provider =
   | providers.StaticJsonRpcProvider
   | providers.FallbackProvider
 
-export type ChartConfig = Chart['config']
+export type ChartConfig = Chart['config'] & {
+  data: {
+    datasets: Array<{
+      pointBackgroundColor?: string
+    }>
+  }
+}

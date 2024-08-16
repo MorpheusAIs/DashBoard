@@ -124,6 +124,7 @@ export const usePool = (poolId: Ref<number>) => {
     const poolDataResponses = await Promise.all([
       erc1967ProxyContract.value.poolsData(poolId.value),
       erc1967ProxyContract.value.pools(poolId.value),
+      erc1967ProxyContract.value.totalDepositedInPublicPools(),
     ])
 
     // TODO: refactor
@@ -139,8 +140,7 @@ export const usePool = (poolId: Ref<number>) => {
       payoutStart: poolDataResponses[1].payoutStart,
       rewardDecrease: poolDataResponses[1].rewardDecrease,
       totalDeposited:
-        poolDataResponses[0]?.totalDeposited ??
-        poolDataResponses[0]?.totalVirtualDeposited,
+        poolDataResponses[2] ?? poolDataResponses[0].totalVirtualDeposited,
       withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
       withdrawLockPeriodAfterStake:
         poolDataResponses[1].withdrawLockPeriodAfterStake,
