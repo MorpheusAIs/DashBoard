@@ -2,55 +2,57 @@
   <div class="info-dashboard" :class="{ 'info-dashboard--loading': isLoading }">
     <transition name="fade" mode="out-in">
       <div v-if="web3ProvidersStore.isConnected" class="info-dashboard__wrp">
-        <div class="info-dashboard__header">
-          <div class="info-dashboard__header-title-wrp">
-            <h5 class="info-dashboard__header-title">
-              {{ chartTitle }}
-            </h5>
-            <app-icon
-              v-tooltip="$t('info-dashboard.header-note')"
-              class="info-dashboard__header-title-icon"
-              :name="$icons.exclamationCircle"
+        <template v-if="isChartShown">
+          <div class="info-dashboard__header">
+            <div class="info-dashboard__header-title-wrp">
+              <h5 class="info-dashboard__header-title">
+                {{ chartTitle }}
+              </h5>
+              <app-icon
+                v-tooltip="$t('info-dashboard.header-note')"
+                class="info-dashboard__header-title-icon"
+                :name="$icons.exclamationCircle"
+              />
+            </div>
+            <div class="info-dashboard__header-buttons">
+              <app-button
+                class="info-dashboard__header-button"
+                scheme="filled"
+                color="secondary"
+                size="none"
+                :disabled="chartType === CHART_TYPE.circulingSupply"
+                :icon-left="$icons.arrowLeft"
+                @click="changeChartType(CHART_TYPE.circulingSupply)"
+              />
+              <app-button
+                class="info-dashboard__header-button"
+                scheme="filled"
+                color="secondary"
+                size="none"
+                :disabled="chartType === CHART_TYPE.earnedMor"
+                :icon-left="$icons.arrowLeft"
+                @click="changeChartType(CHART_TYPE.earnedMor)"
+              />
+            </div>
+          </div>
+          <div class="info-dashboard__app-chart-wrp">
+            <div class="info-dashboard__app-chart-desc">
+              <p class="info-dashboard__header-subtitle">
+                {{ chartSubtitle }}
+              </p>
+              <select-field
+                v-model="selectedMonth"
+                scheme="secondary"
+                :value-options="monthOptions"
+              />
+            </div>
+            <app-chart
+              class="info-dashboard__app-chart"
+              :config="chartConfig"
+              :is-loading="isLoading || isChartDataUpdating"
             />
           </div>
-          <div class="info-dashboard__header-buttons">
-            <app-button
-              class="info-dashboard__header-button"
-              scheme="filled"
-              color="secondary"
-              size="none"
-              :disabled="chartType === CHART_TYPE.circulingSupply"
-              :icon-left="$icons.arrowLeft"
-              @click="changeChartType(CHART_TYPE.circulingSupply)"
-            />
-            <app-button
-              class="info-dashboard__header-button"
-              scheme="filled"
-              color="secondary"
-              size="none"
-              :disabled="chartType === CHART_TYPE.earnedMor"
-              :icon-left="$icons.arrowLeft"
-              @click="changeChartType(CHART_TYPE.earnedMor)"
-            />
-          </div>
-        </div>
-        <div class="info-dashboard__app-chart-wrp">
-          <div class="info-dashboard__app-chart-desc">
-            <p class="info-dashboard__header-subtitle">
-              {{ chartSubtitle }}
-            </p>
-            <select-field
-              v-model="selectedMonth"
-              scheme="secondary"
-              :value-options="monthOptions"
-            />
-          </div>
-          <app-chart
-            class="info-dashboard__app-chart"
-            :config="chartConfig"
-            :is-loading="isLoading || isChartDataUpdating"
-          />
-        </div>
+        </template>
         <ul v-if="indicators?.length" class="info-dashboard__indicators">
           <li
             v-for="(indicator, idx) in indicators"
@@ -116,6 +118,9 @@ import AppIcon from '../AppIcon.vue'
 import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
 import { AppButton } from '@/common'
+import { ROUTE_NAMES } from '@/enums'
+import { useRoute } from 'vue-router'
+import { errors } from '@/errors'
 
 enum CHART_TYPE {
   circulingSupply = 'circulating-supply',
@@ -141,22 +146,15 @@ const props = withDefaults(
 )
 
 const { t } = useI18n()
+const route = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const chartType = ref(CHART_TYPE.circulingSupply)
 
-const chartTitle = computed(() =>
-  chartType.value === CHART_TYPE.circulingSupply
-    ? t('info-dashboard.header-supply-title')
-    : t('info-dashboard.header-earned-title'),
-)
+const isChartDataUpdating = ref(false)
 
-const chartSubtitle = computed(() =>
-  chartType.value === CHART_TYPE.circulingSupply
-    ? t('info-dashboard.header-supply-subtitle')
-    : t('info-dashboard.header-earned-subtitle'),
-)
+const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
 
 const monthOptions = computed<FieldOption<number>[]>(() => {
   const allMonthOptions = Array.from({ length: 12 }).map((_, idx) => ({
@@ -172,9 +170,21 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
 
 const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
 
-const isChartDataUpdating = ref(false)
+const chartTitle = computed(() =>
+  chartType.value === CHART_TYPE.circulingSupply
+    ? t('info-dashboard.header-supply-title')
+    : t('info-dashboard.header-earned-title'),
+)
 
-const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
+const chartSubtitle = computed(() =>
+  chartType.value === CHART_TYPE.circulingSupply
+    ? t('info-dashboard.header-supply-subtitle')
+    : t('info-dashboard.header-earned-subtitle'),
+)
+
+const isChartShown = computed(
+  () => route.name !== ROUTE_NAMES.appDashboardCapital,
+)
 
 const updateSupplyChartData = async (month: number) => {
   const chartData = await getChartData(
@@ -221,7 +231,7 @@ const updateChartData = async (month: number) => {
   isChartDataUpdating.value = true
 
   try {
-    if (!props.poolData) throw new Error('poolData unavailable')
+    if (!props.poolData) throw new errors.PoolDataNotFoundError()
 
     chartType.value === CHART_TYPE.circulingSupply
       ? await updateSupplyChartData(month)

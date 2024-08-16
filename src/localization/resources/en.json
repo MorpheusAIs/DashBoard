@@ -145,14 +145,14 @@
       "claim-at-title": "Claim is locked until",
       "withdraw-at-note": "Note: Withdraw is locked until the specified time",
       "claim-at-note": "Note: Claim is locked until the specified time",
-      "deposit-btn": "Deposit stETH",
-      "external-link": "How to get stETH?",
-      "withdraw-btn": "Withdraw stETH",
+      "deposit-btn": "Deposit {token}",
+      "external-link": "How to receive stETH?",
+      "withdraw-btn": "Withdraw {token}",
       "user-deposit-title": "Your deposit",
       "available-to-claim-title": "Available to claim",
-      "claim-btn": "Claim MOR",
-      "dashboard-description--0": "Upon withdrawal, your deposited stETH will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
-      "dashboard-note--0": "Note: You can withdraw your stETH {time} after deposit."
+      "claim-btn": "Claim {token}",
+      "dashboard-description--0": "Upon withdrawal, your deposited {token} will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
+      "dashboard-note--0": "Note: You can withdraw your {token} {daysCount} days after deposit."
     }
   },
   "mor20-ecosystem": {
@@ -240,10 +240,10 @@
   },
   "zero-pool-description": {
     "list": {
-      "1": "Deposit stETH (via ETH) to earn MOR tokens",
-      "2": "stETH can be withdrawn after day 7",
-      "3": "Claim your MOR tokens starting May 8th",
-      "4": "MOR tokens are rewarded on Arbitrum"
+      "1": "Deposit {deposit} (via ETH) to earn {reward} tokens",
+      "2": "{deposit} can be withdrawn after {time}",
+      "3": "Claim your {reward} tokens starting {time}",
+      "4": "{reward} tokens are rewarded on Arbitrum"
     },
     "details": "Details on"
   },
@@ -266,7 +266,12 @@
     "provider-method-not-supported": "Method is not implemented",
     "provider-limit-exceeded": "Request exceeds defined limit",
     "provider-json-rpc-version-not-supported": "Version of JSON-RPC protocol is not supported",
-    "provider-wrapper-method-not-found": "Provider does not exist or method not supported"
+    "provider-wrapper-method-not-found": "Provider does not exist or method not supported",
+    "unknown-currency": "Unknown currency",
+    "field-not-found": "Cannot find Vuelidate field",
+    "user-address": "User address unavailable",
+    "fallback-provider": "FallbackProvider does not have a signer",
+    "pool-data-not-found": "Pool data not found"
   },
   "notification": {
     "default-title-success": "Success",
