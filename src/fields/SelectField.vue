@@ -106,7 +106,7 @@ const props = withDefaults(
     placeholder?: string
     errorMessage?: string
     note?: string
-    scheme?: 'primary' | 'text'
+    scheme?: 'primary' | 'secondary' | 'text'
     modification?: 'dropdown' | 'dropup'
     uid?: string
     isLoading?: boolean
@@ -269,6 +269,13 @@ $z-local-index: 2;
     color: var(--field-text);
 
     @include body-1-semi-bold;
+  }
+
+  .select-field--secondary & {
+    color: var(--field-text);
+    padding: 0 toRem(28) 0 0;
+    font-family: var(--app-font-family);
+    font-size: toRem(16);
   }
 
   .select-field--error & {
