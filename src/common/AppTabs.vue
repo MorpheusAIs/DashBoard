@@ -54,7 +54,7 @@ const updateTab = (tab: Tab) => {
   display: grid;
   place-items: center;
   padding: toRem(16) toRem(24);
-  border: toRem(1) solid #494949;
+  border: toRem(1) solid var(--border-tertiary-main);
   color: $color;
   cursor: pointer;
   transition: var(--transition-duration-fast) var(--transition-timing-default);

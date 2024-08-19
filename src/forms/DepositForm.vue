@@ -55,6 +55,7 @@
         </template>
       </input-field>
       <datetime-field
+        v-if="isMultiplierShown"
         v-model="form.lockPeriod"
         position="top"
         :placeholder="$t(`deposit-form.lock-period-placeholder`)"
@@ -256,11 +257,12 @@ const submit = async (action: ACTIONS): Promise<void> => {
       tx = await approveByCurrency(balanceOfForm.value.value.currency)
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
+
       tx =
         await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
           props.poolId,
           amountInDecimals,
-          form.lockPeriod || 0,
+          ...(isMultiplierShown.value ? [form.lockPeriod || 0] : []),
         )
       emit('stake-tx-sent')
     }

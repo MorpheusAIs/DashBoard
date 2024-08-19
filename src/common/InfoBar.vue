@@ -114,7 +114,7 @@ withDefaults(
   display: grid;
   grid-gap: toRem(8);
   padding-top: toRem(16);
-  border-top: toRem(2) solid #494949;
+  border-top: toRem(2) solid var(--border-tertiary-main);
 
   @include respond-to(medium) {
     margin-top: toRem(16);

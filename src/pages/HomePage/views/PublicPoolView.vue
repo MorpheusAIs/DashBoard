@@ -368,7 +368,7 @@ watch(
 <style lang="scss" scoped>
 .public-pool-view__bar-slot-wrp {
   margin-top: toRem(16);
-  border-top: toRem(2) solid #494949;
+  border-top: toRem(2) solid var(--border-tertiary-main);
   padding-top: toRem(30);
 
   @include respond-to(medium) {
