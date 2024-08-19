@@ -15,6 +15,7 @@ import { errors } from '@/errors'
 const MULTIPLIER_SCALE = 21 //digits
 const REWARDS_DIVIDER = 10000
 
+// TODO: REFACTOR
 export const usePool = (poolId: Ref<number>) => {
   let _currentUserRewardUpdateIntervalId: NodeJS.Timeout
 
@@ -123,35 +124,35 @@ export const usePool = (poolId: Ref<number>) => {
   const fetchPoolData = async (): Promise<
     Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
   > => {
-    const poolDataResponses = await Promise.all([
-      erc1967ProxyContract.value.poolsData(poolId.value),
-      erc1967ProxyContract.value.pools(poolId.value),
-      erc1967ProxyContract.value.totalDepositedInPublicPools(),
-    ])
+    const [poolsDataResponse, poolsResponse, totalDepositedInPublicPools] =
+      await Promise.all([
+        erc1967ProxyContract.value.poolsData(poolId.value),
+        erc1967ProxyContract.value.pools(poolId.value),
+        erc1967ProxyContract.value.totalDepositedInPublicPools(),
+      ])
 
     const isTotalVirtualDepositedDefined =
-      'totalVirtualDeposited' in poolDataResponses[0]
+      'totalVirtualDeposited' in poolsDataResponse
     const totalDeposited =
-      poolDataResponses[2] ??
+      totalDepositedInPublicPools ??
       (isTotalVirtualDepositedDefined
-        ? (poolDataResponses[0] as unknown as Erc1967ProxyType.PoolData)
+        ? (poolsDataResponse as unknown as Erc1967ProxyType.PoolData)
             .totalVirtualDeposited
         : ethers.BigNumber.from(0))
 
     return {
-      claimLockPeriod: poolDataResponses[1].claimLockPeriod,
-      decreaseInterval: poolDataResponses[1].decreaseInterval,
-      initialReward: poolDataResponses[1].initialReward,
-      isPublic: poolDataResponses[1].isPublic,
-      lastUpdate: poolDataResponses[0].lastUpdate,
-      minimalStake: poolDataResponses[1].minimalStake,
-      payoutStart: poolDataResponses[1].payoutStart,
-      rate: poolDataResponses[0].rate,
-      rewardDecrease: poolDataResponses[1].rewardDecrease,
+      claimLockPeriod: poolsResponse.claimLockPeriod,
+      decreaseInterval: poolsResponse.decreaseInterval,
+      initialReward: poolsResponse.initialReward,
+      isPublic: poolsResponse.isPublic,
+      lastUpdate: poolsDataResponse.lastUpdate,
+      minimalStake: poolsResponse.minimalStake,
+      payoutStart: poolsResponse.payoutStart,
+      rate: poolsDataResponse.rate,
+      rewardDecrease: poolsResponse.rewardDecrease,
       totalDeposited,
-      withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
-      withdrawLockPeriodAfterStake:
-        poolDataResponses[1].withdrawLockPeriodAfterStake,
+      withdrawLockPeriod: poolsResponse.withdrawLockPeriod,
+      withdrawLockPeriodAfterStake: poolsResponse.withdrawLockPeriodAfterStake,
     } as Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
   }
 
