@@ -53,7 +53,11 @@
             />
           </div>
         </template>
-        <ul v-if="indicators?.length" class="info-dashboard__indicators">
+        <ul
+          v-if="indicators?.length"
+          class="info-dashboard__indicators"
+          :class="{ 'info-dashboard__indicators--border': isChartShown }"
+        >
           <li
             v-for="(indicator, idx) in indicators"
             :key="idx"
@@ -349,7 +353,7 @@ watch(
 
 .info-dashboard__app-chart-wrp {
   margin-top: toRem(16);
-  border-top: toRem(2) solid #494949;
+  border-top: toRem(2) solid var(--border-tertiary-main);
   width: 100%;
 }
 
@@ -365,12 +369,15 @@ watch(
 }
 
 .info-dashboard__indicators {
-  margin-top: toRem(16);
   width: 100%;
   display: grid;
   grid-gap: toRem(8);
-  padding-top: toRem(24);
-  border-top: toRem(2) solid #494949;
+
+  &--border {
+    margin-top: toRem(16);
+    padding-top: toRem(24);
+    border-top: toRem(2) solid var(--border-tertiary-main);
+  }
 }
 
 .info-dashboard__indicator {

@@ -163,7 +163,7 @@ withDefaults(
 .info-card__footer {
   display: flex;
   align-items: center;
-  border-top: toRem(1) solid #494949;
+  border-top: toRem(1) solid var(--border-tertiary-main);
 }
 
 .info-card .info-card__show-more-btn {
@@ -173,7 +173,7 @@ withDefaults(
 
 .info-card__edit-btn-wrp {
   flex-basis: toRem(111);
-  border-left: toRem(1) solid #494949;
+  border-left: toRem(1) solid var(--border-tertiary-main);
 }
 
 .info-card .info-card__edit-btn {

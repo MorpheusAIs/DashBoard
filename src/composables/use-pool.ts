@@ -120,14 +120,23 @@ export const usePool = (poolId: Ref<number>) => {
     )
   }
 
-  const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
+  const fetchPoolData = async (): Promise<
+    Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
+  > => {
     const poolDataResponses = await Promise.all([
       erc1967ProxyContract.value.poolsData(poolId.value),
       erc1967ProxyContract.value.pools(poolId.value),
       erc1967ProxyContract.value.totalDepositedInPublicPools(),
     ])
 
-    // TODO: refactor
+    const isTotalVirtualDepositedDefined =
+      'totalVirtualDeposited' in poolDataResponses[0]
+    const totalDeposited =
+      poolDataResponses[2] ??
+      (isTotalVirtualDepositedDefined
+        ? (poolDataResponses[0] as unknown as Erc1967ProxyType.PoolData)
+            .totalVirtualDeposited
+        : ethers.BigNumber.from(0))
 
     return {
       claimLockPeriod: poolDataResponses[1].claimLockPeriod,
@@ -136,18 +145,19 @@ export const usePool = (poolId: Ref<number>) => {
       isPublic: poolDataResponses[1].isPublic,
       lastUpdate: poolDataResponses[0].lastUpdate,
       minimalStake: poolDataResponses[1].minimalStake,
-      rate: poolDataResponses[0].rate,
       payoutStart: poolDataResponses[1].payoutStart,
+      rate: poolDataResponses[0].rate,
       rewardDecrease: poolDataResponses[1].rewardDecrease,
-      totalDeposited:
-        poolDataResponses[2] ?? poolDataResponses[0].totalVirtualDeposited,
+      totalDeposited,
       withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
       withdrawLockPeriodAfterStake:
         poolDataResponses[1].withdrawLockPeriodAfterStake,
-    }
+    } as Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
   }
 
-  const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
+  const fetchUserPoolData = async (): Promise<
+    Erc1967ProxyType.UserData | Mor1967ProxyType.UserData
+  > => {
     if (!web3ProvidersStore.provider.selectedAddress)
       throw new errors.UserAddressError()
 
@@ -156,15 +166,30 @@ export const usePool = (poolId: Ref<number>) => {
       poolId.value,
     )
 
+    const isClaimLockEndDefined = 'claimLockEnd' in response
+    const claimLockEnd = isClaimLockEndDefined
+      ? response.claimLockEnd
+      : ethers.BigNumber.from(0)
+
+    const isClaimLockStartDefined = 'claimLockStart' in response
+    const claimLockStart = isClaimLockStartDefined
+      ? response.claimLockStart
+      : ethers.BigNumber.from(0)
+
+    const isVirtualDepositedDefined = 'virtualDeposited' in response
+    const virtualDeposited = isVirtualDepositedDefined
+      ? response.virtualDeposited
+      : ethers.BigNumber.from(0)
+
     return {
-      claimLockEnd: response?.claimLockEnd ?? ethers.BigNumber.from(0),
-      claimLockStart: response?.claimLockStart ?? ethers.BigNumber.from(0),
+      claimLockEnd,
+      claimLockStart,
       deposited: response.deposited,
       lastStake: response.lastStake,
       pendingRewards: response.pendingRewards,
       rate: response.rate,
-      virtualDeposited: response?.virtualDeposited ?? ethers.BigNumber.from(0),
-    }
+      virtualDeposited,
+    } as Erc1967ProxyType.UserData | Mor1967ProxyType.UserData
   }
 
   const humanizeRewards = (reward: BigNumber) => {
@@ -176,19 +201,23 @@ export const usePool = (poolId: Ref<number>) => {
   const fetchExpectedMultiplier = async (lockPeriod: string) => {
     try {
       if (!lockPeriod) return
+
       const lockStart = new Time().isAfter(
         userPoolData.value?.claimLockStart?.toString(),
       )
         ? new Time().timestamp
         : userPoolData.value?.claimLockStart?.toString()
-      const multiplier =
-        //eslint-disable-next-line max-len
-        await erc1967ProxyContract.value?.getClaimLockPeriodMultiplier(
-          poolId.value,
-          lockStart,
-          lockPeriod || 0,
-        )
-      expectedRewardsMultiplier.value = humanizeRewards(multiplier)
+
+      if ('getClaimLockPeriodMultiplier' in erc1967ProxyContract.value) {
+        const multiplier =
+          await erc1967ProxyContract.value.getClaimLockPeriodMultiplier(
+            poolId.value,
+            lockStart || 0,
+            lockPeriod || 0,
+          )
+
+        expectedRewardsMultiplier.value = humanizeRewards(multiplier)
+      }
     } catch (error) {
       ErrorHandler.processWithoutFeedback(error)
     }
@@ -216,14 +245,15 @@ export const usePool = (poolId: Ref<number>) => {
     isUserDataUpdating.value = true
 
     try {
-      const response =
-        // eslint-disable-next-line max-len
-        await erc1967ProxyContract.value?.getCurrentUserMultiplier(
-          poolId.value,
-          web3ProvidersStore.provider.selectedAddress,
-        )
+      if ('getCurrentUserMultiplier' in erc1967ProxyContract.value) {
+        const response =
+          await erc1967ProxyContract.value.getCurrentUserMultiplier(
+            poolId.value,
+            web3ProvidersStore.provider.selectedAddress,
+          )
 
-      rewardsMultiplier.value = humanizeRewards(response)
+        rewardsMultiplier.value = humanizeRewards(response)
+      }
     } catch (e) {
       ErrorHandler.processWithoutFeedback(e)
     }
