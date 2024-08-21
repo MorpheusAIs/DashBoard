@@ -79,15 +79,18 @@ export async function getUserYieldPerDayChartData(
     rate: string
   }
 
+  type UserIntercation = {
+    timestamp: string
+    rate: string
+    deposited: string
+    claimedRewards: string
+    pendingRewards: string
+  }
+
   type QueryData = {
-    userInteractions: {
-      timestamp: string
-      rate: string
-      deposited: string
-      claimedRewards: string
-      pendingRewards: string
-    }[]
-    poolInteractions: PoolIntercation[]
+    initialUserInteractions: UserIntercation[]
+    userInteractions: UserIntercation[]
+    [key: string]: PoolIntercation[]
   }
 
   // Get data from TheGraph
@@ -95,31 +98,27 @@ export async function getUserYieldPerDayChartData(
     query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month),
   })
 
-  // START leave yields only at the end of the calculation day
-  const poolInteractionsMap = new Map<string, PoolIntercation>()
-  data.poolInteractions.forEach(interaction => {
-    const { timestamp } = interaction
-    const date = new Date(Number(timestamp) * 1000)
-    const day = date.toISOString().split('T')[0]
+  const poolInteractions: PoolIntercation[] = []
+  for (const prop in data) {
+    if (prop === 'userInteractions' || data[prop].length === 0) continue
 
-    if (
-      !poolInteractionsMap.has(day) ||
-      Number(timestamp) > Number(poolInteractionsMap.get(day)!.timestamp)
-    ) {
-      poolInteractionsMap.set(day, interaction)
-    }
-  })
-  const poolInteractions = Array.from(poolInteractionsMap.values())
-  // END
+    poolInteractions.push(data[prop][0])
+  }
+
+  const userInteractions = [
+    ...data.initialUserInteractions.slice(0, 1),
+    ...data.userInteractions,
+  ]
+
+  const fromDate = new Time(String(month + 1), 'M').toDate()
+  const fromTimestamp = fromDate.getTime() / 1000
 
   // START calculate rewards
   const yields: ChartData = {}
-  for (let i = 0; i < data.userInteractions.length; i++) {
-    const ui = data.userInteractions[i]
+  for (let i = 0; i < userInteractions.length; i++) {
+    const ui = userInteractions[i]
     const nextUserIntercation =
-      i < data.userInteractions.length - 1
-        ? data.userInteractions[i + 1]
-        : undefined
+      i < userInteractions.length - 1 ? userInteractions[i + 1] : undefined
 
     // Get `poolInteractions` periods between `userIntercationsYield`
     // When `userInteraction` is last, get all periods that greater then current
@@ -134,7 +133,9 @@ export async function getUserYieldPerDayChartData(
 
     // Calculate current yield from the `userIntercations` and push
     const uiv = BigNumber.from(ui.claimedRewards).add(ui.pendingRewards)
-    yields[Number(ui.timestamp)] = uiv
+    if (Number(ui.timestamp) > fromTimestamp) {
+      yields[Number(ui.timestamp)] = uiv
+    }
 
     // Calculate nex period yields from the `poolIntercations` and push
     periodPoolInteractions.forEach(pi => {
@@ -159,11 +160,28 @@ function _generateUserYieldPerDayGraphqlQuery(
   // TODO: add month
   month: number,
 ) {
-  const fromTimestamp =
-    new Time(String(month + 1), 'M').toDate().getTime() / 1000
-  const toTimestamp = new Time(String(month + 2), 'M').toDate().getTime() / 1000
+  const fromDate = new Time(String(month + 1), 'M').toDate()
+  const toDate = new Time(String(month + 2), 'M').toDate()
+  const fromTimestamp = fromDate.getTime() / 1000
+  const toTimestamp = toDate.getTime() / 1000
 
-  const REQUEST_PATTERN = `
+  const userInteractionsPattern = `
+   initialUserInteractions: userInteractions (
+      orderBy: timestamp
+      orderDirection: desc
+      where: {
+        user: "${user}"
+        poolId: "${poolId.toString()}"
+        timestamp_lt: ${fromTimestamp}
+      }
+      first: 1
+    ) {
+      timestamp
+      rate
+      deposited
+      claimedRewards
+      pendingRewards
+    }
     userInteractions (
       orderBy: timestamp
       orderDirection: asc
@@ -180,25 +198,38 @@ function _generateUserYieldPerDayGraphqlQuery(
       claimedRewards
       pendingRewards
     }
-    poolInteractions (
-      orderBy: timestamp
-      orderDirection: asc
-      where: {
-        rate_gt: 0
-        timestamp_gt: ${fromTimestamp}
-        timestamp_lt: ${toTimestamp}
-        pool_: {
-          id: "${hexlify(poolId)}"
-        }
-      }
-      first: 1000
-    ) {
-      timestamp
-      rate
-    }
   `
 
-  const requests = [REQUEST_PATTERN]
+  const year = new Date().getFullYear()
+  const currentMonth = new Date().getMonth()
+
+  const dateInMonth =
+    currentMonth === month
+      ? new Date().getDate()
+      : new Date(year, month + 1, 0).getDate()
+
+  let poolInteractionsPattern = ''
+  for (let i = 1; i <= dateInMonth; i++) {
+    poolInteractionsPattern += `
+      day${i}: poolInteractions (
+        orderBy: timestamp
+        orderDirection: desc
+        where: {
+          rate_gt: 0
+          timestamp_lt: ${fromTimestamp + i * 86400}
+          pool_: {
+            id: "${hexlify(poolId)}"
+          }
+        }
+        first: 1
+      ) {
+        timestamp
+        rate
+      }
+    `
+  }
+
+  const requests = [userInteractionsPattern, poolInteractionsPattern]
 
   return gql`
     ${'{\n' + requests.join('\n') + '\n}'}
