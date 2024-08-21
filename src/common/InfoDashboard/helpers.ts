@@ -100,7 +100,7 @@ export async function getUserYieldPerDayChartData(
 
   const poolInteractions: PoolIntercation[] = []
   for (const prop in data) {
-    if (prop === 'userInteractions' || data[prop].length === 0) continue
+    if (!prop.includes('day') || data[prop].length === 0) continue
 
     poolInteractions.push(data[prop][0])
   }
