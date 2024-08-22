@@ -5,9 +5,6 @@
       status="public"
       :title="dashboardTitle"
       :subtitle="$t(`home-page.public-pool-view.info-bar.subtitle--${poolId}`)"
-      :description="
-        $t(`home-page.public-pool-view.info-bar.description--${poolId}`)
-      "
       :indicators="barIndicators"
       :is-loading="isInitializing"
     >

@@ -195,6 +195,7 @@ const updateSupplyChartData = async (month: number) => {
     props.poolId,
     props.poolData!.payoutStart,
     month,
+    route.query.network,
   )
 
   const monthTime = new Time(String(month + 1), 'M')
@@ -217,11 +218,13 @@ const updateEarnedMorChartData = async (month: number) => {
     props.poolId,
     web3ProvidersStore.address,
     month,
+    route.query.network,
   )
 
   chartConfig.data.labels = Object.keys(chartData).map(timestamp => {
     return new Time(Number(timestamp)).format('DD MMMM')
   })
+
   chartConfig.data.datasets[0].data = Object.values(chartData).map(amount =>
     Number(formatEther(amount)),
   )
