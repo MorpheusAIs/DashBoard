@@ -52,11 +52,11 @@ withDefaults(
     subtitle: string
     status: 'public' | 'private'
     title: string
-    description: string
     indicators: InfoBarType.Indicator[]
     isLoading?: boolean
+    description?: string
   }>(),
-  { isLoading: false },
+  { isLoading: false, description: '' },
 )
 </script>
 

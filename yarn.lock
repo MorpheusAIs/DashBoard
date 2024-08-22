@@ -7688,7 +7688,7 @@ __metadata:
     postcss-html: ^1.5.0
     prettier: ^2.8.1
     rollup-plugin-visualizer: ^5.9.0
-    sass: ^1.57.1
+    sass: 1.57.1
     stylelint: ^15.6.1
     stylelint-config-recommended-vue: ^1.4.0
     stylelint-config-standard-scss: ^9.0.0
@@ -9281,16 +9281,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.57.1":
-  version: 1.77.8
-  resolution: "sass@npm:1.77.8"
+"sass@npm:1.57.1":
+  version: 1.57.1
+  resolution: "sass@npm:1.57.1"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 6b5dce17faa1bd1e349b4825bf7f76559a32f3f95d789cd2847623c88ee9635e1485d3458532a05fa5b9134cfbce79a4bad3f13dc63c2433632347674db0abae
+  checksum: 734a08781bcbe0e8defb2d54864e7012014ed3e68ba5fcb766189b002929019fc37b2f83a18d4be0b5f69ad77317c92396ce6112447ab47a194ed600ae1afb27
   languageName: node
   linkType: hard
 

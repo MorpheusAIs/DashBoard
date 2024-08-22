@@ -1,6 +1,6 @@
-import { Time, hexlify, BigNumber } from '@/utils'
+import { BigNumber, hexlify, Time } from '@/utils'
 import { gql } from '@apollo/client'
-import { config } from '@config'
+import { config, NETWORK_IDS } from '@config'
 import { mapKeys, mapValues } from 'lodash'
 
 type ChartData = Record<number, BigNumber>
@@ -12,11 +12,16 @@ export async function getChartData(
   poolId: number,
   poolStartedAt: BigNumber,
   month: number,
+  type: NETWORK_IDS,
 ): Promise<ChartData> {
   type QueryData = Record<`r${number}`, { totalStaked?: string }[]>
-  const { data } = await config.apolloClient.query<QueryData>({
+  const query = {
     query: _generateTotalStakedPerDayGraphqlQuery(poolId, poolStartedAt, month),
-  })
+  }
+  const { data } =
+    type === NETWORK_IDS.mainnet
+      ? await config.mainnetApolloClient.query<QueryData>(query)
+      : await config.testnetApolloClient.query<QueryData>(query)
 
   return mapValues(
     mapKeys(data, (_, key) => key.slice(1)),
@@ -73,13 +78,14 @@ export async function getUserYieldPerDayChartData(
   poolId: number,
   user: string,
   month: number,
+  type: NETWORK_IDS,
 ): Promise<ChartData> {
-  type PoolIntercation = {
+  type PoolInteraction = {
     timestamp: string
     rate: string
   }
 
-  type UserIntercation = {
+  type UserInteraction = {
     timestamp: string
     rate: string
     deposited: string
@@ -88,22 +94,25 @@ export async function getUserYieldPerDayChartData(
   }
 
   type QueryData = {
-    initialUserInteractions: UserIntercation[]
-    userInteractions: UserIntercation[]
-    [key: string]: PoolIntercation[]
+    initialUserInteractions: UserInteraction[]
+    userInteractions: UserInteraction[]
+    [key: string]: PoolInteraction[]
   }
 
-  // Get data from TheGraph
-  const { data } = await config.apolloClient.query<QueryData>({
+  const query = {
     query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month),
-  })
-
-  const poolInteractions: PoolIntercation[] = []
-  for (const prop in data) {
-    if (!prop.includes('day') || data[prop].length === 0) continue
-
-    poolInteractions.push(data[prop][0])
   }
+
+  const apolloClient =
+    type === NETWORK_IDS.mainnet
+      ? config.mainnetApolloClient
+      : config.testnetApolloClient
+
+  const { data } = await apolloClient.query<QueryData>(query)
+
+  const poolInteractions: PoolInteraction[] = Object.keys(data)
+    .filter(prop => prop.includes('day') && data[prop].length > 0)
+    .map(prop => data[prop][0])
 
   const userInteractions = [
     ...data.initialUserInteractions.slice(0, 1),
@@ -113,43 +122,39 @@ export async function getUserYieldPerDayChartData(
   const fromDate = new Time(String(month + 1), 'M').toDate()
   const fromTimestamp = fromDate.getTime() / 1000
 
-  // START calculate rewards
   const yields: ChartData = {}
-  for (let i = 0; i < userInteractions.length; i++) {
-    const ui = userInteractions[i]
-    const nextUserIntercation =
-      i < userInteractions.length - 1 ? userInteractions[i + 1] : undefined
 
-    // Get `poolInteractions` periods between `userIntercationsYield`
-    // When `userInteraction` is last, get all periods that greater then current
-    const periodPoolInteractions = poolInteractions.filter(e => {
-      return (
-        Number(e.timestamp) > Number(ui.timestamp) &&
-        (nextUserIntercation
-          ? Number(e.timestamp) < Number(nextUserIntercation.timestamp)
-          : true)
-      )
-    })
+  userInteractions.forEach((userInteraction, index) => {
+    const nextUserInteraction = userInteractions[index + 1]
 
-    // Calculate current yield from the `userIntercations` and push
-    const uiv = BigNumber.from(ui.claimedRewards).add(ui.pendingRewards)
-    if (Number(ui.timestamp) > fromTimestamp) {
-      yields[Number(ui.timestamp)] = uiv
+    const userInteractionValue = BigNumber.from(
+      userInteraction.claimedRewards,
+    ).add(userInteraction.pendingRewards)
+
+    if (Number(userInteraction.timestamp) > fromTimestamp) {
+      yields[Number(userInteraction.timestamp)] = userInteractionValue
     }
 
-    // Calculate nex period yields from the `poolIntercations` and push
-    periodPoolInteractions.forEach(pi => {
-      const rateDiff = BigNumber.from(pi.rate).sub(ui.rate)
-      const periodReward = BigNumber.from(ui.deposited)
+    const periodPoolInteractions = poolInteractions.filter(
+      poolInteraction =>
+        Number(poolInteraction.timestamp) > Number(userInteraction.timestamp) &&
+        (!nextUserInteraction ||
+          Number(poolInteraction.timestamp) <
+            Number(nextUserInteraction.timestamp)),
+    )
+
+    periodPoolInteractions.forEach(poolInteraction => {
+      const rateDiff = BigNumber.from(poolInteraction.rate).sub(
+        userInteraction.rate,
+      )
+      const periodReward = BigNumber.from(userInteraction.deposited)
         .mul(rateDiff)
         .div(DECIMAL)
 
-      const value = uiv.add(periodReward)
-
-      yields[Number(pi.timestamp)] = value
+      yields[Number(poolInteraction.timestamp)] =
+        userInteractionValue.add(periodReward)
     })
-  }
-  // END
+  })
 
   return yields
 }

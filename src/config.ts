@@ -56,7 +56,6 @@ export const config = {
   NAME: import.meta.env.VITE_APP_NAME,
   DESCRIPTION: import.meta.env.VITE_APP_DESCRIPTION,
   URL: import.meta.env.VITE_APP_URL,
-  GRAPHQL_API_URL: import.meta.env.VITE_APP_GRAPHQL_API_URL,
   WALLET_CONNECT_PROJECT_ID: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   LOG_LEVEL: 'trace' as LogLevelDesc,
@@ -85,6 +84,7 @@ export const config = {
     .VITE_APP_L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
   L2_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
+  TESTNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_TESTNET_GRAPHQL_API_URL,
 
   // Mainnet
   ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS: import.meta.env
@@ -99,6 +99,7 @@ export const config = {
     .VITE_APP_L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
   L2_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
+  MAINNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_MAINNET_GRAPHQL_API_URL,
 
   metadata: {} as Metadata,
 
@@ -106,7 +107,8 @@ export const config = {
 
   chainsMap: {} as Record<ETHEREUM_CHAIN_IDS, EthereumType.Chain>,
 
-  apolloClient: {} as ApolloClient<NormalizedCacheObject>,
+  mainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+  testnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
@@ -240,8 +242,13 @@ config.chainsMap = {
   },
 }
 
-config.apolloClient = new ApolloClient({
-  link: createHttpLink({ uri: config.GRAPHQL_API_URL }),
+config.mainnetApolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.MAINNET_GRAPHQL_API_URL }),
+  cache: new InMemoryCache(),
+})
+
+config.testnetApolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.TESTNET_GRAPHQL_API_URL }),
   cache: new InMemoryCache(),
 })
 
