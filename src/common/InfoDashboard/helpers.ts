@@ -2,8 +2,12 @@ import { BigNumber, hexlify, Time } from '@/utils'
 import { gql } from '@apollo/client'
 import { config, NETWORK_IDS } from '@config'
 import { mapKeys, mapValues } from 'lodash'
-
-type ChartData = Record<number, BigNumber>
+import {
+  PoolInteraction,
+  YieldQueryData,
+  ChartQueryData,
+  ChartData,
+} from '@/types'
 
 const ONE_DAY_TIMESTAMP = 24 * 60 * 60
 const DECIMAL = BigNumber.from(10).pow(25)
@@ -14,14 +18,16 @@ export async function getChartData(
   month: number,
   type: NETWORK_IDS,
 ): Promise<ChartData> {
-  type QueryData = Record<`r${number}`, { totalStaked?: string }[]>
   const query = {
     query: _generateTotalStakedPerDayGraphqlQuery(poolId, poolStartedAt, month),
   }
-  const { data } =
+
+  const apolloClient =
     type === NETWORK_IDS.mainnet
-      ? await config.mainnetApolloClient.query<QueryData>(query)
-      : await config.testnetApolloClient.query<QueryData>(query)
+      ? config.mainnetApolloClient
+      : config.testnetApolloClient
+
+  const { data } = await apolloClient.query<ChartQueryData>(query)
 
   return mapValues(
     mapKeys(data, (_, key) => key.slice(1)),
@@ -60,11 +66,10 @@ function _generateTotalStakedPerDayGraphqlQuery(
   for (let date = startDate; date <= endDate; date++) {
     const timestamp = monthTime.timestamp + date * ONE_DAY_TIMESTAMP
 
-    // eslint-disable-next-line prettier/prettier
-    const request = REQUEST_PATTERN
-      .replace('{{date}}', date.toString())
-      // eslint-disable-next-line prettier/prettier
-      .replace('{{timestamp}}', timestamp.toString())
+    const request = REQUEST_PATTERN.replace(
+      '{{date}}',
+      date.toString(),
+    ).replace('{{timestamp}}', timestamp.toString())
 
     requests.push(request)
   }
@@ -80,25 +85,6 @@ export async function getUserYieldPerDayChartData(
   month: number,
   type: NETWORK_IDS,
 ): Promise<ChartData> {
-  type PoolInteraction = {
-    timestamp: string
-    rate: string
-  }
-
-  type UserInteraction = {
-    timestamp: string
-    rate: string
-    deposited: string
-    claimedRewards: string
-    pendingRewards: string
-  }
-
-  type QueryData = {
-    initialUserInteractions: UserInteraction[]
-    userInteractions: UserInteraction[]
-    [key: string]: PoolInteraction[]
-  }
-
   const query = {
     query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month),
   }
@@ -108,7 +94,7 @@ export async function getUserYieldPerDayChartData(
       ? config.mainnetApolloClient
       : config.testnetApolloClient
 
-  const { data } = await apolloClient.query<QueryData>(query)
+  const { data } = await apolloClient.query<YieldQueryData>(query)
 
   const poolInteractions: PoolInteraction[] = Object.keys(data)
     .filter(prop => prop.includes('day') && data[prop].length > 0)
