@@ -76,6 +76,21 @@ export class ErrorHandler {
         case errors.ProviderJsonRpcVersionNotSupported:
           errorMessage = t('errors.provider-json-rpc-version-not-supported')
           break
+        case errors.UserAddressError:
+          errorMessage = t('errors.user-address')
+          break
+        case errors.UnknownCurrencyError:
+          errorMessage = t('errors.unknown-currency')
+          break
+        case errors.FieldNotFoundError:
+          errorMessage = t('errors.field-not-found')
+          break
+        case errors.FallbackProviderError:
+          errorMessage = t('errors.fallback-provider')
+          break
+        case errors.PoolDataNotFoundError:
+          errorMessage = t('errors.pool-data-not-found')
+          break
         default: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const reason = (error as any)?.reason

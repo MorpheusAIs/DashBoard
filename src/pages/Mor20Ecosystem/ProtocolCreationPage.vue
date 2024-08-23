@@ -227,6 +227,8 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .protocol-creation-page__modal-success-mark {

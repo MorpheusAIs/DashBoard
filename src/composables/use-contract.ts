@@ -1,6 +1,7 @@
 import { factories, type Provider } from '@/types'
 import { providers } from 'ethers'
 import { computed, unref, type ComputedRef, type MaybeRef } from 'vue'
+import { errors } from '@/errors'
 
 type ContractFactoryKey = keyof typeof factories
 type ContractFactoryClass<K extends ContractFactoryKey = ContractFactoryKey> =
@@ -50,7 +51,7 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
         {},
         {
           get: () => {
-            throw new Error('FallbackProvider does not have a signer')
+            throw new errors.FallbackProviderError()
           },
         },
       ) as Contract<K>

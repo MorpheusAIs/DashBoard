@@ -5,6 +5,7 @@ import useVuelidate, {
 } from '@vuelidate/core'
 import get from 'lodash/get'
 import { ComputedRef, UnwrapNestedRefs, computed, unref } from 'vue'
+import { errors } from '@/errors'
 
 export interface FormValidation {
   getFieldErrorMessage: (fieldPath: string) => string
@@ -46,9 +47,7 @@ export const useFormValidation = (
       const field = get(validationController.value, fieldPath)
 
       if (!field || !Object.keys(field).length) {
-        throw new Error(
-          `getFieldErrorMessage: Cannot find vuelidate field by '${fieldPath}'`,
-        )
+        throw new errors.FieldNotFoundError()
       }
 
       if (!field.$dirty) errorMessage = ''

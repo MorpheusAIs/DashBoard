@@ -22,7 +22,7 @@
         @blur="touchField('balanceOptionIdx')"
       />
     </div>
-    <div class="deposit-form__multiplier-wrp">
+    <div v-if="isMultiplierShown" class="deposit-form__multiplier-wrp">
       <span class="deposit-form__label">
         {{ $t('deposit-form.expected-multiplier-lbl') }}
       </span>
@@ -36,7 +36,7 @@
         class="deposit-form__input-field"
         :placeholder="
           $t('deposit-form.amount-placeholder', {
-            currency: balanceOfForm?.value.currency || CURRENCIES.stEth,
+            currency: balanceOfForm?.value.currency || CURRENCIES.depositToken,
           })
         "
         :error-message="getFieldErrorMessage('amount')"
@@ -55,6 +55,7 @@
         </template>
       </input-field>
       <datetime-field
+        v-if="isMultiplierShown"
         v-model="form.lockPeriod"
         position="top"
         :placeholder="$t(`deposit-form.lock-period-placeholder`)"
@@ -95,7 +96,10 @@ import { BigNumber, formatEther, parseUnits, Time, toEther } from '@/utils'
 import { ether, maxEther, minEther, minValue, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, toRef, watch } from 'vue'
+import { ROUTE_NAMES } from '@/enums'
+import { useRoute } from 'vue-router'
+import { errors } from '@/errors'
 
 enum ACTIONS {
   approve = 'approve',
@@ -103,7 +107,7 @@ enum ACTIONS {
 }
 
 enum CURRENCIES {
-  stEth = 'stETH',
+  depositToken = 'depositToken',
 }
 
 type BalanceOptionValue = {
@@ -126,12 +130,14 @@ const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
 const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
-  [CURRENCIES.stEth]: null,
+  [CURRENCIES.depositToken]: null,
 })
 
 const { t } = useI18n()
+const route = useRoute()
+
 const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
-  usePool(props.poolId)
+  usePool(toRef(props.poolId))
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const action = computed<ACTIONS>(() => {
@@ -150,13 +156,15 @@ const action = computed<ACTIONS>(() => {
 })
 
 const balanceOptions = computed<FieldOption<BalanceOptionValue>[]>(() => [
-  ...(web3ProvidersStore.balances.stEth
+  ...(web3ProvidersStore.balances.depositToken
     ? [
         {
-          title: `${formatEther(web3ProvidersStore.balances.stEth)} stETH`,
+          title: `${formatEther(web3ProvidersStore.balances.depositToken)} ${
+            web3ProvidersStore.depositTokenSymbol
+          }`,
           value: {
-            amount: toEther(web3ProvidersStore.balances.stEth),
-            currency: CURRENCIES.stEth,
+            amount: toEther(web3ProvidersStore.balances.depositToken),
+            currency: CURRENCIES.depositToken,
           },
         },
       ]
@@ -168,6 +176,10 @@ const form = reactive({
   amount: '',
   lockPeriod: '',
 })
+
+const isMultiplierShown = computed(
+  () => route.name !== ROUTE_NAMES.appDashboardCapital,
+)
 
 const balanceOfForm = computed<FieldOption<BalanceOptionValue> | null>(
   () => balanceOptions.value[form.balanceOptionIdx] || null,
@@ -202,33 +214,31 @@ const fetchAllowanceByCurrency = async (
 ): Promise<BigNumber> => {
   let contract
   switch (currency) {
-    case CURRENCIES.stEth:
-      contract = web3ProvidersStore.stEthContract
+    case CURRENCIES.depositToken:
+      contract = web3ProvidersStore.depositContract
       break
     default:
-      throw new Error('unknown currency')
+      throw new errors.UnknownCurrencyError()
   }
 
   return contract.providerBased.value.allowance(
     web3ProvidersStore.provider.selectedAddress,
-    config.networksMap[web3ProvidersStore.networkId].contractAddressesMap
-      .erc1967Proxy,
+    web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
   )
 }
 
 const approveByCurrency = async (currency: CURRENCIES) => {
   let contract
   switch (currency) {
-    case CURRENCIES.stEth:
-      contract = web3ProvidersStore.stEthContract
+    case CURRENCIES.depositToken:
+      contract = web3ProvidersStore.depositContract
       break
     default:
-      throw new Error('unknown currency')
+      throw new errors.UnknownCurrencyError()
   }
 
   return contract.signerBased.value.approve(
-    config.networksMap[web3ProvidersStore.networkId].contractAddressesMap
-      .erc1967Proxy,
+    web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
     MAX_UINT_256,
   )
 }
@@ -247,11 +257,12 @@ const submit = async (action: ACTIONS): Promise<void> => {
       tx = await approveByCurrency(balanceOfForm.value.value.currency)
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
+
       tx =
         await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
           props.poolId,
           amountInDecimals,
-          form.lockPeriod || 0,
+          ...(isMultiplierShown.value ? [form.lockPeriod || 0] : []),
         )
       emit('stake-tx-sent')
     }
@@ -295,15 +306,15 @@ const init = async (): Promise<void> => {
   isInitializing.value = true
 
   try {
-    allowances[CURRENCIES.stEth] = await fetchAllowanceByCurrency(
-      CURRENCIES.stEth,
+    allowances[CURRENCIES.depositToken] = await fetchAllowanceByCurrency(
+      CURRENCIES.depositToken,
     )
   } catch (error) {
     emit('cancel')
     ErrorHandler.process(error)
   }
 
-  form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
+  form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber() || '')
 
   isInitializing.value = false
 }
@@ -318,16 +329,16 @@ watch(
   async () => {
     if (!form.lockPeriod) {
       form.lockPeriod = String(
-        userPoolData.value?.claimLockEnd.toNumber() || '',
+        userPoolData.value?.claimLockEnd?.toNumber() || '',
       )
     }
-    await fetchExpectedMultiplier(form.lockPeriod)
+    if (isMultiplierShown.value) {
+      await fetchExpectedMultiplier(form.lockPeriod)
+    }
   },
 )
 
-onMounted(() => {
-  init()
-})
+init()
 </script>
 
 <style lang="scss" scoped>

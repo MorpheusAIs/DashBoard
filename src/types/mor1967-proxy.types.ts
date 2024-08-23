@@ -13,15 +13,15 @@ export type PoolData = {
   totalDeposited: BigNumber
   withdrawLockPeriod: BigNumber
   withdrawLockPeriodAfterStake: BigNumber
-  totalVirtualDeposited: BigNumber
 }
 
 export type UserData = {
-  claimLockEnd: BigNumber
-  claimLockStart: BigNumber
   deposited: BigNumber
   lastStake: BigNumber
   pendingRewards: BigNumber
   rate: BigNumber
-  virtualDeposited: BigNumber
+
+  claimLockEnd?: BigNumber
+  claimLockStart?: BigNumber
+  virtualDeposited?: BigNumber
 }

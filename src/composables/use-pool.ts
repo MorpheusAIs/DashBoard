@@ -1,21 +1,34 @@
 import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
-import { storeToRefs, useWeb3ProvidersStore } from '@/store'
-import { type BigNumber, type Erc1967ProxyType } from '@/types'
+import { useWeb3ProvidersStore } from '@/store'
+import {
+  type BigNumber,
+  type Erc1967ProxyType,
+  type Mor1967ProxyType,
+} from '@/types'
 import { useTimestamp } from '@vueuse/core'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { ethers } from 'ethers'
 import { Time } from '@distributedlab/tools'
+import { errors } from '@/errors'
 
 const MULTIPLIER_SCALE = 21 //digits
 const REWARDS_DIVIDER = 10000
 
-export const usePool = (poolId: number) => {
+// TODO: REFACTOR
+export const usePool = (poolId: Ref<number>) => {
   let _currentUserRewardUpdateIntervalId: NodeJS.Timeout
+
+  const route = useRoute()
 
   const currentUserReward = ref<BigNumber | null>(null)
   const dailyReward = ref<BigNumber | null>(null)
-  const poolData = ref<Erc1967ProxyType.PoolData | null>(null)
-  const userPoolData = ref<Erc1967ProxyType.UserData | null>(null)
+  const poolData = ref<
+    Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData | null
+  >(null)
+  const userPoolData = ref<
+    Erc1967ProxyType.UserData | Mor1967ProxyType.UserData | null
+  >(null)
   const rewardsMultiplier = ref('1')
   const expectedRewardsMultiplier = ref('1')
 
@@ -47,8 +60,8 @@ export const usePool = (poolId: number) => {
   })
 
   const isDepositDisabled = computed<boolean>(() => {
-    if (!web3ProvidersStore.balances.stEth) return true
-    return web3ProvidersStore.balances.stEth.isZero()
+    if (!web3ProvidersStore.balances.depositToken) return true
+    return web3ProvidersStore.balances.depositToken.isZero()
   })
 
   const isWithdrawDisabled = computed<boolean>(() => {
@@ -76,20 +89,22 @@ export const usePool = (poolId: number) => {
   const currentTimestampMs = useTimestamp()
 
   const web3ProvidersStore = useWeb3ProvidersStore()
-  const { erc1967ProxyContract } = storeToRefs(web3ProvidersStore)
+  const erc1967ProxyContract = computed(
+    () => web3ProvidersStore.erc1967ProxyContract.providerBased.value,
+  )
 
   const fetchCurrentUserReward = async (): Promise<BigNumber> => {
     if (!web3ProvidersStore.provider.selectedAddress)
-      throw new Error('user address unavailable')
+      throw new errors.UserAddressError()
 
-    return erc1967ProxyContract.value.providerBased.value.getCurrentUserReward(
-      poolId,
+    return erc1967ProxyContract.value.getCurrentUserReward(
+      poolId.value,
       web3ProvidersStore.provider.selectedAddress,
     )
   }
 
   const getDailyReward = (): BigNumber => {
-    if (!poolData.value) throw new Error('poolData unavailable')
+    if (!poolData.value) throw new errors.PoolDataNotFoundError()
 
     const payoutStartTimestamp = poolData.value.payoutStart.toNumber()
 
@@ -106,50 +121,76 @@ export const usePool = (poolId: number) => {
     )
   }
 
-  const fetchPoolData = async (): Promise<Erc1967ProxyType.PoolData> => {
-    const poolDataResponses = await Promise.all([
-      erc1967ProxyContract.value.providerBased.value.poolsData(poolId),
-      erc1967ProxyContract.value.providerBased.value.pools(poolId),
-      // eslint-disable-next-line max-len
-      erc1967ProxyContract.value.providerBased.value.totalDepositedInPublicPools(),
-    ])
+  const fetchPoolData = async (): Promise<
+    Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
+  > => {
+    const [poolsDataResponse, poolsResponse, totalDepositedInPublicPools] =
+      await Promise.all([
+        erc1967ProxyContract.value.poolsData(poolId.value),
+        erc1967ProxyContract.value.pools(poolId.value),
+        erc1967ProxyContract.value.totalDepositedInPublicPools(),
+      ])
+
+    const isTotalVirtualDepositedDefined =
+      'totalVirtualDeposited' in poolsDataResponse
+    const totalDeposited =
+      totalDepositedInPublicPools ??
+      (isTotalVirtualDepositedDefined
+        ? (poolsDataResponse as unknown as Erc1967ProxyType.PoolData)
+            .totalVirtualDeposited
+        : ethers.BigNumber.from(0))
 
     return {
-      claimLockPeriod: poolDataResponses[1].claimLockPeriod,
-      decreaseInterval: poolDataResponses[1].decreaseInterval,
-      initialReward: poolDataResponses[1].initialReward,
-      isPublic: poolDataResponses[1].isPublic,
-      lastUpdate: poolDataResponses[0].lastUpdate,
-      minimalStake: poolDataResponses[1].minimalStake,
-      rate: poolDataResponses[0].rate,
-      payoutStart: poolDataResponses[1].payoutStart,
-      rewardDecrease: poolDataResponses[1].rewardDecrease,
-      totalDeposited: poolDataResponses[2],
-      withdrawLockPeriod: poolDataResponses[1].withdrawLockPeriod,
-      withdrawLockPeriodAfterStake:
-        poolDataResponses[1].withdrawLockPeriodAfterStake,
-    }
+      claimLockPeriod: poolsResponse.claimLockPeriod,
+      decreaseInterval: poolsResponse.decreaseInterval,
+      initialReward: poolsResponse.initialReward,
+      isPublic: poolsResponse.isPublic,
+      lastUpdate: poolsDataResponse.lastUpdate,
+      minimalStake: poolsResponse.minimalStake,
+      payoutStart: poolsResponse.payoutStart,
+      rate: poolsDataResponse.rate,
+      rewardDecrease: poolsResponse.rewardDecrease,
+      totalDeposited,
+      withdrawLockPeriod: poolsResponse.withdrawLockPeriod,
+      withdrawLockPeriodAfterStake: poolsResponse.withdrawLockPeriodAfterStake,
+    } as Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
   }
 
-  const fetchUserPoolData = async (): Promise<Erc1967ProxyType.UserData> => {
+  const fetchUserPoolData = async (): Promise<
+    Erc1967ProxyType.UserData | Mor1967ProxyType.UserData
+  > => {
     if (!web3ProvidersStore.provider.selectedAddress)
-      throw new Error('user address unavailable')
+      throw new errors.UserAddressError()
 
-    const response =
-      await erc1967ProxyContract.value.providerBased.value.usersData(
-        web3ProvidersStore.provider.selectedAddress,
-        poolId,
-      )
+    const response = await erc1967ProxyContract.value.usersData(
+      web3ProvidersStore.provider.selectedAddress,
+      poolId.value,
+    )
+
+    const isClaimLockEndDefined = 'claimLockEnd' in response
+    const claimLockEnd = isClaimLockEndDefined
+      ? response.claimLockEnd
+      : ethers.BigNumber.from(0)
+
+    const isClaimLockStartDefined = 'claimLockStart' in response
+    const claimLockStart = isClaimLockStartDefined
+      ? response.claimLockStart
+      : ethers.BigNumber.from(0)
+
+    const isVirtualDepositedDefined = 'virtualDeposited' in response
+    const virtualDeposited = isVirtualDepositedDefined
+      ? response.virtualDeposited
+      : ethers.BigNumber.from(0)
 
     return {
-      claimLockEnd: response.claimLockEnd,
-      claimLockStart: response.claimLockStart,
+      claimLockEnd,
+      claimLockStart,
       deposited: response.deposited,
       lastStake: response.lastStake,
       pendingRewards: response.pendingRewards,
       rate: response.rate,
-      virtualDeposited: response.virtualDeposited,
-    }
+      virtualDeposited,
+    } as Erc1967ProxyType.UserData | Mor1967ProxyType.UserData
   }
 
   const humanizeRewards = (reward: BigNumber) => {
@@ -160,19 +201,24 @@ export const usePool = (poolId: number) => {
 
   const fetchExpectedMultiplier = async (lockPeriod: string) => {
     try {
+      if (!lockPeriod) return
+
       const lockStart = new Time().isAfter(
-        userPoolData.value?.claimLockStart.toString(),
+        userPoolData.value?.claimLockStart?.toString(),
       )
         ? new Time().timestamp
-        : userPoolData.value?.claimLockStart.toString() ?? 0
-      const multiplier =
-        //eslint-disable-next-line max-len
-        await web3ProvidersStore.erc1967ProxyContract.providerBased.value.getClaimLockPeriodMultiplier(
-          poolId,
-          lockStart,
-          lockPeriod || 0,
-        )
-      expectedRewardsMultiplier.value = humanizeRewards(multiplier)
+        : userPoolData.value?.claimLockStart?.toString()
+
+      if ('getClaimLockPeriodMultiplier' in erc1967ProxyContract.value) {
+        const multiplier =
+          await erc1967ProxyContract.value.getClaimLockPeriodMultiplier(
+            poolId.value,
+            lockStart || 0,
+            lockPeriod || 0,
+          )
+
+        expectedRewardsMultiplier.value = humanizeRewards(multiplier)
+      }
     } catch (error) {
       ErrorHandler.processWithoutFeedback(error)
     }
@@ -195,17 +241,20 @@ export const usePool = (poolId: number) => {
   }
 
   const updateUserReward = async (): Promise<void> => {
+    if (route.query.address) return
+
     isUserDataUpdating.value = true
 
     try {
-      const response =
-        // eslint-disable-next-line max-len
-        await erc1967ProxyContract.value.providerBased.value.getCurrentUserMultiplier(
-          poolId,
-          web3ProvidersStore.provider.selectedAddress,
-        )
+      if ('getCurrentUserMultiplier' in erc1967ProxyContract.value) {
+        const response =
+          await erc1967ProxyContract.value.getCurrentUserMultiplier(
+            poolId.value,
+            web3ProvidersStore.provider.selectedAddress,
+          )
 
-      rewardsMultiplier.value = humanizeRewards(response)
+        rewardsMultiplier.value = humanizeRewards(response)
+      }
     } catch (e) {
       ErrorHandler.processWithoutFeedback(e)
     }
@@ -268,17 +317,23 @@ export const usePool = (poolId: number) => {
     }
   }
 
+  watch(() => [poolId, web3ProvidersStore.dashboardInfo], init, { deep: true })
+
   watch(
     () => [
       web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.isConnected,
       web3ProvidersStore.networkId,
+      web3ProvidersStore.dashboardInfo,
     ],
-    async ([newAddress, isConnected]) => {
+    async () => {
       currentUserReward.value = null
       userPoolData.value = null
 
-      if (newAddress && isConnected) {
+      if (
+        (route.query.address || web3ProvidersStore.provider.selectedAddress) &&
+        web3ProvidersStore.isConnected
+      ) {
         try {
           await Promise.all([updateUserData(), updateUserReward()])
         } catch (error) {
