@@ -390,7 +390,7 @@ $button-transition: var(--transition-duration-fast)
     --app-button-flat-text-focused: var(--primary-main);
     --app-button-flat-text-active: var(--primary-main);
 
-    --app-button-flat-border: #{toRem(1)} solid #494949;
+    --app-button-flat-border: #{toRem(1)} solid var(--border-tertiary-main);
     --app-button-flat-border-hover: #{toRem(1)} solid var(--primary-main);
     --app-button-flat-border-focused: var(--app-button-flat-border-hover);
     --app-button-flat-border-active: var(--app-button-flat-border-hover);

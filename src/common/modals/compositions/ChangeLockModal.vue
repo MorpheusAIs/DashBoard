@@ -52,7 +52,7 @@
 <script lang="ts" setup>
 import BasicModal from '../BasicModal.vue'
 import { DatetimeField } from '@/fields'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, toRef, watch } from 'vue'
 import { minValue } from '@/validators'
 import { Time } from '@/utils'
 import { useFormValidation, useI18n, usePool } from '@/composables'
@@ -84,7 +84,7 @@ const {
   expectedRewardsMultiplier,
   userPoolData,
   fetchExpectedMultiplier,
-} = usePool(props.poolId)
+} = usePool(toRef(props.poolId))
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -187,7 +187,7 @@ watch(
 watch(
   () => [props.isShown, userPoolData.value?.claimLockEnd],
   () => {
-    form.lockPeriod = String(userPoolData.value?.claimLockEnd.toNumber() || '')
+    form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber() || '')
   },
 )
 </script>
