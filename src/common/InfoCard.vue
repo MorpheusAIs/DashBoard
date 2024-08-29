@@ -28,9 +28,12 @@
         class="info-card__show-more-btn"
         scheme="link"
         color="none"
-        target="_blank"
-        rel="noopener noreferrer"
-        href="#"
+        :route="{
+          name: $routes.contractInfo,
+          query: {
+            address: card.address,
+          },
+        }"
         :text="$t('info-card.show-more')"
       />
       <div class="info-card__edit-btn-wrp">

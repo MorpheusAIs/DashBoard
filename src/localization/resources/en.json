@@ -322,5 +322,9 @@
     "hours": "{duration} hours",
     "minutes": "{duration} minutes",
     "seconds": "{duration} seconds"
+  },
+  "contract-info-page": {
+    "back-button": "Back",
+    "error-message": "Something bad happened"
   }
 }

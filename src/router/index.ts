@@ -66,7 +66,6 @@ const routes: RouteRecordRaw[] = [
         beforeEnter: async to => {
           const { provider } = useWeb3ProvidersStore()
 
-          // waiting for the web3 provider to be initialized on page reload
           if (!provider.selectedAddress) {
             await sleep(1000)
           }
@@ -76,6 +75,11 @@ const routes: RouteRecordRaw[] = [
         },
       },
     ],
+  },
+  {
+    path: '/contract-info',
+    name: ROUTE_NAMES.contractInfo,
+    component: () => import('@/pages/ContractInfoPage/index.vue'),
   },
 ]
 
@@ -89,7 +93,7 @@ router.beforeEach((to, from) => {
   if (to.query.network) return
   return {
     ...to,
-    query: { network: from.query.network || NETWORK_IDS.mainnet },
+    query: { ...to.query, network: from.query.network || NETWORK_IDS.mainnet },
   }
 })
 
