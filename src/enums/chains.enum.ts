@@ -9,7 +9,7 @@ export enum ETHEREUM_CHAIN_NAMES {
   ethereum = 'ethereum',
   sepolia = 'sepolia',
   arbitrum = 'arbitrum',
-  arbitrumSepolia = 'arbitrumSepolia',
+  arbitrumSepolia = 'arbitrum sepolia',
 }
 
 export enum ETHEREUM_RPC_URLS {

@@ -17,6 +17,7 @@ export { default as NetworkSwitch } from './NetworkSwitch.vue'
 export { default as WalletBalances } from './WalletBalances.vue'
 export { default as WalletDashboard } from './WalletDashboard.vue'
 export { default as ErrorMessage } from './ErrorMessage.vue'
+export { default as Loader } from './Loader.vue'
 
 export * from './modals'
 export * from './toasts'

@@ -274,8 +274,8 @@ watch(
   border-image-slice: 1;
   border-image-source: linear-gradient(
     -84deg,
-    rgba(255, 255, 255, 0.48),
-    rgba(255, 255, 255, 0.08)
+    rgba(var(--white-rgb), 0.48),
+    rgba(var(--white-rgb), 0.08)
   );
   background: linear-gradient(
       -84deg,

@@ -326,5 +326,69 @@
   "contract-info-page": {
     "back-button": "Back",
     "error-message": "Something bad happened"
+  },
+  "token-contract-info": {
+    "project-name": "Project Name",
+    "description": "The contract that distributes the \"Token\" to the depositors and the team members.",
+    "decimals": "Decimals:",
+    "total-supply": "Total Supply:",
+    "owner": "Owner:",
+    "endpoint": "Endpoint:",
+    "pre-crime": "Pre-Crime:",
+    "shared-decimals": "Shared Decimals:",
+    "oft-version": "OFT Version:",
+    "interface-id": "Interface ID:",
+    "version": "Version:",
+    "oapp-version": "oApp Version:",
+    "sender-version": "Sender Version:",
+    "receiver-version": "Receiver Version:",
+    "is-approval-required": "Is Approval Required:",
+    "error-message": "Something bad happened."
+  },
+  "distribution-contract-info": {
+    "title": "Distribution",
+    "deposit-token": "Deposit Token:",
+    "fee-config": "Fee Configuration:",
+    "l1-sender": "L1 Sender:",
+    "overplus": "Overplus:",
+    "owner": "Owner:",
+    "total-deposited-in-public-pools": "Total Deposited in Public Pools:",
+    "error-message": "Something bad happened."
+  },
+  "l1sender-contract-info": {
+    "title": "L1 Sender",
+    "deposit-token-config": "Deposit Token Configuration:",
+    "token": "Token:",
+    "gateway": "Gateway:",
+    "receiver": "Receiver:",
+    "distribution": "Distribution:",
+    "owner": "Owner:",
+    "reward-token-config": "Reward Token Configuration:",
+    "receiver-chain-id": "Receiver Chain ID:",
+    "zro-payment-address": "ZRO Payment Address:",
+    "unwrapped-deposit-token": "Unwrapped Deposit Token:",
+    "error-message": "Something bad happened."
+  },
+  "l2-message-receiver-contract-info": {
+    "title": "L2 Message Receiver",
+    "config": "Configuration:",
+    "gateway": "Gateway:",
+    "sender": "Sender:",
+    "sender-chain-id": "Sender Chain ID:",
+    "owner": "Owner:",
+    "reward-token": "Reward Token:",
+    "error-message": "Something bad happened."
+  },
+  "l2-token-receiver-contract-info": {
+    "title": "L2 Token Receiver",
+    "first-swap-params": "First Swap Parameters:",
+    "token-in": "Token In:",
+    "token-out": "Token Out:",
+    "fee": "Fee:",
+    "nonfungible-position-manager": "Nonfungible Position Manager:",
+    "owner": "Owner:",
+    "router": "Router:",
+    "second-swap-params": "Second Swap Parameters:",
+    "error-message": "Something bad happened."
   }
 }

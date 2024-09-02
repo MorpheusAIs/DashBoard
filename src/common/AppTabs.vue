@@ -49,7 +49,7 @@ const updateTab = (tab: Tab) => {
 }
 
 .app-tabs__btn {
-  $color: rgba(255, 255, 255, 0.8);
+  $color: rgba(var(--white-rgb), 0.8);
 
   display: grid;
   place-items: center;

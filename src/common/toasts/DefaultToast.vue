@@ -84,7 +84,7 @@ $color-info: #ffffff;
   width: toRem(32);
   display: flex;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(var(--white-rgb), 0.1);
 
   &:before {
     $z-index: -1;
@@ -143,8 +143,8 @@ $color-info: #ffffff;
     &:before {
       background: radial-gradient(
         50% 50% at 50% 50%,
-        rgba(255, 255, 255, 0.12) 0%,
-        rgba(255, 255, 255, 0) 100%
+        rgba(var(--white-rgb), 0.12) 0%,
+        rgba(var(--white-rgb), 0) 100%
       );
     }
   }

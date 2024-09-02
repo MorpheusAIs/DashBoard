@@ -9,12 +9,19 @@
         @click="$router.back()"
       />
       <template v-if="isLoaded">
-        <error-message
-          v-if="isLoadFailed"
-          class="contract-info-page__state-message"
-          :message="$t('contract-info-page.error-message')"
-        />
-        <component v-else :is="contractInfoComponent" />
+        <transition name="fade">
+          <error-message
+            v-if="isLoadFailed"
+            class="contract-info-page__state-message"
+            :message="$t('contract-info-page.error-message')"
+          />
+          <component
+            v-else
+            class="contract-info-page__content"
+            :is="contractInfoComponent"
+            :project-name="deployedProtocol.name"
+          />
+        </transition>
       </template>
       <loader class="contract-info-page__state-message" v-else />
     </div>
@@ -44,7 +51,7 @@ const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 
 const contractInfoComponent = computed(() => {
-  switch (String(route.query.address)) {
+  switch (String(route.query.contractAddress)) {
     case deployedProtocol.value?.distributionAddress:
       return DistributionContractInfo
     case deployedProtocol.value?.tokenAddress:
@@ -136,6 +143,11 @@ watch(
 }
 
 .contract-info-page__wrp {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: toRem(20);
+
   @include page-wrp;
 }
 
@@ -147,6 +159,11 @@ watch(
 }
 
 .contract-info-page__back-btn {
-  margin-top: toRem(40);
+  margin-top: toRem(20);
+}
+
+.contract-info-page__content {
+  flex: 1;
+  margin-top: toRem(20);
 }
 </style>

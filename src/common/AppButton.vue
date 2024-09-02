@@ -170,6 +170,7 @@ $button-transition: var(--transition-duration-fast)
   background: var(--app-button-bg);
   color: var(--app-button-text);
   border: var(--app-button-border);
+  max-width: 100%;
 
   &:disabled,
   &--disabled {
@@ -385,7 +386,7 @@ $button-transition: var(--transition-duration-fast)
     --app-button-filled-border-active: #{toRem(1)} solid var(--primary-main);
     --app-button-filled-border-disabled: #{toRem(1)} solid transparent;
 
-    --app-button-flat-text: rgba(255, 255, 255, 0.8);
+    --app-button-flat-text: rgba(var(--white-rgb), 0.8);
     --app-button-flat-text-hover: var(--primary-main);
     --app-button-flat-text-focused: var(--primary-main);
     --app-button-flat-text-active: var(--primary-main);
@@ -608,6 +609,8 @@ $button-transition: var(--transition-duration-fast)
   color: var(--app-button-icon);
   height: var(--button-icon-size);
   width: var(--button-icon-size);
+  min-height: var(--button-icon-size);
+  min-width: var(--button-icon-size);
 }
 
 .app-button__text {
