@@ -1,5 +1,5 @@
 <template>
-  <div class="contract-info-header">
+  <header class="contract-info-header">
     <div class="contract-info-header__name-wrp">
       <div class="contract-info-header__text-name-wrp">
         <h2 class="contract-info-header__name">
@@ -25,7 +25,7 @@
     <p v-if="description" class="contract-info-header__description">
       {{ description }}
     </p>
-  </div>
+  </header>
 </template>
 
 <script setup lang="ts">

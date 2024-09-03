@@ -1,18 +1,14 @@
 <template>
   <div class="loader">
-    <template v-if="scheme === 'spinner'">
-      <spinner />
-    </template>
-    <template v-else-if="scheme === 'skeleton'">
-      <skeleton v-bind="$attrs" />
-    </template>
+    <component v-bind="$attrs" :is="loaderComponent" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue'
 import { Spinner, Skeleton } from '@/common/loaders'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     scheme: 'spinner' | 'skeleton'
   }>(),
@@ -20,6 +16,16 @@ withDefaults(
     scheme: 'spinner',
   },
 )
+
+const loaderComponent = computed(() => {
+  switch (props.scheme) {
+    case 'skeleton':
+      return Skeleton
+    case 'spinner':
+    default:
+      return Spinner
+  }
+})
 </script>
 
 <style lang="scss" scoped>

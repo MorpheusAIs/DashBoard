@@ -7,17 +7,16 @@ const findMatchingProtocols = (
   l1Pools: IL1Factory.PoolViewStructOutput[],
   l2Pools: IL1Factory.PoolViewStructOutput[],
 ) => {
-  const l1Pool = l1Pools.find(l1Pool =>
-    l2Pools.some(l2Pool => l1Pool.protocol === l2Pool.protocol),
-  )
+  const l2PoolMap = new Map(l2Pools.map(pool => [pool.protocol, pool]))
 
-  if (!l1Pool) {
-    return [null, null]
+  for (const l1Pool of l1Pools) {
+    const l2Pool = l2PoolMap.get(l1Pool.protocol)
+    if (l2Pool) {
+      return [l1Pool, l2Pool]
+    }
   }
 
-  const l2Pool = l2Pools.find(l2Pool => l2Pool.protocol === l1Pool.protocol)
-
-  return [l1Pool, l2Pool]
+  return [null, null]
 }
 
 export const getUsersLastFullyDeployedProtocol = async (
