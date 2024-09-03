@@ -150,11 +150,15 @@ const init = async () => {
   isInitializing.value = true
 
   try {
-    protocol.value = await getUsersLastFullyDeployedProtocol(
+    const deployedProtocol = await getUsersLastFullyDeployedProtocol(
       web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.l1FactoryContract,
       web3ProvidersStore.l2FactoryContract,
     )
+
+    if (deployedProtocol) {
+      protocol.value = deployedProtocol
+    }
   } catch (error) {
     protocol.value = null
     ErrorHandler.process(error)

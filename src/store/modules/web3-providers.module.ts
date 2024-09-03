@@ -166,6 +166,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
           l1FactoryContract.value,
           l2FactoryContract.value,
         )
+        if (!protocol) {
+          return
+        }
         dashboardInfo.name = protocol.name
         dashboardInfo.distributionAddress = protocol.distributionAddress
         dashboardInfo.tokenAddress = protocol.tokenAddress

@@ -73,11 +73,14 @@ watch(
     isLoaded.value = false
     isLoadFailed.value = false
     try {
-      deployedProtocol.value = await getUsersLastFullyDeployedProtocol(
+      const protocol = await getUsersLastFullyDeployedProtocol(
         web3ProvidersStore.provider.selectedAddress,
         web3ProvidersStore.l1FactoryContract,
         web3ProvidersStore.l2FactoryContract,
       )
+      if (protocol) {
+        deployedProtocol.value = protocol
+      }
     } catch (e) {
       ErrorHandler.process(e)
       isLoadFailed.value = true

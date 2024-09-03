@@ -128,24 +128,7 @@ watch(contract, init, { immediate: true })
 
 <style scoped lang="scss">
 .l2-message-receiver-contract-info {
-  padding: toRem(40);
-  border: toRem(1) solid;
-  border-image-slice: 1;
-  border-image-source: linear-gradient(
-    180deg,
-    var(--border-quaternary-main) 0%,
-    var(--border-quaternary-light) 100%
-  );
-  background: linear-gradient(
-      180deg,
-      var(--background-tertiary-main) 0%,
-      var(--background-tertiary-dark) 100%
-    ),
-    linear-gradient(
-      180deg,
-      var(--border-quaternary-main) 0%,
-      var(--border-quaternary-light) 100%
-    );
+  @include contract-info;
 }
 
 .l2-message-receiver-contract-info__data {
@@ -153,9 +136,6 @@ watch(contract, init, { immediate: true })
 }
 
 .l2-message-receiver-contract-info__system-message {
-  position: absolute;
-  top: 50%;
-  right: 50%;
-  transform: translateX(50%) translateY(-50%);
+  @include system-message;
 }
 </style>

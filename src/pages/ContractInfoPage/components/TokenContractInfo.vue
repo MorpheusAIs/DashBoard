@@ -228,9 +228,6 @@ watch(contract, init, { immediate: true })
 }
 
 .token-contract-info__system-message {
-  position: absolute;
-  top: 50%;
-  right: 50%;
-  transform: translateX(50%) translateY(-50%);
+  @include system-message;
 }
 </style>
