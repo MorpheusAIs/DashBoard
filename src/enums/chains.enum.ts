@@ -5,6 +5,13 @@ export enum ETHEREUM_CHAIN_IDS {
   arbitrumSepolia = '421614',
 }
 
+export enum ETHEREUM_CHAIN_NAMES {
+  ethereum = 'ethereum',
+  sepolia = 'sepolia',
+  arbitrum = 'arbitrum',
+  arbitrumSepolia = 'arbitrum sepolia',
+}
+
 export enum ETHEREUM_RPC_URLS {
   ethereum = 'https://eth.llamarpc.com',
   sepolia = 'https://ethereum-sepolia.publicnode.com',

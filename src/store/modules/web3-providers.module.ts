@@ -1,13 +1,12 @@
 import { useContract, useProvider } from '@/composables'
 import { CONTRACT_IDS, NETWORK_IDS } from '@/enums'
-import { sleep } from '@/helpers'
+import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
 import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
 import { config } from '@config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
-import { MAX_UINT_256 } from '@/const'
 
 enum BALANCE_CURRENCIES {
   depositToken = 'depositToken',
@@ -158,64 +157,25 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     await sleep(1000)
   }
 
-  // TODO: SIMPLIFY
-  const getUsersLastFullyDeployedProtocol = async (): Promise<void> => {
-    const [l1DeployedPools, l2DeployedPools] = await Promise.all([
-      l1FactoryContract.value.providerBased.value.getDeployedPools(
-        String(_route.query.address),
-        0,
-        MAX_UINT_256,
-      ),
-      l2FactoryContract.value.providerBased.value.getDeployedPools(
-        String(_route.query.address),
-        0,
-        MAX_UINT_256,
-      ),
-    ])
-
-    let lastFullyL1DeployedPoolIdx = -1
-    let lastFullyL2DeployedPoolIdx = -1
-    for (let i = l1DeployedPools.length - 1; i >= 0; i--) {
-      if (
-        lastFullyL1DeployedPoolIdx !== -1 &&
-        lastFullyL2DeployedPoolIdx !== -1
-      )
-        break
-
-      for (let j = l2DeployedPools.length - 1; j >= 0; j--) {
-        if (l1DeployedPools[i].protocol === l2DeployedPools[j].protocol) {
-          lastFullyL1DeployedPoolIdx = i
-          lastFullyL2DeployedPoolIdx = j
-          break
-        }
-      }
-    }
-
-    if (
-      lastFullyL1DeployedPoolIdx === -1 ||
-      lastFullyL2DeployedPoolIdx === -1
-    ) {
-      return
-    }
-
-    dashboardInfo.name = l1DeployedPools[lastFullyL1DeployedPoolIdx].protocol
-    dashboardInfo.distributionAddress =
-      l1DeployedPools[lastFullyL1DeployedPoolIdx].distribution
-    dashboardInfo.l1SenderAddress =
-      l1DeployedPools[lastFullyL1DeployedPoolIdx].l1Sender
-    dashboardInfo.l2MessageReceiverAddress =
-      l2DeployedPools[lastFullyL2DeployedPoolIdx].l2MessageReceiver
-    dashboardInfo.l2TokenReceiverAddress =
-      l2DeployedPools[lastFullyL2DeployedPoolIdx].l2TokenReceiver
-    dashboardInfo.tokenAddress =
-      l2DeployedPools[lastFullyL2DeployedPoolIdx].mor20
-  }
-
   watch(
     () => _route.query,
-    () => {
+    async () => {
       if (_route.query.address) {
-        getUsersLastFullyDeployedProtocol()
+        const protocol = await getUsersLastFullyDeployedProtocol(
+          String(_route.query.address),
+          l1FactoryContract.value,
+          l2FactoryContract.value,
+        )
+        if (!protocol) {
+          return
+        }
+        dashboardInfo.name = protocol.name
+        dashboardInfo.distributionAddress = protocol.distributionAddress
+        dashboardInfo.tokenAddress = protocol.tokenAddress
+        dashboardInfo.l1SenderAddress = protocol.l1SenderAddress
+        dashboardInfo.l2MessageReceiverAddress =
+          protocol.l2MessageReceiverAddress
+        dashboardInfo.l2TokenReceiverAddress = protocol.l2TokenReceiverAddress
         return
       }
       dashboardInfo.name = ''

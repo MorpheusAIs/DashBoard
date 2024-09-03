@@ -18,6 +18,9 @@
   --background-secondary-main: #{$background-secondary-main};
   --background-secondary-dark: #{$background-secondary-dark};
 
+  --background-tertiary-main: #{$background-tertiary-main};
+  --background-tertiary-dark: #{$background-tertiary-dark};
+
   /* status colors */
   --success-light: #{$success-light};
   --success-main: #{$success-main};
@@ -83,7 +86,12 @@
   --border-secondary-main: #{$border-secondary-main};
   --border-secondary-dark: #{$border-secondary-dark};
 
+  --border-tertiary-light: #{$border-tertiary-light};
   --border-tertiary-main: #{$border-tertiary-main};
+
+  --border-quaternary-light: #{$border-quaternary-light};
+  --border-quaternary-main: #{$border-quaternary-main};
+
 
   /* common colors */
   --backdrop-modal: #{$backdrop-modal};

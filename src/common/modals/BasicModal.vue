@@ -62,9 +62,21 @@ const emit = defineEmits<{
   width: toRem(584);
   border: toRem(1) solid;
   border-image-slice: 1;
-  border-image-source: linear-gradient(180deg, #7c7c7d 0%, #cacaca 100%);
-  background: linear-gradient(180deg, #222322 0%, #1d201c 100%),
-    linear-gradient(180deg, #7c7c7d 0%, #cacaca 100%);
+  border-image-source: linear-gradient(
+    180deg,
+    var(--border-quaternary-main) 0%,
+    var(--border-quaternary-light) 100%
+  );
+  background: linear-gradient(
+      180deg,
+      var(--background-tertiary-main) 0%,
+      var(--background-tertiary-dark) 100%
+    ),
+    linear-gradient(
+      180deg,
+      var(--border-quaternary-main) 0%,
+      var(--border-quaternary-light) 100%
+    );
 
   @include respond-to(medium) {
     padding: toRem(36) toRem(20) toRem(24);

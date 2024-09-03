@@ -9,6 +9,7 @@ export * as Mor20EcosystemType from './mor20-ecosystem.types'
 
 export * from './pool-data.types'
 export * from './contracts'
+export * from './deployed-contracts.types'
 
 export type { BigNumber, BigNumberish, Time } from '@/utils'
 export type { LocationAsRelativeRaw as Route } from 'vue-router'

@@ -272,8 +272,8 @@ const onBackBtnClick = () => {
   height: toRem(1);
   background: linear-gradient(
     95.36deg,
-    rgba(255, 255, 255, 0.48) 0%,
-    rgba(255, 255, 255, 0.08) 100%
+    rgba(var(--white-rgb), 0.48) 0%,
+    rgba(var(--white-rgb), 0.08) 100%
   );
 
   @include respond-to(medium) {

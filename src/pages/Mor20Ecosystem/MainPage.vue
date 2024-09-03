@@ -55,9 +55,12 @@
 <script lang="ts" setup>
 import { AppButton, ConnectWalletButton, InfoCard } from '@/common'
 import { useI18n } from '@/composables'
-import { MAX_UINT_256 } from '@/const'
 import { ICON_NAMES, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
-import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
+import {
+  ErrorHandler,
+  getEthExplorerAddressUrl,
+  getUsersLastFullyDeployedProtocol,
+} from '@/helpers'
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
@@ -138,62 +141,6 @@ const cards = computed<InfoCardType.Card[]>(() => [
   },
 ])
 
-// TODO: optimize
-const getUsersLastFullyDeployedProtocol =
-  async (): Promise<Mor20EcosystemType.Protocol | null> => {
-    const { address, l1FactoryContract, l2FactoryContract } = web3ProvidersStore
-
-    const [l1DeployedPools, l2DeployedPools] = await Promise.all([
-      l1FactoryContract.providerBased.value.getDeployedPools(
-        address,
-        0,
-        MAX_UINT_256,
-      ),
-      l2FactoryContract.providerBased.value.getDeployedPools(
-        address,
-        0,
-        MAX_UINT_256,
-      ),
-    ])
-
-    let lastFullyL1DeployedPoolIdx = -1
-    let lastFullyL2DeployedPoolIdx = -1
-    for (let i = l1DeployedPools.length - 1; i >= 0; i--) {
-      if (
-        lastFullyL1DeployedPoolIdx !== -1 &&
-        lastFullyL2DeployedPoolIdx !== -1
-      )
-        break
-
-      for (let j = l2DeployedPools.length - 1; j >= 0; j--) {
-        if (l1DeployedPools[i].protocol === l2DeployedPools[j].protocol) {
-          lastFullyL1DeployedPoolIdx = i
-          lastFullyL2DeployedPoolIdx = j
-          break
-        }
-      }
-    }
-
-    if (
-      lastFullyL1DeployedPoolIdx === -1 ||
-      lastFullyL2DeployedPoolIdx === -1
-    ) {
-      return null
-    }
-
-    return {
-      name: l1DeployedPools[lastFullyL1DeployedPoolIdx].protocol,
-      distributionAddress:
-        l1DeployedPools[lastFullyL1DeployedPoolIdx].distribution,
-      l1SenderAddress: l1DeployedPools[lastFullyL1DeployedPoolIdx].l1Sender,
-      l2MessageReceiverAddress:
-        l2DeployedPools[lastFullyL2DeployedPoolIdx].l2MessageReceiver,
-      l2TokenReceiverAddress:
-        l2DeployedPools[lastFullyL2DeployedPoolIdx].l2TokenReceiver,
-      tokenAddress: l2DeployedPools[lastFullyL2DeployedPoolIdx].mor20,
-    }
-  }
-
 const init = async () => {
   if (!web3ProvidersStore.provider.selectedAddress) {
     protocol.value = null
@@ -203,7 +150,15 @@ const init = async () => {
   isInitializing.value = true
 
   try {
-    protocol.value = await getUsersLastFullyDeployedProtocol()
+    const deployedProtocol = await getUsersLastFullyDeployedProtocol(
+      web3ProvidersStore.provider.selectedAddress,
+      web3ProvidersStore.l1FactoryContract,
+      web3ProvidersStore.l2FactoryContract,
+    )
+
+    if (deployedProtocol) {
+      protocol.value = deployedProtocol
+    }
   } catch (error) {
     protocol.value = null
     ErrorHandler.process(error)
