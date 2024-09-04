@@ -7,6 +7,22 @@
             <h2 class="main-page__title">
               {{ protocol?.name || $t(`${I18N_KEY_PREFIX}.title`) }}
             </h2>
+            <div class="main-page__dashboard-links">
+              <app-button
+                scheme="link"
+                :icon-right="$icons.externalLink"
+                :text="$t(`${I18N_KEY_PREFIX}.dashboard-button`)"
+                :route="{
+                  name: $routes.appDashboardCapital,
+                  query: { address: web3ProvidersStore.address },
+                }"
+              />
+              <app-button
+                :text="copyButtonText"
+                :icon-right="$icons.copy"
+                @click="copyDashboardLink"
+              />
+            </div>
             <div class="main-page__content-wrp">
               <ul class="main-page__cards">
                 <li v-for="(card, idx) in cards" :key="idx">
@@ -66,6 +82,8 @@ import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
 import { config } from '@config'
 import { computed, ref, watch } from 'vue'
+import { useClipboard } from '@vueuse/core'
+import { useRoute } from 'vue-router'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
@@ -77,10 +95,30 @@ const I18N_KEY_PREFIX = 'mor20-ecosystem.main-page'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const protocol = ref<Mor20EcosystemType.Protocol | null>(null)
 const isInitializing = ref(false)
+
+const { copy: _copy, copied: isCopied } = useClipboard()
+
+const copyButtonText = computed(() =>
+  isCopied.value
+    ? t(`${I18N_KEY_PREFIX}.copied-text`)
+    : t(`${I18N_KEY_PREFIX}.copy-button`),
+)
+
+const dashboardLink = computed(() => {
+  const link = router.resolve({
+    name: ROUTE_NAMES.appDashboardCapital,
+    query: {
+      address: web3ProvidersStore.address,
+      network: route.query.network,
+    },
+  }).href
+  return `${window.location.origin}${link}`
+})
 
 const cards = computed<InfoCardType.Card[]>(() => [
   {
@@ -165,6 +203,14 @@ const init = async () => {
   }
 
   isInitializing.value = false
+}
+
+const copyDashboardLink = async () => {
+  try {
+    await _copy(dashboardLink.value)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 
 watch(
@@ -287,5 +333,11 @@ init()
   @include respond-to(tablet) {
     grid-template-columns: unset;
   }
+}
+
+.main-page__dashboard-links {
+  display: flex;
+  gap: toRem(12);
+  margin-top: toRem(20);
 }
 </style>
