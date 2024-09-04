@@ -181,7 +181,10 @@
           "title": "L2 Token Receiver V2",
           "description": "A contract that receives tokens from the L1Sender contract and used for Uniswap market making with extended functionality."
         }
-      }
+      },
+      "copy-button": "Copy Dashboard Link",
+      "copied-text": "Copied!",
+      "dashboard-button": "Contract Dashboard"
     },
     "protocol-creation-page": {
       "distribution-address-label": "Distribution address",
