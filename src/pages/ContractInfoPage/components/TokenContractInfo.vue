@@ -32,15 +32,15 @@ import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { TokenContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { NETWORK_IDS } from '@config'
 import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
 import { ethers } from 'ethers'
-import { config } from '@config'
 import { ErrorMessage, Loader } from '@/common'
 
 const props = defineProps<{
   projectName: string
+  network: ETHEREUM_CHAIN_NAMES
+  explorerUrl: string
 }>()
 
 const route = useRoute()
@@ -49,21 +49,6 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<TokenContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-
-const network = computed(() =>
-  route.query.network === NETWORK_IDS.mainnet
-    ? ETHEREUM_CHAIN_NAMES.arbitrum
-    : ETHEREUM_CHAIN_NAMES.arbitrumSepolia,
-)
-
-const explorerUrl = computed(
-  () =>
-    `${
-      network.value === ETHEREUM_CHAIN_NAMES.arbitrum
-        ? config.networksMap.mainnet.l2.explorerUrl
-        : config.networksMap.testnet.l2.explorerUrl
-    }/address/`,
-)
 
 const contract = computed<IUseContract<'MOR20__factory'> | null>(() => {
   if (!route.query.contractAddress) {
@@ -91,12 +76,12 @@ const contractData = computed(() => [
   {
     title: t('token-contract-info.owner'),
     value: contractInfo.value?.owner,
-    link: `${explorerUrl.value}${contractInfo.value?.owner}`,
+    link: `${props.explorerUrl}${contractInfo.value?.owner}`,
   },
   {
     title: t('token-contract-info.endpoint'),
     value: contractInfo.value?.endpoint,
-    link: `${explorerUrl.value}${contractInfo.value?.endpoint}`,
+    link: `${props.explorerUrl}${contractInfo.value?.endpoint}`,
   },
   {
     title: t('token-contract-info.pre-crime'),

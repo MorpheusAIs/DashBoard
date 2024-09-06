@@ -29,11 +29,14 @@ import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { L2MessageReceiverContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { NETWORK_IDS } from '@config'
 import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
-import { config } from '@config'
 import { ErrorMessage, Loader } from '@/common'
+
+const props = defineProps<{
+  network: ETHEREUM_CHAIN_NAMES
+  explorerUrl: string
+}>()
 
 const route = useRoute()
 const { t } = useI18n()
@@ -41,21 +44,6 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<L2MessageReceiverContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-
-const network = computed(() =>
-  route.query.network === NETWORK_IDS.mainnet
-    ? ETHEREUM_CHAIN_NAMES.arbitrum
-    : ETHEREUM_CHAIN_NAMES.arbitrumSepolia,
-)
-
-const explorerUrl = computed(
-  () =>
-    `${
-      network.value === ETHEREUM_CHAIN_NAMES.arbitrum
-        ? config.networksMap.mainnet.l2.explorerUrl
-        : config.networksMap.testnet.l2.explorerUrl
-    }/address/`,
-)
 
 const contract = computed<IUseContract<'L2MessageReceiver__factory'> | null>(
   () => {
@@ -77,12 +65,12 @@ const contractData = computed(() => [
       {
         title: t('l2-message-receiver-contract-info.gateway'),
         value: contractInfo.value?.config.gateway,
-        link: `${explorerUrl.value}${contractInfo.value?.config.gateway}`,
+        link: `${props.explorerUrl}${contractInfo.value?.config.gateway}`,
       },
       {
         title: t('l2-message-receiver-contract-info.sender'),
         value: contractInfo.value?.config.sender,
-        link: `${explorerUrl.value}${contractInfo.value?.config.sender}`,
+        link: `${props.explorerUrl}${contractInfo.value?.config.sender}`,
       },
       {
         title: t('l2-message-receiver-contract-info.sender-chain-id'),
@@ -93,12 +81,12 @@ const contractData = computed(() => [
   {
     title: t('l2-message-receiver-contract-info.owner'),
     value: contractInfo.value?.owner,
-    link: `${explorerUrl.value}${contractInfo.value?.owner}`,
+    link: `${props.explorerUrl}${contractInfo.value?.owner}`,
   },
   {
     title: t('l2-message-receiver-contract-info.reward-token'),
     value: contractInfo.value?.rewardToken,
-    link: `${explorerUrl.value}${contractInfo.value?.rewardToken}`,
+    link: `${props.explorerUrl}${contractInfo.value?.rewardToken}`,
   },
 ])
 

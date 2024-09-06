@@ -393,5 +393,9 @@
     "router": "Router:",
     "second-swap-params": "Second Swap Parameters:",
     "error-message": "Something bad happened."
+  },
+  "edit-contract": {
+    "title": "Edit Contract",
+    "submit-btn": "Submit"
   }
 }

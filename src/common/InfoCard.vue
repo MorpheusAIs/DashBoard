@@ -32,6 +32,7 @@
           name: $routes.contractInfo,
           query: {
             contractAddress: card.address,
+            type: CONTRACT_INFO_NAMES.read,
           },
         }"
         :text="$t('info-card.show-more')"
@@ -55,6 +56,7 @@
 import { type InfoCardType } from '@/types'
 import AppButton from './AppButton.vue'
 import AppIcon from './AppIcon.vue'
+import { CONTRACT_INFO_NAMES } from '@/enums'
 
 withDefaults(
   defineProps<{
