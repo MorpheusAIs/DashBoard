@@ -1,3 +1,5 @@
+import { ValidationRule } from '@vuelidate/core'
+
 export type TokenContractInfo = {
   name: string
   symbol: string
@@ -68,5 +70,17 @@ export type L2TokenReceiverContractInfo = {
     tokenIn: string
     tokenOut: string
     fee: number
+  }
+}
+
+export type ContractEditionType = {
+  note: string
+  inputs: string[]
+  inputNotes: string[]
+  validationRules: {
+    firstInput: ValidationRule
+    secondInput?: ValidationRule
+    thirdInput?: ValidationRule
+    fourthInput?: ValidationRule
   }
 }
