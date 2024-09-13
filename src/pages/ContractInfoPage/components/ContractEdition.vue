@@ -7,72 +7,22 @@
       {{ methodToEdit.note }}
     </span>
     <div class="contract-edition__inputs">
-      <!--TODO: THINK MORE ABOUT THIS LOGIC-->
-      <div class="contract-edition__input-wrp">
-        <input-field
-          v-model="form.firstInput"
-          class="contract-edition__input"
-          :placeholder="methodToEdit.inputs[0]"
-          :error-message="getFieldErrorMessage('firstInput')"
-          :disabled="isSubmitting || isSubmitted"
-          @blur="touchField('firstInput')"
-        />
-        <app-icon
-          v-tooltip="methodToEdit.inputNotes[0]"
-          class="contract-edition__input-icon"
-          :name="$icons.exclamationCircle"
-        />
-      </div>
       <div
-        v-if="methodToEdit.inputNotes.length > 1"
+        v-for="(input, index) in methodToEdit.inputs"
+        :key="index"
         class="contract-edition__input-wrp"
       >
         <input-field
-          v-model="form.secondInput"
+          v-model="form[`input-${index}`]"
           class="contract-edition__input"
-          :placeholder="methodToEdit.inputs[1]"
-          :error-message="getFieldErrorMessage('secondInput')"
+          :placeholder="input"
+          :error-message="getFieldErrorMessage(`input-${index}`)"
           :disabled="isSubmitting || isSubmitted"
-          @blur="touchField('secondInput')"
+          @blur="touchField(`input-${index}`)"
         />
         <app-icon
-          v-tooltip="methodToEdit.inputNotes[1]"
-          class="contract-edition__input-icon"
-          :name="$icons.exclamationCircle"
-        />
-      </div>
-      <div
-        v-if="methodToEdit.inputNotes.length > 2"
-        class="contract-edition__input-wrp"
-      >
-        <input-field
-          v-model="form.thirdInput"
-          class="contract-edition__input"
-          :placeholder="methodToEdit.inputs[2]"
-          :error-message="getFieldErrorMessage('thirdInput')"
-          :disabled="isSubmitting || isSubmitted"
-          @blur="touchField('thirdInput')"
-        />
-        <app-icon
-          v-tooltip="methodToEdit.inputNotes[2]"
-          class="contract-edition__input-icon"
-          :name="$icons.exclamationCircle"
-        />
-      </div>
-      <div
-        v-if="methodToEdit.inputNotes.length > 3"
-        class="contract-edition__input-wrp"
-      >
-        <input-field
-          v-model="form.fourthInput"
-          class="contract-edition__input"
-          :placeholder="methodToEdit.inputs[3]"
-          :error-message="getFieldErrorMessage('fourthInput')"
-          :disabled="isSubmitting || isSubmitted"
-          @blur="touchField('fourthInput')"
-        />
-        <app-icon
-          v-tooltip="methodToEdit.inputNotes[3]"
+          v-if="methodToEdit.inputNotes[index]"
+          v-tooltip="methodToEdit.inputNotes[index]"
           class="contract-edition__input-icon"
           :name="$icons.exclamationCircle"
         />
@@ -81,6 +31,7 @@
     <app-button
       class="contract-edition__btn"
       :text="$t('contract-edition.submit-btn')"
+      :disabled="!isFieldsValid || isSubmitting"
       @click="submit"
     />
   </div>
@@ -88,41 +39,238 @@
 
 <script setup lang="ts">
 import { ContractEditionType } from '@/types'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { InputField } from '@/fields'
-import { AppButton } from '@/common'
-import { useFormValidation } from '@/composables'
-import { ErrorHandler } from '@/helpers'
-import AppIcon from '../../../common/AppIcon.vue'
+import { AppButton, AppIcon } from '@/common'
+import { useContract, useFormValidation } from '@/composables'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import {
+  CONTRACT_TYPE,
+  DISTRIBUTION_CONTRACT_METHODS,
+  ETHEREUM_CHAIN_NAMES,
+  TOKEN_CONTRACT_METHODS,
+} from '@/enums'
+import { useWeb3ProvidersStore } from '@/store'
+import { useRoute } from 'vue-router'
+import { utils, ContractTransaction } from 'ethers'
+import { config } from '@config'
+
+type ContractInfo = {
+  contractName: string
+  network: keyof typeof ETHEREUM_CHAIN_NAMES
+}
 
 const props = defineProps<{
+  contractType: CONTRACT_TYPE
   methodToEdit: ContractEditionType
 }>()
+
+const route = useRoute()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isSubmitting = ref(false)
 const isSubmitted = ref(false)
 
-const form = reactive({
-  firstInput: '',
-  secondInput: '',
-  thirdInput: '',
-  fourthInput: '',
-})
+const form = reactive(
+  props.methodToEdit.inputs.reduce((acc, _, idx) => {
+    acc[`input-${idx}`] = ''
+    return acc
+  }, {}),
+)
 
-const { getFieldErrorMessage, touchField } = useFormValidation(
+const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   props.methodToEdit.validationRules,
 )
 
+const contract = computed(() => {
+  if (!route.query.contractAddress) return null
+  const contractInfo: ContractInfo = {
+    contractName: '',
+    network: ETHEREUM_CHAIN_NAMES.arbitrum,
+  }
+  switch (props.contractType) {
+    case CONTRACT_TYPE.distribution:
+      contractInfo.contractName = 'Distribution__factory'
+      contractInfo.network = ETHEREUM_CHAIN_NAMES.ethereum
+      break
+    case CONTRACT_TYPE.l1Sender:
+      contractInfo.contractName = 'L1Sender__factory'
+      contractInfo.network = ETHEREUM_CHAIN_NAMES.ethereum
+      break
+    case CONTRACT_TYPE.l2MessageReceiver:
+      contractInfo.contractName = 'L2MessageReceiver__factory'
+      break
+    case CONTRACT_TYPE.l2TokenReceiver:
+      contractInfo.contractName = 'L2TokenReceiver__factory'
+      break
+    default:
+      contractInfo.contractName = 'MOR20__factory'
+  }
+  return useContract(
+    contractInfo.contractName,
+    route.query.contractAddress,
+    contractInfo.network === ETHEREUM_CHAIN_NAMES.ethereum
+      ? web3ProvidersStore.l1Provider
+      : web3ProvidersStore.l2Provider,
+  )
+})
+
+const submitTokenContract = async (): Promise<ContractTransaction | null> => {
+  let tx: ContractTransaction | null = null
+  if (!contract.value) {
+    return
+  }
+  switch (props.methodToEdit.methodName) {
+    case TOKEN_CONTRACT_METHODS.approve:
+      tx = await contract.value?.signerBased.value?.approve(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.transfer:
+      tx = await contract.value?.signerBased.value?.transfer(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.burn:
+      tx = await contract.value?.signerBased.value?.burn(
+        utils.parseEther(form['input-0']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.mint:
+      tx = await contract.value?.signerBased.value?.mint(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.increaseAllowance:
+      tx = await contract.value?.signerBased.value?.increaseAllowance(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.transferOwnership:
+      tx = await contract.value?.signerBased.value?.transferOwnership(
+        form['input-0'],
+      )
+      break
+    default:
+      return tx
+  }
+  return tx
+}
+
+const submitDistributionContract = async () => {
+  let tx: ContractTransaction | null = null
+  if (!contract.value) {
+    return
+  }
+  switch (props.methodToEdit.methodName) {
+    case DISTRIBUTION_CONTRACT_METHODS.bridgeOverplus:
+      tx = await contract.value?.signerBased.value?.bridgeOverplus(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+        {
+          value: form['input-0'],
+        },
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.transfer:
+      tx = await contract.value?.signerBased.value?.transfer(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.burn:
+      tx = await contract.value?.signerBased.value?.burn(
+        utils.parseEther(form['input-0']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.mint:
+      tx = await contract.value?.signerBased.value?.mint(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.increaseAllowance:
+      tx = await contract.value?.signerBased.value?.increaseAllowance(
+        form['input-0'],
+        utils.parseEther(form['input-1']),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.transferOwnership:
+      tx = await contract.value?.signerBased.value?.transferOwnership(
+        form['input-0'],
+      )
+      break
+    default:
+      return tx
+  }
+  return tx
+}
+
+const submitL1SenderContract = async () => {
+  return new Promise(resolve => {
+    setTimeout(resolve, 1000)
+  })
+}
+
+const submitL2MessageReceiver = async () => {
+  return new Promise(resolve => {
+    setTimeout(resolve, 1000)
+  })
+}
+
+const submitL2TokenReceiver = async () => {
+  return new Promise(resolve => {
+    setTimeout(resolve, 1000)
+  })
+}
+
 const submit = async () => {
   isSubmitted.value = false
   isSubmitting.value = true
+  let tx: ContractTransaction | null = null
+  let isL1 = false
   try {
-    await new Promise(() => {
-      setTimeout(() => {
-        return
-      }, 1000)
-    })
+    switch (props.contractType) {
+      case CONTRACT_TYPE.token:
+        tx = await submitTokenContract()
+        break
+      case CONTRACT_TYPE.distribution:
+        tx = await submitDistributionContract()
+        isL1 = true
+        break
+      case CONTRACT_TYPE.l1_sender:
+        tx = await submitL1SenderContract()
+        isL1 = true
+        break
+      case CONTRACT_TYPE.l2_message_receiver:
+        tx = await submitL2MessageReceiver()
+        break
+      default:
+        tx = await submitL2TokenReceiver()
+    }
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.networksMap[web3ProvidersStore.networkId][isL1 ? 'l1' : 'l2']
+        .explorerUrl,
+      tx.hash,
+    )
+    if (tx && explorerTxUrl) {
+      bus.emit(
+        BUS_EVENTS.info,
+        t('mor20-creation-form.tx-sent-message', { explorerTxUrl }),
+      )
+
+      await tx.wait()
+
+      bus.emit(
+        BUS_EVENTS.success,
+        t('mor20-creation-form.success-message', { explorerTxUrl }),
+      )
+    }
     isSubmitted.value = true
   } catch (e) {
     ErrorHandler.process(e)

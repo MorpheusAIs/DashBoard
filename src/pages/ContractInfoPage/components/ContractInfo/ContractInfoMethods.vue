@@ -18,19 +18,19 @@
 </template>
 
 <script setup lang="ts">
-import { CONTRACT_METHODS } from '@/enums'
+import { ContractMethods } from '@/types'
 import { AppButton } from '@/common'
 
 defineProps<{
-  chosenMethod: CONTRACT_METHODS
-  methods: CONTRACT_METHODS[]
+  chosenMethod: ContractMethods
+  methods: ContractMethods[]
 }>()
 
 const emit = defineEmits<{
-  (e: 'choose-method', v: CONTRACT_METHODS): void
+  (e: 'choose-method', v: ContractMethods): void
 }>()
 
-const chooseMethod = (method: CONTRACT_METHODS) => {
+const chooseMethod = (method: ContractMethods) => {
   emit('choose-method', method)
 }
 </script>

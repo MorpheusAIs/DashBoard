@@ -470,7 +470,9 @@
       "submissionCost-lbl": "Max Submission Cost",
       "gasLimit-note": "Enter the gas limit for the transaction",
       "maxFee-note": "Enter the maximum fee per gas",
-      "submissionCost-note": "Enter the maximum submission cost"
+      "submissionCost-note": "Enter the maximum submission cost",
+      "bridge-value-note": "Bridge amount",
+      "bridge-value-lbl": "Bridge amount"
     },
     "createPool": {
       "note": "Create a new pool by specifying the payout start, reward, and other parameters.",

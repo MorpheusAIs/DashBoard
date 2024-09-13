@@ -6,21 +6,32 @@ export enum CONTRACT_TYPE {
   l2MessageReceiver = 'l2 Message Receiver',
 }
 
-export enum CONTRACT_METHODS {
-  approve = 'approve',
-  burn = 'burn',
-  increaseAllowance = 'increase allowance',
+export enum TOKEN_CONTRACT_METHODS {
   mint = 'mint',
   transfer = 'transfer',
   transferOwnership = 'transfer ownership',
+  approve = 'approve',
+  burn = 'burn',
+  increaseAllowance = 'increase allowance',
+}
 
+export enum DISTRIBUTION_CONTRACT_METHODS {
   bridgeOverplus = 'bridge overplus',
   createPool = 'create pool',
-  manageUsersInPrivatePool = 'manage users in private pool',
+}
 
+export enum L1_SENDER_CONTRACT_METHODS {
   sendDepositToken = 'send deposit token',
   sendMintMessage = 'send mint message',
+  transferOwnership = 'transfer ownership',
+}
 
+export enum L2_MESSAGE_RECEIVER_CONTRACT_METHODS {
+  transferOwnership = 'transfer ownership',
+}
+
+export enum L2_TOKEN_RECEIVER_CONTRACT_METHODS {
+  transferOwnership = 'transfer ownership',
   collectFees = 'collect fees',
   decreaseLiquidityCurrentRange = 'decrease liquidity current range',
   increaseLiquidityCurrentRange = 'increase liquidity current range',
