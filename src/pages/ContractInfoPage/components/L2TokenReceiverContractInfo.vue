@@ -29,11 +29,14 @@ import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { L2TokenReceiverContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { NETWORK_IDS } from '@config'
 import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
-import { config } from '@config'
 import { ErrorMessage, Loader } from '@/common'
+
+const props = defineProps<{
+  network: ETHEREUM_CHAIN_NAMES
+  explorerUrl: string
+}>()
 
 const route = useRoute()
 const { t } = useI18n()
@@ -41,21 +44,6 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<L2TokenReceiverContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-
-const network = computed(() =>
-  route.query.network === NETWORK_IDS.mainnet
-    ? ETHEREUM_CHAIN_NAMES.arbitrum
-    : ETHEREUM_CHAIN_NAMES.arbitrumSepolia,
-)
-
-const explorerUrl = computed(
-  () =>
-    `${
-      network.value === ETHEREUM_CHAIN_NAMES.arbitrum
-        ? config.networksMap.mainnet.l2.explorerUrl
-        : config.networksMap.testnet.l2.explorerUrl
-    }/address/`,
-)
 
 const contract = computed<IUseContract<'L2TokenReceiver__factory'> | null>(
   () => {
@@ -77,12 +65,12 @@ const contractData = computed(() => [
       {
         title: t('l2-token-receiver-contract-info.token-in'),
         value: contractInfo.value?.firstSwapParams.tokenIn,
-        link: `${explorerUrl.value}${contractInfo.value?.firstSwapParams.tokenIn}`,
+        link: `${props.explorerUrl}${contractInfo.value?.firstSwapParams.tokenIn}`,
       },
       {
         title: t('l2-token-receiver-contract-info.token-out'),
         value: contractInfo.value?.firstSwapParams.tokenOut,
-        link: `${explorerUrl.value}${contractInfo.value?.firstSwapParams.tokenOut}`,
+        link: `${props.explorerUrl}${contractInfo.value?.firstSwapParams.tokenOut}`,
       },
       {
         title: t('l2-token-receiver-contract-info.fee'),
@@ -93,17 +81,17 @@ const contractData = computed(() => [
   {
     title: t('l2-token-receiver-contract-info.nonfungible-position-manager'),
     value: contractInfo.value?.nonfungiblePositionManager,
-    link: `${explorerUrl.value}${contractInfo.value?.nonfungiblePositionManager}`,
+    link: `${props.explorerUrl}${contractInfo.value?.nonfungiblePositionManager}`,
   },
   {
     title: t('l2-token-receiver-contract-info.owner'),
     value: contractInfo.value?.owner,
-    link: `${explorerUrl.value}${contractInfo.value?.owner}`,
+    link: `${props.explorerUrl}${contractInfo.value?.owner}`,
   },
   {
     title: t('l2-token-receiver-contract-info.router'),
     value: contractInfo.value?.router,
-    link: `${explorerUrl.value}${contractInfo.value?.router}`,
+    link: `${props.explorerUrl}${contractInfo.value?.router}`,
   },
   {
     title: t('l2-token-receiver-contract-info.second-swap-params'),
@@ -111,12 +99,12 @@ const contractData = computed(() => [
       {
         title: t('l2-token-receiver-contract-info.token-in'),
         value: contractInfo.value?.secondSwapParams.tokenIn,
-        link: `${explorerUrl.value}${contractInfo.value?.secondSwapParams.tokenIn}`,
+        link: `${props.explorerUrl}${contractInfo.value?.secondSwapParams.tokenIn}`,
       },
       {
         title: t('l2-token-receiver-contract-info.token-out'),
         value: contractInfo.value?.secondSwapParams.tokenOut,
-        link: `${explorerUrl.value}${contractInfo.value?.secondSwapParams.tokenOut}`,
+        link: `${props.explorerUrl}${contractInfo.value?.secondSwapParams.tokenOut}`,
       },
       {
         title: t('l2-token-receiver-contract-info.fee'),

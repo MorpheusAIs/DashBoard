@@ -19,7 +19,10 @@
             v-else
             class="contract-info-page__content"
             :is="contractInfoComponent"
-            :project-name="deployedProtocol.name"
+            :network="network"
+            :explorer-url="explorerUrl"
+            :project-name="deployedProtocol?.name"
+            :contract-type="contractType"
           />
         </transition>
       </template>
@@ -29,20 +32,28 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton, NoDataMessage, ErrorMessage } from '@/common'
-import { watch, ref, computed } from 'vue'
+import { AppButton, ErrorMessage, NoDataMessage } from '@/common'
+import { computed, ref, watch } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoDashboardType } from '@/types'
-import { getUsersLastFullyDeployedProtocol, ErrorHandler } from '@/helpers'
+import { ErrorHandler, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRoute } from 'vue-router'
 import {
-  L2MessageReceiverContractInfo,
-  L1SenderContractInfo,
-  L2TokenReceiverContractInfo,
   DistributionContractInfo,
+  EditContract,
+  L1SenderContractInfo,
+  L2MessageReceiverContractInfo,
+  L2TokenReceiverContractInfo,
   TokenContractInfo,
 } from '@/pages/ContractInfoPage/components'
 import Loader from '@/common/Loader.vue'
+import {
+  CONTRACT_INFO_ACTIONS,
+  CONTRACT_TYPE,
+  ETHEREUM_CHAIN_NAMES,
+  NETWORK_IDS,
+} from '@/enums'
+import { config } from '@config'
 
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -50,22 +61,83 @@ const deployedProtocol = ref<InfoDashboardType.DashboardInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 
-const contractInfoComponent = computed(() => {
+const contractInfoComponent = computed(() =>
+  route.query.type === CONTRACT_INFO_ACTIONS.read
+    ? contractReadComponent.value
+    : contractWriteComponent.value,
+)
+
+const contractType = computed(() => {
   switch (String(route.query.contractAddress)) {
     case deployedProtocol.value?.distributionAddress:
-      return DistributionContractInfo
+      return CONTRACT_TYPE.distribution
     case deployedProtocol.value?.tokenAddress:
-      return TokenContractInfo
+      return CONTRACT_TYPE.token
     case deployedProtocol.value?.l1SenderAddress:
-      return L1SenderContractInfo
+      return CONTRACT_TYPE.l1Sender
     case deployedProtocol.value?.l2MessageReceiverAddress:
-      return L2MessageReceiverContractInfo
+      return CONTRACT_TYPE.l2MessageReceiver
     case deployedProtocol.value?.l2TokenReceiverAddress:
+      return CONTRACT_TYPE.l2TokenReceiver
+    default:
+      return ''
+  }
+})
+
+const network = computed(() => {
+  if (
+    contractType.value === CONTRACT_TYPE.token ||
+    contractType.value === CONTRACT_TYPE.l2MessageReceiver ||
+    contractType.value === CONTRACT_TYPE.l2TokenReceiver
+  ) {
+    return route.query.network === NETWORK_IDS.testnet
+      ? ETHEREUM_CHAIN_NAMES.arbitrumSepolia
+      : ETHEREUM_CHAIN_NAMES.arbitrum
+  }
+  return route.query.network === NETWORK_IDS.testnet
+    ? ETHEREUM_CHAIN_NAMES.sepolia
+    : ETHEREUM_CHAIN_NAMES.ethereum
+})
+
+const explorerUrl = computed(() => {
+  let url = ''
+  switch (network.value) {
+    case ETHEREUM_CHAIN_NAMES.arbitrum:
+      url = config.networksMap.mainnet.l2.explorerUrl
+      break
+    case ETHEREUM_CHAIN_NAMES.sepolia:
+      url = config.networksMap.testnet.l1.explorerUrl
+      break
+    case ETHEREUM_CHAIN_NAMES.ethereum:
+      url = config.networksMap.mainnet.l1.explorerUrl
+      break
+    default:
+      url = config.networksMap.testnet.l2.explorerUrl
+      break
+  }
+  return `${url}/address/`
+})
+
+const contractReadComponent = computed(() => {
+  switch (contractType.value) {
+    case CONTRACT_TYPE.distribution:
+      return DistributionContractInfo
+    case CONTRACT_TYPE.token:
+      return TokenContractInfo
+    case CONTRACT_TYPE.l1Sender:
+      return L1SenderContractInfo
+    case CONTRACT_TYPE.l2MessageReceiver:
+      return L2MessageReceiverContractInfo
+    case CONTRACT_TYPE.l2TokenReceiver:
       return L2TokenReceiverContractInfo
     default:
       return NoDataMessage
   }
 })
+
+const contractWriteComponent = computed(() =>
+  route.query.contractAddress ? EditContract : NoDataMessage,
+)
 
 watch(
   () => route.query,

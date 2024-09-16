@@ -32,6 +32,7 @@
           name: $routes.contractInfo,
           query: {
             contractAddress: card.address,
+            type: CONTRACT_INFO_ACTIONS.read,
           },
         }"
         :text="$t('info-card.show-more')"
@@ -41,10 +42,14 @@
           class="info-card__edit-btn"
           scheme="link"
           color="none"
-          target="_blank"
-          rel="noopener noreferrer"
-          href="#"
           :icon-right="$icons.edit"
+          :route="{
+            name: $routes.contractInfo,
+            query: {
+              contractAddress: card.address,
+              type: CONTRACT_INFO_ACTIONS.edit,
+            },
+          }"
         />
       </div>
     </div>
@@ -55,6 +60,7 @@
 import { type InfoCardType } from '@/types'
 import AppButton from './AppButton.vue'
 import AppIcon from './AppIcon.vue'
+import { CONTRACT_INFO_ACTIONS } from '@/enums'
 
 withDefaults(
   defineProps<{

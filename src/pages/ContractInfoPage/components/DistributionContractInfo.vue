@@ -29,12 +29,15 @@ import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { TokenContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { NETWORK_IDS } from '@config'
 import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
 import { ethers } from 'ethers'
-import { config } from '@config'
 import { ErrorMessage, Loader } from '@/common'
+
+const props = defineProps<{
+  network: ETHEREUM_CHAIN_NAMES
+  explorerUrl: string
+}>()
 
 const route = useRoute()
 const { t } = useI18n()
@@ -42,21 +45,6 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<TokenContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-
-const network = computed(() =>
-  route.query.network === NETWORK_IDS.mainnet
-    ? ETHEREUM_CHAIN_NAMES.ethereum
-    : ETHEREUM_CHAIN_NAMES.sepolia,
-)
-
-const explorerUrl = computed(
-  () =>
-    `${
-      network.value === ETHEREUM_CHAIN_NAMES.ethereum
-        ? config.networksMap.mainnet.l1.explorerUrl
-        : config.networksMap.testnet.l1.explorerUrl
-    }/address/`,
-)
 
 const contract = computed<IUseContract<'Distribution__factory'> | null>(() => {
   if (!route.query.contractAddress) {
@@ -73,17 +61,17 @@ const contractData = computed(() => [
   {
     title: t('distribution-contract-info.deposit-token'),
     value: contractInfo.value?.depositToken,
-    link: `${explorerUrl.value}${contractInfo.value?.depositToken}`,
+    link: `${props.explorerUrl}${contractInfo.value?.depositToken}`,
   },
   {
     title: t('distribution-contract-info.fee-config'),
     value: contractInfo.value?.feeConfig,
-    link: `${explorerUrl.value}${contractInfo.value?.feeConfig}`,
+    link: `${props.explorerUrl}${contractInfo.value?.feeConfig}`,
   },
   {
     title: t('distribution-contract-info.l1-sender'),
     value: contractInfo.value?.l1Sender,
-    link: `${explorerUrl.value}${contractInfo.value?.l1Sender}`,
+    link: `${props.explorerUrl}${contractInfo.value?.l1Sender}`,
   },
   {
     title: t('distribution-contract-info.overplus'),
@@ -92,7 +80,7 @@ const contractData = computed(() => [
   {
     title: t('distribution-contract-info.owner'),
     value: contractInfo.value?.owner,
-    link: `${explorerUrl.value}${contractInfo.value?.owner}`,
+    link: `${props.explorerUrl}${contractInfo.value?.owner}`,
   },
   {
     title: t('distribution-contract-info.total-deposited-in-public-pools'),

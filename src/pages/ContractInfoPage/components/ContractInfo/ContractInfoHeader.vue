@@ -12,14 +12,14 @@
           {{ `(${symbol})` }}
         </h2>
       </div>
-      <div class="contract-info-header__title-icon-wrp">
+      <div v-if="network" class="contract-info-header__title-icon-wrp">
         <app-icon class="contract-info-header__title-icon" :name="iconName" />
         <span class="contract-info-header__icon-description">
           {{ network }}
         </span>
       </div>
     </div>
-    <h4 v-if="projectName" class="contract-info-header__project">
+    <h4 v-if="projectName" :class="projectClassNames">
       {{ projectName }}
     </h4>
     <p v-if="description" class="contract-info-header__description">
@@ -30,12 +30,17 @@
 
 <script setup lang="ts">
 import { AppIcon } from '@/common'
-import { ETHEREUM_CHAIN_NAMES, ICON_NAMES } from '@/enums'
+import {
+  CONTRACT_INFO_ACTIONS,
+  ETHEREUM_CHAIN_NAMES,
+  ICON_NAMES,
+} from '@/enums'
 import { computed } from 'vue'
 
 const props = defineProps<{
   name: string
-  network: ETHEREUM_CHAIN_NAMES
+  type?: CONTRACT_INFO_ACTIONS
+  network?: ETHEREUM_CHAIN_NAMES
   symbol?: string
   projectName?: string
   description?: string
@@ -46,6 +51,15 @@ const iconName = computed(() =>
   props.network === ETHEREUM_CHAIN_NAMES.sepolia
     ? ICON_NAMES.ethereumAlt
     : ICON_NAMES.arbitrumAlt,
+)
+
+const projectClassNames = computed(() =>
+  [
+    'contract-info-header__project',
+    ...(props.type === CONTRACT_INFO_NAMES.read
+      ? ['contract-info-header__project--action-write']
+      : []),
+  ].join(' '),
 )
 </script>
 
@@ -141,6 +155,10 @@ const iconName = computed(() =>
   font-size: toRem(22);
   line-height: toRem(32);
   font-weight: 400;
+
+  &--action-write {
+    color: var(--primary-main);
+  }
 
   @include respond-to(tablet) {
     margin-top: toRem(20);

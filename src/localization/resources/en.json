@@ -393,5 +393,189 @@
     "router": "Router:",
     "second-swap-params": "Second Swap Parameters:",
     "error-message": "Something bad happened."
+  },
+  "edit-contract": {
+    "title": "Edit Contract",
+    "submit-btn": "Submit",
+    "approve": {
+      "note": "NOTE: If amount is the maximum uint256, the allowance is not updated on transferFrom. This is semantically equivalent to an infinite approval.",
+      "spender-lbl": "Spender",
+      "amount-lbl": "Amount",
+      "spender-note": "Address of the spender",
+      "amount-note": "Amount to approve"
+    },
+    "burn": {
+      "note": "Burn a specific amount of tokens, reducing the total supply.",
+      "amount-lbl": "Amount",
+      "amount-note": "Amount of tokens to burn"
+    },
+    "burnFrom": {
+      "note": "Burn tokens from an account, reducing the total supply.",
+      "from-lbl": "From",
+      "amount-lbl": "Amount",
+      "from-note": "Address from which tokens will be burned",
+      "amount-note": "Amount of tokens to burn"
+    },
+    "decreaseAllowance": {
+      "note": "Decrease the allowance for the spender.",
+      "spender-lbl": "Spender",
+      "amount-lbl": "Reduced Amount",
+      "spender-note": "Address of the spender",
+      "amount-note": "Amount to reduce from the allowance"
+    },
+    "increaseAllowance": {
+      "note": "Increase the allowance for the spender.",
+      "spender-lbl": "Spender",
+      "amount-lbl": "Additional Amount",
+      "spender-note": "Address of the spender",
+      "amount-note": "Amount to add to the allowance"
+    },
+    "mint": {
+      "note": "Mint new tokens to a specified address.",
+      "to-lbl": "Recipient",
+      "amount-lbl": "Amount",
+      "to-note": "Address to mint the tokens to",
+      "amount-note": "Amount of tokens to mint"
+    },
+    "transfer": {
+      "note": "Transfer tokens to another account.",
+      "to-lbl": "Recipient",
+      "amount-lbl": "Amount",
+      "to-note": "Address of the recipient",
+      "amount-note": "Amount of tokens to transfer"
+    },
+    "transferFrom": {
+      "note": "Transfer tokens from one account to another on behalf of an owner.",
+      "from-lbl": "From",
+      "to-lbl": "To",
+      "amount-lbl": "Amount",
+      "from-note": "Address of the sender",
+      "to-note": "Address of the recipient",
+      "amount-note": "Amount of tokens to transfer"
+    },
+    "transferOwnership": {
+      "note": "Transfer ownership of the contract to a new address.",
+      "new-owner-lbl": "New Owner",
+      "new-owner-note": "Address of the new owner"
+    },
+    "renounceOwnership": {
+      "note": "Renounce ownership of the contract, leaving it without an owner.",
+      "confirm-lbl": "Confirm",
+      "confirm-note": "Confirm renunciation of ownership"
+    },
+    "bridge-overplus": {
+      "note": "Bridge overplus by specifying gas limit, maximum fee, and submission cost.",
+      "gasLimit-lbl": "Gas Limit",
+      "maxFee-lbl": "Max Fee per Gas",
+      "submissionCost-lbl": "Max Submission Cost",
+      "gasLimit-note": "Enter the gas limit for the transaction",
+      "maxFee-note": "Enter the maximum fee per gas",
+      "submissionCost-note": "Enter the maximum submission cost",
+      "bridge-value-note": "Bridge amount",
+      "bridge-value-lbl": "Bridge amount"
+    },
+    "createPool": {
+      "note": "Create a new pool by specifying the payout start, reward, and other parameters.",
+      "payoutStart-lbl": "Payout Start",
+      "decreaseInterval-lbl": "Decrease Interval",
+      "withdrawLockPeriod-lbl": "Withdraw Lock Period",
+      "claimLockPeriod-lbl": "Claim Lock Period",
+      "withdrawLockPeriodAfterStake-lbl": "Withdraw Lock Period After Stake",
+      "initialReward-lbl": "Initial Reward",
+      "rewardDecrease-lbl": "Reward Decrease",
+      "minimalStake-lbl": "Minimal Stake",
+      "isPublic-lbl": "Is Public",
+      "payoutStart-note": "Enter the start time for payout",
+      "decreaseInterval-note": "Enter the interval for reward decrease",
+      "withdrawLockPeriod-note": "Enter the lock period for withdrawals",
+      "claimLockPeriod-note": "Enter the lock period for claims",
+      "withdrawLockPeriodAfterStake-note": "Enter the lock period for withdrawals after staking",
+      "initialReward-note": "Enter the initial reward amount",
+      "rewardDecrease-note": "Enter the reward decrease amount",
+      "minimalStake-note": "Enter the minimum stake amount",
+      "isPublic-note": "Specify whether the pool is public or private"
+    },
+    "manage-users-in-private-pool": {
+      "note": "Manage users in a private pool by specifying the pool ID, users, and corresponding amounts.",
+      "poolId-lbl": "Pool ID",
+      "poolId-note": "Enter the ID of the pool you want to manage.",
+      "users-lbl": "User Addresses",
+      "users-note": "Provide a list of user addresses to manage within the pool.",
+      "amounts-lbl": "Amounts",
+      "amounts-note": "Specify the amounts associated with each user. Ensure that the number of amounts matches the number of users."
+    },
+    "sendDepositToken": {
+      "note": "Send a deposit token with specified parameters.",
+      "eth-value-note": "Amount to send",
+      "eth-value-lbl": "Amount to send",
+      "gasLimit-lbl": "Gas Limit",
+      "gasLimit-note": "Specify the maximum gas limit for the transaction.",
+      "maxFeePerGas-lbl": "Max Fee Per Gas",
+      "maxFeePerGas-note": "Specify the maximum fee per gas unit.",
+      "maxSubmissionCost-lbl": "Max Submission Cost",
+      "maxSubmissionCost-note": "Specify the maximum submission cost."
+    },
+    "sendMintMessage": {
+      "note": "Send a mint message with specified parameters.",
+      "eth-amount-note": "Payable Amount",
+      "eth-amount-lbl": "Payable Amount",
+      "user-lbl": "User Address",
+      "user-note": "Enter the address of the user who will receive the minted tokens.",
+      "amount-lbl": "Amount",
+      "amount-note": "Specify the amount of tokens to mint.",
+      "refundTo-lbl": "Refund Address",
+      "refundTo-note": "Enter the address where any excess funds should be refunded (optional)."
+    },
+    "collectFees": {
+      "note": "Collect fees from a specific token ID.",
+      "tokenId-lbl": "Token ID",
+      "tokenId-note": "Enter the ID of the token for which you want to collect fees."
+    },
+    "decreaseLiquidityCurrentRange": {
+      "note": "Decrease liquidity for a specific token ID within the current range.",
+      "tokenId-lbl": "Token ID",
+      "tokenId-note": "Enter the ID of the token for which you want to decrease liquidity.",
+      "liquidity-lbl": "Liquidity",
+      "liquidity-note": "Enter the amount of liquidity to decrease.",
+      "amount0Min-lbl": "Minimum Amount of Token0",
+      "amount0Min-note": "Specify the minimum amount of token0 to accept.",
+      "amount1Min-lbl": "Minimum Amount of Token1",
+      "amount1Min-note": "Specify the minimum amount of token1 to accept."
+    },
+    "increaseLiquidityCurrentRange": {
+      "note": "Increase liquidity for a specific token ID within the current range.",
+      "tokenId-lbl": "Token ID",
+      "tokenId-note": "Enter the ID of the token for which you want to increase liquidity.",
+      "amount0Add-lbl": "Amount of Token0 to Add",
+      "amount0Add-note": "Specify the amount of token0 to add.",
+      "amount1Add-lbl": "Amount of Token1 to Add",
+      "amount1Add-note": "Specify the amount of token1 to add.",
+      "amount0Min-lbl": "Minimum Amount of Token0",
+      "amount0Min-note": "Specify the minimum amount of token0 to accept.",
+      "amount1Min-lbl": "Minimum Amount of Token1",
+      "amount1Min-note": "Specify the minimum amount of token1 to accept."
+    },
+    "withdrawToken": {
+      "note": "Withdraw a specific amount of tokens to a designated address.",
+      "recipient-lbl": "Recipient Address",
+      "recipient-note": "Enter the address where the tokens should be sent.",
+      "token-lbl": "Token Address",
+      "token-note": "Enter the address of the token to withdraw.",
+      "amount-lbl": "Amount",
+      "amount-note": "Specify the amount of tokens to withdraw."
+    },
+    "withdrawTokenId": {
+      "note": "Withdraw a specific token ID to a designated address.",
+      "recipient-lbl": "Recipient Address",
+      "recipient-note": "Enter the address where the token ID should be sent.",
+      "token-lbl": "Token Contract Address",
+      "token-note": "Enter the address of the token contract.",
+      "tokenId-lbl": "Token ID",
+      "tokenId-note": "Enter the ID of the token to withdraw."
+    }
+  },
+  "contract-edition": {
+    "title": "Edit Contract",
+    "submit-btn": "Submit"
   }
 }

@@ -29,11 +29,14 @@ import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { L1SenderContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { NETWORK_IDS } from '@config'
 import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
-import { config } from '@config'
 import { ErrorMessage, Loader } from '@/common'
+
+const props = defineProps<{
+  network: ETHEREUM_CHAIN_NAMES
+  explorerUrl: string
+}>()
 
 const route = useRoute()
 const { t } = useI18n()
@@ -41,21 +44,6 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<L1SenderContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-
-const network = computed(() =>
-  route.query.network === NETWORK_IDS.mainnet
-    ? ETHEREUM_CHAIN_NAMES.ethereum
-    : ETHEREUM_CHAIN_NAMES.sepolia,
-)
-
-const explorerUrl = computed(
-  () =>
-    `${
-      network.value === ETHEREUM_CHAIN_NAMES.ethereum
-        ? config.networksMap.mainnet.l1.explorerUrl
-        : config.networksMap.testnet.l1.explorerUrl
-    }/address/`,
-)
 
 const contract = computed<IUseContract<'L1Sender__factory'> | null>(() => {
   if (!route.query.contractAddress) {
@@ -75,29 +63,29 @@ const contractData = computed(() => [
       {
         title: t('l1sender-contract-info.token'),
         value: contractInfo.value?.depositTokenConfig.token,
-        link: `${explorerUrl.value}${contractInfo.value?.depositTokenConfig.token}`,
+        link: `${props.explorerUrl}${contractInfo.value?.depositTokenConfig.token}`,
       },
       {
         title: t('l1sender-contract-info.gateway'),
         value: contractInfo.value?.depositTokenConfig.gateway,
-        link: `${explorerUrl.value}${contractInfo.value?.depositTokenConfig.gateway}`,
+        link: `${props.explorerUrl}${contractInfo.value?.depositTokenConfig.gateway}`,
       },
       {
         title: t('l1sender-contract-info.receiver'),
         value: contractInfo.value?.depositTokenConfig.receiver,
-        link: `${explorerUrl.value}${contractInfo.value?.depositTokenConfig.receiver}`,
+        link: `${props.explorerUrl}${contractInfo.value?.depositTokenConfig.receiver}`,
       },
     ],
   },
   {
     title: t('l1sender-contract-info.distribution'),
     value: contractInfo.value?.distribution,
-    link: `${explorerUrl.value}${contractInfo.value?.distribution}`,
+    link: `${props.explorerUrl}${contractInfo.value?.distribution}`,
   },
   {
     title: t('l1sender-contract-info.owner'),
     value: contractInfo.value?.owner,
-    link: `${explorerUrl.value}${contractInfo.value?.owner}`,
+    link: `${props.explorerUrl}${contractInfo.value?.owner}`,
   },
   {
     title: t('l1sender-contract-info.reward-token-config'),
@@ -105,12 +93,12 @@ const contractData = computed(() => [
       {
         title: t('l1sender-contract-info.gateway'),
         value: contractInfo.value?.rewardTokenConfig.gateway,
-        link: `${explorerUrl.value}${contractInfo.value?.rewardTokenConfig.gateway}`,
+        link: `${props.explorerUrl}${contractInfo.value?.rewardTokenConfig.gateway}`,
       },
       {
         title: t('l1sender-contract-info.receiver'),
         value: contractInfo.value?.rewardTokenConfig.receiver,
-        link: `${explorerUrl.value}${contractInfo.value?.rewardTokenConfig.receiver}`,
+        link: `${props.explorerUrl}${contractInfo.value?.rewardTokenConfig.receiver}`,
       },
       {
         title: t('l1sender-contract-info.receiver-chain-id'),
@@ -125,7 +113,7 @@ const contractData = computed(() => [
   {
     title: t('l1sender-contract-info.unwrapped-deposit-token'),
     value: contractInfo.value?.unwrappedDepositToken,
-    link: `${explorerUrl.value}${contractInfo.value?.unwrappedDepositToken}`,
+    link: `${props.explorerUrl}${contractInfo.value?.unwrappedDepositToken}`,
   },
 ])
 
