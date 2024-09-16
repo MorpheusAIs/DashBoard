@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ContractEditionType } from '@/types'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { AppButton, AppIcon } from '@/common'
 import { useContract, useFormValidation } from '@/composables'
