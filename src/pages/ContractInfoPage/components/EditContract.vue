@@ -4,7 +4,7 @@
       <contract-info-header
         :name="$t('edit-contract.title')"
         :project-name="contractName"
-        :type="CONTRACT_INFO_NAMES.edit"
+        :type="CONTRACT_INFO_ACTIONS.edit"
       />
     </header>
     <div class="edit-contract__content">
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { CONTRACT_INFO_NAMES, CONTRACT_TYPE } from '@/enums'
+import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE } from '@/enums'
 import { computed, ref, watch } from 'vue'
 import { ContractInfoHeader, ContractInfoMethods } from './ContractInfo'
 import ContractEdition from './ContractEdition.vue'

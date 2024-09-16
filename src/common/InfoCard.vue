@@ -32,7 +32,7 @@
           name: $routes.contractInfo,
           query: {
             contractAddress: card.address,
-            type: CONTRACT_INFO_NAMES.read,
+            type: CONTRACT_INFO_ACTIONS.read,
           },
         }"
         :text="$t('info-card.show-more')"
@@ -47,7 +47,7 @@
             name: $routes.contractInfo,
             query: {
               contractAddress: card.address,
-              type: CONTRACT_INFO_NAMES.edit,
+              type: CONTRACT_INFO_ACTIONS.edit,
             },
           }"
         />
@@ -60,7 +60,7 @@
 import { type InfoCardType } from '@/types'
 import AppButton from './AppButton.vue'
 import AppIcon from './AppIcon.vue'
-import { CONTRACT_INFO_NAMES } from '@/enums'
+import { CONTRACT_INFO_ACTIONS } from '@/enums'
 
 withDefaults(
   defineProps<{

@@ -9,7 +9,7 @@ export enum ROUTE_NAMES {
   appMor20EcosystemProtocolCreation = 'app-mor20-ecosystem-protocol-creation',
 }
 
-export enum CONTRACT_INFO_NAMES {
+export enum CONTRACT_INFO_ACTIONS {
   edit = 'edit',
   read = 'read',
 }

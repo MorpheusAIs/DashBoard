@@ -48,7 +48,7 @@ import {
 } from '@/pages/ContractInfoPage/components'
 import Loader from '@/common/Loader.vue'
 import {
-  CONTRACT_INFO_NAMES,
+  CONTRACT_INFO_ACTIONS,
   CONTRACT_TYPE,
   ETHEREUM_CHAIN_NAMES,
   NETWORK_IDS,
@@ -62,7 +62,7 @@ const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 
 const contractInfoComponent = computed(() =>
-  route.query.type === CONTRACT_INFO_NAMES.read
+  route.query.type === CONTRACT_INFO_ACTIONS.read
     ? contractReadComponent.value
     : contractWriteComponent.value,
 )

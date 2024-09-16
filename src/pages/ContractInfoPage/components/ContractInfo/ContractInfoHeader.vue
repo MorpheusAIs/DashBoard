@@ -19,7 +19,7 @@
         </span>
       </div>
     </div>
-    <h4 v-if="projectName" :class="projectClassName">
+    <h4 v-if="projectName" :class="projectClassNames">
       {{ projectName }}
     </h4>
     <p v-if="description" class="contract-info-header__description">
@@ -30,12 +30,16 @@
 
 <script setup lang="ts">
 import { AppIcon } from '@/common'
-import { CONTRACT_INFO_NAMES, ETHEREUM_CHAIN_NAMES, ICON_NAMES } from '@/enums'
+import {
+  CONTRACT_INFO_ACTIONS,
+  ETHEREUM_CHAIN_NAMES,
+  ICON_NAMES,
+} from '@/enums'
 import { computed } from 'vue'
 
 const props = defineProps<{
   name: string
-  type?: CONTRACT_INFO_NAMES
+  type?: CONTRACT_INFO_ACTIONS
   network?: ETHEREUM_CHAIN_NAMES
   symbol?: string
   projectName?: string
@@ -49,10 +53,13 @@ const iconName = computed(() =>
     : ICON_NAMES.arbitrumAlt,
 )
 
-const projectClassName = computed(() =>
-  props.type === CONTRACT_INFO_NAMES.read
-    ? 'contract-info-header__project'
-    : 'contract-info-header__project contract-info-header__project--write',
+const projectClassNames = computed(() =>
+  [
+    'contract-info-header__project',
+    ...(props.type === CONTRACT_INFO_NAMES.read
+      ? ['contract-info-header__project--action-write']
+      : []),
+  ].join(' '),
 )
 </script>
 
@@ -149,7 +156,7 @@ const projectClassName = computed(() =>
   line-height: toRem(32);
   font-weight: 400;
 
-  &--write {
+  &--action-write {
     color: var(--primary-main);
   }
 
