@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ContractEditionType } from '@/types'
-import { ref, reactive, computed } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { InputField } from '@/fields'
 import { AppButton, AppIcon } from '@/common'
 import { useContract, useFormValidation } from '@/composables'
@@ -47,12 +47,16 @@ import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import {
   CONTRACT_TYPE,
   DISTRIBUTION_CONTRACT_METHODS,
+  ETHEREUM_CHAIN_IDS,
   ETHEREUM_CHAIN_NAMES,
+  L1_SENDER_CONTRACT_METHODS,
+  L2_TOKEN_RECEIVER_CONTRACT_METHODS,
+  NETWORK_IDS,
   TOKEN_CONTRACT_METHODS,
 } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { useRoute } from 'vue-router'
-import { utils, ContractTransaction } from 'ethers'
+import { ContractTransaction, utils } from 'ethers'
 import { config } from '@config'
 
 type ContractInfo = {
@@ -164,9 +168,6 @@ const submitTokenContract = async (): Promise<ContractTransaction | null> => {
 
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
-  if (!contract.value) {
-    return
-  }
   switch (props.methodToEdit.methodName) {
     case DISTRIBUTION_CONTRACT_METHODS.bridgeOverplus:
       tx = await contract.value?.signerBased.value?.bridgeOverplus(
@@ -212,45 +213,140 @@ const submitDistributionContract = async () => {
 }
 
 const submitL1SenderContract = async () => {
-  return new Promise(resolve => {
-    setTimeout(resolve, 1000)
-  })
+  let tx: ContractTransaction | null = null
+  switch (props.methodToEdit.methodName) {
+    case L1_SENDER_CONTRACT_METHODS.sendDepositToken:
+      tx = await contract.value?.signerBased.value?.sendDepositToken(
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+        {
+          value: utils.parseEther(form['input-0']),
+        },
+      )
+      break
+    case L1_SENDER_CONTRACT_METHODS.sendMintMessage:
+      tx = await contract.value?.signerBased.value?.sendMintMessage(
+        form['input-1'],
+        utils.parseEther(form['input-2']),
+        form['input-3'],
+        {
+          value: utils.parseEther(form['input-0']),
+        },
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.burn:
+      tx = await contract.value?.signerBased.value?.burn(
+        utils.parseEther(form['input-0']),
+      )
+      break
+    default:
+      return tx
+  }
+  return tx
 }
 
 const submitL2MessageReceiver = async () => {
-  return new Promise(resolve => {
-    setTimeout(resolve, 1000)
-  })
+  return contract.value?.signerBased.value?.transferOwnership(form['input-0'])
 }
 
 const submitL2TokenReceiver = async () => {
-  return new Promise(resolve => {
-    setTimeout(resolve, 1000)
-  })
+  let tx: ContractTransaction | null = null
+  switch (props.methodToEdit.methodName) {
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.transferOwnership:
+      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.collectFees:
+      tx = await contract.value?.signerBased.value?.collectFees(form['input-0'])
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.decreaseLiquidityCurrentRange:
+      tx =
+        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
+          form['input-0'],
+          form['input-1'],
+          form['input-2'],
+          form['input-3'],
+        )
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.increaseLiquidityCurrentRange:
+      tx =
+        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
+          form['input-0'],
+          form['input-1'],
+          form['input-2'],
+          form['input-3'],
+          form['input-4'],
+        )
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawToken:
+      tx =
+        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
+          form['input-0'],
+          form['input-1'],
+          utils.parseEther(form['input-2']),
+        )
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawTokenId:
+      tx =
+        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
+          form['input-0'],
+          form['input-1'],
+          form['input-2'],
+        )
+      break
+    default:
+      return tx
+  }
+  return tx
 }
 
 const submit = async () => {
+  if (!contract.value) {
+    return
+  }
   isSubmitted.value = false
   isSubmitting.value = true
   let tx: ContractTransaction | null = null
   let isL1 = false
+  const isMainnet = route.query.network === NETWORK_IDS.mainnet
   try {
     switch (props.contractType) {
       case CONTRACT_TYPE.token:
+        await web3ProvidersStore.provider.selectChain(
+          isMainnet
+            ? ETHEREUM_CHAIN_IDS.arbitrum
+            : ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+        )
         tx = await submitTokenContract()
         break
       case CONTRACT_TYPE.distribution:
+        await web3ProvidersStore.provider.selectChain(
+          isMainnet ? ETHEREUM_CHAIN_IDS.ethereum : ETHEREUM_CHAIN_IDS.sepolia,
+        )
         tx = await submitDistributionContract()
         isL1 = true
         break
-      case CONTRACT_TYPE.l1_sender:
+      case CONTRACT_TYPE.l1Sender:
+        await web3ProvidersStore.provider.selectChain(
+          isMainnet ? ETHEREUM_CHAIN_IDS.ethereum : ETHEREUM_CHAIN_IDS.sepolia,
+        )
         tx = await submitL1SenderContract()
         isL1 = true
         break
-      case CONTRACT_TYPE.l2_message_receiver:
+      case CONTRACT_TYPE.l2MessageReceiver:
+        await web3ProvidersStore.provider.selectChain(
+          isMainnet
+            ? ETHEREUM_CHAIN_IDS.arbitrum
+            : ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+        )
         tx = await submitL2MessageReceiver()
         break
       default:
+        await web3ProvidersStore.provider.selectChain(
+          isMainnet
+            ? ETHEREUM_CHAIN_IDS.arbitrum
+            : ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+        )
         tx = await submitL2TokenReceiver()
     }
     const explorerTxUrl = getEthExplorerTxUrl(

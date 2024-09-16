@@ -42,10 +42,14 @@
           class="info-card__edit-btn"
           scheme="link"
           color="none"
-          target="_blank"
-          rel="noopener noreferrer"
-          href="#"
           :icon-right="$icons.edit"
+          :route="{
+            name: $routes.contractInfo,
+            query: {
+              contractAddress: card.address,
+              type: CONTRACT_INFO_NAMES.edit,
+            },
+          }"
         />
       </div>
     </div>

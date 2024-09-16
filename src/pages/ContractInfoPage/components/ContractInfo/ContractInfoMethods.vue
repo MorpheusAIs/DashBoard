@@ -45,6 +45,11 @@ const chooseMethod = (method: ContractMethods) => {
   display: flex;
   flex-direction: column;
   gap: toRem(12);
+  margin-right: toRem(40);
+
+  @include respond-to(medium) {
+    margin: 0;
+  }
 }
 
 .contract-info-methods__button {
@@ -62,6 +67,10 @@ const chooseMethod = (method: ContractMethods) => {
     &:not([disabled]):active {
       border-color: var(--primary-main);
     }
+  }
+
+  @include respond-to(medium) {
+    width: 100%;
   }
 }
 </style>

@@ -506,6 +506,8 @@
     },
     "sendDepositToken": {
       "note": "Send a deposit token with specified parameters.",
+      "eth-value-note": "Amount to send",
+      "eth-value-lbl": "Amount to send",
       "gasLimit-lbl": "Gas Limit",
       "gasLimit-note": "Specify the maximum gas limit for the transaction.",
       "maxFeePerGas-lbl": "Max Fee Per Gas",
@@ -515,6 +517,8 @@
     },
     "sendMintMessage": {
       "note": "Send a mint message with specified parameters.",
+      "eth-amount-note": "Payable Amount",
+      "eth-amount-lbl": "Payable Amount",
       "user-lbl": "User Address",
       "user-note": "Enter the address of the user who will receive the minted tokens.",
       "amount-lbl": "Amount",
