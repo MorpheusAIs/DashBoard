@@ -1,5 +1,5 @@
 import { ValidationRule } from '@vuelidate/core'
-import { ContractMethods, ContractType } from './index'
+import { ContractMethods } from './index'
 
 export type TokenContractInfo = {
   name: string
