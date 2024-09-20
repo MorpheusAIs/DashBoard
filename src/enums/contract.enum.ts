@@ -18,16 +18,19 @@ export enum TOKEN_CONTRACT_METHODS {
 export enum DISTRIBUTION_CONTRACT_METHODS {
   bridgeOverplus = 'bridge overplus',
   createPool = 'create pool',
+  editPool = 'edit pool',
+  manageUsersInPrivatePool = 'manage users in private pool',
 }
 
 export enum L1_SENDER_CONTRACT_METHODS {
-  sendDepositToken = 'send deposit token',
-  sendMintMessage = 'send mint message',
   transferOwnership = 'transfer ownership',
+  setRewardTokenLZParams = 'set reward token lz params',
 }
 
 export enum L2_MESSAGE_RECEIVER_CONTRACT_METHODS {
   transferOwnership = 'transfer ownership',
+  retryMessage = 'retry message',
+  setLzSender = 'set lz sender',
 }
 
 export enum L2_TOKEN_RECEIVER_CONTRACT_METHODS {
@@ -35,6 +38,7 @@ export enum L2_TOKEN_RECEIVER_CONTRACT_METHODS {
   collectFees = 'collect fees',
   decreaseLiquidityCurrentRange = 'decrease liquidity current range',
   increaseLiquidityCurrentRange = 'increase liquidity current range',
-  withdrawToken = 'withdraw token',
   withdrawTokenId = 'withdraw token id',
+  swap = 'swap',
+  editParams = 'edit params',
 }

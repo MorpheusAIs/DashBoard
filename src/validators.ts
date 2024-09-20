@@ -5,6 +5,7 @@ import {
   integer as _integer,
   numeric as _numeric,
   minValue as _minValue,
+  maxValue as _maxValue,
   required as _required,
 } from '@vuelidate/validators'
 import { type ValidationRule } from '@vuelidate/core'
@@ -24,6 +25,9 @@ export const numeric = <ValidationRule>withI18nMessage(_numeric)
 export const minValue = (value: number): ValidationRule =>
   <ValidationRule>withI18nMessage(_minValue(value))
 
+export const maxValue = (value: number): ValidationRule =>
+  <ValidationRule>withI18nMessage(_maxValue(value))
+
 export const required = <ValidationRule>withI18nMessage(_required)
 
 export const address = <ValidationRule>withI18nMessage(isAddress)
@@ -36,6 +40,10 @@ export const ether = <ValidationRule>withI18nMessage(value => {
     return false
   }
 })
+
+export const hex = <ValidationRule>(
+  withI18nMessage(value => /^0x[0-9a-fA-F]+$/.test(String(value)))
+)
 
 export const maxEther = (max: string): ValidationRule =>
   withI18nMessage(value => {

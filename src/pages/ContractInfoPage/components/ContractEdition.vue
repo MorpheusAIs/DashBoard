@@ -50,6 +50,7 @@ import {
   ETHEREUM_CHAIN_IDS,
   ETHEREUM_CHAIN_NAMES,
   L1_SENDER_CONTRACT_METHODS,
+  L2_MESSAGE_RECEIVER_CONTRACT_METHODS,
   L2_TOKEN_RECEIVER_CONTRACT_METHODS,
   NETWORK_IDS,
   TOKEN_CONTRACT_METHODS,
@@ -169,6 +170,19 @@ const submitTokenContract = async (): Promise<ContractTransaction | null> => {
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
+    case DISTRIBUTION_CONTRACT_METHODS.editPool:
+      tx = await contract.value?.signerBased.value?.editPool(form['input-0'], [
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+        form['input-4'],
+        form['input-5'],
+        form['input-6'],
+        form['input-7'],
+        form['input-8'],
+        Boolean(Number(form['input-9'])),
+      ])
+      break
     case DISTRIBUTION_CONTRACT_METHODS.bridgeOverplus:
       tx = await contract.value?.signerBased.value?.bridgeOverplus(
         form['input-0'],
@@ -215,29 +229,13 @@ const submitDistributionContract = async () => {
 const submitL1SenderContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
-    case L1_SENDER_CONTRACT_METHODS.sendDepositToken:
-      tx = await contract.value?.signerBased.value?.sendDepositToken(
-        form['input-1'],
-        form['input-2'],
-        form['input-3'],
-        {
-          value: utils.parseEther(form['input-0']),
-        },
-      )
+    case L1_SENDER_CONTRACT_METHODS.transferOwnership:
+      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
       break
-    case L1_SENDER_CONTRACT_METHODS.sendMintMessage:
-      tx = await contract.value?.signerBased.value?.sendMintMessage(
+    case L1_SENDER_CONTRACT_METHODS.setRewardTokenLZParams:
+      tx = contract.value?.signerBased.value?.setRewardTokenLZParams(
+        form['input-0'],
         form['input-1'],
-        utils.parseEther(form['input-2']),
-        form['input-3'],
-        {
-          value: utils.parseEther(form['input-0']),
-        },
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.burn:
-      tx = await contract.value?.signerBased.value?.burn(
-        utils.parseEther(form['input-0']),
       )
       break
     default:
@@ -247,7 +245,26 @@ const submitL1SenderContract = async () => {
 }
 
 const submitL2MessageReceiver = async () => {
-  return contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+  let tx: ContractTransaction | null = null
+  switch (props.methodToEdit.methodName) {
+    case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.transferOwnership:
+      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+      break
+    case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.retryMessage:
+      tx = contract.value?.signerBased.value?.retryMessage(
+        form['input-0'],
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+      )
+      break
+    case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.setLzSender:
+      tx = contract.value?.signerBased.value?.setLzSender(form['input-0'])
+      break
+    default:
+      return tx
+  }
+  return tx
 }
 
 const submitL2TokenReceiver = async () => {
@@ -278,21 +295,27 @@ const submitL2TokenReceiver = async () => {
           form['input-4'],
         )
       break
-    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawToken:
-      tx =
-        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
-          form['input-0'],
-          form['input-1'],
-          utils.parseEther(form['input-2']),
-        )
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.swap:
+      tx = await contract.value?.signerBased.value?.swap(
+        form['input-0'],
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+        Boolean(Number(form['input-4'])),
+      )
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.editParams:
+      tx = await contract.value?.signerBased.value?.editParams(
+        [form['input-0'], form['input-1'], form['input-2']],
+        Boolean(Number(form['input-3'])),
+      )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawTokenId:
-      tx =
-        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
-          form['input-0'],
-          form['input-1'],
-          form['input-2'],
-        )
+      tx = await contract.value?.signerBased.value?.withdrawTokenId(
+        form['input-0'],
+        form['input-1'],
+        form['input-2'],
+      )
       break
     default:
       return tx

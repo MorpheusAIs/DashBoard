@@ -56,7 +56,7 @@ const iconName = computed(() =>
 const projectClassNames = computed(() =>
   [
     'contract-info-header__project',
-    ...(props.type === CONTRACT_INFO_NAMES.read
+    ...(props.type === CONTRACT_INFO_ACTIONS.read
       ? ['contract-info-header__project--action-write']
       : []),
   ].join(' '),
@@ -155,6 +155,7 @@ const projectClassNames = computed(() =>
   font-size: toRem(22);
   line-height: toRem(32);
   font-weight: 400;
+  text-transform: capitalize;
 
   &--action-write {
     color: var(--primary-main);
