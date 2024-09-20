@@ -15,7 +15,7 @@
         @choose-method="updateChosenMethod"
       />
       <div class="edit-contract__content-edit-wrp">
-        <contract-edition
+        <contract-editing
           class="edit-contract__content-edit"
           :key="methodsToEdit[chosenMethod]"
           :contract-type="contractType"
@@ -30,14 +30,14 @@
 import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE } from '@/enums'
 import { computed, ref, watch } from 'vue'
 import { ContractInfoHeader, ContractInfoMethods } from './ContractInfo'
-import ContractEdition from './ContractEdition.vue'
+import ContractEditing from './ContractEditing.vue'
 import { address, minValue, maxValue, required, hex } from '@/validators'
-import { ContractEditionType, ContractMethods } from '@/types'
+import { ContractEditingType, ContractMethods } from '@/types'
 import { useI18n } from '@/composables'
 import { CONTRACT_METHODS } from '@/const'
 
 type ContractMethodsConfig = {
-  [key in keyof typeof CONTRACT_METHODS]: ContractEditionType
+  [key in keyof typeof CONTRACT_METHODS]: ContractEditingType
 }
 
 const props = defineProps<{

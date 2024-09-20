@@ -617,7 +617,7 @@
       "amounts-note": "The corresponding staking amounts for each user."
     }
   },
-  "contract-edition": {
+  "contract-editing": {
     "title": "Edit Contract",
     "submit-btn": "Submit"
   }

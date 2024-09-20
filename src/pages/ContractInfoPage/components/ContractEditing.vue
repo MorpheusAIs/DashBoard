@@ -1,20 +1,20 @@
 <template>
-  <div class="contract-edition">
-    <h4 class="contract-edition__title">
-      {{ $t('contract-edition.title') }}
+  <div class="contract-editing">
+    <h4 class="contract-editing__title">
+      {{ $t('contract-editing.title') }}
     </h4>
-    <span class="contract-edition__note">
+    <span class="contract-editing__note">
       {{ methodToEdit.note }}
     </span>
-    <div class="contract-edition__inputs">
+    <div class="contract-editing__inputs">
       <div
         v-for="(input, index) in methodToEdit.inputs"
         :key="index"
-        class="contract-edition__input-wrp"
+        class="contract-editing__input-wrp"
       >
         <input-field
           v-model="form[`input-${index}`]"
-          class="contract-edition__input"
+          class="contract-editing__input"
           :placeholder="input"
           :error-message="getFieldErrorMessage(`input-${index}`)"
           :disabled="isSubmitting || isSubmitted"
@@ -25,15 +25,15 @@
           v-tooltip="methodToEdit.inputNotes[index]"
         >
           <app-icon
-            class="contract-edition__input-icon"
+            class="contract-editing__input-icon"
             :name="$icons.exclamationCircle"
           />
         </div>
       </div>
     </div>
     <app-button
-      class="contract-edition__btn"
-      :text="$t('contract-edition.submit-btn')"
+      class="contract-editing__btn"
+      :text="$t('contract-editing.submit-btn')"
       :disabled="!isFieldsValid || isSubmitting"
       @click="submit"
     />
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContractEditionType } from '@/types'
+import { ContractEditingType } from '@/types'
 import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { AppButton, AppIcon } from '@/common'
@@ -70,7 +70,7 @@ type ContractInfo = {
 
 const props = defineProps<{
   contractType: CONTRACT_TYPE
-  methodToEdit: ContractEditionType
+  methodToEdit: ContractEditingType
 }>()
 
 const route = useRoute()
@@ -170,6 +170,7 @@ const submitTokenContract = async (): Promise<ContractTransaction | null> => {
   return tx
 }
 
+//TODO: ADD NEW LOGIC AS WE TALKED WITH MARK
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
@@ -402,37 +403,37 @@ const submit = async () => {
 </script>
 
 <style scoped lang="scss">
-.contract-edition {
+.contract-editing {
   width: 100%;
 }
 
-.contract-edition__title {
+.contract-editing__title {
   margin-bottom: toRem(12);
 }
 
-.contract-edition__note {
+.contract-editing__note {
   color: var(--text-tertiary-main);
 }
 
-.contract-edition__inputs {
+.contract-editing__inputs {
   display: flex;
   flex-direction: column;
   gap: toRem(32);
   margin-top: toRem(24);
 }
 
-.contract-edition__btn {
+.contract-editing__btn {
   margin-top: toRem(24);
   margin-left: auto;
 }
 
-.contract-edition__input-wrp {
+.contract-editing__input-wrp {
   position: relative;
   display: flex;
   gap: toRem(18);
 }
 
-.contract-edition__input-icon {
+.contract-editing__input-icon {
   position: relative;
   top: toRem(17);
   width: toRem(30);

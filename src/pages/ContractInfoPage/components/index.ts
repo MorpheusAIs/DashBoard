@@ -4,4 +4,4 @@ export { default as L2TokenReceiverContractInfo } from './L2TokenReceiverContrac
 export { default as L2MessageReceiverContractInfo } from './L2MessageReceiverContractInfo.vue'
 export { default as DistributionContractInfo } from './DistributionContractInfo.vue'
 export { default as EditContract } from './EditContract.vue'
-export { default as ContractEdition } from './ContractEdition.vue'
+export { default as ContractEditing } from './ContractEditing.vue'
