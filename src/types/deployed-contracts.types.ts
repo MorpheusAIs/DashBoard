@@ -74,7 +74,7 @@ export type L2TokenReceiverContractInfo = {
   }
 }
 
-export type ContractEditionType = {
+export type ContractEditingType = {
   methodName: ContractMethods
   note: string
   inputs: string[]

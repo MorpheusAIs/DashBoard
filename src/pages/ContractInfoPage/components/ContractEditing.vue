@@ -1,36 +1,39 @@
 <template>
-  <div class="contract-edition">
-    <h4 class="contract-edition__title">
-      {{ $t('contract-edition.title') }}
+  <div class="contract-editing">
+    <h4 class="contract-editing__title">
+      {{ $t('contract-editing.title') }}
     </h4>
-    <span class="contract-edition__note">
+    <span class="contract-editing__note">
       {{ methodToEdit.note }}
     </span>
-    <div class="contract-edition__inputs">
+    <div class="contract-editing__inputs">
       <div
         v-for="(input, index) in methodToEdit.inputs"
         :key="index"
-        class="contract-edition__input-wrp"
+        class="contract-editing__input-wrp"
       >
         <input-field
           v-model="form[`input-${index}`]"
-          class="contract-edition__input"
+          class="contract-editing__input"
           :placeholder="input"
           :error-message="getFieldErrorMessage(`input-${index}`)"
           :disabled="isSubmitting || isSubmitted"
           @blur="touchField(`input-${index}`)"
         />
-        <app-icon
+        <div
           v-if="methodToEdit.inputNotes[index]"
           v-tooltip="methodToEdit.inputNotes[index]"
-          class="contract-edition__input-icon"
-          :name="$icons.exclamationCircle"
-        />
+        >
+          <app-icon
+            class="contract-editing__input-icon"
+            :name="$icons.exclamationCircle"
+          />
+        </div>
       </div>
     </div>
     <app-button
-      class="contract-edition__btn"
-      :text="$t('contract-edition.submit-btn')"
+      class="contract-editing__btn"
+      :text="$t('contract-editing.submit-btn')"
       :disabled="!isFieldsValid || isSubmitting"
       @click="submit"
     />
@@ -38,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContractEditionType } from '@/types'
+import { ContractEditingType } from '@/types'
 import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { AppButton, AppIcon } from '@/common'
@@ -50,6 +53,7 @@ import {
   ETHEREUM_CHAIN_IDS,
   ETHEREUM_CHAIN_NAMES,
   L1_SENDER_CONTRACT_METHODS,
+  L2_MESSAGE_RECEIVER_CONTRACT_METHODS,
   L2_TOKEN_RECEIVER_CONTRACT_METHODS,
   NETWORK_IDS,
   TOKEN_CONTRACT_METHODS,
@@ -66,7 +70,7 @@ type ContractInfo = {
 
 const props = defineProps<{
   contractType: CONTRACT_TYPE
-  methodToEdit: ContractEditionType
+  methodToEdit: ContractEditingType
 }>()
 
 const route = useRoute()
@@ -166,9 +170,23 @@ const submitTokenContract = async (): Promise<ContractTransaction | null> => {
   return tx
 }
 
+//TODO: ADD NEW LOGIC AS WE TALKED WITH MARK
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
+    case DISTRIBUTION_CONTRACT_METHODS.editPool:
+      tx = await contract.value?.signerBased.value?.editPool(form['input-0'], [
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+        form['input-4'],
+        form['input-5'],
+        form['input-6'],
+        form['input-7'],
+        form['input-8'],
+        Boolean(Number(form['input-9'])),
+      ])
+      break
     case DISTRIBUTION_CONTRACT_METHODS.bridgeOverplus:
       tx = await contract.value?.signerBased.value?.bridgeOverplus(
         form['input-0'],
@@ -215,29 +233,13 @@ const submitDistributionContract = async () => {
 const submitL1SenderContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
-    case L1_SENDER_CONTRACT_METHODS.sendDepositToken:
-      tx = await contract.value?.signerBased.value?.sendDepositToken(
-        form['input-1'],
-        form['input-2'],
-        form['input-3'],
-        {
-          value: utils.parseEther(form['input-0']),
-        },
-      )
+    case L1_SENDER_CONTRACT_METHODS.transferOwnership:
+      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
       break
-    case L1_SENDER_CONTRACT_METHODS.sendMintMessage:
-      tx = await contract.value?.signerBased.value?.sendMintMessage(
+    case L1_SENDER_CONTRACT_METHODS.setRewardTokenLZParams:
+      tx = contract.value?.signerBased.value?.setRewardTokenLZParams(
+        form['input-0'],
         form['input-1'],
-        utils.parseEther(form['input-2']),
-        form['input-3'],
-        {
-          value: utils.parseEther(form['input-0']),
-        },
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.burn:
-      tx = await contract.value?.signerBased.value?.burn(
-        utils.parseEther(form['input-0']),
       )
       break
     default:
@@ -247,7 +249,26 @@ const submitL1SenderContract = async () => {
 }
 
 const submitL2MessageReceiver = async () => {
-  return contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+  let tx: ContractTransaction | null = null
+  switch (props.methodToEdit.methodName) {
+    case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.transferOwnership:
+      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+      break
+    case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.retryMessage:
+      tx = contract.value?.signerBased.value?.retryMessage(
+        form['input-0'],
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+      )
+      break
+    case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.setLzSender:
+      tx = contract.value?.signerBased.value?.setLzSender(form['input-0'])
+      break
+    default:
+      return tx
+  }
+  return tx
 }
 
 const submitL2TokenReceiver = async () => {
@@ -278,21 +299,27 @@ const submitL2TokenReceiver = async () => {
           form['input-4'],
         )
       break
-    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawToken:
-      tx =
-        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
-          form['input-0'],
-          form['input-1'],
-          utils.parseEther(form['input-2']),
-        )
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.swap:
+      tx = await contract.value?.signerBased.value?.swap(
+        form['input-0'],
+        form['input-1'],
+        form['input-2'],
+        form['input-3'],
+        Boolean(Number(form['input-4'])),
+      )
+      break
+    case L2_TOKEN_RECEIVER_CONTRACT_METHODS.editParams:
+      tx = await contract.value?.signerBased.value?.editParams(
+        [form['input-0'], form['input-1'], form['input-2']],
+        Boolean(Number(form['input-3'])),
+      )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawTokenId:
-      tx =
-        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
-          form['input-0'],
-          form['input-1'],
-          form['input-2'],
-        )
+      tx = await contract.value?.signerBased.value?.withdrawTokenId(
+        form['input-0'],
+        form['input-1'],
+        form['input-2'],
+      )
       break
     default:
       return tx
@@ -376,37 +403,37 @@ const submit = async () => {
 </script>
 
 <style scoped lang="scss">
-.contract-edition {
+.contract-editing {
   width: 100%;
 }
 
-.contract-edition__title {
+.contract-editing__title {
   margin-bottom: toRem(12);
 }
 
-.contract-edition__note {
+.contract-editing__note {
   color: var(--text-tertiary-main);
 }
 
-.contract-edition__inputs {
+.contract-editing__inputs {
   display: flex;
   flex-direction: column;
   gap: toRem(32);
   margin-top: toRem(24);
 }
 
-.contract-edition__btn {
+.contract-editing__btn {
   margin-top: toRem(24);
   margin-left: auto;
 }
 
-.contract-edition__input-wrp {
+.contract-editing__input-wrp {
   position: relative;
   display: flex;
   gap: toRem(18);
 }
 
-.contract-edition__input-icon {
+.contract-editing__input-icon {
   position: relative;
   top: toRem(17);
   width: toRem(30);

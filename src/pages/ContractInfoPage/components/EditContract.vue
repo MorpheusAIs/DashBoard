@@ -14,12 +14,14 @@
         :chosen-method="chosenMethod"
         @choose-method="updateChosenMethod"
       />
-      <contract-edition
-        class="edit-contract__content-edit"
-        :key="methodsToEdit[chosenMethod]"
-        :contract-type="contractType"
-        :method-to-edit="methodsToEdit[chosenMethod]"
-      />
+      <div class="edit-contract__content-edit-wrp">
+        <contract-editing
+          class="edit-contract__content-edit"
+          :key="methodsToEdit[chosenMethod]"
+          :contract-type="contractType"
+          :method-to-edit="methodsToEdit[chosenMethod]"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -28,15 +30,14 @@
 import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE } from '@/enums'
 import { computed, ref, watch } from 'vue'
 import { ContractInfoHeader, ContractInfoMethods } from './ContractInfo'
-import ContractEdition from './ContractEdition.vue'
-import { address, minValue, required } from '@/validators'
-import { ContractEditionType, ContractMethods } from '@/types'
+import ContractEditing from './ContractEditing.vue'
+import { address, minValue, maxValue, required, hex } from '@/validators'
+import { ContractEditingType, ContractMethods } from '@/types'
 import { useI18n } from '@/composables'
 import { CONTRACT_METHODS } from '@/const'
-import { maxValue } from '@vuelidate/validators'
 
 type ContractMethodsConfig = {
-  [key in keyof typeof CONTRACT_METHODS]: ContractEditionType
+  [key in keyof typeof CONTRACT_METHODS]: ContractEditingType
 }
 
 const props = defineProps<{
@@ -47,36 +48,46 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const chosenMethod = ref(CONTRACT_METHODS.mint)
+const chosenMethod = ref(CONTRACT_METHODS.transfer)
 
 const contractMethods = computed(() => {
   switch (props.contractType) {
     case CONTRACT_TYPE.token:
       return [
-        CONTRACT_METHODS.mint,
+        CONTRACT_METHODS.approve,
+        CONTRACT_METHODS.burn,
+        CONTRACT_METHODS.increaseAllowance,
         CONTRACT_METHODS.transfer,
         CONTRACT_METHODS.transferOwnership,
-        CONTRACT_METHODS.increaseAllowance,
-        CONTRACT_METHODS.burn,
-        CONTRACT_METHODS.approve,
       ]
     case CONTRACT_TYPE.distribution:
-      return [CONTRACT_METHODS.bridgeOverplus, CONTRACT_METHODS.createPool]
+      return [
+        CONTRACT_METHODS.bridgeOverplus,
+        CONTRACT_METHODS.createPool,
+        CONTRACT_METHODS.editPool,
+        CONTRACT_METHODS.transferOwnership,
+        // TODO: THINK ABOUT ARRAY VALIDATION
+        // CONTRACT_METHODS.manageUsersInPrivatePool,
+      ]
     case CONTRACT_TYPE.l1Sender:
       return [
-        CONTRACT_METHODS.sendDepositToken,
-        CONTRACT_METHODS.sendMintMessage,
+        CONTRACT_METHODS.setRewardTokenLZParams,
         CONTRACT_METHODS.transferOwnership,
       ]
     case CONTRACT_TYPE.l2MessageReceiver:
-      return [CONTRACT_METHODS.transferOwnership]
+      return [
+        CONTRACT_METHODS.retryMessage,
+        CONTRACT_METHODS.setLzSender,
+        CONTRACT_METHODS.transferOwnership,
+      ]
     case CONTRACT_TYPE.l2TokenReceiver:
       return [
-        CONTRACT_METHODS.transferOwnership,
         CONTRACT_METHODS.collectFees,
         CONTRACT_METHODS.decreaseLiquidityCurrentRange,
+        CONTRACT_METHODS.editParams,
         CONTRACT_METHODS.increaseLiquidityCurrentRange,
-        CONTRACT_METHODS.withdrawToken,
+        CONTRACT_METHODS.swap,
+        CONTRACT_METHODS.transferOwnership,
         CONTRACT_METHODS.withdrawTokenId,
       ]
     default:
@@ -84,12 +95,9 @@ const contractMethods = computed(() => {
   }
 })
 
-const contractName = computed(() => {
-  if (props.projectName) {
-    return props.projectName
-  }
-  return props.contractType
-})
+const contractName = computed(
+  () => `${props.projectName} ${props.contractType}`,
+)
 
 const methodsToEdit = computed<ContractMethodsConfig>(() => ({
   [CONTRACT_METHODS.approve]: {
@@ -124,28 +132,6 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     inputNotes: [
       t('edit-contract.transfer.to-note'),
       t('edit-contract.transfer.amount-note'),
-    ],
-    validationRules: {
-      'input-0': {
-        required,
-        address,
-      },
-      'input-1': {
-        required,
-        minValue: minValue(0),
-      },
-    },
-  },
-  [CONTRACT_METHODS.mint]: {
-    methodName: CONTRACT_METHODS.mint,
-    note: t('edit-contract.mint.note'),
-    inputs: [
-      t('edit-contract.mint.to-lbl'),
-      t('edit-contract.mint.amount-lbl'),
-    ],
-    inputNotes: [
-      t('edit-contract.mint.to-note'),
-      t('edit-contract.mint.amount-note'),
     ],
     validationRules: {
       'input-0': {
@@ -303,6 +289,7 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       },
     },
   },
+  // TODO: THINK ABOUT ARRAY VALIDATION
   [CONTRACT_METHODS.manageUsersInPrivatePool]: {
     methodName: CONTRACT_METHODS.manageUsersInPrivatePool,
     note: t('edit-contract.manage-users-in-private-pool.note'),
@@ -328,72 +315,6 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       'input-3': {
         required,
         // type: 'array',
-      },
-    },
-  },
-  [CONTRACT_METHODS.sendDepositToken]: {
-    methodName: CONTRACT_METHODS.sendDepositToken,
-    note: t('edit-contract.sendDepositToken.note'),
-    inputs: [
-      t('edit-contract.sendDepositToken.eth-value-lbl'),
-      t('edit-contract.sendDepositToken.gasLimit-lbl'),
-      t('edit-contract.sendDepositToken.maxFeePerGas-lbl'),
-      t('edit-contract.sendDepositToken.maxSubmissionCost-lbl'),
-    ],
-    inputNotes: [
-      t('edit-contract.sendDepositToken.eth-value-note'),
-      t('edit-contract.sendDepositToken.gasLimit-note'),
-      t('edit-contract.sendDepositToken.maxFeePerGas-note'),
-      t('edit-contract.sendDepositToken.maxSubmissionCost-note'),
-    ],
-    validationRules: {
-      'input-0': {
-        required,
-        minValue: minValue(0),
-      },
-      'input-1': {
-        required,
-        minValue: minValue(0),
-      },
-      'input-2': {
-        required,
-        minValue: minValue(0),
-      },
-      'input-3': {
-        required,
-        minValue: minValue(0),
-      },
-    },
-  },
-  [CONTRACT_METHODS.sendMintMessage]: {
-    methodName: CONTRACT_METHODS.sendMintMessage,
-    note: t('edit-contract.sendMintMessage.note'),
-    inputs: [
-      t('edit-contract.sendMintMessage.eth-amount-lbl'),
-      t('edit-contract.sendMintMessage.user-lbl'),
-      t('edit-contract.sendMintMessage.amount-lbl'),
-      t('edit-contract.sendMintMessage.refundTo-lbl'),
-    ],
-    inputNotes: [
-      t('edit-contract.sendMintMessage.eth-amount-note'),
-      t('edit-contract.sendMintMessage.user-note'),
-      t('edit-contract.sendMintMessage.amount-note'),
-      t('edit-contract.sendMintMessage.refundTo-note'),
-    ],
-    validationRules: {
-      'input-0': {
-        required,
-        minValue: minValue(0),
-      },
-      'input-1': {
-        required,
-        address,
-      },
-      'input-2': {
-        minValue: minValue(0),
-      },
-      'input-3': {
-        address,
       },
     },
   },
@@ -483,34 +404,6 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       },
     },
   },
-  [CONTRACT_METHODS.withdrawToken]: {
-    methodName: CONTRACT_METHODS.withdrawToken,
-    note: t('edit-contract.withdrawToken.note'),
-    inputs: [
-      t('edit-contract.withdrawToken.recipient-lbl'),
-      t('edit-contract.withdrawToken.token-lbl'),
-      t('edit-contract.withdrawToken.amount-lbl'),
-    ],
-    inputNotes: [
-      t('edit-contract.withdrawToken.recipient-note'),
-      t('edit-contract.withdrawToken.token-note'),
-      t('edit-contract.withdrawToken.amount-note'),
-    ],
-    validationRules: {
-      'input-0': {
-        required,
-        address,
-      },
-      'input-1': {
-        required,
-        address,
-      },
-      'input-2': {
-        required,
-        minValue: minValue(0),
-      },
-    },
-  },
   [CONTRACT_METHODS.withdrawTokenId]: {
     methodName: CONTRACT_METHODS.withdrawTokenId,
     note: t('edit-contract.withdrawTokenId.note'),
@@ -536,6 +429,221 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       'input-2': {
         required,
         minValue: minValue(0),
+      },
+    },
+  },
+  [CONTRACT_METHODS.swap]: {
+    methodName: CONTRACT_METHODS.swap,
+    note: t('edit-contract.swap.note'),
+    inputs: [
+      t('edit-contract.swap.amountIn-lbl'),
+      t('edit-contract.swap.amountOutMinimum-lbl'),
+      t('edit-contract.swap.deadline-lbl'),
+      t('edit-contract.swap.sqrtPriceLimitX96-lbl'),
+      t('edit-contract.swap.isUseFirstSwapParams-lbl'),
+    ],
+    inputNotes: [
+      t('edit-contract.swap.amountIn-note'),
+      t('edit-contract.swap.amountOutMinimum-note'),
+      t('edit-contract.swap.deadline-note'),
+      t('edit-contract.swap.sqrtPriceLimitX96-note'),
+      t('edit-contract.swap.isUseFirstSwapParams-note'),
+    ],
+    validationRules: {
+      'input-0': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-1': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-2': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-3': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-4': {
+        required,
+        minValue: minValue(0),
+        maxValue: minValue(1),
+      },
+    },
+  },
+  [CONTRACT_METHODS.editParams]: {
+    methodName: CONTRACT_METHODS.editParams,
+    note: t('edit-contract.editParams.note'),
+    inputs: [
+      t('edit-contract.editParams.tokenIn-lbl'),
+      t('edit-contract.editParams.tokenOut-lbl'),
+      t('edit-contract.editParams.fee-lbl'),
+      t('edit-contract.editParams.isEditFirstParams-lbl'),
+    ],
+    inputNotes: [
+      t('edit-contract.editParams.tokenIn-note'),
+      t('edit-contract.editParams.tokenOut-note'),
+      t('edit-contract.editParams.fee-note'),
+      t('edit-contract.editParams.isEditFirstParams-note'),
+    ],
+    validationRules: {
+      'input-0': {
+        required,
+        address,
+      },
+      'input-1': {
+        required,
+        address,
+      },
+      'input-2': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-3': {
+        required,
+        minValue: minValue(0),
+        maxValue: minValue(1),
+      },
+    },
+  },
+  [CONTRACT_METHODS.retryMessage]: {
+    methodName: CONTRACT_METHODS.retryMessage,
+    note: t('edit-contract.retryMessage.note'),
+    inputs: [
+      t('edit-contract.retryMessage.senderChainId-lbl'),
+      t('edit-contract.retryMessage.senderAndReceiverAddresses-lbl'),
+      t('edit-contract.retryMessage.nonce-lbl'),
+      t('edit-contract.retryMessage.payload-lbl'),
+    ],
+    inputNotes: [
+      t('edit-contract.retryMessage.senderChainId-note'),
+      t('edit-contract.retryMessage.senderAndReceiverAddresses-note'),
+      t('edit-contract.retryMessage.nonce-note'),
+      t('edit-contract.retryMessage.payload-note'),
+    ],
+    validationRules: {
+      'input-0': {
+        required,
+        minValue: minValue(1),
+      },
+      'input-1': {
+        required,
+        hex,
+      },
+      'input-2': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-3': {
+        required,
+        hex,
+      },
+    },
+  },
+  [CONTRACT_METHODS.setLzSender]: {
+    methodName: CONTRACT_METHODS.setLzSender,
+    note: t('edit-contract.setLzSender.note'),
+    inputs: [t('edit-contract.setLzSender.lzSender-lbl')],
+    inputNotes: [t('edit-contract.setLzSender.lzSender-note')],
+    validationRules: {
+      'input-0': {
+        required,
+        address,
+      },
+    },
+  },
+  [CONTRACT_METHODS.setRewardTokenLZParams]: {
+    methodName: CONTRACT_METHODS.setRewardTokenLZParams,
+    note: t('edit-contract.setRewardTokenLZParams.note'),
+    inputs: [
+      t('edit-contract.setRewardTokenLZParams.zroPaymentAddress-lbl'),
+      t('edit-contract.setRewardTokenLZParams.adapterParams-lbl'),
+    ],
+    inputNotes: [
+      t('edit-contract.setRewardTokenLZParams.zroPaymentAddress-note'),
+      t('edit-contract.setRewardTokenLZParams.adapterParams-note'),
+    ],
+    validationRules: {
+      'input-0': {
+        required,
+        address,
+      },
+      'input-1': {
+        required,
+        hex,
+      },
+    },
+  },
+  [CONTRACT_METHODS.editPool]: {
+    methodName: CONTRACT_METHODS.editPool,
+    note: t('edit-contract.editPool.note'),
+    inputs: [
+      t('edit-contract.editPool.poolId-lbl'),
+      t('edit-contract.editPool.payoutStart-lbl'),
+      t('edit-contract.editPool.decreaseInterval-lbl'),
+      t('edit-contract.editPool.withdrawLockPeriod-lbl'),
+      t('edit-contract.editPool.claimLockPeriod-lbl'),
+      t('edit-contract.editPool.withdrawLockPeriodAfterStake-lbl'),
+      t('edit-contract.editPool.initialReward-lbl'),
+      t('edit-contract.editPool.rewardDecrease-lbl'),
+      t('edit-contract.editPool.minimalStake-lbl'),
+      t('edit-contract.editPool.isPublic-lbl'),
+    ],
+    inputNotes: [
+      t('edit-contract.editPool.poolId-note'),
+      t('edit-contract.editPool.payoutStart-note'),
+      t('edit-contract.editPool.decreaseInterval-note'),
+      t('edit-contract.editPool.withdrawLockPeriod-note'),
+      t('edit-contract.editPool.claimLockPeriod-note'),
+      t('edit-contract.editPool.withdrawLockPeriodAfterStake-note'),
+      t('edit-contract.editPool.initialReward-note'),
+      t('edit-contract.editPool.rewardDecrease-note'),
+      t('edit-contract.editPool.minimalStake-note'),
+      t('edit-contract.editPool.isPublic-note'),
+    ],
+    validationRules: {
+      'input-0': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-1': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-2': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-3': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-4': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-5': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-6': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-7': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-8': {
+        required,
+        minValue: minValue(0),
+      },
+      'input-9': {
+        required,
+        minValue: minValue(0),
+        maxValue: minValue(1),
       },
     },
   },
@@ -601,11 +709,20 @@ watch(
 }
 
 .edit-contract__content-methods {
-  max-width: toRem(320);
-  border-right: toRem(1) solid var(--border-primary-dark);
+  flex: 1;
+  min-width: toRem(320);
+  height: 100%;
 
   @include respond-to(medium) {
     max-width: 100%;
+  }
+}
+
+.edit-contract__content-edit-wrp {
+  width: 100%;
+  border-left: toRem(1) solid var(--border-primary-dark);
+
+  @include respond-to(medium) {
     border: none;
   }
 }

@@ -42,6 +42,7 @@ const chooseMethod = (method: ContractMethods) => {
 }
 
 .contract-info-methods__content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: toRem(12);

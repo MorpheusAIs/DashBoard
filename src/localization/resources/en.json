@@ -218,6 +218,7 @@
     "field-error_address": "Field must be a valid address with prefix \"0x\"",
     "field-error_required": "Field must be filled in",
     "field-error_ether": "Field must contain the amount of tokens",
+    "field-error_hex": "The field must start with 0x and have a valid hex.",
     "field-error_integer": "Field must be integer",
     "field-error_numeric": "Field must be numeric",
     "field-error_maxEther": "Insufficient amount of tokens",
@@ -430,13 +431,6 @@
       "spender-note": "Address of the spender",
       "amount-note": "Amount to add to the allowance"
     },
-    "mint": {
-      "note": "Mint new tokens to a specified address.",
-      "to-lbl": "Recipient",
-      "amount-lbl": "Amount",
-      "to-note": "Address to mint the tokens to",
-      "amount-note": "Amount of tokens to mint"
-    },
     "transfer": {
       "note": "Transfer tokens to another account.",
       "to-lbl": "Recipient",
@@ -504,28 +498,6 @@
       "amounts-lbl": "Amounts",
       "amounts-note": "Specify the amounts associated with each user. Ensure that the number of amounts matches the number of users."
     },
-    "sendDepositToken": {
-      "note": "Send a deposit token with specified parameters.",
-      "eth-value-note": "Amount to send",
-      "eth-value-lbl": "Amount to send",
-      "gasLimit-lbl": "Gas Limit",
-      "gasLimit-note": "Specify the maximum gas limit for the transaction.",
-      "maxFeePerGas-lbl": "Max Fee Per Gas",
-      "maxFeePerGas-note": "Specify the maximum fee per gas unit.",
-      "maxSubmissionCost-lbl": "Max Submission Cost",
-      "maxSubmissionCost-note": "Specify the maximum submission cost."
-    },
-    "sendMintMessage": {
-      "note": "Send a mint message with specified parameters.",
-      "eth-amount-note": "Payable Amount",
-      "eth-amount-lbl": "Payable Amount",
-      "user-lbl": "User Address",
-      "user-note": "Enter the address of the user who will receive the minted tokens.",
-      "amount-lbl": "Amount",
-      "amount-note": "Specify the amount of tokens to mint.",
-      "refundTo-lbl": "Refund Address",
-      "refundTo-note": "Enter the address where any excess funds should be refunded (optional)."
-    },
     "collectFees": {
       "note": "Collect fees from a specific token ID.",
       "tokenId-lbl": "Token ID",
@@ -555,15 +527,6 @@
       "amount1Min-lbl": "Minimum Amount of Token1",
       "amount1Min-note": "Specify the minimum amount of token1 to accept."
     },
-    "withdrawToken": {
-      "note": "Withdraw a specific amount of tokens to a designated address.",
-      "recipient-lbl": "Recipient Address",
-      "recipient-note": "Enter the address where the tokens should be sent.",
-      "token-lbl": "Token Address",
-      "token-note": "Enter the address of the token to withdraw.",
-      "amount-lbl": "Amount",
-      "amount-note": "Specify the amount of tokens to withdraw."
-    },
     "withdrawTokenId": {
       "note": "Withdraw a specific token ID to a designated address.",
       "recipient-lbl": "Recipient Address",
@@ -572,9 +535,89 @@
       "token-note": "Enter the address of the token contract.",
       "tokenId-lbl": "Token ID",
       "tokenId-note": "Enter the ID of the token to withdraw."
+    },
+    "swap": {
+      "note": "Perform a swap between two tokens.",
+      "amountIn-lbl": "Amount In",
+      "amountOutMinimum-lbl": "Minimum Amount Out",
+      "deadline-lbl": "Deadline",
+      "sqrtPriceLimitX96-lbl": "Sqrt Price Limit X96",
+      "isUseFirstSwapParams-lbl": "Use First Swap Params",
+      "amountIn-note": "Amount of token to swap in.",
+      "amountOutMinimum-note": "Minimum amount of token to receive.",
+      "deadline-note": "Deadline for the swap transaction.",
+      "sqrtPriceLimitX96-note": "Price limit for the swap in Q64.96 format.",
+      "isUseFirstSwapParams-note": "Specify whether to use the first set of swap parameters."
+    },
+    "editParams": {
+      "note": "Update the parameters for swapping tokens. You can modify either the first or the second swap parameters.",
+      "newParams-lbl": "New Parameters",
+      "tokenIn-lbl": "Token In",
+      "tokenIn-note": "Address of the token being swapped from",
+      "tokenOut-lbl": "Token Out",
+      "tokenOut-note": "Address of the token being swapped to",
+      "fee-lbl": "Fee",
+      "fee-note": "Fee tier for the swap",
+      "isEditFirstParams-lbl": "Edit First Params",
+      "isEditFirstParams-note": "Indicate whether you are editing the first swap parameters or the second"
+    },
+    "retryMessage": {
+      "note": "Resend a previously failed message by specifying the sender chain, addresses, nonce, and payload.",
+      "senderChainId-lbl": "Sender Chain ID",
+      "senderChainId-note": "The ID of the sender's blockchain network.",
+      "senderAndReceiverAddresses-lbl": "Sender and Receiver Addresses",
+      "senderAndReceiverAddresses-note": "A combined byte representation of the sender and receiver addresses.",
+      "nonce-lbl": "Nonce",
+      "nonce-note": "The unique message nonce for the failed message.",
+      "payload-lbl": "Payload",
+      "payload-note": "The message payload to be retried."
+    },
+    "setLzSender": {
+      "note": "Update the LayerZero sender address that will send messages to this contract.",
+      "lzSender-lbl": "Lz Sender Address",
+      "lzSender-note": "The address of the LayerZero sender."
+    },
+    "setRewardTokenLZParams": {
+      "note": "Configure LayerZero parameters for the reward token.",
+      "zroPaymentAddress-lbl": "ZRO Payment Address",
+      "zroPaymentAddress-note": "Address to pay ZRO fees for LayerZero transactions.",
+      "adapterParams-lbl": "Adapter Params",
+      "adapterParams-note": "Extra parameters for the LayerZero adapter."
+    },
+    "editPool": {
+      "note": "Modify the parameters of an existing pool.",
+      "poolId-lbl": "Pool ID",
+      "poolId-note": "The ID of the pool to be edited.",
+      "payoutStart-lbl": "Payout Start",
+      "payoutStart-note": "The timestamp when payouts will start.",
+      "decreaseInterval-lbl": "Decrease Interval",
+      "decreaseInterval-note": "The interval after which the rewards will decrease.",
+      "withdrawLockPeriod-lbl": "Withdraw Lock Period",
+      "withdrawLockPeriod-note": "The lock period after staking during which withdrawals are not allowed.",
+      "claimLockPeriod-lbl": "Claim Lock Period",
+      "claimLockPeriod-note": "The lock period during which claims cannot be made.",
+      "withdrawLockPeriodAfterStake-lbl": "Withdraw Lock Period After Stake",
+      "withdrawLockPeriodAfterStake-note": "The additional lock period after a stake is made.",
+      "initialReward-lbl": "Initial Reward",
+      "initialReward-note": "The initial reward for staking.",
+      "rewardDecrease-lbl": "Reward Decrease",
+      "rewardDecrease-note": "The amount by which the reward decreases over time.",
+      "minimalStake-lbl": "Minimal Stake",
+      "minimalStake-note": "The minimum stake required to participate.",
+      "isPublic-lbl": "Is Public",
+      "isPublic-note": "Indicates whether the pool is public or private."
+    },
+    "manageUsersInPrivatePool": {
+      "note": "Manage users' participation and staking amounts in a private pool.",
+      "poolId-lbl": "Pool ID",
+      "poolId-note": "The ID of the private pool to manage.",
+      "users-lbl": "Users",
+      "users-note": "A list of addresses of users participating in the private pool.",
+      "amounts-lbl": "Amounts",
+      "amounts-note": "The corresponding staking amounts for each user."
     }
   },
-  "contract-edition": {
+  "contract-editing": {
     "title": "Edit Contract",
     "submit-btn": "Submit"
   }
