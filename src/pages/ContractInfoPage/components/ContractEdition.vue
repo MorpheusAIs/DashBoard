@@ -20,12 +20,15 @@
           :disabled="isSubmitting || isSubmitted"
           @blur="touchField(`input-${index}`)"
         />
-        <app-icon
+        <div
           v-if="methodToEdit.inputNotes[index]"
           v-tooltip="methodToEdit.inputNotes[index]"
-          class="contract-edition__input-icon"
-          :name="$icons.exclamationCircle"
-        />
+        >
+          <app-icon
+            class="contract-edition__input-icon"
+            :name="$icons.exclamationCircle"
+          />
+        </div>
       </div>
     </div>
     <app-button
