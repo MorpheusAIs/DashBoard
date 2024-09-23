@@ -86,8 +86,8 @@ const isLoaded = ref(true)
 
 const form = reactive(
   props.methodToEdit?.inputs
-    ? props.methodToEdit?.inputs.reduce((acc, _, idx) => {
-        acc[`input-${idx}`] = ''
+    ? props.methodToEdit?.inputs.reduce((acc, item) => {
+        acc[`input-${item.id}`] = ''
         return acc
       }, {})
     : {},
