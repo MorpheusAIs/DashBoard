@@ -453,9 +453,7 @@
       "new-owner-note": "Address of the new owner"
     },
     "renounceOwnership": {
-      "note": "Renounce ownership of the contract, leaving it without an owner.",
-      "confirm-lbl": "Confirm",
-      "confirm-note": "Confirm renunciation of ownership"
+      "note": "Renounce ownership of the contract, leaving it without an owner."
     },
     "bridge-overplus": {
       "note": "Bridge overplus by specifying gas limit, maximum fee, and submission cost.",
@@ -619,6 +617,7 @@
   },
   "contract-editing": {
     "title": "Edit Contract",
-    "submit-btn": "Submit"
+    "submit-btn": "Submit",
+    "renounce-btn": "Renounce"
   }
 }

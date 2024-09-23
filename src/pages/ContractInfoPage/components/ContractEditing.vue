@@ -6,19 +6,22 @@
     <span class="contract-editing__note">
       {{ methodToEdit.note }}
     </span>
-    <div class="contract-editing__inputs">
+    <div
+      v-if="methodToEdit.methodName !== CONTRACT_METHODS.renounceOwnership"
+      class="contract-editing__inputs"
+    >
       <div
-        v-for="(input, index) in methodToEdit.inputs"
-        :key="index"
+        v-for="({ id, displayedName }, index) in methodToEdit?.inputs"
+        :key="displayedName"
         class="contract-editing__input-wrp"
       >
         <input-field
-          v-model="form[`input-${index}`]"
+          v-model="form[`input-${id}`]"
           class="contract-editing__input"
-          :placeholder="input"
-          :error-message="getFieldErrorMessage(`input-${index}`)"
+          :placeholder="displayedName"
+          :error-message="getFieldErrorMessage(`input-${id}`)"
           :disabled="isSubmitting || isSubmitted"
-          @blur="touchField(`input-${index}`)"
+          @blur="touchField(`input-${id}`)"
         />
         <div
           v-if="methodToEdit.inputNotes[index]"
@@ -33,8 +36,8 @@
     </div>
     <app-button
       class="contract-editing__btn"
-      :text="$t('contract-editing.submit-btn')"
-      :disabled="!isFieldsValid || isSubmitting"
+      :text="submitButtonName"
+      :disabled="!isFieldsValid || !isLoaded"
       @click="submit"
     />
   </div>
@@ -45,9 +48,10 @@ import { ContractEditingType } from '@/types'
 import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { AppButton, AppIcon } from '@/common'
-import { useContract, useFormValidation } from '@/composables'
+import { useContract, useFormValidation, useI18n } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import {
+  CONTRACT_INPUTS,
   CONTRACT_TYPE,
   DISTRIBUTION_CONTRACT_METHODS,
   ETHEREUM_CHAIN_IDS,
@@ -62,6 +66,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { useRoute } from 'vue-router'
 import { ContractTransaction, utils } from 'ethers'
 import { config } from '@config'
+import { CONTRACT_METHODS } from '@/const'
 
 type ContractInfo = {
   contractName: string
@@ -73,22 +78,30 @@ const props = defineProps<{
   methodToEdit: ContractEditingType
 }>()
 
+const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const isSubmitting = ref(false)
-const isSubmitted = ref(false)
+const isLoaded = ref(true)
 
 const form = reactive(
-  props.methodToEdit.inputs.reduce((acc, _, idx) => {
-    acc[`input-${idx}`] = ''
-    return acc
-  }, {}),
+  props.methodToEdit?.inputs
+    ? props.methodToEdit?.inputs.reduce((acc, _, idx) => {
+        acc[`input-${idx}`] = ''
+        return acc
+      }, {})
+    : {},
 )
 
 const { getFieldErrorMessage, touchField, isFieldsValid } = useFormValidation(
   form,
   props.methodToEdit.validationRules,
+)
+
+const submitButtonName = computed(() =>
+  props.methodToEdit.methodName === CONTRACT_METHODS.renounceOwnership
+    ? t('contract-editing.renounce-btn')
+    : t('contract-editing.submit-btn'),
 )
 
 const contract = computed(() => {
@@ -130,38 +143,41 @@ const submitTokenContract = async (): Promise<ContractTransaction | null> => {
     return
   }
   switch (props.methodToEdit.methodName) {
+    case TOKEN_CONTRACT_METHODS.renounceOwnership:
+      tx = await contract.value?.signerBased.value?.renounceOwnership()
+      break
     case TOKEN_CONTRACT_METHODS.approve:
       tx = await contract.value?.signerBased.value?.approve(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.spender}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.transfer:
       tx = await contract.value?.signerBased.value?.transfer(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.burn:
       tx = await contract.value?.signerBased.value?.burn(
-        utils.parseEther(form['input-0']),
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.mint:
       tx = await contract.value?.signerBased.value?.mint(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.increaseAllowance:
       tx = await contract.value?.signerBased.value?.increaseAllowance(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.spender}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.transferOwnership:
       tx = await contract.value?.signerBased.value?.transferOwnership(
-        form['input-0'],
+        form[`input-${CONTRACT_INPUTS.newOwner}`],
       )
       break
     default:
@@ -174,54 +190,71 @@ const submitTokenContract = async (): Promise<ContractTransaction | null> => {
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
-    case DISTRIBUTION_CONTRACT_METHODS.editPool:
-      tx = await contract.value?.signerBased.value?.editPool(form['input-0'], [
-        form['input-1'],
-        form['input-2'],
-        form['input-3'],
-        form['input-4'],
-        form['input-5'],
-        form['input-6'],
-        form['input-7'],
-        form['input-8'],
-        Boolean(Number(form['input-9'])),
+    case DISTRIBUTION_CONTRACT_METHODS.createPool:
+      tx = await contract.value?.signerBased.value?.createPool([
+        form[`input-${CONTRACT_INPUTS.payoutStart}`],
+        form[`input-${CONTRACT_INPUTS.decreaseInterval}`],
+        form[`input-${CONTRACT_INPUTS.withdrawLockPeriod}`],
+        form[`input-${CONTRACT_INPUTS.claimLockPeriod}`],
+        form[`input-${CONTRACT_INPUTS.withdrawLockPeriodAfterStake}`],
+        form[`input-${CONTRACT_INPUTS.initialReward}`],
+        form[`input-${CONTRACT_INPUTS.rewardDecrease}`],
+        form[`input-${CONTRACT_INPUTS.minimalStake}`],
+        Boolean(Number(form[`input-${CONTRACT_INPUTS.isPublic}`])),
       ])
+      break
+    case DISTRIBUTION_CONTRACT_METHODS.editPool:
+      tx = await contract.value?.signerBased.value?.editPool(
+        form[`input-${CONTRACT_INPUTS.poolId}`],
+        [
+          form[`input-${CONTRACT_INPUTS.payoutStart}`],
+          form[`input-${CONTRACT_INPUTS.decreaseInterval}`],
+          form[`input-${CONTRACT_INPUTS.withdrawLockPeriod}`],
+          form[`input-${CONTRACT_INPUTS.claimLockPeriod}`],
+          form[`input-${CONTRACT_INPUTS.withdrawLockPeriodAfterStake}`],
+          form[`input-${CONTRACT_INPUTS.initialReward}`],
+          form[`input-${CONTRACT_INPUTS.rewardDecrease}`],
+          form[`input-${CONTRACT_INPUTS.minimalStake}`],
+          Boolean(Number(form[`input-${CONTRACT_INPUTS.isPublic}`])),
+        ],
+      )
       break
     case DISTRIBUTION_CONTRACT_METHODS.bridgeOverplus:
       tx = await contract.value?.signerBased.value?.bridgeOverplus(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.gasLimit}`],
+        form[`input-${CONTRACT_INPUTS.maxFee}`],
+        form[`input-${CONTRACT_INPUTS.submissionCost}`],
         {
-          value: form['input-0'],
+          value: form[`input-${CONTRACT_INPUTS.bridgeValue}`],
         },
       )
       break
     case TOKEN_CONTRACT_METHODS.transfer:
       tx = await contract.value?.signerBased.value?.transfer(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.burn:
       tx = await contract.value?.signerBased.value?.burn(
-        utils.parseEther(form['input-0']),
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.mint:
       tx = await contract.value?.signerBased.value?.mint(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.increaseAllowance:
       tx = await contract.value?.signerBased.value?.increaseAllowance(
-        form['input-0'],
-        utils.parseEther(form['input-1']),
+        form[`input-${CONTRACT_INPUTS.spender}`],
+        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
       )
       break
     case TOKEN_CONTRACT_METHODS.transferOwnership:
       tx = await contract.value?.signerBased.value?.transferOwnership(
-        form['input-0'],
+        form[`input-${CONTRACT_INPUTS.newOwner}`],
       )
       break
     default:
@@ -234,12 +267,14 @@ const submitL1SenderContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
     case L1_SENDER_CONTRACT_METHODS.transferOwnership:
-      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+      tx = contract.value?.signerBased.value?.transferOwnership(
+        form[`input-${CONTRACT_INPUTS.newOwner}`],
+      )
       break
     case L1_SENDER_CONTRACT_METHODS.setRewardTokenLZParams:
       tx = contract.value?.signerBased.value?.setRewardTokenLZParams(
-        form['input-0'],
-        form['input-1'],
+        form[`input-${CONTRACT_INPUTS.zroPaymentAddress}`],
+        form[`input-${CONTRACT_INPUTS.adapterParams}`],
       )
       break
     default:
@@ -252,18 +287,22 @@ const submitL2MessageReceiver = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
     case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.transferOwnership:
-      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+      tx = contract.value?.signerBased.value?.transferOwnership(
+        form[`input-${CONTRACT_INPUTS.newOwner}`],
+      )
       break
     case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.retryMessage:
       tx = contract.value?.signerBased.value?.retryMessage(
-        form['input-0'],
-        form['input-1'],
-        form['input-2'],
-        form['input-3'],
+        form[`input-${CONTRACT_INPUTS.senderChainId}`],
+        form[`input-${CONTRACT_INPUTS.senderAndReceiverAddresses}`],
+        form[`input-${CONTRACT_INPUTS.nonce}`],
+        form[`input-${CONTRACT_INPUTS.payload}`],
       )
       break
     case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.setLzSender:
-      tx = contract.value?.signerBased.value?.setLzSender(form['input-0'])
+      tx = contract.value?.signerBased.value?.setLzSender(
+        form[`input-${CONTRACT_INPUTS.lzSender}`],
+      )
       break
     default:
       return tx
@@ -275,50 +314,58 @@ const submitL2TokenReceiver = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.transferOwnership:
-      tx = contract.value?.signerBased.value?.transferOwnership(form['input-0'])
+      tx = contract.value?.signerBased.value?.transferOwnership(
+        form[`input-${CONTRACT_INPUTS.newOwner}`],
+      )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.collectFees:
-      tx = await contract.value?.signerBased.value?.collectFees(form['input-0'])
+      tx = await contract.value?.signerBased.value?.collectFees(
+        form[`input-${CONTRACT_INPUTS.tokenId}`],
+      )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.decreaseLiquidityCurrentRange:
       tx =
         await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
-          form['input-0'],
-          form['input-1'],
-          form['input-2'],
-          form['input-3'],
+          form[`input-${CONTRACT_INPUTS.tokenId}`],
+          form[`input-${CONTRACT_INPUTS.amount0Min}`],
+          form[`input-${CONTRACT_INPUTS.amount1Min}`],
+          form[`input-${CONTRACT_INPUTS.liquidity}`],
         )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.increaseLiquidityCurrentRange:
       tx =
-        await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
-          form['input-0'],
-          form['input-1'],
-          form['input-2'],
-          form['input-3'],
-          form['input-4'],
+        await contract.value?.signerBased.value?.increaseLiquidityCurrentRange(
+          form[`input-${CONTRACT_INPUTS.tokenId}`],
+          form[`input-${CONTRACT_INPUTS.amount0Add}`],
+          form[`input-${CONTRACT_INPUTS.amount1Add}`],
+          form[`input-${CONTRACT_INPUTS.amount0Min}`],
+          form[`input-${CONTRACT_INPUTS.amount1Min}`],
         )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.swap:
       tx = await contract.value?.signerBased.value?.swap(
-        form['input-0'],
-        form['input-1'],
-        form['input-2'],
-        form['input-3'],
-        Boolean(Number(form['input-4'])),
+        form[`input-${CONTRACT_INPUTS.amountIn}`],
+        form[`input-${CONTRACT_INPUTS.amountOutMinimum}`],
+        form[`input-${CONTRACT_INPUTS.deadline}`],
+        form[`input-${CONTRACT_INPUTS.sqrtPriceLimitX96}`],
+        Boolean(Number(form[`input-${CONTRACT_INPUTS.isUseFirstSwapParams}`])),
       )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.editParams:
       tx = await contract.value?.signerBased.value?.editParams(
-        [form['input-0'], form['input-1'], form['input-2']],
-        Boolean(Number(form['input-3'])),
+        [
+          form[`input-${CONTRACT_INPUTS.tokenIn}`],
+          form[`input-${CONTRACT_INPUTS.tokenOut}`],
+          form[`input-${CONTRACT_INPUTS.fee}`],
+        ],
+        Boolean(Number(form[`input-${CONTRACT_INPUTS.isEditFirstParams}`])),
       )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawTokenId:
       tx = await contract.value?.signerBased.value?.withdrawTokenId(
-        form['input-0'],
-        form['input-1'],
-        form['input-2'],
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        form[`input-${CONTRACT_INPUTS.token}`],
+        form[`input-${CONTRACT_INPUTS.tokenId}`],
       )
       break
     default:
@@ -331,8 +378,7 @@ const submit = async () => {
   if (!contract.value) {
     return
   }
-  isSubmitted.value = false
-  isSubmitting.value = true
+  isLoaded.value = false
   let tx: ContractTransaction | null = null
   let isL1 = false
   const isMainnet = route.query.network === NETWORK_IDS.mainnet
@@ -394,11 +440,10 @@ const submit = async () => {
         t('mor20-creation-form.success-message', { explorerTxUrl }),
       )
     }
-    isSubmitted.value = true
   } catch (e) {
     ErrorHandler.process(e)
   }
-  isSubmitting.value = false
+  isLoaded.value = true
 }
 </script>
 
