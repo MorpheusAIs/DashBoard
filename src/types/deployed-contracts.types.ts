@@ -1,5 +1,6 @@
 import { ValidationRule } from '@vuelidate/core'
 import { ContractMethods } from './index'
+import { CONTRACT_INPUTS } from '@/enums'
 
 export type TokenContractInfo = {
   name: string
@@ -77,7 +78,10 @@ export type L2TokenReceiverContractInfo = {
 export type ContractEditingType = {
   methodName: ContractMethods
   note: string
-  inputs: string[]
+  inputs?: {
+    id: CONTRACT_INPUTS
+    displayedName: string
+  }[]
   inputNotes: string[]
   validationRules: {
     firstInput: ValidationRule

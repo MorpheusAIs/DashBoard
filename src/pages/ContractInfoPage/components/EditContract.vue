@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE } from '@/enums'
+import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE, CONTRACT_INPUTS } from '@/enums'
 import { computed, ref, watch } from 'vue'
 import { ContractInfoHeader, ContractInfoMethods } from './ContractInfo'
 import ContractEditing from './ContractEditing.vue'
@@ -59,6 +59,7 @@ const contractMethods = computed(() => {
         CONTRACT_METHODS.increaseAllowance,
         CONTRACT_METHODS.transfer,
         CONTRACT_METHODS.transferOwnership,
+        CONTRACT_METHODS.renounceOwnership,
       ]
     case CONTRACT_TYPE.distribution:
       return [
@@ -66,6 +67,7 @@ const contractMethods = computed(() => {
         CONTRACT_METHODS.createPool,
         CONTRACT_METHODS.editPool,
         CONTRACT_METHODS.transferOwnership,
+        CONTRACT_METHODS.renounceOwnership,
         // TODO: THINK ABOUT ARRAY VALIDATION
         // CONTRACT_METHODS.manageUsersInPrivatePool,
       ]
@@ -73,12 +75,14 @@ const contractMethods = computed(() => {
       return [
         CONTRACT_METHODS.setRewardTokenLZParams,
         CONTRACT_METHODS.transferOwnership,
+        CONTRACT_METHODS.renounceOwnership,
       ]
     case CONTRACT_TYPE.l2MessageReceiver:
       return [
         CONTRACT_METHODS.retryMessage,
         CONTRACT_METHODS.setLzSender,
         CONTRACT_METHODS.transferOwnership,
+        CONTRACT_METHODS.renounceOwnership,
       ]
     case CONTRACT_TYPE.l2TokenReceiver:
       return [
@@ -89,6 +93,7 @@ const contractMethods = computed(() => {
         CONTRACT_METHODS.swap,
         CONTRACT_METHODS.transferOwnership,
         CONTRACT_METHODS.withdrawTokenId,
+        CONTRACT_METHODS.renounceOwnership,
       ]
     default:
       return []
@@ -104,19 +109,25 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.approve,
     note: t('edit-contract.approve.note'),
     inputs: [
-      t('edit-contract.approve.spender-lbl'),
-      t('edit-contract.approve.amount-lbl'),
+      {
+        id: CONTRACT_INPUTS.spender,
+        displayedName: t('edit-contract.approve.spender-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.amount,
+        displayedName: t('edit-contract.approve.amount-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.approve.spender-note'),
       t('edit-contract.approve.amount-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.spender}`]: {
         required,
         address,
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.amount}`]: {
         required,
         minValue: minValue(0),
       },
@@ -126,19 +137,25 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.transfer,
     note: t('edit-contract.transfer.note'),
     inputs: [
-      t('edit-contract.transfer.to-lbl'),
-      t('edit-contract.transfer.amount-lbl'),
+      {
+        id: CONTRACT_INPUTS.to,
+        displayedName: t('edit-contract.transfer.to-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.amount,
+        displayedName: t('edit-contract.transfer.amount-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.transfer.to-note'),
       t('edit-contract.transfer.amount-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.to}`]: {
         required,
         address,
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.amount}`]: {
         required,
         minValue: minValue(0),
       },
@@ -147,10 +164,15 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
   [CONTRACT_METHODS.burn]: {
     methodName: CONTRACT_METHODS.burn,
     note: t('edit-contract.burn.note'),
-    inputs: [t('edit-contract.burn.amount-lbl')],
+    inputs: [
+      {
+        id: CONTRACT_INPUTS.amount,
+        displayedName: t('edit-contract.burn.amount-lbl'),
+      },
+    ],
     inputNotes: [t('edit-contract.burn.amount-note')],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.amount}`]: {
         required,
         minValue: minValue(0),
       },
@@ -160,19 +182,25 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.increaseAllowance,
     note: t('edit-contract.increaseAllowance.note'),
     inputs: [
-      t('edit-contract.increaseAllowance.spender-lbl'),
-      t('edit-contract.increaseAllowance.amount-lbl'),
+      {
+        id: CONTRACT_INPUTS.spender,
+        displayedName: t('edit-contract.increaseAllowance.spender-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.amount,
+        displayedName: t('edit-contract.increaseAllowance.amount-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.increaseAllowance.spender-note'),
       t('edit-contract.increaseAllowance.amount-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.spender}`]: {
         required,
         address,
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.amount}`]: {
         required,
         minValue: minValue(0),
       },
@@ -181,10 +209,15 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
   [CONTRACT_METHODS.transferOwnership]: {
     methodName: CONTRACT_METHODS.transferOwnership,
     note: t('edit-contract.transferOwnership.note'),
-    inputs: [t('edit-contract.transferOwnership.new-owner-lbl')],
+    inputs: [
+      {
+        id: CONTRACT_INPUTS.newOwner,
+        displayedName: t('edit-contract.transferOwnership.new-owner-lbl'),
+      },
+    ],
     inputNotes: [t('edit-contract.transferOwnership.new-owner-note')],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.newOwner}`]: {
         required,
         address,
       },
@@ -194,10 +227,22 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.bridgeOverplus,
     note: t('edit-contract.bridge-overplus.note'),
     inputs: [
-      t('edit-contract.bridge-overplus.gasLimit-lbl'),
-      t('edit-contract.bridge-overplus.maxFee-lbl'),
-      t('edit-contract.bridge-overplus.submissionCost-lbl'),
-      t('edit-contract.bridge-overplus.bridge-value-lbl'),
+      {
+        id: CONTRACT_INPUTS.gasLimit,
+        displayedName: t('edit-contract.bridge-overplus.gasLimit-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.maxFee,
+        displayedName: t('edit-contract.bridge-overplus.maxFee-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.submissionCost,
+        displayedName: t('edit-contract.bridge-overplus.submissionCost-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.bridgeValue,
+        displayedName: t('edit-contract.bridge-overplus.bridge-value-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.bridge-overplus.gasLimit-note'),
@@ -206,19 +251,19 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.bridge-overplus.bridge-value-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.gasLimit}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.maxFee}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.submissionCost}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.bridgeValue}`]: {
         required,
         minValue: minValue(0),
       },
@@ -228,15 +273,44 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.createPool,
     note: t('edit-contract.createPool.note'),
     inputs: [
-      t('edit-contract.createPool.payoutStart-lbl'),
-      t('edit-contract.createPool.decreaseInterval-lbl'),
-      t('edit-contract.createPool.withdrawLockPeriod-lbl'),
-      t('edit-contract.createPool.claimLockPeriod-lbl'),
-      t('edit-contract.createPool.withdrawLockPeriodAfterStake-lbl'),
-      t('edit-contract.createPool.initialReward-lbl'),
-      t('edit-contract.createPool.rewardDecrease-lbl'),
-      t('edit-contract.createPool.minimalStake-lbl'),
-      t('edit-contract.createPool.isPublic-lbl'),
+      {
+        id: CONTRACT_INPUTS.payoutStart,
+        displayedName: t('edit-contract.createPool.payoutStart-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.decreaseInterval,
+        displayedName: t('edit-contract.createPool.decreaseInterval-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.withdrawLockPeriod,
+        displayedName: t('edit-contract.createPool.withdrawLockPeriod-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.claimLockPeriod,
+        displayedName: t('edit-contract.createPool.claimLockPeriod-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.withdrawLockPeriodAfterStake,
+        displayedName: t(
+          'edit-contract.createPool.withdrawLockPeriodAfterStake-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.initialReward,
+        displayedName: t('edit-contract.createPool.initialReward-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.rewardDecrease,
+        displayedName: t('edit-contract.createPool.rewardDecrease-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.minimalStake,
+        displayedName: t('edit-contract.createPool.minimalStake-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.isPublic,
+        displayedName: t('edit-contract.createPool.isPublic-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.createPool.payoutStart-note'),
@@ -250,39 +324,39 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.createPool.isPublic-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.payoutStart}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.decreaseInterval}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.withdrawLockPeriod}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.claimLockPeriod}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-4': {
+      [`input-${CONTRACT_INPUTS.withdrawLockPeriodAfterStake}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-5': {
+      [`input-${CONTRACT_INPUTS.initialReward}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-6': {
+      [`input-${CONTRACT_INPUTS.rewardDecrease}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-7': {
+      [`input-${CONTRACT_INPUTS.minimalStake}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-8': {
+      [`input-${CONTRACT_INPUTS.isPublic}`]: {
         required,
         minValue: minValue(0),
         maxValue: maxValue(1),
@@ -294,9 +368,24 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.manageUsersInPrivatePool,
     note: t('edit-contract.manage-users-in-private-pool.note'),
     inputs: [
-      t('edit-contract.manage-users-in-private-pool.poolId-lbl'),
-      t('edit-contract.manage-users-in-private-pool.users-lbl'),
-      t('edit-contract.manage-users-in-private-pool.amounts-lbl'),
+      {
+        id: CONTRACT_INPUTS.poolId,
+        displayedName: t(
+          'edit-contract.manage-users-in-private-pool.poolId-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.users,
+        displayedName: t(
+          'edit-contract.manage-users-in-private-pool.users-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.amounts,
+        displayedName: t(
+          'edit-contract.manage-users-in-private-pool.amounts-lbl',
+        ),
+      },
     ],
     inputNotes: [
       t('edit-contract.manage-users-in-private-pool.poolId-note'),
@@ -304,15 +393,15 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.manage-users-in-private-pool.amounts-note'),
     ],
     validationRules: {
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.poolId}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.users}`]: {
         required,
         // type: 'array',
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.amounts}`]: {
         required,
         // type: 'array',
       },
@@ -321,10 +410,15 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
   [CONTRACT_METHODS.collectFees]: {
     methodName: CONTRACT_METHODS.collectFees,
     note: t('edit-contract.collectFees.note'),
-    inputs: [t('edit-contract.collectFees.tokenId-lbl')],
+    inputs: [
+      {
+        id: CONTRACT_INPUTS.tokenId,
+        displayedName: t('edit-contract.collectFees.tokenId-lbl'),
+      },
+    ],
     inputNotes: [t('edit-contract.collectFees.tokenId-note')],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.tokenId}`]: {
         required,
         minValue: minValue(0),
       },
@@ -334,10 +428,30 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.decreaseLiquidityCurrentRange,
     note: t('edit-contract.decreaseLiquidityCurrentRange.note'),
     inputs: [
-      t('edit-contract.decreaseLiquidityCurrentRange.tokenId-lbl'),
-      t('edit-contract.decreaseLiquidityCurrentRange.liquidity-lbl'),
-      t('edit-contract.decreaseLiquidityCurrentRange.amount0Min-lbl'),
-      t('edit-contract.decreaseLiquidityCurrentRange.amount1Min-lbl'),
+      {
+        id: CONTRACT_INPUTS.tokenId,
+        displayedName: t(
+          'edit-contract.decreaseLiquidityCurrentRange.tokenId-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.liquidity,
+        displayedName: t(
+          'edit-contract.decreaseLiquidityCurrentRange.liquidity-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.amount0Min,
+        displayedName: t(
+          'edit-contract.decreaseLiquidityCurrentRange.amount0Min-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.amount1Min,
+        displayedName: t(
+          'edit-contract.decreaseLiquidityCurrentRange.amount1Min-lbl',
+        ),
+      },
     ],
     inputNotes: [
       t('edit-contract.decreaseLiquidityCurrentRange.tokenId-note'),
@@ -346,19 +460,19 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.decreaseLiquidityCurrentRange.amount1Min-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.tokenId}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.liquidity}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.amount0Min}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.amount1Min}`]: {
         required,
         minValue: minValue(0),
       },
@@ -368,11 +482,36 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.increaseLiquidityCurrentRange,
     note: t('edit-contract.increaseLiquidityCurrentRange.note'),
     inputs: [
-      t('edit-contract.increaseLiquidityCurrentRange.tokenId-lbl'),
-      t('edit-contract.increaseLiquidityCurrentRange.amount0Add-lbl'),
-      t('edit-contract.increaseLiquidityCurrentRange.amount1Add-lbl'),
-      t('edit-contract.increaseLiquidityCurrentRange.amount0Min-lbl'),
-      t('edit-contract.increaseLiquidityCurrentRange.amount1Min-lbl'),
+      {
+        id: CONTRACT_INPUTS.tokenId,
+        displayedName: t(
+          'edit-contract.increaseLiquidityCurrentRange.tokenId-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.liquidity,
+        displayedName: t(
+          'edit-contract.increaseLiquidityCurrentRange.amount0Add-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.amount1Add,
+        displayedName: t(
+          'edit-contract.increaseLiquidityCurrentRange.amount1Add-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.amount0Min,
+        displayedName: t(
+          'edit-contract.increaseLiquidityCurrentRange.amount0Min-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.amount1Min,
+        displayedName: t(
+          'edit-contract.increaseLiquidityCurrentRange.amount1Min-lbl',
+        ),
+      },
     ],
     inputNotes: [
       t('edit-contract.increaseLiquidityCurrentRange.tokenId-note'),
@@ -382,23 +521,23 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.increaseLiquidityCurrentRange.amount1Min-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.tokenId}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.liquidity}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.amount1Add}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.amount0Min}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-4': {
+      [`input-${CONTRACT_INPUTS.amount1Min}`]: {
         required,
         minValue: minValue(0),
       },
@@ -408,9 +547,18 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.withdrawTokenId,
     note: t('edit-contract.withdrawTokenId.note'),
     inputs: [
-      t('edit-contract.withdrawTokenId.recipient-lbl'),
-      t('edit-contract.withdrawTokenId.token-lbl'),
-      t('edit-contract.withdrawTokenId.tokenId-lbl'),
+      {
+        id: CONTRACT_INPUTS.recipient,
+        displayedName: t('edit-contract.withdrawTokenId.recipient-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.token,
+        displayedName: t('edit-contract.withdrawTokenId.token-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.tokenId,
+        displayedName: t('edit-contract.withdrawTokenId.tokenId-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.withdrawTokenId.recipient-note'),
@@ -418,15 +566,15 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.withdrawTokenId.tokenId-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.recipient}`]: {
         required,
         address,
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.token}`]: {
         required,
         address,
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.tokenId}`]: {
         required,
         minValue: minValue(0),
       },
@@ -436,11 +584,26 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.swap,
     note: t('edit-contract.swap.note'),
     inputs: [
-      t('edit-contract.swap.amountIn-lbl'),
-      t('edit-contract.swap.amountOutMinimum-lbl'),
-      t('edit-contract.swap.deadline-lbl'),
-      t('edit-contract.swap.sqrtPriceLimitX96-lbl'),
-      t('edit-contract.swap.isUseFirstSwapParams-lbl'),
+      {
+        id: CONTRACT_INPUTS.amountIn,
+        displayedName: t('edit-contract.swap.amountIn-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.amountOutMinimum,
+        displayedName: t('edit-contract.swap.amountOutMinimum-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.deadline,
+        displayedName: t('edit-contract.swap.deadline-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.sqrtPriceLimitX96,
+        displayedName: t('edit-contract.swap.sqrtPriceLimitX96-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.isUseFirstSwapParams,
+        displayedName: t('edit-contract.swap.isUseFirstSwapParams-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.swap.amountIn-note'),
@@ -450,23 +613,23 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.swap.isUseFirstSwapParams-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.amountIn}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.amountOutMinimum}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.deadline}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.sqrtPriceLimitX96}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-4': {
+      [`input-${CONTRACT_INPUTS.isUseFirstSwapParams}`]: {
         required,
         minValue: minValue(0),
         maxValue: minValue(1),
@@ -477,10 +640,22 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.editParams,
     note: t('edit-contract.editParams.note'),
     inputs: [
-      t('edit-contract.editParams.tokenIn-lbl'),
-      t('edit-contract.editParams.tokenOut-lbl'),
-      t('edit-contract.editParams.fee-lbl'),
-      t('edit-contract.editParams.isEditFirstParams-lbl'),
+      {
+        id: CONTRACT_INPUTS.tokenIn,
+        displayedName: t('edit-contract.editParams.tokenIn-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.tokenOut,
+        displayedName: t('edit-contract.editParams.tokenOut-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.fee,
+        displayedName: t('edit-contract.editParams.fee-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.isEditFirstParams,
+        displayedName: t('edit-contract.editParams.isEditFirstParams-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.editParams.tokenIn-note'),
@@ -489,19 +664,19 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.editParams.isEditFirstParams-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.tokenIn}`]: {
         required,
         address,
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.tokenOut}`]: {
         required,
         address,
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.fee}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.isEditFirstParams}`]: {
         required,
         minValue: minValue(0),
         maxValue: minValue(1),
@@ -512,10 +687,24 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.retryMessage,
     note: t('edit-contract.retryMessage.note'),
     inputs: [
-      t('edit-contract.retryMessage.senderChainId-lbl'),
-      t('edit-contract.retryMessage.senderAndReceiverAddresses-lbl'),
-      t('edit-contract.retryMessage.nonce-lbl'),
-      t('edit-contract.retryMessage.payload-lbl'),
+      {
+        id: CONTRACT_INPUTS.senderChainId,
+        displayedName: t('edit-contract.retryMessage.senderChainId-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.senderAndReceiverAddresses,
+        displayedName: t(
+          'edit-contract.retryMessage.senderAndReceiverAddresses-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.nonce,
+        displayedName: t('edit-contract.retryMessage.nonce-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.payload,
+        displayedName: t('edit-contract.retryMessage.payload-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.retryMessage.senderChainId-note'),
@@ -524,19 +713,19 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.retryMessage.payload-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.senderChainId}`]: {
         required,
         minValue: minValue(1),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.senderAndReceiverAddresses}`]: {
         required,
         hex,
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.nonce}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.payload}`]: {
         required,
         hex,
       },
@@ -545,10 +734,15 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
   [CONTRACT_METHODS.setLzSender]: {
     methodName: CONTRACT_METHODS.setLzSender,
     note: t('edit-contract.setLzSender.note'),
-    inputs: [t('edit-contract.setLzSender.lzSender-lbl')],
+    inputs: [
+      {
+        id: CONTRACT_INPUTS.lzSender,
+        displayedName: t('edit-contract.setLzSender.lzSender-lbl'),
+      },
+    ],
     inputNotes: [t('edit-contract.setLzSender.lzSender-note')],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.lzSender}`]: {
         required,
         address,
       },
@@ -558,19 +752,29 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.setRewardTokenLZParams,
     note: t('edit-contract.setRewardTokenLZParams.note'),
     inputs: [
-      t('edit-contract.setRewardTokenLZParams.zroPaymentAddress-lbl'),
-      t('edit-contract.setRewardTokenLZParams.adapterParams-lbl'),
+      {
+        id: CONTRACT_INPUTS.zroPaymentAddress,
+        displayedName: t(
+          'edit-contract.setRewardTokenLZParams.zroPaymentAddress-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.adapterParams,
+        displayedName: t(
+          'edit-contract.setRewardTokenLZParams.adapterParams-lbl',
+        ),
+      },
     ],
     inputNotes: [
       t('edit-contract.setRewardTokenLZParams.zroPaymentAddress-note'),
       t('edit-contract.setRewardTokenLZParams.adapterParams-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.zroPaymentAddress}`]: {
         required,
         address,
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.adapterParams}`]: {
         required,
         hex,
       },
@@ -580,16 +784,48 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
     methodName: CONTRACT_METHODS.editPool,
     note: t('edit-contract.editPool.note'),
     inputs: [
-      t('edit-contract.editPool.poolId-lbl'),
-      t('edit-contract.editPool.payoutStart-lbl'),
-      t('edit-contract.editPool.decreaseInterval-lbl'),
-      t('edit-contract.editPool.withdrawLockPeriod-lbl'),
-      t('edit-contract.editPool.claimLockPeriod-lbl'),
-      t('edit-contract.editPool.withdrawLockPeriodAfterStake-lbl'),
-      t('edit-contract.editPool.initialReward-lbl'),
-      t('edit-contract.editPool.rewardDecrease-lbl'),
-      t('edit-contract.editPool.minimalStake-lbl'),
-      t('edit-contract.editPool.isPublic-lbl'),
+      {
+        id: CONTRACT_INPUTS.poolId,
+        displayedName: t('edit-contract.editPool.poolId-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.payoutStart,
+        displayedName: t('edit-contract.editPool.payoutStart-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.decreaseInterval,
+        displayedName: t('edit-contract.editPool.decreaseInterval-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.withdrawLockPeriod,
+        displayedName: t('edit-contract.editPool.withdrawLockPeriod-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.claimLockPeriod,
+        displayedName: t('edit-contract.editPool.claimLockPeriod-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.withdrawLockPeriodAfterStake,
+        displayedName: t(
+          'edit-contract.editPool.withdrawLockPeriodAfterStake-lbl',
+        ),
+      },
+      {
+        id: CONTRACT_INPUTS.initialReward,
+        displayedName: t('edit-contract.editPool.initialReward-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.rewardDecrease,
+        displayedName: t('edit-contract.editPool.rewardDecrease-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.minimalStake,
+        displayedName: t('edit-contract.editPool.minimalStake-lbl'),
+      },
+      {
+        id: CONTRACT_INPUTS.isPublic,
+        displayedName: t('edit-contract.editPool.isPublic-lbl'),
+      },
     ],
     inputNotes: [
       t('edit-contract.editPool.poolId-note'),
@@ -604,48 +840,52 @@ const methodsToEdit = computed<ContractMethodsConfig>(() => ({
       t('edit-contract.editPool.isPublic-note'),
     ],
     validationRules: {
-      'input-0': {
+      [`input-${CONTRACT_INPUTS.poolId}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-1': {
+      [`input-${CONTRACT_INPUTS.payoutStart}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-2': {
+      [`input-${CONTRACT_INPUTS.decreaseInterval}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-3': {
+      [`input-${CONTRACT_INPUTS.withdrawLockPeriod}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-4': {
+      [`input-${CONTRACT_INPUTS.claimLockPeriod}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-5': {
+      [`input-${CONTRACT_INPUTS.withdrawLockPeriodAfterStake}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-6': {
+      [`input-${CONTRACT_INPUTS.initialReward}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-7': {
+      [`input-${CONTRACT_INPUTS.rewardDecrease}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-8': {
+      [`input-${CONTRACT_INPUTS.minimalStake}`]: {
         required,
         minValue: minValue(0),
       },
-      'input-9': {
+      [`input-${CONTRACT_INPUTS.isPublic}`]: {
         required,
         minValue: minValue(0),
         maxValue: minValue(1),
       },
     },
+  },
+  [CONTRACT_METHODS.renounceOwnership]: {
+    methodName: CONTRACT_METHODS.renounceOwnership,
+    note: t('edit-contract.renounceOwnership.note'),
   },
 }))
 
