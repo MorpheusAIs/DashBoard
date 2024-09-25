@@ -1,1086 +1,1226 @@
 [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "inputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"constructor"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousAdmin",
-        "type": "address"
+        "indexed":false,
+        "internalType":"address",
+        "name":"previousAdmin",
+        "type":"address"
       },
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newAdmin",
-        "type": "address"
+        "indexed":false,
+        "internalType":"address",
+        "name":"newAdmin",
+        "type":"address"
       }
     ],
-    "name": "AdminChanged",
-    "type": "event"
+    "name":"AdminChanged",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "beacon",
-        "type": "address"
+        "indexed":true,
+        "internalType":"address",
+        "name":"beacon",
+        "type":"address"
       }
     ],
-    "name": "BeaconUpgraded",
-    "type": "event"
+    "name":"BeaconUpgraded",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
-        "type": "uint8"
+        "indexed":false,
+        "internalType":"uint8",
+        "name":"version",
+        "type":"uint8"
       }
     ],
-    "name": "Initialized",
-    "type": "event"
+    "name":"Initialized",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "indexed":false,
+        "internalType":"uint256",
+        "name":"amount",
+        "type":"uint256"
       },
       {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "uniqueId",
-        "type": "bytes"
+        "indexed":false,
+        "internalType":"bytes",
+        "name":"uniqueId",
+        "type":"bytes"
       }
     ],
-    "name": "OverplusBridged",
-    "type": "event"
+    "name":"OverplusBridged",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
+        "indexed":true,
+        "internalType":"address",
+        "name":"previousOwner",
+        "type":"address"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "indexed":true,
+        "internalType":"address",
+        "name":"newOwner",
+        "type":"address"
       }
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    "name":"OwnershipTransferred",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "poolId",
-        "type": "uint256"
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
       },
       {
-        "components": [
+        "components":[
           {
-            "internalType": "uint128",
-            "name": "payoutStart",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"payoutStart",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "decreaseInterval",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"decreaseInterval",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "claimLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"claimLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriodAfterStake",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriodAfterStake",
+            "type":"uint128"
           },
           {
-            "internalType": "uint256",
-            "name": "initialReward",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"initialReward",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "rewardDecrease",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"rewardDecrease",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "minimalStake",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"minimalStake",
+            "type":"uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPublic",
-            "type": "bool"
+            "internalType":"bool",
+            "name":"isPublic",
+            "type":"bool"
           }
         ],
-        "indexed": false,
-        "internalType": "struct IDistributionV2.Pool",
-        "name": "pool",
-        "type": "tuple"
+        "indexed":false,
+        "internalType":"struct IDistributionV4.Pool",
+        "name":"pool",
+        "type":"tuple"
       }
     ],
-    "name": "PoolCreated",
-    "type": "event"
+    "name":"PoolCreated",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "poolId",
-        "type": "uint256"
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
       },
       {
-        "components": [
+        "components":[
           {
-            "internalType": "uint128",
-            "name": "payoutStart",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"payoutStart",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "decreaseInterval",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"decreaseInterval",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "claimLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"claimLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriodAfterStake",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriodAfterStake",
+            "type":"uint128"
           },
           {
-            "internalType": "uint256",
-            "name": "initialReward",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"initialReward",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "rewardDecrease",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"rewardDecrease",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "minimalStake",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"minimalStake",
+            "type":"uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPublic",
-            "type": "bool"
+            "internalType":"bool",
+            "name":"isPublic",
+            "type":"bool"
           }
         ],
-        "indexed": false,
-        "internalType": "struct IDistributionV2.Pool",
-        "name": "pool",
-        "type": "tuple"
+        "indexed":false,
+        "internalType":"struct IDistributionV4.Pool",
+        "name":"pool",
+        "type":"tuple"
       }
     ],
-    "name": "PoolEdited",
-    "type": "event"
+    "name":"PoolEdited",
+    "type":"event"
   },
   {
-    "anonymous": false,
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "implementation",
-        "type": "address"
-      }
-    ],
-    "name": "Upgraded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "poolId",
-        "type": "uint256"
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "claimLockStart",
-        "type": "uint128"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "claimLockEnd",
-        "type": "uint128"
-      }
-    ],
-    "name": "UserClaimLocked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "poolId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "UserClaimed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "poolId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "UserStaked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "poolId",
-        "type": "uint256"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "UserWithdrawn",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "depositToken_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "l1Sender_",
-        "type": "address"
-      },
-      {
-        "components": [
+        "components":[
           {
-            "internalType": "uint128",
-            "name": "payoutStart",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"claimLockPeriodAfterStake",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "decreaseInterval",
-            "type": "uint128"
-          },
-          {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriod",
-            "type": "uint128"
-          },
-          {
-            "internalType": "uint128",
-            "name": "claimLockPeriod",
-            "type": "uint128"
-          },
-          {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriodAfterStake",
-            "type": "uint128"
-          },
-          {
-            "internalType": "uint256",
-            "name": "initialReward",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "rewardDecrease",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minimalStake",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "isPublic",
-            "type": "bool"
+            "internalType":"uint128",
+            "name":"claimLockPeriodAfterClaim",
+            "type":"uint128"
           }
         ],
-        "internalType": "struct IDistributionV2.Pool[]",
-        "name": "poolsInfo_",
-        "type": "tuple[]"
+        "indexed":false,
+        "internalType":"struct IDistributionV4.PoolLimits",
+        "name":"poolLimit",
+        "type":"tuple"
       }
     ],
-    "name": "Distribution_init",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name":"PoolLimitsEdited",
+    "type":"event"
   },
   {
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "gasLimit_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxFeePerGas_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxSubmissionCost_",
-        "type": "uint256"
+        "indexed":true,
+        "internalType":"address",
+        "name":"implementation",
+        "type":"address"
       }
     ],
-    "name": "bridgeOverplus",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
+    "name":"Upgraded",
+    "type":"event"
   },
   {
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
       },
       {
-        "internalType": "address",
-        "name": "receiver_",
-        "type": "address"
+        "indexed":true,
+        "internalType":"address",
+        "name":"user",
+        "type":"address"
+      },
+      {
+        "indexed":false,
+        "internalType":"uint128",
+        "name":"claimLockStart",
+        "type":"uint128"
+      },
+      {
+        "indexed":false,
+        "internalType":"uint128",
+        "name":"claimLockEnd",
+        "type":"uint128"
       }
     ],
-    "name": "claim",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    "name":"UserClaimLocked",
+    "type":"event"
   },
   {
-    "inputs": [
+    "anonymous":false,
+    "inputs":[
       {
-        "components": [
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
+      },
+      {
+        "indexed":true,
+        "internalType":"address",
+        "name":"user",
+        "type":"address"
+      },
+      {
+        "indexed":false,
+        "internalType":"address",
+        "name":"receiver",
+        "type":"address"
+      },
+      {
+        "indexed":false,
+        "internalType":"uint256",
+        "name":"amount",
+        "type":"uint256"
+      }
+    ],
+    "name":"UserClaimed",
+    "type":"event"
+  },
+  {
+    "anonymous":false,
+    "inputs":[
+      {
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
+      },
+      {
+        "indexed":true,
+        "internalType":"address",
+        "name":"user",
+        "type":"address"
+      },
+      {
+        "indexed":false,
+        "internalType":"uint256",
+        "name":"amount",
+        "type":"uint256"
+      }
+    ],
+    "name":"UserStaked",
+    "type":"event"
+  },
+  {
+    "anonymous":false,
+    "inputs":[
+      {
+        "indexed":true,
+        "internalType":"uint256",
+        "name":"poolId",
+        "type":"uint256"
+      },
+      {
+        "indexed":true,
+        "internalType":"address",
+        "name":"user",
+        "type":"address"
+      },
+      {
+        "indexed":false,
+        "internalType":"uint256",
+        "name":"amount",
+        "type":"uint256"
+      }
+    ],
+    "name":"UserWithdrawn",
+    "type":"event"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"address",
+        "name":"depositToken_",
+        "type":"address"
+      },
+      {
+        "internalType":"address",
+        "name":"l1Sender_",
+        "type":"address"
+      },
+      {
+        "components":[
           {
-            "internalType": "uint128",
-            "name": "payoutStart",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"payoutStart",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "decreaseInterval",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"decreaseInterval",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "claimLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"claimLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriodAfterStake",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriodAfterStake",
+            "type":"uint128"
           },
           {
-            "internalType": "uint256",
-            "name": "initialReward",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"initialReward",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "rewardDecrease",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"rewardDecrease",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "minimalStake",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"minimalStake",
+            "type":"uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPublic",
-            "type": "bool"
+            "internalType":"bool",
+            "name":"isPublic",
+            "type":"bool"
           }
         ],
-        "internalType": "struct IDistributionV2.Pool",
-        "name": "pool_",
-        "type": "tuple"
+        "internalType":"struct IDistributionV4.Pool[]",
+        "name":"poolsInfo_",
+        "type":"tuple[]"
       }
     ],
-    "name": "createPool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "depositToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+    "name":"Distribution_init",
+    "outputs":[
+
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"gasLimit_",
+        "type":"uint256"
       },
       {
-        "components": [
+        "internalType":"uint256",
+        "name":"maxFeePerGas_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"maxSubmissionCost_",
+        "type":"uint256"
+      }
+    ],
+    "name":"bridgeOverplus",
+    "outputs":[
+      {
+        "internalType":"bytes",
+        "name":"",
+        "type":"bytes"
+      }
+    ],
+    "stateMutability":"payable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"address",
+        "name":"receiver_",
+        "type":"address"
+      }
+    ],
+    "name":"claim",
+    "outputs":[
+
+    ],
+    "stateMutability":"payable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "components":[
           {
-            "internalType": "uint128",
-            "name": "payoutStart",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"payoutStart",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "decreaseInterval",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"decreaseInterval",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "claimLockPeriod",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"claimLockPeriod",
+            "type":"uint128"
           },
           {
-            "internalType": "uint128",
-            "name": "withdrawLockPeriodAfterStake",
-            "type": "uint128"
+            "internalType":"uint128",
+            "name":"withdrawLockPeriodAfterStake",
+            "type":"uint128"
           },
           {
-            "internalType": "uint256",
-            "name": "initialReward",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"initialReward",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "rewardDecrease",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"rewardDecrease",
+            "type":"uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "minimalStake",
-            "type": "uint256"
+            "internalType":"uint256",
+            "name":"minimalStake",
+            "type":"uint256"
           },
           {
-            "internalType": "bool",
-            "name": "isPublic",
-            "type": "bool"
+            "internalType":"bool",
+            "name":"isPublic",
+            "type":"bool"
           }
         ],
-        "internalType": "struct IDistributionV2.Pool",
-        "name": "pool_",
-        "type": "tuple"
+        "internalType":"struct IDistributionV4.Pool",
+        "name":"pool_",
+        "type":"tuple"
       }
     ],
-    "name": "editPool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name":"createPool",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
+
+    ],
+    "name":"depositToken",
+    "outputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint128",
-        "name": "claimLockStart_",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "claimLockEnd_",
-        "type": "uint128"
+        "internalType":"address",
+        "name":"",
+        "type":"address"
       }
     ],
-    "name": "getClaimLockPeriodMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
       },
       {
-        "internalType": "address",
-        "name": "user_",
-        "type": "address"
+        "components":[
+          {
+            "internalType":"uint128",
+            "name":"payoutStart",
+            "type":"uint128"
+          },
+          {
+            "internalType":"uint128",
+            "name":"decreaseInterval",
+            "type":"uint128"
+          },
+          {
+            "internalType":"uint128",
+            "name":"withdrawLockPeriod",
+            "type":"uint128"
+          },
+          {
+            "internalType":"uint128",
+            "name":"claimLockPeriod",
+            "type":"uint128"
+          },
+          {
+            "internalType":"uint128",
+            "name":"withdrawLockPeriodAfterStake",
+            "type":"uint128"
+          },
+          {
+            "internalType":"uint256",
+            "name":"initialReward",
+            "type":"uint256"
+          },
+          {
+            "internalType":"uint256",
+            "name":"rewardDecrease",
+            "type":"uint256"
+          },
+          {
+            "internalType":"uint256",
+            "name":"minimalStake",
+            "type":"uint256"
+          },
+          {
+            "internalType":"bool",
+            "name":"isPublic",
+            "type":"bool"
+          }
+        ],
+        "internalType":"struct IDistributionV4.Pool",
+        "name":"pool_",
+        "type":"tuple"
       }
     ],
-    "name": "getCurrentUserMultiplier",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+    "name":"editPool",
+    "outputs":[
+
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
       },
       {
-        "internalType": "address",
-        "name": "user_",
-        "type": "address"
+        "components":[
+          {
+            "internalType":"uint128",
+            "name":"claimLockPeriodAfterStake",
+            "type":"uint128"
+          },
+          {
+            "internalType":"uint128",
+            "name":"claimLockPeriodAfterClaim",
+            "type":"uint128"
+          }
+        ],
+        "internalType":"struct IDistributionV4.PoolLimits",
+        "name":"poolLimits_",
+        "type":"tuple"
       }
     ],
-    "name": "getCurrentUserReward",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+    "name":"editPoolLimits",
+    "outputs":[
+
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
       },
       {
-        "internalType": "uint128",
-        "name": "startTime_",
-        "type": "uint128"
+        "internalType":"uint128",
+        "name":"claimLockStart_",
+        "type":"uint128"
       },
       {
-        "internalType": "uint128",
-        "name": "endTime_",
-        "type": "uint128"
+        "internalType":"uint128",
+        "name":"claimLockEnd_",
+        "type":"uint128"
       }
     ],
-    "name": "getPeriodReward",
-    "outputs": [
+    "name":"getClaimLockPeriodMultiplier",
+    "outputs":[
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "isNotUpgradeable",
-    "outputs": [
+    "inputs":[
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"address",
+        "name":"user_",
+        "type":"address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "name":"getCurrentUserMultiplier",
+    "outputs":[
+      {
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "l1Sender",
-    "outputs": [
+    "inputs":[
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"address",
+        "name":"user_",
+        "type":"address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "name":"getCurrentUserReward",
+    "outputs":[
+      {
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
       },
       {
-        "internalType": "uint128",
-        "name": "claimLockEnd_",
-        "type": "uint128"
+        "internalType":"uint128",
+        "name":"startTime_",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"endTime_",
+        "type":"uint128"
       }
     ],
-    "name": "lockClaim",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name":"getPeriodReward",
+    "outputs":[
+      {
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
+
+    ],
+    "name":"isNotUpgradeable",
+    "outputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address[]",
-        "name": "users_",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "amounts_",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint128[]",
-        "name": "lockEnds_",
-        "type": "uint128[]"
+        "internalType":"bool",
+        "name":"",
+        "type":"bool"
       }
     ],
-    "name": "manageUsersInPrivatePool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "overplus",
-    "outputs": [
+    "inputs":[
+
+    ],
+    "name":"l1Sender",
+    "outputs":[
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType":"address",
+        "name":"",
+        "type":"address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    "inputs":[
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint128",
+        "name":"claimLockEnd_",
+        "type":"uint128"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "name":"lockClaim",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"address[]",
+        "name":"users_",
+        "type":"address[]"
+      },
+      {
+        "internalType":"uint256[]",
+        "name":"amounts_",
+        "type":"uint256[]"
+      },
+      {
+        "internalType":"uint128[]",
+        "name":"claimLockEnds_",
+        "type":"uint128[]"
       }
     ],
-    "name": "pools",
-    "outputs": [
-      {
-        "internalType": "uint128",
-        "name": "payoutStart",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "decreaseInterval",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "withdrawLockPeriod",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "claimLockPeriod",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "withdrawLockPeriodAfterStake",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint256",
-        "name": "initialReward",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardDecrease",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "minimalStake",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "isPublic",
-        "type": "bool"
-      }
+    "name":"manageUsersInPrivatePool",
+    "outputs":[
+
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
+
+    ],
+    "name":"overplus",
+    "outputs":[
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
       }
     ],
-    "name": "poolsData",
-    "outputs": [
-      {
-        "internalType": "uint128",
-        "name": "lastUpdate",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalVirtualDeposited",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "proxiableUUID",
-    "outputs": [
+    "inputs":[
+
+    ],
+    "name":"owner",
+    "outputs":[
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
+        "internalType":"address",
+        "name":"",
+        "type":"address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "removeUpgradeability",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint128",
-        "name": "claimLockEnd_",
-        "type": "uint128"
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
       }
     ],
-    "name": "stake",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name":"pools",
+    "outputs":[
+      {
+        "internalType":"uint128",
+        "name":"payoutStart",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"decreaseInterval",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"withdrawLockPeriod",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"claimLockPeriod",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"withdrawLockPeriodAfterStake",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint256",
+        "name":"initialReward",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"rewardDecrease",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"minimalStake",
+        "type":"uint256"
+      },
+      {
+        "internalType":"bool",
+        "name":"isPublic",
+        "type":"bool"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "totalDepositedInPublicPools",
-    "outputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "name":"poolsData",
+    "outputs":[
+      {
+        "internalType":"uint128",
+        "name":"lastUpdate",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint256",
+        "name":"rate",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"totalVirtualDeposited",
+        "type":"uint256"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
       }
     ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name":"poolsLimits",
+    "outputs":[
+      {
+        "internalType":"uint128",
+        "name":"claimLockPeriodAfterStake",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"claimLockPeriodAfterClaim",
+        "type":"uint128"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [
+    "inputs":[
+
+    ],
+    "name":"proxiableUUID",
+    "outputs":[
       {
-        "internalType": "address",
-        "name": "newImplementation",
-        "type": "address"
+        "internalType":"bytes32",
+        "name":"",
+        "type":"bytes32"
       }
     ],
-    "name": "upgradeTo",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability":"view",
+    "type":"function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newImplementation",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
+    "inputs":[
+
     ],
-    "name": "upgradeToAndCall",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    "name":"removeUpgradeability",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+    "inputs":[
+
     ],
-    "name": "usersData",
-    "outputs": [
-      {
-        "internalType": "uint128",
-        "name": "lastStake",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint256",
-        "name": "deposited",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pendingRewards",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint128",
-        "name": "claimLockStart",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "claimLockEnd",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint256",
-        "name": "virtualDeposited",
-        "type": "uint256"
-      }
+    "name":"renounceOwnership",
+    "outputs":[
+
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability":"nonpayable",
+    "type":"function"
   },
   {
-    "inputs": [],
-    "name": "version",
-    "outputs": [
+    "inputs":[
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "poolId_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "amount_",
-        "type": "uint256"
+        "internalType":"uint256",
+        "name":"amount_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint128",
+        "name":"claimLockEnd_",
+        "type":"uint128"
       }
     ],
-    "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name":"stake",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+
+    ],
+    "name":"totalDepositedInPublicPools",
+    "outputs":[
+      {
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"address",
+        "name":"newOwner",
+        "type":"address"
+      }
+    ],
+    "name":"transferOwnership",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"address",
+        "name":"newImplementation",
+        "type":"address"
+      }
+    ],
+    "name":"upgradeTo",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"address",
+        "name":"newImplementation",
+        "type":"address"
+      },
+      {
+        "internalType":"bytes",
+        "name":"data",
+        "type":"bytes"
+      }
+    ],
+    "name":"upgradeToAndCall",
+    "outputs":[
+
+    ],
+    "stateMutability":"payable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"address",
+        "name":"",
+        "type":"address"
+      },
+      {
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
+      }
+    ],
+    "name":"usersData",
+    "outputs":[
+      {
+        "internalType":"uint128",
+        "name":"lastStake",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint256",
+        "name":"deposited",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"rate",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"pendingRewards",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint128",
+        "name":"claimLockStart",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint128",
+        "name":"claimLockEnd",
+        "type":"uint128"
+      },
+      {
+        "internalType":"uint256",
+        "name":"virtualDeposited",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint128",
+        "name":"lastClaim",
+        "type":"uint128"
+      }
+    ],
+    "stateMutability":"view",
+    "type":"function"
+  },
+  {
+    "inputs":[
+
+    ],
+    "name":"version",
+    "outputs":[
+      {
+        "internalType":"uint256",
+        "name":"",
+        "type":"uint256"
+      }
+    ],
+    "stateMutability":"pure",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {
+        "internalType":"uint256",
+        "name":"poolId_",
+        "type":"uint256"
+      },
+      {
+        "internalType":"uint256",
+        "name":"amount_",
+        "type":"uint256"
+      }
+    ],
+    "name":"withdraw",
+    "outputs":[
+
+    ],
+    "stateMutability":"nonpayable",
+    "type":"function"
   }
 ]
