@@ -57,19 +57,6 @@ const isGlobalDashboard = computed(
 )
 
 const listItems = computed<string[]>(() => [
-  ...(isGlobalDashboard.value
-    ? [
-        t('zero-pool-description.list.text-1', {
-          time: humanizeTime(poolsLimits.value.claimLockPeriodAfterStake),
-          deposit: web3ProvidersStore.depositTokenSymbol,
-          reward: web3ProvidersStore.rewardsTokenSymbol,
-        }),
-        t('zero-pool-description.list.text-2', {
-          time: humanizeTime(poolsLimits.value.claimLockPeriodAfterClaim),
-          reward: web3ProvidersStore.rewardsTokenSymbol,
-        }),
-      ]
-    : []),
   t('zero-pool-description.list.text-3', {
     deposit: web3ProvidersStore.depositTokenSymbol,
     reward: web3ProvidersStore.rewardsTokenSymbol,
@@ -89,6 +76,19 @@ const listItems = computed<string[]>(() => [
   t('zero-pool-description.list.text-6', {
     reward: web3ProvidersStore.rewardsTokenSymbol,
   }),
+  ...(isGlobalDashboard.value
+    ? [
+        t('zero-pool-description.list.text-1', {
+          time: humanizeTime(poolsLimits.value.claimLockPeriodAfterStake),
+          deposit: web3ProvidersStore.depositTokenSymbol,
+          reward: web3ProvidersStore.rewardsTokenSymbol,
+        }),
+        t('zero-pool-description.list.text-2', {
+          time: humanizeTime(poolsLimits.value.claimLockPeriodAfterClaim),
+          reward: web3ProvidersStore.rewardsTokenSymbol,
+        }),
+      ]
+    : []),
 ])
 
 const loadPoolsLimits = async () => {
