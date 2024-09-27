@@ -20,18 +20,18 @@
                 scheme="filled"
                 color="secondary"
                 size="none"
-                :disabled="chartType === CHART_TYPE.circulingSupply"
+                :disabled="chartType === CHART_TYPE.earnedMor"
                 :icon-left="$icons.arrowLeft"
-                @click="changeChartType(CHART_TYPE.circulingSupply)"
+                @click="changeChartType(CHART_TYPE.earnedMor)"
               />
               <app-button
                 class="info-dashboard__header-button"
                 scheme="filled"
                 color="secondary"
                 size="none"
-                :disabled="chartType === CHART_TYPE.earnedMor"
+                :disabled="chartType === CHART_TYPE.circulingSupply"
                 :icon-left="$icons.arrowLeft"
-                @click="changeChartType(CHART_TYPE.earnedMor)"
+                @click="changeChartType(CHART_TYPE.circulingSupply)"
               />
             </div>
           </div>
@@ -154,7 +154,7 @@ const route = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const chartType = ref(CHART_TYPE.circulingSupply)
+const chartType = ref(CHART_TYPE.earnedMor)
 
 const isChartDataUpdating = ref(false)
 
