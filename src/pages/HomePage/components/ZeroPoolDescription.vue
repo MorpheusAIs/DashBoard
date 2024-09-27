@@ -57,33 +57,27 @@ const isGlobalDashboard = computed(
 )
 
 const listItems = computed<string[]>(() => [
-  t('zero-pool-description.list.text-3', {
+  t('zero-pool-description.list.text-1', {
     deposit: web3ProvidersStore.depositTokenSymbol,
     reward: web3ProvidersStore.rewardsTokenSymbol,
   }),
-  t('zero-pool-description.list.text-4', {
+  t('zero-pool-description.list.text-2', {
     deposit: web3ProvidersStore.depositTokenSymbol,
     time: props.withdrawAfter
       ? props.withdrawAfter.format(DAY_MONTH_TIME_FORMAT)
       : '',
   }),
-  t('zero-pool-description.list.text-5', {
-    reward: web3ProvidersStore.rewardsTokenSymbol,
-    time: props.claimAfter
-      ? props.claimAfter.format(DAY_MONTH_TIME_FORMAT)
-      : '',
-  }),
-  t('zero-pool-description.list.text-6', {
+  t('zero-pool-description.list.text-3', {
     reward: web3ProvidersStore.rewardsTokenSymbol,
   }),
   ...(isGlobalDashboard.value
     ? [
-        t('zero-pool-description.list.text-1', {
+        t('zero-pool-description.list.text-4', {
           time: humanizeTime(poolsLimits.value.claimLockPeriodAfterStake),
           deposit: web3ProvidersStore.depositTokenSymbol,
           reward: web3ProvidersStore.rewardsTokenSymbol,
         }),
-        t('zero-pool-description.list.text-2', {
+        t('zero-pool-description.list.text-5', {
           time: humanizeTime(poolsLimits.value.claimLockPeriodAfterClaim),
           reward: web3ProvidersStore.rewardsTokenSymbol,
         }),

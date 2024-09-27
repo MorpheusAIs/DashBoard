@@ -244,12 +244,11 @@
   },
   "zero-pool-description": {
     "list": {
-      "text-1": "{reward} tokens can be claimed {time} after deposit of {deposit}.",
-      "text-2": "{reward} tokens can be claimed {time} after last {reward} claim.",
-      "text-3": "Deposit {deposit} (via ETH) to earn {reward} tokens",
-      "text-4": "{deposit} can be withdrawn after {time}",
-      "text-5": "Claim your {reward} tokens starting {time}",
-      "text-6": "{reward} tokens are rewarded on Arbitrum"
+      "text-1": "Deposit {deposit} (via ETH) to earn {reward} tokens",
+      "text-2": "{deposit} can be withdrawn after {time}",
+      "text-3": "{reward} tokens are rewarded on Arbitrum",
+      "text-4": "Claim {reward} tokens {time} after {deposit} deposit",
+      "text-5": "Claim {reward} tokens {time} after last claim."
     },
     "details": "Details on"
   },
