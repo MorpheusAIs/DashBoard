@@ -63,7 +63,7 @@ const listItems = computed<string[]>(() => [
   t('zero-pool-description.list.text-2', {
     deposit: web3ProvidersStore.depositTokenSymbol,
     time: props.withdrawAfter
-      ? duration(props.withdrawAfter.timestamp, 'seconds').asDays
+      ? duration(props.withdrawAfter.timestamp, 'seconds').asDays.toFixed()
       : '',
   }),
   t('zero-pool-description.list.text-3', {
