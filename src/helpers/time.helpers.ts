@@ -1,7 +1,7 @@
 import { i18n } from '@/localization'
-import { Duration, duration } from '@distributedlab/tools'
+import { duration } from '@distributedlab/tools'
 
-export const humanizeAsYears = (time: Duration | number) => {
+export const humanizeAsYears = (time: number) => {
   const { t } = i18n.global
   const seconds = duration(time, 'seconds')
   const timeAsYears = seconds.asYears
@@ -10,7 +10,7 @@ export const humanizeAsYears = (time: Duration | number) => {
     : t('time.year', { duration: timeAsYears.toFixed() })
 }
 
-export const humanizeAsMonths = (time: Duration | number) => {
+export const humanizeAsMonths = (time: number) => {
   const { t } = i18n.global
   const seconds = duration(time, 'seconds')
   const timeAsMonths = seconds.asMonths
@@ -19,7 +19,7 @@ export const humanizeAsMonths = (time: Duration | number) => {
     : t('time.month', { duration: timeAsMonths.toFixed() })
 }
 
-export const humanizeAsDays = (time: Duration | number) => {
+export const humanizeAsDays = (time: number) => {
   const { t } = i18n.global
   const seconds = duration(time, 'seconds')
   const timeAsDays = seconds.asDays
@@ -28,7 +28,7 @@ export const humanizeAsDays = (time: Duration | number) => {
     : t('time.day', { duration: timeAsDays.toFixed() })
 }
 
-export const humanizeAsHours = (time: Duration | number) => {
+export const humanizeAsHours = (time: number) => {
   const { t } = i18n.global
   const seconds = duration(time, 'seconds')
   const timeAsHours = seconds.asHours
@@ -37,7 +37,7 @@ export const humanizeAsHours = (time: Duration | number) => {
     : t('time.hour', { duration: timeAsHours.toFixed() })
 }
 
-export const humanizeAsMinutes = (time: Duration | number) => {
+export const humanizeAsMinutes = (time: number) => {
   const { t } = i18n.global
   const seconds = duration(time, 'seconds')
   const timeAsMinutes = seconds.asMinutes
@@ -46,32 +46,32 @@ export const humanizeAsMinutes = (time: Duration | number) => {
     : t('time.minute', { duration: timeAsMinutes.toFixed() })
 }
 
-export const humanizeAsSeconds = (time: Duration | number) => {
+export const humanizeAsSeconds = (time: number) => {
   const { t } = i18n.global
   const seconds = duration(time, 'seconds')
   const timeAsSeconds = seconds.asSeconds
-  return seconds > 1
+  return timeAsSeconds > 1
     ? t('time.seconds', { duration: timeAsSeconds.toFixed() })
     : t('time.second', { duration: timeAsSeconds.toFixed() })
 }
 
-export const humanizeTime = time => {
+export const humanizeTime = (time: number) => {
   const durationInSeconds = duration(time, 'seconds')
 
   if (durationInSeconds.asYears >= 1) {
-    return humanizeAsYears(durationInSeconds)
+    return humanizeAsYears(durationInSeconds.asSeconds)
   }
   if (durationInSeconds.asMonths >= 1) {
-    return humanizeAsMonths(durationInSeconds)
+    return humanizeAsMonths(durationInSeconds.asSeconds)
   }
   if (durationInSeconds.asDays >= 1) {
-    return humanizeAsDays(durationInSeconds)
+    return humanizeAsDays(durationInSeconds.asSeconds)
   }
   if (durationInSeconds.asHours >= 1) {
-    return humanizeAsHours(durationInSeconds)
+    return humanizeAsHours(durationInSeconds.asSeconds)
   }
   if (durationInSeconds.asMinutes >= 1) {
-    return humanizeAsMinutes(durationInSeconds)
+    return humanizeAsMinutes(durationInSeconds.asSeconds)
   }
-  return humanizeAsSeconds(durationInSeconds)
+  return humanizeAsSeconds(durationInSeconds.asSeconds)
 }
