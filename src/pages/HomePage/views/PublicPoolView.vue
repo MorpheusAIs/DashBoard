@@ -276,13 +276,9 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
 const withdrawAfterTime = computed(() => {
   if (poolData.value) {
     return new Time(
-      userPoolData.value && !userPoolData.value.lastStake.isZero()
-        ? userPoolData.value.lastStake
-            .add(poolData.value.withdrawLockPeriodAfterStake)
-            .toNumber()
-        : poolData.value.payoutStart
-            .add(poolData.value.withdrawLockPeriod)
-            .toNumber(),
+      userPoolData.value.lastStake
+        .add(poolData.value.withdrawLockPeriodAfterStake)
+        .toNumber(),
     )
   }
   return ''

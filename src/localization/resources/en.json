@@ -245,7 +245,7 @@
   "zero-pool-description": {
     "list": {
       "text-1": "Deposit {deposit} (via ETH) to earn {reward} tokens",
-      "text-2": "{deposit} can be withdrawn after {time}",
+      "text-2": "{deposit} can be withdrawn after day {time}",
       "text-3": "{reward} tokens are rewarded on Arbitrum",
       "text-4": "Claim {reward} tokens {time} after {deposit} deposit",
       "text-5": "Claim {reward} tokens {time} after last claim."

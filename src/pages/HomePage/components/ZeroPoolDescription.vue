@@ -32,11 +32,10 @@ import { AppButton } from '@/common'
 import { useI18n } from '@/composables'
 import { computed, defineProps } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
-import { Time } from '@distributedlab/tools'
-import { DAY_MONTH_TIME_FORMAT } from '@/const'
+import { duration, Time } from '@distributedlab/tools'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
-import { humanizeTime, ErrorHandler } from '@/helpers'
+import { ErrorHandler, humanizeAsDays } from '@/helpers'
 
 const props = defineProps<{
   withdrawAfter: '' | Time
@@ -64,7 +63,7 @@ const listItems = computed<string[]>(() => [
   t('zero-pool-description.list.text-2', {
     deposit: web3ProvidersStore.depositTokenSymbol,
     time: props.withdrawAfter
-      ? props.withdrawAfter.format(DAY_MONTH_TIME_FORMAT)
+      ? duration(props.withdrawAfter.timestamp, 'seconds').asDays
       : '',
   }),
   t('zero-pool-description.list.text-3', {
@@ -73,12 +72,12 @@ const listItems = computed<string[]>(() => [
   ...(isGlobalDashboard.value
     ? [
         t('zero-pool-description.list.text-4', {
-          time: humanizeTime(poolsLimits.value.claimLockPeriodAfterStake),
+          time: humanizeAsDays(poolsLimits.value.claimLockPeriodAfterStake),
           deposit: web3ProvidersStore.depositTokenSymbol,
           reward: web3ProvidersStore.rewardsTokenSymbol,
         }),
         t('zero-pool-description.list.text-5', {
-          time: humanizeTime(poolsLimits.value.claimLockPeriodAfterClaim),
+          time: humanizeAsDays(poolsLimits.value.claimLockPeriodAfterClaim),
           reward: web3ProvidersStore.rewardsTokenSymbol,
         }),
       ]
