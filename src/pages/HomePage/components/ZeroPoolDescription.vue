@@ -33,9 +33,9 @@ import { useI18n } from '@/composables'
 import { computed, defineProps } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { duration, Time } from '@distributedlab/tools'
-import { ROUTE_NAMES } from '@/enums'
+import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
-import { ErrorHandler, humanizeAsDays } from '@/helpers'
+import { ErrorHandler, humanizeAsDays, humanizeTime } from '@/helpers'
 
 const props = defineProps<{
   withdrawAfter: '' | Time
@@ -45,6 +45,7 @@ const props = defineProps<{
 const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
+const isMainnet = computed(() => route.query.network === NETWORK_IDS.mainnet)
 
 const poolsLimits = ref({
   claimLockPeriodAfterStake: 0,
@@ -60,24 +61,40 @@ const listItems = computed<string[]>(() => [
     deposit: web3ProvidersStore.depositTokenSymbol,
     reward: web3ProvidersStore.rewardsTokenSymbol,
   }),
-  t('zero-pool-description.list.text-2', {
-    deposit: web3ProvidersStore.depositTokenSymbol,
-    time: props.withdrawAfter
-      ? duration(props.withdrawAfter.timestamp, 'seconds').asDays.toFixed()
-      : '',
-  }),
+  ...(isMainnet.value
+    ? [
+        t('zero-pool-description.list.text-2-mainnet', {
+          deposit: web3ProvidersStore.depositTokenSymbol,
+          time: props.withdrawAfter
+            ? duration(
+                props.withdrawAfter.timestamp,
+                'seconds',
+              ).asDays.toFixed()
+            : '',
+        }),
+      ]
+    : [
+        t('zero-pool-description.list.text-2-testnet', {
+          deposit: web3ProvidersStore.depositTokenSymbol,
+          time: humanizeTime(props.withdrawAfter?.timestamp || 0),
+        }),
+      ]),
   t('zero-pool-description.list.text-3', {
     reward: web3ProvidersStore.rewardsTokenSymbol,
   }),
   ...(isGlobalDashboard.value
     ? [
         t('zero-pool-description.list.text-4', {
-          time: humanizeAsDays(poolsLimits.value.claimLockPeriodAfterStake),
+          time: isMainnet.value
+            ? humanizeAsDays(poolsLimits.value.claimLockPeriodAfterStake)
+            : humanizeTime(poolsLimits.value.claimLockPeriodAfterStake),
           deposit: web3ProvidersStore.depositTokenSymbol,
           reward: web3ProvidersStore.rewardsTokenSymbol,
         }),
         t('zero-pool-description.list.text-5', {
-          time: humanizeAsDays(poolsLimits.value.claimLockPeriodAfterClaim),
+          time: isMainnet.value
+            ? humanizeAsDays(poolsLimits.value.claimLockPeriodAfterClaim)
+            : humanizeTime(poolsLimits.value.claimLockPeriodAfterClaim),
           reward: web3ProvidersStore.rewardsTokenSymbol,
         }),
       ]
@@ -101,7 +118,7 @@ const loadPoolsLimits = async () => {
 }
 
 watch(
-  () => web3ProvidersStore.address,
+  [() => web3ProvidersStore.address, isMainnet],
   () => {
     if (!isGlobalDashboard.value) return
     loadPoolsLimits()
