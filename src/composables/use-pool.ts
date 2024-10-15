@@ -44,18 +44,40 @@ export const usePool = (poolId: Ref<number>) => {
       !poolData.value ||
       !currentUserReward.value ||
       currentUserReward.value.isZero()
-    )
+    ) {
       return true
+    }
 
-    if (userPoolData.value?.claimLockEnd) {
-      return (
-        currentTimestamp.value <= userPoolData.value.claimLockEnd.toNumber()
-      )
+    if (!userPoolData.value) return true
+
+    if (
+      userPoolData.value.claimLockEnd &&
+      currentTimestamp.value <= userPoolData.value.claimLockEnd.toNumber()
+    ) {
+      return true
+    }
+
+    if (
+      currentTimestamp.value <=
+      poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber()
+    ) {
+      return true
+    }
+
+    if (
+      currentTimestamp.value <=
+      userPoolData.value.lastStake
+        .add(poolData.value.withdrawLockPeriodAfterStake)
+        .toNumber()
+    ) {
+      return true
     }
 
     return (
       currentTimestamp.value <=
-      poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber()
+      (userPoolData.value.lastClaim || BigNumber.from(0))
+        .add(poolData.value.claimLockPeriodAfterClaim)
+        .toNumber()
     )
   })
 
@@ -69,21 +91,24 @@ export const usePool = (poolId: Ref<number>) => {
       !poolData.value ||
       !userPoolData.value ||
       userPoolData.value.deposited.isZero()
-    )
+    ) {
       return true
+    }
 
-    if (currentTimestamp.value < poolData.value.payoutStart.toNumber())
-      return false
+    const payoutStart = poolData.value.payoutStart.toNumber()
+    const withdrawLockEnd =
+      payoutStart + poolData.value.withdrawLockPeriod.toNumber()
+    const stakeLockEnd = userPoolData.value.lastStake
+      .add(poolData.value.withdrawLockPeriodAfterStake)
+      .toNumber()
 
-    return userPoolData.value.lastStake.isZero()
-      ? currentTimestamp.value <=
-          poolData.value.payoutStart
-            .add(poolData.value.withdrawLockPeriod)
-            .toNumber()
-      : currentTimestamp.value <=
-          userPoolData.value.lastStake
-            .add(poolData.value.withdrawLockPeriodAfterStake)
-            .toNumber()
+    const currentTime = currentTimestamp.value
+
+    return (
+      currentTime < payoutStart ||
+      (currentTime > payoutStart && currentTime <= withdrawLockEnd) ||
+      currentTime <= stakeLockEnd
+    )
   })
 
   const currentTimestampMs = useTimestamp()
@@ -384,6 +409,8 @@ export const usePool = (poolId: Ref<number>) => {
 
     isInitializing,
     isUserDataUpdating,
+
+    currentTimestamp,
 
     fetchExpectedMultiplier,
   }

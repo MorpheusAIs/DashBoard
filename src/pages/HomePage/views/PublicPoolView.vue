@@ -156,6 +156,7 @@ import { ZeroPoolDescription } from '../components'
 import { humanizeTime } from '@/helpers'
 import { useRoute } from 'vue-router'
 import { ErrorHandler } from '@/helpers'
+import { ethers } from 'ethers'
 
 const route = useRoute()
 const props = defineProps<{ poolId: number }>()
@@ -174,6 +175,7 @@ const {
   dailyReward,
   poolData,
   userPoolData,
+  currentTimestamp,
 
   isClaimDisabled,
   isDepositDisabled,
@@ -191,27 +193,36 @@ const isChangeLockEnabled = computed(
 )
 
 const claimLockTime = computed(() => {
-  if (userPoolData.value?.claimLockEnd) {
-    const lockEnd = new Time(userPoolData.value?.claimLockEnd.toNumber())
-    return new Time().isAfter(lockEnd)
-      ? '-'
-      : lockEnd.format(DEFAULT_TIME_FORMAT)
+  if (!poolData.value || !userPoolData.value) return '-'
+
+  const claimLockEnd = userPoolData.value.claimLockEnd?.toNumber() || 0
+
+  const payoutLockEnd = poolData.value.payoutStart
+    .add(poolData.value.claimLockPeriod)
+    .toNumber()
+
+  const withdrawLockEnd = userPoolData.value.lastStake
+    .add(poolData.value.withdrawLockPeriodAfterStake)
+    .toNumber()
+
+  const lastClaim = userPoolData.value.lastClaim || ethers.BigNumber.from(0)
+
+  const claimLockAfterClaimEnd = lastClaim
+    .add(poolData.value.claimLockPeriodAfterClaim || ethers.BigNumber.from(0))
+    .toNumber()
+
+  const maxLockEnd = Math.max(
+    claimLockEnd,
+    payoutLockEnd,
+    withdrawLockEnd,
+    claimLockAfterClaimEnd,
+  )
+
+  if (maxLockEnd > currentTimestamp.value) {
+    return new Time(maxLockEnd).format(DEFAULT_TIME_FORMAT)
   }
-  if (poolData.value) {
-    const lockTime = new Time(
-      userPoolData.value && !userPoolData.value.lastStake.isZero()
-        ? userPoolData.value.lastStake
-            .add(poolData.value.withdrawLockPeriodAfterStake)
-            .toNumber()
-        : poolData.value.payoutStart
-            .add(poolData.value.withdrawLockPeriod)
-            .toNumber(),
-    )
-    return new Time().isAfter(lockTime)
-      ? '-'
-      : lockTime.format(DEFAULT_TIME_FORMAT)
-  }
-  return ''
+
+  return '-'
 })
 
 const withdrawAtTime = computed(() => {
@@ -268,7 +279,7 @@ const barIndicators = computed<InfoBarType.Indicator[]>(() => [
   },
   {
     title: t('home-page.public-pool-view.claim-at-title'),
-    value: claimLockTime.value.toString(),
+    value: claimLockTime.value,
     note: t('home-page.public-pool-view.claim-at-note'),
   },
 ])
