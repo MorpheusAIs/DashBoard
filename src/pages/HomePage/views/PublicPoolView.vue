@@ -21,6 +21,18 @@
             class="public-pool-view__bar-slot-wrp"
           >
             <div class="public-pool-view__bar-buttons-wrp">
+              <!--              TODO: RETURN-->
+              <!--              <app-button-->
+              <!--                class="public-pool-view__bar-button"-->
+              <!--                :text="-->
+              <!--        $t('home-page.public-pool-view.deposit-btn', {-->
+              <!--             token: web3ProvidersStore.depositTokenSymbol,-->
+              <!--                 })-->
+              <!--                "-->
+              <!--                :is-loading="isInitializing"-->
+              <!--                :disabled="isDepositDisabled"-->
+              <!--                @click="isDepositModalShown = true"-->
+              <!--              />-->
               <app-button
                 class="public-pool-view__bar-button"
                 :text="
@@ -29,7 +41,7 @@
                   })
                 "
                 :is-loading="isInitializing"
-                :disabled="isDepositDisabled"
+                :disabled="false"
                 @click="isDepositModalShown = true"
               />
               <app-button
@@ -45,8 +57,16 @@
                 :href="$config.HOW_GET_STETH_URL"
               />
             </div>
+            <!--            TODO: RETURN-->
+            <!--            <deposit-modal-->
+            <!--     v-if="!isDepositDisabled && poolData?.minimalStake"-->
+            <!--              v-model:is-shown="isDepositModalShown"-->
+            <!--              :pool-id="poolId"-->
+            <!--              :min-stake="poolData.minimalStake"-->
+            <!--:claim-lock-end="userPoolData?
+            .claimLockEnd?.toString() ?? ''"-->
+            <!--            />-->
             <deposit-modal
-              v-if="!isDepositDisabled && poolData?.minimalStake"
               v-model:is-shown="isDepositModalShown"
               :pool-id="poolId"
               :min-stake="poolData.minimalStake"
@@ -176,7 +196,6 @@ const {
   userPoolData,
 
   isClaimDisabled,
-  isDepositDisabled,
   isWithdrawDisabled,
   rewardsMultiplier,
 

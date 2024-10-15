@@ -3,3 +3,8 @@
 document.ENV = document.ENV || Object.freeze({
   /* ... */
 })
+
+//TODO: FIND BETTER PLACE FOR THIS
+window.Browser = {
+  T: () => {}
+}
