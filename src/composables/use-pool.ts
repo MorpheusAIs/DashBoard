@@ -75,7 +75,7 @@ export const usePool = (poolId: Ref<number>) => {
 
     return (
       currentTimestamp.value <=
-      (userPoolData.value.lastClaim || BigNumber.from(0))
+      (userPoolData.value.lastClaim || ethers.BigNumber.from(0))
         .add(poolData.value.claimLockPeriodAfterClaim)
         .toNumber()
     )
@@ -146,15 +146,37 @@ export const usePool = (poolId: Ref<number>) => {
     )
   }
 
+  const fetchPoolLimits = async () => {
+    const isPoolLimitsCanBeFetched = 'poolsLimits' in erc1967ProxyContract.value
+
+    if (isPoolLimitsCanBeFetched) {
+      const [claimLockPeriodAfterClaim, claimLockPeriodAfterStake] =
+        await erc1967ProxyContract.value.poolsLimits(poolId.value)
+      return {
+        claimLockPeriodAfterStake: claimLockPeriodAfterStake,
+        claimLockPeriodAfterClaim: claimLockPeriodAfterClaim,
+      }
+    }
+    return {
+      claimLockPeriodAfterStake: ethers.BigNumber.from(0),
+      claimLockPeriodAfterClaim: ethers.BigNumber.from(0),
+    }
+  }
+
   const fetchPoolData = async (): Promise<
     Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
   > => {
-    const [poolsDataResponse, poolsResponse, totalDepositedInPublicPools] =
-      await Promise.all([
-        erc1967ProxyContract.value.poolsData(poolId.value),
-        erc1967ProxyContract.value.pools(poolId.value),
-        erc1967ProxyContract.value.totalDepositedInPublicPools(),
-      ])
+    const [
+      poolsDataResponse,
+      poolsResponse,
+      totalDepositedInPublicPools,
+      poolLimits,
+    ] = await Promise.all([
+      erc1967ProxyContract.value.poolsData(poolId.value),
+      erc1967ProxyContract.value.pools(poolId.value),
+      erc1967ProxyContract.value.totalDepositedInPublicPools(),
+      fetchPoolLimits(),
+    ])
 
     const isTotalVirtualDepositedDefined =
       'totalVirtualDeposited' in poolsDataResponse
@@ -176,6 +198,8 @@ export const usePool = (poolId: Ref<number>) => {
       rate: poolsDataResponse.rate,
       rewardDecrease: poolsResponse.rewardDecrease,
       totalDeposited,
+      claimLockPeriodAfterStake: poolLimits.claimLockPeriodAfterStake,
+      claimLockPeriodAfterClaim: poolLimits.claimLockPeriodAfterClaim,
       withdrawLockPeriod: poolsResponse.withdrawLockPeriod,
       withdrawLockPeriodAfterStake: poolsResponse.withdrawLockPeriodAfterStake,
     } as Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData
@@ -207,6 +231,11 @@ export const usePool = (poolId: Ref<number>) => {
       ? response.virtualDeposited
       : ethers.BigNumber.from(0)
 
+    const isLastClaim = 'lastClaim' in response
+    const lastClaim = isLastClaim
+      ? response.lastClaim
+      : ethers.BigNumber.from(0)
+
     return {
       claimLockEnd,
       claimLockStart,
@@ -214,6 +243,7 @@ export const usePool = (poolId: Ref<number>) => {
       lastStake: response.lastStake,
       pendingRewards: response.pendingRewards,
       rate: response.rate,
+      lastClaim,
       virtualDeposited,
     } as Erc1967ProxyType.UserData | Mor1967ProxyType.UserData
   }
