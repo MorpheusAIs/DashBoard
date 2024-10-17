@@ -4,13 +4,13 @@
     :is-shown="isShown"
     :is-close-by-click-outside="isCloseByClickOutside"
     :title="$t('deposit-modal.title')"
-    :subtitle="$t('deposit-modal.subtitle')"
     @update:is-shown="emit('update:is-shown', $event)"
   >
     <template #default="{ modal }">
       <transition name="fade">
-        <deposit-form
+        <component
           v-if="isShown"
+          :is="modalContent"
           class="deposit-modal__form"
           :pool-id="poolId"
           :min-stake="minStake"
@@ -23,9 +23,13 @@
 </template>
 
 <script lang="ts" setup>
+import MainnetDepositModalContent from './MainnetDepositModalContent.vue'
 import { DepositForm } from '@/forms'
 import { type BigNumber } from '@/types'
-import BasicModal from '../BasicModal.vue'
+import BasicModal from '../../BasicModal.vue'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+import { NETWORK_IDS } from '@config'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -42,6 +46,13 @@ withDefaults(
   {
     isCloseByClickOutside: true,
   },
+)
+
+const route = useRoute()
+const isMainnet = computed(() => route.query.network === NETWORK_IDS.mainnet)
+
+const modalContent = computed(() =>
+  isMainnet.value ? MainnetDepositModalContent : DepositForm,
 )
 </script>
 
