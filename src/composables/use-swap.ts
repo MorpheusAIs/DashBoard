@@ -13,8 +13,8 @@ import { useWeb3ProvidersStore } from '@/store'
 import { useContract } from '@/composables/use-contract'
 import { ErrorHandler } from '@/helpers'
 import { Time } from '@distributedlab/tools'
-import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_CHAIN_IDS } from '@/enums'
+import { MAX_UINT_256, SWAP_ASSETS } from '@/const'
+import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
 
 const AVERAGE_SWAP_TX_PRICE = '1214895' // gwei
 const SLIPPAGE = '50' // 0.5% slippage
@@ -34,12 +34,20 @@ export function useSwap(
   const estimatedTokenOutAmount = ref<string>('0')
   const pairAddress = ref('')
   const estimatedGasCost = ref('0')
-  const isApproved = ref(false)
 
   const tokenToSendContract = computed(() =>
     useContract(
       'ERC20__factory',
       tokenInAddress,
+      web3ProvidersStore.l1Provider,
+    ),
+  )
+
+  const wethContract = computed(() =>
+    useContract(
+      'ERC20__factory',
+      SWAP_ASSETS.find(({ symbol }) => symbol === SWAP_ASSETS_NAMES.WETH)
+        ?.address,
       web3ProvidersStore.l1Provider,
     ),
   )
@@ -171,14 +179,12 @@ export function useSwap(
           ),
         )
       ) {
-        isApproved.value = true
         estimatedGasCost.value = ethers.utils.formatEther(
           ethers.utils.parseUnits(AVERAGE_SWAP_TX_PRICE, 'gwei'),
         )
         return
       }
 
-      isApproved.value = false
       const approvalGasEstimate =
         await tokenToSendContract.value.signerBased.value.estimateGas.approve(
           V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
@@ -202,29 +208,111 @@ export function useSwap(
     }
   }
 
-  const approveRouter = async () =>
-    tokenToSendContract.value.signerBased.value.approve(
+  const executeTrade = async () => {
+    if (tokenInAddress === wethContract.value.providerBased.value.address) {
+      await performSwap(
+        tokenIn.value!,
+        tokenOut.value!,
+        CurrencyAmount.fromRawAmount(
+          tokenIn.value!,
+          ethers.utils
+            .parseUnits(tokenInValue.value, tokenIn.value!.decimals)
+            .toString(),
+        ),
+      )
+      return
+    }
+    await executeMultiSwap()
+  }
+
+  const performSwap = async (
+    fromToken: Token,
+    toToken: Token,
+    amountIn: CurrencyAmount<Token>,
+  ) => {
+    const slippageTolerance = new Percent(SLIPPAGE, '10000')
+
+    const sentTokenContract =
+      fromToken.address === wethContract.value.providerBased.value.address
+        ? wethContract.value.providerBased.value
+        : tokenToSendContract.value.providerBased.value
+
+    const allowance = await sentTokenContract.allowance(
+      web3ProvidersStore.address,
       V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
-      MAX_UINT_256,
     )
 
-  const executeTrade = async () => {
-    if (!trade.value || !tokenIn.value || !isApproved.value) return
+    if (allowance.lt(amountIn.quotient)) {
+      const tx = await sentTokenContract.approve(
+        V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+        MAX_UINT_256,
+      )
+      await tx.wait()
+    }
 
-    try {
-      const slippageTolerance = new Percent(SLIPPAGE, '10000')
-      const amountOutMin = trade.value
-        .minimumAmountOut(slippageTolerance)
-        .quotient.toString()
+    const tradeInstance = new Trade(
+      new Route([pair.value!], fromToken, toToken),
+      amountIn,
+      TradeType.EXACT_INPUT,
+    )
 
-      // eslint-disable-next-line max-len
-      return uniswapV2RouterContract.value.signerBased.value.swapExactTokensForTokens(
-        trade.value.inputAmount.quotient.toString(),
+    const amountOutMin = tradeInstance
+      .minimumAmountOut(slippageTolerance)
+      .quotient.toString()
+
+    const tx =
+      uniswapV2RouterContract.value.signerBased.value.swapExactTokensForTokens(
+        amountIn.quotient.toString(),
         amountOutMin,
-        [tokenIn.value.address, tokenOut.value.address],
+        [fromToken.address, toToken.address],
         web3ProvidersStore.address,
         new Time().add(20, 'minutes').timestamp,
       )
+    await tx.wait()
+  }
+
+  const executeMultiSwap = async () => {
+    if (!tokenIn.value) return
+
+    try {
+      const tokenInDecimals = tokenIn.value.decimals
+      const tokenInAmount = ethers.utils.parseUnits(
+        tokenInValue.value,
+        tokenInDecimals,
+      )
+      const currencyAmountIn = CurrencyAmount.fromRawAmount(
+        tokenIn.value,
+        tokenInAmount.toString(),
+      )
+
+      const wethDecimals =
+        await wethContract.value.providerBased.value.decimals()
+
+      const wethToken = new Token(
+        Number(ETHEREUM_CHAIN_IDS.ethereum),
+        wethContract.value.providerBased.value.address,
+        wethDecimals,
+      )
+      await performSwap(tokenIn.value, wethToken, currencyAmountIn)
+
+      const tokenToReceiveDecimals =
+        await tokenToReceiveContract.value.providerBased.value.decimals()
+
+      const stEthToken = new Token(
+        Number(ETHEREUM_CHAIN_IDS.ethereum),
+        tokenToReceiveContract.value.providerBased.value.address,
+        tokenToReceiveDecimals,
+      )
+      const wethBalance =
+        await wethContract.value.providerBased.value.balanceOf(
+          web3ProvidersStore.address,
+        )
+      const wethAmountIn = CurrencyAmount.fromRawAmount(
+        wethToken,
+        wethBalance.toString(),
+      )
+
+      return performSwap(wethToken, stEthToken, wethAmountIn)
     } catch (error) {
       ErrorHandler.process(error)
     }
@@ -242,7 +330,6 @@ export function useSwap(
     estimatedGasCost,
     isApproved,
 
-    approveRouter,
     executeTrade,
     calculateTrade,
   }
