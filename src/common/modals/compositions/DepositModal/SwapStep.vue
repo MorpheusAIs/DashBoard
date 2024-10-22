@@ -35,7 +35,7 @@
       <app-button
         class="swap-step__button"
         :text="mainButtonText"
-        :disabled="!isFieldsValid"
+        :disabled="!isFieldsValid || !isLoaded"
         @click="submit"
       />
     </div>
@@ -156,6 +156,7 @@ const getUserBalance = async () => {
 }
 
 const submit = async () => {
+  isLoaded.value = false
   try {
     const tx = isApproved.value ? await executeTrade() : await approveRouter()
     if (!tx) return
@@ -185,6 +186,7 @@ const submit = async () => {
   } catch (e) {
     ErrorHandler.process(e)
   }
+  isLoaded.value = true
 }
 
 watch(
