@@ -628,12 +628,17 @@
     "next-btn": "Next"
   },
   "swap-step": {
-    "step-txt": "Step 1/2:",
-    "swap-for-txt": "Swap for {asset}",
     "amount-placeholder": "Enter token amount for swap",
     "eth-amount-text":  "Approximate stETH amount",
     "estimated-fee-text": "Estimated fee (ETH)",
+    "approve-btn": "Approve",
     "confirm-btn": "Confirm",
     "cancel-btn":  "Cancel"
+  },
+  "mainnet-deposit-modal-content": {
+    "swap-lbl": "Step 1/2:",
+    "swap-txt": "Swap for {asset}",
+    "deposit-lbl": "Step 2/2",
+    "deposit-txt": "Deposit {asset}"
   }
 }

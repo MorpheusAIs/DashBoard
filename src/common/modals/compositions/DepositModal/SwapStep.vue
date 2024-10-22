@@ -1,11 +1,5 @@
 <template>
   <div class="swap-step">
-    <p class="swap-step__lbl">
-      <span class="swap-step__lbl swap-step__lbl--highlighted">
-        {{ $t('swap-step.step-txt') }}
-      </span>
-      {{ $t('swap-step.swap-for-txt', { asset: chosenAsset }) }}
-    </p>
     <input-field
       v-model="form.amount"
       :placeholder="$t(`swap-step.amount-placeholder`)"
@@ -18,13 +12,17 @@
         <span class="swap-step__desc-text">
           {{ $t('swap-step.eth-amount-text') }}
         </span>
-        <span class="swap-step__desc-amount"> {{ estimatedTokenIn }} </span>
+        <span class="swap-step__desc-amount">
+          {{ humanizedEstimations.estimatedTokenOutAmount }}
+        </span>
       </div>
       <div class="swap-step__desc">
         <span class="swap-step__desc-text">
           {{ $t('swap-step.estimated-fee-text') }}
         </span>
-        <span class="swap-step__desc-amount"> {{ estimatedFee }} </span>
+        <span class="swap-step__desc-amount">
+          {{ humanizedEstimations.estimatedGasCost }}
+        </span>
       </div>
     </div>
     <div class="swap-step__buttons">
@@ -36,7 +34,7 @@
       />
       <app-button
         class="swap-step__button"
-        :text="$t('swap-step.confirm-btn')"
+        :text="mainButtonText"
         :disabled="!isFieldsValid"
         @click="submit"
       />
@@ -48,23 +46,27 @@
 import { reactive, computed, ref, watch, toRef } from 'vue'
 import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
 import { InputField } from '@/fields'
-import { useContract, useFormValidation, useSwap } from '@/composables'
-import { required, minEther } from '@/validators'
+import { useContract, useFormValidation, useI18n, useSwap } from '@/composables'
+import { required, minEther, maxEther } from '@/validators'
 import { SWAP_ASSETS } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
-import { ErrorHandler } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { utils } from 'ethers'
 import { AppButton } from '@/common'
 import { config } from '@config'
 
+const PRECISION = 5
+
 const emit = defineEmits<{
   (e: 'cancel'): void
+  (e: 'swap-success'): void
 }>()
 
 const props = defineProps<{
   chosenAsset: SWAP_ASSETS_NAMES
 }>()
 
+const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isLoaded = ref(false)
@@ -81,10 +83,32 @@ const chosenAssetAddress = computed(
     '',
 )
 
-const { estimatedTokenIn, estimatedFee, executeTrade } = useSwap(
+const {
+  estimatedTokenOutAmount,
+  estimatedGasCost,
+  isApproved,
+  executeTrade,
+  approveRouter,
+  calculateTrade,
+} = useSwap(
   chosenAssetAddress.value,
   config.STETH_MAINNET_CONTRACT_ADDRESS,
   toRef(() => form.amount),
+)
+
+const { getFieldErrorMessage, isFieldsValid, touchField } = useFormValidation(
+  form,
+  {
+    amount: {
+      required,
+      minEther: minEther(0),
+      maxEther: computed(() => maxEther(userBalance.value)),
+    },
+  },
+)
+
+const mainButtonText = computed(() =>
+  isApproved.value ? t('swap-step.confirm-btn') : t('swap-step.approve-btn'),
 )
 
 const tokenAddress = computed(
@@ -92,6 +116,17 @@ const tokenAddress = computed(
     SWAP_ASSETS.find(({ symbol }) => symbol === props.chosenAsset)?.address ||
     '',
 )
+
+const humanizedEstimations = computed(() => ({
+  estimatedTokenOutAmount: humanizeEtherValue(
+    estimatedTokenOutAmount.value,
+    SWAP_ASSETS_NAMES.STETH,
+  ),
+  estimatedGasCost: humanizeEtherValue(
+    estimatedGasCost.value,
+    config.chainsMap[ETHEREUM_CHAIN_IDS.ethereum].nativeCurrency.name,
+  ),
+}))
 
 const erc20Contract = computed(() =>
   useContract(
@@ -101,16 +136,8 @@ const erc20Contract = computed(() =>
   ),
 )
 
-const { getFieldErrorMessage, isFieldsValid, touchField } = useFormValidation(
-  form,
-  {
-    amount: {
-      required,
-      minEther: minEther(0),
-      // maxEther: maxEther(userBalance.value),
-    },
-  },
-)
+const humanizeEtherValue = (number: string, symbol: string) =>
+  `${parseFloat(Number(number).toFixed(PRECISION))} ${symbol}`
 
 const getUserBalance = async () => {
   isLoaded.value = false
@@ -118,7 +145,7 @@ const getUserBalance = async () => {
   try {
     await web3ProvidersStore.provider.switchChain(ETHEREUM_CHAIN_IDS.ethereum)
     const balance = await erc20Contract.value.providerBased.value.balanceOf(
-      '0xd17b3c9784510E33cD5B87b490E79253BcD81e2E',
+      web3ProvidersStore.address,
     )
     userBalance.value = utils.formatEther(balance.toString())
   } catch (e) {
@@ -130,7 +157,31 @@ const getUserBalance = async () => {
 
 const submit = async () => {
   try {
-    await executeTrade()
+    const tx = isApproved.value ? await executeTrade() : await approveRouter()
+    if (!tx) return
+
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      t('deposit-form.tx-sent-message', { explorerTxUrl }),
+    )
+
+    await tx.wait()
+
+    bus.emit(
+      BUS_EVENTS.success,
+      t('deposit-form.success-message', { explorerTxUrl }),
+    )
+
+    if (isApproved.value) {
+      emit('swap-success')
+    }
+
+    await calculateTrade()
   } catch (e) {
     ErrorHandler.process(e)
   }
@@ -149,16 +200,6 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.swap-step__lbl {
-  font-size: toRem(20);
-  line-height: toRem(30);
-  margin: toRem(32) 0 toRem(24);
-
-  &--highlighted {
-    color: var(--primary-main);
-  }
-}
-
 .swap-step__desc-wrp {
   display: flex;
   margin-top: toRem(20);

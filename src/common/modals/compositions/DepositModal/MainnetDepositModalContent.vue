@@ -1,11 +1,31 @@
 <template>
   <div class="mainnet-deposit-modal-content">
+    <p
+      v-if="currentStep !== STEPS.chooseAssetStep"
+      class="mainnet-deposit-modal-content__lbl"
+    >
+      <span
+        :class="
+          [
+            'mainnet-deposit-modal-content__lbl',
+            'mainnet-deposit-modal-content__lbl--highlighted',
+          ].join(' ')
+        "
+      >
+        {{ lblText.lbl }}
+      </span>
+      {{ lblText.text }}
+    </p>
     <component
       :is="chosenComponent"
       :chosen-asset="chosenAsset"
+      :pool-id="poolId"
+      :min-stake="minStake"
+      @stake-tx-sent="emit('cancel')"
       @asset-chosen="chooseAsset"
       @cancel="emit('cancel')"
       @next-step="increaseStep"
+      @swap-success="moveToDepositTab"
     />
   </div>
 </template>
@@ -17,6 +37,7 @@ import SwapStep from './SwapStep.vue'
 import { SWAP_ASSETS_NAMES } from '@/enums'
 import { DepositForm } from '@/forms'
 import { BigNumber } from '@/utils'
+import { useI18n } from '@/composables'
 
 enum STEPS {
   chooseAssetStep,
@@ -33,6 +54,8 @@ defineProps<{
   minStake: BigNumber
 }>()
 
+const { t } = useI18n()
+
 const currentStep = ref(STEPS.chooseAssetStep)
 const chosenAsset = ref<SWAP_ASSETS_NAMES | ''>('')
 
@@ -47,6 +70,22 @@ const chosenComponent = computed(() => {
   }
 })
 
+const lblText = computed(() =>
+  currentStep.value === STEPS.deposit
+    ? {
+        lbl: t('mainnet-deposit-modal-content.deposit-lbl'),
+        text: t('mainnet-deposit-modal-content.deposit-txt', {
+          asset: chosenAsset.value,
+        }),
+      }
+    : {
+        lbl: t('mainnet-deposit-modal-content.swap-lbl'),
+        text: t('mainnet-deposit-modal-content.swap-txt', {
+          asset: chosenAsset.value,
+        }),
+      },
+)
+
 const chooseAsset = (e: SWAP_ASSETS_NAMES) => {
   chosenAsset.value = e
 }
@@ -55,6 +94,20 @@ const increaseStep = () => {
   currentStep.value =
     chosenAsset.value === SWAP_ASSETS_NAMES.STETH ? STEPS.deposit : STEPS.swap
 }
+
+const moveToDepositTab = () => {
+  currentStep.value = STEPS.deposit
+}
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.mainnet-deposit-modal-content__lbl {
+  font-size: toRem(20);
+  line-height: toRem(30);
+  margin: toRem(32) 0 toRem(24);
+
+  &--highlighted {
+    color: var(--primary-main);
+  }
+}
+</style>
