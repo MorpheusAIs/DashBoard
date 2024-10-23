@@ -50,7 +50,7 @@ import { useContract, useFormValidation, useI18n, useSwap } from '@/composables'
 import { required, minEther, maxEther } from '@/validators'
 import { SWAP_ASSETS } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
-import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import { ErrorHandler } from '@/helpers'
 import { utils } from 'ethers'
 import { AppButton } from '@/common'
 import { config } from '@config'
@@ -83,14 +83,7 @@ const chosenAssetAddress = computed(
     '',
 )
 
-const {
-  estimatedTokenOutAmount,
-  estimatedGasCost,
-  isApproved,
-  executeTrade,
-  approveRouter,
-  calculateTrade,
-} = useSwap(
+const { estimatedTokenOutAmount, estimatedGasCost, executeTrade } = useSwap(
   chosenAssetAddress.value,
   config.STETH_MAINNET_CONTRACT_ADDRESS,
   toRef(() => form.amount),
@@ -107,9 +100,7 @@ const { getFieldErrorMessage, isFieldsValid, touchField } = useFormValidation(
   },
 )
 
-const mainButtonText = computed(() =>
-  isApproved.value ? t('swap-step.confirm-btn') : t('swap-step.approve-btn'),
-)
+const mainButtonText = computed(() => t('swap-step.confirm-btn'))
 
 const tokenAddress = computed(
   () =>
@@ -158,31 +149,7 @@ const getUserBalance = async () => {
 const submit = async () => {
   isLoaded.value = false
   try {
-    const tx = isApproved.value ? await executeTrade() : await approveRouter()
-    if (!tx) return
-
-    const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
-      tx.hash,
-    )
-
-    bus.emit(
-      BUS_EVENTS.info,
-      t('deposit-form.tx-sent-message', { explorerTxUrl }),
-    )
-
-    await tx.wait()
-
-    bus.emit(
-      BUS_EVENTS.success,
-      t('deposit-form.success-message', { explorerTxUrl }),
-    )
-
-    if (isApproved.value) {
-      emit('swap-success')
-    }
-
-    await calculateTrade()
+    await executeTrade()
   } catch (e) {
     ErrorHandler.process(e)
   }

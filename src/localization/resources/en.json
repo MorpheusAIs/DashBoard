@@ -640,5 +640,9 @@
     "swap-txt": "Swap for {asset}",
     "deposit-lbl": "Step 2/2",
     "deposit-txt": "Deposit {asset}"
+  },
+  "use-swap": {
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   }
 }

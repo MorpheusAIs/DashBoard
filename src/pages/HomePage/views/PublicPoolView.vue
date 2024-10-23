@@ -21,18 +21,17 @@
             class="public-pool-view__bar-slot-wrp"
           >
             <div class="public-pool-view__bar-buttons-wrp">
-              <!--              TODO: RETURN-->
-              <!--              <app-button-->
-              <!--                class="public-pool-view__bar-button"-->
-              <!--                :text="-->
-              <!--        $t('home-page.public-pool-view.deposit-btn', {-->
-              <!--             token: web3ProvidersStore.depositTokenSymbol,-->
-              <!--                 })-->
-              <!--                "-->
-              <!--                :is-loading="isInitializing"-->
-              <!--                :disabled="isDepositDisabled"-->
-              <!--                @click="isDepositModalShown = true"-->
-              <!--              />-->
+              <app-button
+                class="public-pool-view__bar-button"
+                :text="
+                  $t('home-page.public-pool-view.deposit-btn', {
+                    token: web3ProvidersStore.depositTokenSymbol,
+                  })
+                "
+                :is-loading="isInitializing"
+                :disabled="isDepositDisabled"
+                @click="isDepositModalShown = true"
+              />
               <app-button
                 class="public-pool-view__bar-button"
                 :text="

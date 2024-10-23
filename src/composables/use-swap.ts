@@ -11,13 +11,14 @@ import { Pair, Route, Trade } from '@uniswap/v2-sdk'
 import { ethers } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
 import { useContract } from '@/composables/use-contract'
-import { ErrorHandler } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { Time } from '@distributedlab/tools'
 import { MAX_UINT_256, SWAP_ASSETS } from '@/const'
 import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
+import { config } from '@config'
 
-const AVERAGE_SWAP_TX_PRICE = '1214895' // gwei
-const SLIPPAGE = '50' // 0.5% slippage
+const AVERAGE_GAS_USED_FOR_SWAP_TX = '150292' // gas units
+const SLIPPAGE = '50'
 
 export function useSwap(
   tokenInAddress: string,
@@ -29,8 +30,6 @@ export function useSwap(
   const tokenIn = ref<Token | null>(null)
   const tokenOut = ref<Token | null>(null)
   const pair = ref<Pair | null>(null)
-  const route = ref<Route | null>(null)
-  const trade = ref<Trade | null>(null)
   const estimatedTokenOutAmount = ref<string>('0')
   const pairAddress = ref('')
   const estimatedGasCost = ref('0')
@@ -92,13 +91,6 @@ export function useSwap(
           tokenOutAddress,
         )
 
-      if (pairAddress.value === ethers.constants.AddressZero) {
-        return
-      }
-
-      const [reserve0, reserve1] =
-        await uniswapV2PairContract.value.providerBased.value.getReserves()
-
       const [tokenInDecimals, tokenOutDecimals] = await Promise.all([
         tokenToSendContract.value.providerBased.value.decimals(),
         tokenToReceiveContract.value.providerBased.value.decimals(),
@@ -119,6 +111,13 @@ export function useSwap(
       tokenIn.value = inToken
       tokenOut.value = outToken
 
+      if (pairAddress.value === ethers.constants.AddressZero) {
+        return
+      }
+
+      const [reserve0, reserve1] =
+        await uniswapV2PairContract.value.providerBased.value.getReserves()
+
       pair.value = new Pair(
         CurrencyAmount.fromRawAmount(inToken, reserve0.toString()),
         CurrencyAmount.fromRawAmount(outToken, reserve1.toString()),
@@ -129,12 +128,11 @@ export function useSwap(
   }
 
   const calculateTrade = async () => {
-    if (!parseFloat(tokenInValue.value)) {
-      return
-    }
+    if (!parseFloat(tokenInValue.value)) return
+
     await estimateGasCost()
-    if (!tokenIn.value || !tokenOut.value || !pair.value) {
-      console.warn('Tokens or pair not initialized correctly.')
+
+    if (!tokenIn.value || !tokenOut.value) {
       return
     }
 
@@ -144,11 +142,67 @@ export function useSwap(
       tokenInDecimals,
     )
 
-    const routeInstance = new Route([pair.value], tokenIn.value, tokenOut.value)
-    route.value = routeInstance
+    const wethTokenDecimals =
+      await wethContract.value.providerBased.value.decimals()
+    const wethToken = new Token(
+      1,
+      wethContract.value.providerBased.value.address,
+      wethTokenDecimals,
+    )
+
+    if (
+      tokenInAddress.toLowerCase() ===
+      wethContract.value.providerBased.value.address.toLowerCase()
+    ) {
+      const route = new Route([pair.value!], tokenIn.value, tokenOut.value!)
+      const tradeInstance = new Trade(
+        route,
+        CurrencyAmount.fromRawAmount(
+          tokenIn.value,
+          tokenInAmountInWei.toString(),
+        ),
+        TradeType.EXACT_INPUT,
+      )
+
+      estimatedTokenOutAmount.value = ethers.utils.formatUnits(
+        tradeInstance.outputAmount.quotient.toString(),
+        tokenOut.value.decimals,
+      )
+      return
+    }
+
+    pairAddress.value =
+      await uniswapV2FactoryContract.value.providerBased.value.getPair(
+        tokenInAddress,
+        wethContract.value.providerBased.value.address,
+      )
+
+    const [reserveTokenIn, reserveWETH] =
+      await uniswapV2PairContract.value.providerBased.value.getReserves()
+
+    const pair1 = new Pair(
+      CurrencyAmount.fromRawAmount(tokenIn.value, reserveTokenIn.toString()),
+      CurrencyAmount.fromRawAmount(wethToken, reserveWETH.toString()),
+    )
+
+    pairAddress.value =
+      await uniswapV2FactoryContract.value.providerBased.value.getPair(
+        wethContract.value.providerBased.value.address,
+        tokenOutAddress,
+      )
+
+    const [reserve0, reserve1] =
+      await uniswapV2PairContract.value.providerBased.value.getReserves()
+
+    const pair2 = new Pair(
+      CurrencyAmount.fromRawAmount(wethToken, reserve1.toString()),
+      CurrencyAmount.fromRawAmount(tokenOut.value, reserve0.toString()),
+    )
+
+    const route = new Route([pair1, pair2], tokenIn.value, tokenOut.value!)
 
     const tradeInstance = new Trade(
-      routeInstance,
+      route,
       CurrencyAmount.fromRawAmount(
         tokenIn.value,
         tokenInAmountInWei.toString(),
@@ -156,52 +210,72 @@ export function useSwap(
       TradeType.EXACT_INPUT,
     )
 
-    trade.value = tradeInstance
     estimatedTokenOutAmount.value = ethers.utils.formatUnits(
       tradeInstance.outputAmount.quotient.toString(),
       tokenOut.value.decimals,
     )
   }
 
+  const estimateApprovals = async () => {
+    let estimation = ethers.BigNumber.from(0)
+
+    const allowance = await wethContract.value.signerBased.value.allowance(
+      web3ProvidersStore.address,
+      V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+    )
+
+    if (allowance.lt(MAX_UINT_256)) {
+      estimation =
+        await wethContract.value.signerBased.value.estimateGas.approve(
+          V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+          MAX_UINT_256,
+        )
+    }
+
+    if (
+      tokenInAddress.toString() ===
+      wethContract.value.providerBased.value.address.toString()
+    ) {
+      return estimation
+    }
+
+    const tokenToSendAllowance =
+      await tokenToSendContract.value.signerBased.value.allowance(
+        web3ProvidersStore.address,
+        V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+      )
+
+    if (tokenToSendAllowance.gte(MAX_UINT_256)) {
+      return estimation
+    }
+
+    const tokenToSendGasEstimate =
+      await tokenToSendContract.value.signerBased.value.estimateGas.approve(
+        V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+        MAX_UINT_256,
+      )
+
+    return estimation.add(tokenToSendGasEstimate)
+  }
+
+  const estimateGasPriceForSwaps = async () => {
+    const gasPrice = await web3ProvidersStore.l1Provider.getGasPrice()
+
+    const txPrice = gasPrice.mul(AVERAGE_GAS_USED_FOR_SWAP_TX)
+
+    return tokenInAddress.toString() ===
+      wethContract.value.providerBased.value.address.toString()
+      ? txPrice
+      : txPrice.mul(2)
+  }
+
   const estimateGasCost = async () => {
     try {
-      const allowance =
-        await tokenToSendContract.value.signerBased.value.allowance(
-          web3ProvidersStore.address,
-          V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
-        )
-
-      if (
-        allowance.gte(
-          ethers.utils.parseUnits(
-            tokenInValue.value || '0',
-            tokenIn.value.decimals,
-          ),
-        )
-      ) {
-        estimatedGasCost.value = ethers.utils.formatEther(
-          ethers.utils.parseUnits(AVERAGE_SWAP_TX_PRICE, 'gwei'),
-        )
-        return
-      }
-
-      const approvalGasEstimate =
-        await tokenToSendContract.value.signerBased.value.estimateGas.approve(
-          V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
-          ethers.utils.parseUnits(
-            tokenInValue.value || '0',
-            tokenIn.value.decimals,
-          ),
-        )
-      const gasPrice = await web3ProvidersStore.l1Provider.getGasPrice()
-      const totalGasCostInWei = approvalGasEstimate.mul(gasPrice)
-      estimatedGasCost.value = ethers.utils
-        .formatEther(
-          totalGasCostInWei
-            .add(ethers.utils.parseUnits(AVERAGE_SWAP_TX_PRICE, 'gwei'))
-            .toString(),
-        )
-        .toString()
+      const estimatedApprovals = await estimateApprovals()
+      const estimatedSwaps = await estimateGasPriceForSwaps()
+      estimatedGasCost.value = ethers.utils.formatEther(
+        estimatedApprovals.add(estimatedSwaps),
+      )
     } catch (error) {
       ErrorHandler.processWithoutFeedback(error)
       estimatedGasCost.value = ethers.BigNumber.from(0).toString()
@@ -216,13 +290,28 @@ export function useSwap(
         CurrencyAmount.fromRawAmount(
           tokenIn.value!,
           ethers.utils
-            .parseUnits(tokenInValue.value, tokenIn.value!.decimals)
+            .parseUnits(tokenInValue.value, tokenIn.value.decimals)
             .toString(),
         ),
       )
       return
     }
     await executeMultiSwap()
+  }
+
+  const waitForTx = async (tx: ethers.ContractTransaction) => {
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      tx.hash,
+    )
+    bus.emit(BUS_EVENTS.info, t('use-swap.tx-sent-message', { explorerTxUrl }))
+
+    await tx.wait()
+
+    bus.emit(
+      BUS_EVENTS.success,
+      t('use-swap.success-message', { explorerTxUrl }),
+    )
   }
 
   const performSwap = async (
@@ -247,7 +336,7 @@ export function useSwap(
         V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
         MAX_UINT_256,
       )
-      await tx.wait()
+      await waitForTx(tx)
     }
 
     const tradeInstance = new Trade(
@@ -268,7 +357,13 @@ export function useSwap(
         web3ProvidersStore.address,
         new Time().add(20, 'minutes').timestamp,
       )
-    await tx.wait()
+
+    await waitForTx(tx)
+
+    return ethers.utils.formatUnits(
+      tradeInstance.outputAmount.quotient.toString(),
+      toToken.decimals,
+    )
   }
 
   const executeMultiSwap = async () => {
@@ -293,7 +388,11 @@ export function useSwap(
         wethContract.value.providerBased.value.address,
         wethDecimals,
       )
-      await performSwap(tokenIn.value, wethToken, currencyAmountIn)
+      const amountOutWETH = await performSwap(
+        tokenIn.value,
+        wethToken,
+        currencyAmountIn,
+      )
 
       const tokenToReceiveDecimals =
         await tokenToReceiveContract.value.providerBased.value.decimals()
@@ -303,13 +402,10 @@ export function useSwap(
         tokenToReceiveContract.value.providerBased.value.address,
         tokenToReceiveDecimals,
       )
-      const wethBalance =
-        await wethContract.value.providerBased.value.balanceOf(
-          web3ProvidersStore.address,
-        )
+
       const wethAmountIn = CurrencyAmount.fromRawAmount(
         wethToken,
-        wethBalance.toString(),
+        ethers.utils.parseUnits(amountOutWETH, 'ether').toString(),
       )
 
       return performSwap(wethToken, stEthToken, wethAmountIn)
@@ -328,9 +424,7 @@ export function useSwap(
   return {
     estimatedTokenOutAmount,
     estimatedGasCost,
-    isApproved,
 
     executeTrade,
-    calculateTrade,
   }
 }
