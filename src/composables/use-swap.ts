@@ -1,21 +1,20 @@
-import { computed, ref, Ref, watch } from 'vue'
+import { ref, Ref, watch } from 'vue'
 import {
   CurrencyAmount,
   Percent,
   Token,
   TradeType,
-  V2_FACTORY_ADDRESSES,
   V2_ROUTER_ADDRESSES,
 } from '@uniswap/sdk-core'
 import { Pair, Route, Trade } from '@uniswap/v2-sdk'
 import { ethers } from 'ethers'
 import { useWeb3ProvidersStore } from '@/store'
-import { useContract } from '@/composables/use-contract'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { Time } from '@distributedlab/tools'
-import { MAX_UINT_256, SWAP_ASSETS } from '@/const'
-import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
+import { MAX_UINT_256 } from '@/const'
+import { ETHEREUM_CHAIN_IDS } from '@/enums'
 import { config } from '@config'
+import { useSwapContracts } from '@/composables'
 
 const AVERAGE_GAS_USED_FOR_SWAP_TX = '150292' // gas units
 const SLIPPAGE = '50'
@@ -34,54 +33,14 @@ export function useSwap(
   const pairAddress = ref('')
   const estimatedGasCost = ref('0')
 
-  const tokenToSendContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      tokenInAddress,
-      web3ProvidersStore.l1Provider,
-    ),
-  )
-
-  const wethContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      SWAP_ASSETS.find(({ symbol }) => symbol === SWAP_ASSETS_NAMES.WETH)
-        ?.address,
-      web3ProvidersStore.l1Provider,
-    ),
-  )
-
-  const tokenToReceiveContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      tokenOutAddress,
-      web3ProvidersStore.l1Provider,
-    ),
-  )
-
-  const uniswapV2FactoryContract = computed(() =>
-    useContract(
-      'UniswapV2Factory__factory',
-      V2_FACTORY_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
-      web3ProvidersStore.l1Provider,
-    ),
-  )
-
-  const uniswapV2RouterContract = computed(() =>
-    useContract(
-      'UniswapV2Router__factory',
-      V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
-      web3ProvidersStore.l1Provider,
-    ),
-  )
-
-  const uniswapV2PairContract = computed(() =>
-    useContract(
-      'UniswapV2Pair__factory',
-      pairAddress.value,
-      web3ProvidersStore.l1Provider,
-    ),
-  )
+  const {
+    tokenToSendContract,
+    tokenToReceiveContract,
+    uniswapV2FactoryContract,
+    uniswapV2PairContract,
+    uniswapV2RouterContract,
+    wethContract,
+  } = useSwapContracts(tokenInAddress, tokenOutAddress, pairAddress)
 
   const loadTokensAndPair = async () => {
     try {

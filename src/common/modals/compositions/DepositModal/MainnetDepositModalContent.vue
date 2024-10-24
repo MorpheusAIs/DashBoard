@@ -6,10 +6,10 @@
     >
       <span
         :class="
-          [
+          mergeClasses(
             'mainnet-deposit-modal-content__lbl',
             'mainnet-deposit-modal-content__lbl--highlighted',
-          ].join(' ')
+          )
         "
       >
         {{ lblText.lbl }}
@@ -38,6 +38,7 @@ import { SWAP_ASSETS_NAMES } from '@/enums'
 import { DepositForm } from '@/forms'
 import { BigNumber } from '@/utils'
 import { useI18n } from '@/composables'
+import { mergeClasses } from '@/helpers'
 
 enum STEPS {
   chooseAssetStep,

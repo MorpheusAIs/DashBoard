@@ -1,5 +1,5 @@
 <template>
-  <div class="swap-step">
+  <form class="swap-step" @submit="submit">
     <input-field
       v-model="form.amount"
       :placeholder="$t(`swap-step.amount-placeholder`)"
@@ -34,12 +34,12 @@
       />
       <app-button
         class="swap-step__button"
+        type="submit"
         :text="mainButtonText"
         :disabled="!isFieldsValid || !isLoaded"
-        @click="submit"
       />
     </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">

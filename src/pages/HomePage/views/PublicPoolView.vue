@@ -33,17 +33,6 @@
                 @click="isDepositModalShown = true"
               />
               <app-button
-                class="public-pool-view__bar-button"
-                :text="
-                  $t('home-page.public-pool-view.deposit-btn', {
-                    token: web3ProvidersStore.depositTokenSymbol,
-                  })
-                "
-                :is-loading="isInitializing"
-                :disabled="false"
-                @click="isDepositModalShown = true"
-              />
-              <app-button
                 v-if="!web3ProvidersStore.dashboardInfo.name"
                 class="public-pool-view__bar-button"
                 scheme="link"
