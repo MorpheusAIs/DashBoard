@@ -152,7 +152,7 @@
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim {token}",
       "dashboard-description--0": "Upon withdrawal, your deposited {token} will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
-      "dashboard-note--0": "Note: You can withdraw your {token} {daysCount} days after deposit."
+      "dashboard-note--0": "Note: You can withdraw your {token} {time} after deposit."
     }
   },
   "mor20-ecosystem": {
