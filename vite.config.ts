@@ -3,14 +3,9 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig, loadEnv } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-
-/**
- * @description Enable import if you need polyfills
- *
- * import { nodePolyfills } from 'vite-plugin-node-polyfills'
- * import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
- * import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
- */
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
 import * as fs from 'fs'
 import * as path from 'path'
@@ -39,7 +34,11 @@ export default defineConfig(({ mode }) => {
     publicDir: 'static',
     base: '',
     build: {
+      target: 'esnext',
       rollupOptions: {
+        plugins: [
+          nodePolyfills(),
+        ],
         output: {
           manualChunks: {
             w3m: ['@web3modal/ethers5'],
@@ -87,40 +86,38 @@ export default defineConfig(({ mode }) => {
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
       dedupe: ['vue', '@vueuse/core', 'lodash'],
-      alias: {
-        '@': `${root}/`,
-        '@config': `${root}/config.ts`,
-        '@static': `${root}/../static`,
-      },
+      alias: [
+        {
+          find: '@',
+          replacement: `${root}/`,
+        },
+        {
+          find: '@config',
+          replacement: `${root}/config.ts`,
+        },
+        {
+          find: '@static',
+          replacement: `${root}/../static`,
+        },
+        {
+          find: 'fs',
+          replacement: 'memfs',
+        },
+      ],
     },
-    /**
-     * @description Enable configuration for polyfills
-     *
-     * optimizeDeps: {
-     *       esbuildOptions: {
-     *         define: {
-     *           global: 'globalThis',
-     *         },
-     *       },
-     *       // Enable esbuild polyfill plugins
-     *       plugins: [
-     *         NodeGlobalsPolyfillPlugin({
-     *           process: true,
-     *           buffer: true,
-     *         }),
-     *         NodeModulesPolyfillPlugin(),
-     *       ],
-     *     },
-     *     build: {
-     *       target: 'esnext',
-     *       rollupOptions: {
-     *         plugins: [
-     *           // Enable rollup polyfills plugin
-     *           // used during production bundling
-     *           nodePolyfills(),
-     *         ],
-     *       },
-     *     },
-     */
+    optimizeDeps: {
+      esbuildOptions: {
+        define: {
+          global: 'globalThis',
+        },
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          process: true,
+          buffer: true,
+        }),
+        NodeModulesPolyfillPlugin(),
+      ],
+    },
   }
 })

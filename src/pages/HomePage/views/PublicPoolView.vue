@@ -45,8 +45,16 @@
                 :href="$config.HOW_GET_STETH_URL"
               />
             </div>
+            <!--            TODO: RETURN-->
+            <!--            <deposit-modal-->
+            <!--     v-if="!isDepositDisabled && poolData?.minimalStake"-->
+            <!--              v-model:is-shown="isDepositModalShown"-->
+            <!--              :pool-id="poolId"-->
+            <!--              :min-stake="poolData.minimalStake"-->
+            <!--:claim-lock-end="userPoolData?
+            .claimLockEnd?.toString() ?? ''"-->
+            <!--            />-->
             <deposit-modal
-              v-if="!isDepositDisabled && poolData?.minimalStake"
               v-model:is-shown="isDepositModalShown"
               :pool-id="poolId"
               :min-stake="poolData.minimalStake"
@@ -178,7 +186,6 @@ const {
   currentTimestamp,
 
   isClaimDisabled,
-  isDepositDisabled,
   isWithdrawDisabled,
   rewardsMultiplier,
 

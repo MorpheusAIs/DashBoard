@@ -12,3 +12,6 @@ export function capitalize(text: string): string {
   if (!text.length) return ''
   return text[0].toUpperCase().concat(text.slice(1))
 }
+
+export const mergeClasses = (...classes: (string | undefined)[]) =>
+  classes.join(' ')

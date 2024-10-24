@@ -12,3 +12,6 @@ export { L2MessageReceiver__factory } from "./L2MessageReceiver__factory";
 export { L2TokenReceiver__factory } from "./L2TokenReceiver__factory";
 export { MOR1967__factory } from "./MOR1967__factory";
 export { MOR20__factory } from "./MOR20__factory";
+export { UniswapV2Factory__factory } from "./UniswapV2Factory__factory";
+export { UniswapV2Pair__factory } from "./UniswapV2Pair__factory";
+export { UniswapV2Router__factory } from "./UniswapV2Router__factory";
