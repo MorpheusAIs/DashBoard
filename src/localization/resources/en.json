@@ -621,5 +621,29 @@
     "title": "Edit Contract",
     "submit-btn": "Submit",
     "renounce-btn": "Renounce"
+  },
+  "choose-asset-step": {
+    "title": "Please select the token for deposit:",
+    "cancel-btn": "Cancel",
+    "next-btn": "Next"
+  },
+  "swap-step": {
+    "amount-placeholder": "Enter token amount for swap",
+    "eth-amount-text":  "Approximate stETH amount",
+    "balance-text": "Current balance: ",
+    "estimated-fee-text": "Estimated fee (ETH)",
+    "approve-btn": "Approve",
+    "confirm-btn": "Confirm",
+    "cancel-btn":  "Cancel"
+  },
+  "mainnet-deposit-modal-content": {
+    "swap-lbl": "Step 1/2:",
+    "swap-txt": "Swap for {asset}",
+    "deposit-lbl": "Step 2/2",
+    "deposit-txt": "Deposit {asset}"
+  },
+  "use-swap": {
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   }
 }

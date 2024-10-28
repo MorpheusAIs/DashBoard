@@ -178,7 +178,6 @@ const {
   currentTimestamp,
 
   isClaimDisabled,
-  isDepositDisabled,
   isWithdrawDisabled,
   rewardsMultiplier,
 

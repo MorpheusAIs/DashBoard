@@ -4,23 +4,13 @@
     :class="{ 'deposit-form--loading': isInitializing }"
     @submit.prevent
   >
-    <div class="deposit-form__select-field-wrp">
+    <div class="deposit-form__balance-wrp">
       <label class="deposit-form__label" :for="`select-field--${uid}`">
         {{ $t('deposit-form.balance-label') }}
       </label>
-      <select-field
-        :model-value="balanceOfForm"
-        :uid="`select-field--${uid}`"
-        :value-options="balanceOptions"
-        :error-message="getFieldErrorMessage('balanceOptionIdx')"
-        :is-loading="isInitializing"
-        :disabled="isSubmitting"
-        scheme="text"
-        @update:model-value="
-          form.balanceOptionIdx = balanceOptions.indexOf($event)
-        "
-        @blur="touchField('balanceOptionIdx')"
-      />
+      <span class="deposit-form__value">
+        {{ balanceOfForm }}
+      </span>
     </div>
     <div v-if="isMultiplierShown" class="deposit-form__multiplier-wrp">
       <span class="deposit-form__label">
@@ -36,7 +26,8 @@
         class="deposit-form__input-field"
         :placeholder="
           $t('deposit-form.amount-placeholder', {
-            currency: balanceOfForm?.value.currency || CURRENCIES.depositToken,
+            currency:
+              web3ProvidersStore.depositTokenSymbol || CURRENCIES.depositToken,
           })
         "
         :error-message="getFieldErrorMessage('amount')"
@@ -50,7 +41,11 @@
             scheme="link"
             text="max"
             :disabled="isSubmitting || !balanceOfForm"
-            @click="form.amount = balanceOfForm?.value.amount || ''"
+            @click="
+              form.amount = formatEther(
+                web3ProvidersStore.balances.depositToken,
+              )
+            "
           />
         </template>
       </input-field>
@@ -88,18 +83,16 @@
 import { AppButton } from '@/common'
 import { useFormValidation, useI18n, usePool } from '@/composables'
 import { MAX_UINT_256 } from '@/const'
-import { DatetimeField, InputField, SelectField } from '@/fields'
+import { DatetimeField, InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { type FieldOption } from '@/types'
-import { BigNumber, formatEther, parseUnits, Time, toEther } from '@/utils'
+import { BigNumber, formatEther, parseUnits, Time } from '@/utils'
 import { ether, maxEther, minEther, minValue, required } from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, reactive, ref, toRef, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
-import { errors } from '@/errors'
 
 enum ACTIONS {
   approve = 'approve',
@@ -108,11 +101,6 @@ enum ACTIONS {
 
 enum CURRENCIES {
   depositToken = 'depositToken',
-}
-
-type BalanceOptionValue = {
-  amount: string
-  currency: CURRENCIES
 }
 
 const emit = defineEmits<{
@@ -129,9 +117,7 @@ const uid = uuidv4()
 const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
-const allowances = reactive<Record<CURRENCIES, BigNumber | null>>({
-  [CURRENCIES.depositToken]: null,
-})
+const depositTokenAllowance = ref('')
 
 const { t } = useI18n()
 const route = useRoute()
@@ -143,11 +129,11 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const action = computed<ACTIONS>(() => {
   if (isFieldsValid.value) {
     const amountInDecimals = parseUnits(form.amount, 'ether')
-    const allowance = balanceOfForm.value
-      ? allowances[balanceOfForm.value.value.currency]
-      : null
 
-    if (allowance && amountInDecimals.gt(allowance)) {
+    if (
+      depositTokenAllowance.value &&
+      amountInDecimals.gt(depositTokenAllowance.value)
+    ) {
       return ACTIONS.approve
     }
   }
@@ -155,24 +141,7 @@ const action = computed<ACTIONS>(() => {
   return ACTIONS.stake
 })
 
-const balanceOptions = computed<FieldOption<BalanceOptionValue>[]>(() => [
-  ...(web3ProvidersStore.balances.depositToken
-    ? [
-        {
-          title: `${formatEther(web3ProvidersStore.balances.depositToken)} ${
-            web3ProvidersStore.depositTokenSymbol
-          }`,
-          value: {
-            amount: toEther(web3ProvidersStore.balances.depositToken),
-            currency: CURRENCIES.depositToken,
-          },
-        },
-      ]
-    : []),
-])
-
 const form = reactive({
-  balanceOptionIdx: 0,
   amount: '',
   lockPeriod: '',
 })
@@ -181,18 +150,20 @@ const isMultiplierShown = computed(
   () => route.name !== ROUTE_NAMES.appDashboardCapital,
 )
 
-const balanceOfForm = computed<FieldOption<BalanceOptionValue> | null>(
-  () => balanceOptions.value[form.balanceOptionIdx] || null,
+const balanceOfForm = computed(
+  () =>
+    `${formatEther(web3ProvidersStore.balances.depositToken)} ${
+      web3ProvidersStore.depositTokenSymbol
+    }`,
 )
 
 const validationRules = computed(() => ({
-  balanceOptionIdx: { required },
   amount: {
     required,
     ether,
     minEther: minEther(props.minStake.add(parseUnits('0.001', 'ether'))),
-    ...(balanceOfForm.value?.value && {
-      maxEther: maxEther(balanceOfForm.value.value.amount),
+    ...(balanceOfForm.value && {
+      maxEther: maxEther(formatEther(web3ProvidersStore.balances.depositToken)),
     }),
   },
   lockPeriod: {
@@ -209,39 +180,17 @@ const submissionBtnText = computed<string>(() =>
     : t('deposit-form.submit-btn.deposit'),
 )
 
-const fetchAllowanceByCurrency = async (
-  currency: CURRENCIES,
-): Promise<BigNumber> => {
-  let contract
-  switch (currency) {
-    case CURRENCIES.depositToken:
-      contract = web3ProvidersStore.depositContract
-      break
-    default:
-      throw new errors.UnknownCurrencyError()
-  }
-
-  return contract.providerBased.value.allowance(
+const fetchAllowance = async (): Promise<BigNumber> =>
+  web3ProvidersStore.depositContract.providerBased.value.allowance(
     web3ProvidersStore.provider.selectedAddress,
     web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
   )
-}
 
-const approveByCurrency = async (currency: CURRENCIES) => {
-  let contract
-  switch (currency) {
-    case CURRENCIES.depositToken:
-      contract = web3ProvidersStore.depositContract
-      break
-    default:
-      throw new errors.UnknownCurrencyError()
-  }
-
-  return contract.signerBased.value.approve(
+const approveByCurrency = async () =>
+  web3ProvidersStore.depositContract.signerBased.value.approve(
     web3ProvidersStore.erc1967ProxyContract.providerBased.value.address,
     MAX_UINT_256,
   )
-}
 
 const submit = async (action: ACTIONS): Promise<void> => {
   if (!isFormValid()) return
@@ -254,7 +203,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
 
     let tx
     if (action === ACTIONS.approve && balanceOfForm.value) {
-      tx = await approveByCurrency(balanceOfForm.value.value.currency)
+      tx = await approveByCurrency()
     } else {
       const amountInDecimals = parseUnits(form.amount, 'ether')
 
@@ -287,8 +236,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
     bus.emit(BUS_EVENTS.changedPoolData)
 
     if (balanceOfForm.value)
-      allowances[balanceOfForm.value.value.currency] =
-        await fetchAllowanceByCurrency(balanceOfForm.value.value.currency)
+      depositTokenAllowance.value = await fetchAllowance()
   } catch (error) {
     ErrorHandler.process(error)
   } finally {
@@ -306,9 +254,7 @@ const init = async (): Promise<void> => {
   isInitializing.value = true
 
   try {
-    allowances[CURRENCIES.depositToken] = await fetchAllowanceByCurrency(
-      CURRENCIES.depositToken,
-    )
+    depositTokenAllowance.value = await fetchAllowance()
   } catch (error) {
     emit('cancel')
     ErrorHandler.process(error)
@@ -342,7 +288,7 @@ init()
 </script>
 
 <style lang="scss" scoped>
-.deposit-form__select-field-wrp {
+.deposit-form__balance-wrp {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -350,7 +296,7 @@ init()
 
   @include respond-to(medium) {
     flex-direction: column;
-    align-items: start;
+    align-items: center;
     gap: toRem(4);
   }
 }
@@ -361,6 +307,10 @@ init()
   }
 
   @include body-1-regular;
+
+  @include respond-to(medium) {
+    text-align: center;
+  }
 }
 
 .deposit-form__form-data {
@@ -395,6 +345,8 @@ init()
 
   @include respond-to(medium) {
     font-size: toRem(18);
+    padding: 0;
+    text-align: center;
   }
 }
 
