@@ -14,17 +14,19 @@ import { Time } from '@distributedlab/tools'
 import { MAX_UINT_256 } from '@/const'
 import { ETHEREUM_CHAIN_IDS } from '@/enums'
 import { config } from '@config'
-import { useSwapContracts } from '@/composables'
+import { useI18n, useSwapContracts } from '@/composables'
 
 const AVERAGE_GAS_USED_FOR_SWAP_TX = '150292' // gas units
-const SLIPPAGE = '50'
+const SLIPPAGE = '1000'
 
+// TODO: REFACTOR
 export function useSwap(
   tokenInAddress: string,
   tokenOutAddress: string,
   tokenInValue: Ref<string>,
 ) {
   const web3ProvidersStore = useWeb3ProvidersStore()
+  const { t } = useI18n()
 
   const tokenIn = ref<Token | null>(null)
   const tokenOut = ref<Token | null>(null)
@@ -43,52 +45,51 @@ export function useSwap(
   } = useSwapContracts(tokenInAddress, tokenOutAddress, pairAddress)
 
   const loadTokensAndPair = async () => {
-    try {
-      pairAddress.value =
-        await uniswapV2FactoryContract.value.providerBased.value.getPair(
-          tokenInAddress,
-          tokenOutAddress,
-        )
-
-      const [tokenInDecimals, tokenOutDecimals] = await Promise.all([
-        tokenToSendContract.value.providerBased.value.decimals(),
-        tokenToReceiveContract.value.providerBased.value.decimals(),
-      ])
-
-      const [inToken, outToken] = [
-        new Token(
-          Number(ETHEREUM_CHAIN_IDS.ethereum),
-          tokenInAddress,
-          tokenInDecimals,
-        ),
-        new Token(
-          Number(ETHEREUM_CHAIN_IDS.ethereum),
-          tokenOutAddress,
-          tokenOutDecimals,
-        ),
-      ]
-      tokenIn.value = inToken
-      tokenOut.value = outToken
-
-      if (pairAddress.value === ethers.constants.AddressZero) {
-        return
-      }
-
-      const [reserve0, reserve1] =
-        await uniswapV2PairContract.value.providerBased.value.getReserves()
-
-      pair.value = new Pair(
-        CurrencyAmount.fromRawAmount(inToken, reserve0.toString()),
-        CurrencyAmount.fromRawAmount(outToken, reserve1.toString()),
+    pairAddress.value =
+      await uniswapV2FactoryContract.value.providerBased.value.getPair(
+        tokenInAddress,
+        tokenOutAddress,
       )
-    } catch (error) {
-      console.error('Error loading pair data:', error)
+
+    const [tokenInDecimals, tokenOutDecimals] = await Promise.all([
+      tokenToSendContract.value.providerBased.value.decimals(),
+      tokenToReceiveContract.value.providerBased.value.decimals(),
+    ])
+
+    const [inToken, outToken] = [
+      new Token(
+        Number(ETHEREUM_CHAIN_IDS.ethereum),
+        tokenInAddress,
+        tokenInDecimals,
+      ),
+      new Token(
+        Number(ETHEREUM_CHAIN_IDS.ethereum),
+        tokenOutAddress,
+        tokenOutDecimals,
+      ),
+    ]
+    tokenIn.value = inToken
+    tokenOut.value = outToken
+
+    if (pairAddress.value === ethers.constants.AddressZero) {
+      return
     }
+
+    const [reserve0, reserve1] =
+      await uniswapV2PairContract.value.providerBased.value.getReserves()
+
+    pair.value = new Pair(
+      CurrencyAmount.fromRawAmount(inToken, reserve0.toString()),
+      CurrencyAmount.fromRawAmount(outToken, reserve1.toString()),
+    )
   }
 
   const calculateTrade = async () => {
-    if (!parseFloat(tokenInValue.value)) return
-
+    if (!parseFloat(tokenInValue.value)) {
+      estimatedGasCost.value = '0'
+      estimatedTokenOutAmount.value = '0'
+      return
+    }
     await estimateGasCost()
 
     if (!tokenIn.value || !tokenOut.value) {
@@ -113,7 +114,11 @@ export function useSwap(
       tokenInAddress.toLowerCase() ===
       wethContract.value.providerBased.value.address.toLowerCase()
     ) {
-      const route = new Route([pair.value!], tokenIn.value, tokenOut.value!)
+      const route = new Route(
+        [pair.value! as Pair],
+        tokenIn.value,
+        tokenOut.value!,
+      )
       const tradeInstance = new Trade(
         route,
         CurrencyAmount.fromRawAmount(
@@ -180,13 +185,13 @@ export function useSwap(
 
     const allowance = await wethContract.value.signerBased.value.allowance(
       web3ProvidersStore.address,
-      V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+      V2_ROUTER_ADDRESSES[1],
     )
 
     if (allowance.lt(MAX_UINT_256)) {
       estimation =
         await wethContract.value.signerBased.value.estimateGas.approve(
-          V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+          V2_ROUTER_ADDRESSES[1],
           MAX_UINT_256,
         )
     }
@@ -201,7 +206,7 @@ export function useSwap(
     const tokenToSendAllowance =
       await tokenToSendContract.value.signerBased.value.allowance(
         web3ProvidersStore.address,
-        V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+        V2_ROUTER_ADDRESSES[1],
       )
 
     if (tokenToSendAllowance.gte(MAX_UINT_256)) {
@@ -210,7 +215,7 @@ export function useSwap(
 
     const tokenToSendGasEstimate =
       await tokenToSendContract.value.signerBased.value.estimateGas.approve(
-        V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+        V2_ROUTER_ADDRESSES[1],
         MAX_UINT_256,
       )
 
@@ -242,6 +247,7 @@ export function useSwap(
   }
 
   const executeTrade = async () => {
+    if (!tokenIn.value || !tokenOut.value) return
     if (tokenInAddress === wethContract.value.providerBased.value.address) {
       await performSwap(
         tokenIn.value!,
@@ -253,9 +259,11 @@ export function useSwap(
             .toString(),
         ),
       )
+      await web3ProvidersStore.updateBalances()
       return
     }
     await executeMultiSwap()
+    await web3ProvidersStore.updateBalances()
   }
 
   const waitForTx = async (tx: ethers.ContractTransaction) => {
@@ -281,25 +289,39 @@ export function useSwap(
     const slippageTolerance = new Percent(SLIPPAGE, '10000')
 
     const sentTokenContract =
-      fromToken.address === wethContract.value.providerBased.value.address
-        ? wethContract.value.providerBased.value
-        : tokenToSendContract.value.providerBased.value
+      fromToken.address.toLowerCase() ===
+      wethContract.value.providerBased.value.address.toLowerCase()
+        ? wethContract.value.signerBased.value
+        : tokenToSendContract.value.signerBased.value
 
     const allowance = await sentTokenContract.allowance(
       web3ProvidersStore.address,
       V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
     )
-
-    if (allowance.lt(amountIn.quotient)) {
+    if (allowance.lt(amountIn.quotient.toString())) {
       const tx = await sentTokenContract.approve(
         V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
-        MAX_UINT_256,
+        amountIn.quotient.toString(),
       )
       await waitForTx(tx)
     }
 
+    pairAddress.value =
+      await uniswapV2FactoryContract.value.providerBased.value.getPair(
+        fromToken.address,
+        toToken.address,
+      )
+
+    const [reserve0, reserve1] =
+      await uniswapV2PairContract.value.providerBased.value.getReserves()
+
+    const swapPair = new Pair(
+      CurrencyAmount.fromRawAmount(fromToken, reserve0.toString()),
+      CurrencyAmount.fromRawAmount(toToken, reserve1.toString()),
+    )
+
     const tradeInstance = new Trade(
-      new Route([pair.value!], fromToken, toToken),
+      new Route([swapPair!], fromToken, toToken),
       amountIn,
       TradeType.EXACT_INPUT,
     )
@@ -309,7 +331,8 @@ export function useSwap(
       .quotient.toString()
 
     const tx =
-      uniswapV2RouterContract.value.signerBased.value.swapExactTokensForTokens(
+      // eslint-disable-next-line max-len
+      await uniswapV2RouterContract.value.signerBased.value.swapExactTokensForTokens(
         amountIn.quotient.toString(),
         amountOutMin,
         [fromToken.address, toToken.address],
@@ -328,49 +351,45 @@ export function useSwap(
   const executeMultiSwap = async () => {
     if (!tokenIn.value) return
 
-    try {
-      const tokenInDecimals = tokenIn.value.decimals
-      const tokenInAmount = ethers.utils.parseUnits(
-        tokenInValue.value,
-        tokenInDecimals,
-      )
-      const currencyAmountIn = CurrencyAmount.fromRawAmount(
-        tokenIn.value,
-        tokenInAmount.toString(),
-      )
+    const tokenInDecimals = tokenIn.value.decimals
+    const tokenInAmount = ethers.utils.parseUnits(
+      tokenInValue.value,
+      tokenInDecimals,
+    )
+    const currencyAmountIn = CurrencyAmount.fromRawAmount(
+      tokenIn.value,
+      tokenInAmount.toString(),
+    )
 
-      const wethDecimals =
-        await wethContract.value.providerBased.value.decimals()
+    const wethDecimals = await wethContract.value.providerBased.value.decimals()
 
-      const wethToken = new Token(
-        Number(ETHEREUM_CHAIN_IDS.ethereum),
-        wethContract.value.providerBased.value.address,
-        wethDecimals,
-      )
-      const amountOutWETH = await performSwap(
-        tokenIn.value,
-        wethToken,
-        currencyAmountIn,
-      )
+    const wethToken = new Token(
+      Number(ETHEREUM_CHAIN_IDS.ethereum),
+      wethContract.value.providerBased.value.address,
+      wethDecimals,
+    )
 
-      const tokenToReceiveDecimals =
-        await tokenToReceiveContract.value.providerBased.value.decimals()
+    const amountOutWETH = await performSwap(
+      tokenIn.value,
+      wethToken,
+      currencyAmountIn,
+    )
 
-      const stEthToken = new Token(
-        Number(ETHEREUM_CHAIN_IDS.ethereum),
-        tokenToReceiveContract.value.providerBased.value.address,
-        tokenToReceiveDecimals,
-      )
+    const tokenToReceiveDecimals =
+      await tokenToReceiveContract.value.providerBased.value.decimals()
 
-      const wethAmountIn = CurrencyAmount.fromRawAmount(
-        wethToken,
-        ethers.utils.parseUnits(amountOutWETH, 'ether').toString(),
-      )
+    const stEthToken = new Token(
+      Number(ETHEREUM_CHAIN_IDS.ethereum),
+      tokenToReceiveContract.value.providerBased.value.address,
+      tokenToReceiveDecimals,
+    )
 
-      return performSwap(wethToken, stEthToken, wethAmountIn)
-    } catch (error) {
-      ErrorHandler.process(error)
-    }
+    const wethAmountIn = CurrencyAmount.fromRawAmount(
+      wethToken,
+      ethers.utils.parseUnits(amountOutWETH, 'ether').toString(),
+    )
+
+    return performSwap(wethToken, stEthToken, wethAmountIn)
   }
 
   const init = async () => {

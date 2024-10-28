@@ -630,6 +630,7 @@
   "swap-step": {
     "amount-placeholder": "Enter token amount for swap",
     "eth-amount-text":  "Approximate stETH amount",
+    "balance-text": "Current balance: ",
     "estimated-fee-text": "Estimated fee (ETH)",
     "approve-btn": "Approve",
     "confirm-btn": "Confirm",

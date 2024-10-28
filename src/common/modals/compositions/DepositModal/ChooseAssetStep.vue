@@ -62,6 +62,10 @@ watch(chosenRadioButton, () => emit('asset-chosen', chosenRadioButton.value))
   display: grid;
   grid-template-columns: repeat(2, minmax(toRem(200), 1fr));
   gap: toRem(16);
+
+  @include respond-to(medium) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .choose-asset-step__buttons {

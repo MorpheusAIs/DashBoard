@@ -1,5 +1,13 @@
 <template>
   <form class="swap-step" @submit="submit">
+    <h3 class="swap-step__balance">
+      <span class="swap-step__desc-text">
+        {{ $t('swap-step.balance-text') }}
+      </span>
+      <span class="swap-step__desc-amount">
+        {{ parsedUserBalance }}
+      </span>
+    </h3>
     <input-field
       v-model="form.amount"
       :placeholder="$t(`swap-step.amount-placeholder`)"
@@ -83,30 +91,34 @@ const chosenAssetAddress = computed(
     '',
 )
 
+const chosenAssetSymbol = computed(
+  () =>
+    SWAP_ASSETS.find(({ symbol }) => symbol === props.chosenAsset)?.symbol ||
+    '',
+)
+
 const { estimatedTokenOutAmount, estimatedGasCost, executeTrade } = useSwap(
   chosenAssetAddress.value,
   config.STETH_MAINNET_CONTRACT_ADDRESS,
   toRef(() => form.amount),
 )
 
+const validationRules = computed(() => ({
+  amount: {
+    required,
+    minEther: minEther(0),
+    ...(userBalance.value && {
+      maxEther: maxEther(userBalance.value),
+    }),
+  },
+}))
+
 const { getFieldErrorMessage, isFieldsValid, touchField } = useFormValidation(
   form,
-  {
-    amount: {
-      required,
-      minEther: minEther(0),
-      maxEther: computed(() => maxEther(userBalance.value)),
-    },
-  },
+  validationRules,
 )
 
 const mainButtonText = computed(() => t('swap-step.confirm-btn'))
-
-const tokenAddress = computed(
-  () =>
-    SWAP_ASSETS.find(({ symbol }) => symbol === props.chosenAsset)?.address ||
-    '',
-)
 
 const humanizedEstimations = computed(() => ({
   estimatedTokenOutAmount: humanizeEtherValue(
@@ -122,9 +134,13 @@ const humanizedEstimations = computed(() => ({
 const erc20Contract = computed(() =>
   useContract(
     'ERC20__factory',
-    tokenAddress.value,
+    chosenAssetAddress.value,
     web3ProvidersStore.l1Provider,
   ),
+)
+
+const parsedUserBalance = computed(
+  () => `${userBalance.value} ${chosenAssetSymbol.value}`,
 )
 
 const humanizeEtherValue = (number: string, symbol: string) =>
@@ -138,7 +154,12 @@ const getUserBalance = async () => {
     const balance = await erc20Contract.value.providerBased.value.balanceOf(
       web3ProvidersStore.address,
     )
-    userBalance.value = utils.formatEther(balance.toString())
+    const tokenDecimals =
+      await erc20Contract.value.providerBased.value.decimals()
+    userBalance.value = utils.formatUnits(
+      balance.toString(),
+      Number(tokenDecimals.toString()),
+    )
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.processWithoutFeedback(e)
@@ -150,6 +171,7 @@ const submit = async () => {
   isLoaded.value = false
   try {
     await executeTrade()
+    emit('swap-success')
   } catch (e) {
     ErrorHandler.process(e)
   }
@@ -174,6 +196,21 @@ watch(
   margin-top: toRem(20);
   flex-direction: column;
   gap: toRem(8);
+
+  @include respond-to(medium) {
+    gap: toRem(16);
+  }
+}
+
+.swap-step__balance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: toRem(20);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+  }
 }
 
 .swap-step__desc {
@@ -181,6 +218,10 @@ watch(
   align-items: center;
   justify-content: space-between;
   gap: toRem(8);
+
+  @include respond-to(medium) {
+    flex-direction: column;
+  }
 }
 
 .swap-step__desc-text {
@@ -199,6 +240,10 @@ watch(
   justify-content: center;
   gap: toRem(16);
   margin-top: toRem(40);
+
+  @include respond-to(medium) {
+    margin-top: toRem(16);
+  }
 }
 
 .swap-step__button {

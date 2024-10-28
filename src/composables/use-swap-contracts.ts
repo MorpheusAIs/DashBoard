@@ -3,12 +3,15 @@ import { useContract } from '@/composables/use-contract'
 import { SWAP_ASSETS } from '@/const'
 import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
 import { V2_FACTORY_ADDRESSES, V2_ROUTER_ADDRESSES } from '@uniswap/sdk-core'
+import { useWeb3ProvidersStore } from '@/store'
 
 export function useSwapContracts(
   tokenInAddress: string,
   tokenOutAddress: string,
   pairAddress: Ref<string>,
 ) {
+  const web3ProvidersStore = useWeb3ProvidersStore()
+
   const tokenToSendContract = computed(() =>
     useContract(
       'ERC20__factory',
@@ -21,7 +24,7 @@ export function useSwapContracts(
     useContract(
       'ERC20__factory',
       SWAP_ASSETS.find(({ symbol }) => symbol === SWAP_ASSETS_NAMES.WETH)
-        ?.address,
+        ?.address ?? '',
       web3ProvidersStore.l1Provider,
     ),
   )

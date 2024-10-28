@@ -108,23 +108,6 @@ const onSelectBtnClick = (balanceIdx: number) => {
   isDropMenuShown.value = false
 }
 
-const updateBalances = async () => {
-  if (!web3ProvidersStore.provider.selectedAddress)
-    throw new errors.UserAddressError()
-
-  const [stEthValue, morValue] = await Promise.all([
-    web3ProvidersStore.depositContract.providerBased.value.balanceOf(
-      web3ProvidersStore.provider.selectedAddress,
-    ),
-    web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
-      web3ProvidersStore.provider.selectedAddress,
-    ),
-  ])
-
-  web3ProvidersStore.balances.depositToken = stEthValue
-  web3ProvidersStore.balances.rewardsToken = morValue
-}
-
 const init = async (): Promise<void> => {
   if (!web3ProvidersStore.provider.selectedAddress) {
     isInitializing.value = false
@@ -134,7 +117,7 @@ const init = async (): Promise<void> => {
   isInitializing.value = true
 
   try {
-    await updateBalances()
+    await web3ProvidersStore.updateBalances()
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -146,7 +129,7 @@ const onChangeBalances = async () => {
   if (!web3ProvidersStore.provider.selectedAddress) return
 
   try {
-    await updateBalances()
+    await web3ProvidersStore.updateBalances()
   } catch (error) {
     ErrorHandler.process(error)
   }

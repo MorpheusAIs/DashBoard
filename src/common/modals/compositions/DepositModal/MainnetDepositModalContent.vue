@@ -110,5 +110,9 @@ const moveToDepositTab = () => {
   &--highlighted {
     color: var(--primary-main);
   }
+
+  @include respond-to(medium) {
+    text-align: center;
+  }
 }
 </style>
