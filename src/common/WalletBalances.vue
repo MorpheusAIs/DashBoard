@@ -61,7 +61,6 @@ import { useWeb3ProvidersStore } from '@/store'
 import { formatEther } from '@/utils'
 import { onClickOutside } from '@vueuse/core'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { errors } from '@/errors'
 import AppIcon from './AppIcon.vue'
 
 type Balance = {
