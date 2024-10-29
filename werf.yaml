@@ -23,7 +23,6 @@ shell:
   setup: 
     - cd /app
     - yarn build
-
 ---
 image: web
 from: nginx:alpine
