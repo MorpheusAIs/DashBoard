@@ -81,6 +81,12 @@ const routes: RouteRecordRaw[] = [
     name: ROUTE_NAMES.contractInfo,
     component: () => import('@/pages/ContractInfoPage/index.vue'),
   },
+  {
+    path: '/referrals',
+    name: ROUTE_NAMES.appReferrals,
+    component: () => import('@/pages/Referrals/index.vue'),
+    redirect: () => router.resolve({ name: ROUTE_NAMES.appCapital }).path,
+  },
 ]
 
 const router = createRouter({

@@ -1,6 +1,7 @@
 {
   "app-navbar": {
     "mor20-ecosystem-link": "MOR20",
+    "referrals-link": "Referrals",
     "contract-faq-link": "Contract FAQ",
     "community-website-link": "Community Website"
   },
@@ -101,6 +102,7 @@
     "amount-placeholder": "Enter {currency} amount",
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
+    "referrer-placeholder": "Referrer",
     "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",
@@ -201,7 +203,9 @@
     "header-note": "Note: Amount of deposited stETH",
     "header-supply-subtitle": "Number of stETH circulating in the project in relation to time",
     "header-earned-subtitle": "Number of earned MOR tokens in relation to time",
-    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
+    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
+    "referee-bonus-text": "Referee Bonus",
+    "your-referrer-text": "Your Referrer"
   },
   "info-bar": {
     "status--public": "Automated",
@@ -645,5 +649,8 @@
   "use-swap": {
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "info-indicator": {
+    "coppied-text": "Coppied!"
   }
 }

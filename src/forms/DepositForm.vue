@@ -59,6 +59,14 @@
         :disabled="isSubmitting"
         @blur="touchField('payoutStartAt')"
       />
+      <input-field
+        v-model="form.referrer"
+        :disabled="Boolean($route.query?.referrer) || isSubmitting"
+        :placeholder="$t(`deposit-form.referrer-placeholder`)"
+        :error-message="getFieldErrorMessage('referrer')"
+        :is-loading="isInitializing"
+        @blur="touchField('referrer')"
+      />
     </div>
     <div class="deposit-form__buttons-wrp">
       <app-button
@@ -87,7 +95,14 @@ import { DatetimeField, InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { BigNumber, formatEther, parseUnits, Time } from '@/utils'
-import { ether, maxEther, minEther, minValue, required } from '@/validators'
+import {
+  ether,
+  maxEther,
+  minEther,
+  minValue,
+  required,
+  address,
+} from '@/validators'
 import { config } from '@config'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, reactive, ref, toRef, watch } from 'vue'
@@ -114,14 +129,14 @@ const props = defineProps<{
   minStake: BigNumber
 }>()
 
+const { t } = useI18n()
+const route = useRoute()
+
 const uid = uuidv4()
 const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
 const depositTokenAllowance = ref('')
-
-const { t } = useI18n()
-const route = useRoute()
 
 const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
   usePool(toRef(props.poolId))
@@ -145,6 +160,7 @@ const action = computed<ACTIONS>(() => {
 const form = reactive({
   amount: '',
   lockPeriod: '',
+  referrer: '',
 })
 
 const isMultiplierShown = computed(
@@ -169,6 +185,9 @@ const validationRules = computed(() => ({
   },
   lockPeriod: {
     minValue: minValue(new Time().timestamp),
+  },
+  referrer: {
+    address,
   },
 }))
 
@@ -213,7 +232,10 @@ const submit = async (action: ACTIONS): Promise<void> => {
           props.poolId,
           amountInDecimals,
           ...(isMultiplierShown.value
-            ? [form.lockPeriod || 0, ethers.constants.AddressZero]
+            ? [
+                form.lockPeriod || 0,
+                form.referrer || ethers.constants.AddressZero,
+              ]
             : []),
         )
       emit('stake-tx-sent')
@@ -285,6 +307,16 @@ watch(
       await fetchExpectedMultiplier(form.lockPeriod)
     }
   },
+)
+
+watch(
+  () => route.query?.referrer,
+  () => {
+    if (!route.query?.referrer) return
+    form.referrer = route.query.referrer
+    touchField('referrer')
+  },
+  { immediate: true },
 )
 
 init()

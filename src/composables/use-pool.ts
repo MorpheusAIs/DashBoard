@@ -236,6 +236,9 @@ export const usePool = (poolId: Ref<number>) => {
       ? response.lastClaim
       : ethers.BigNumber.from(0)
 
+    const isReferrerDefined = 'referrer' in response
+    const referrer = isReferrerDefined ? response.referrer : ''
+
     return {
       claimLockEnd,
       claimLockStart,
@@ -245,6 +248,7 @@ export const usePool = (poolId: Ref<number>) => {
       rate: response.rate,
       lastClaim,
       virtualDeposited,
+      referrer,
     } as Erc1967ProxyType.UserData | Mor1967ProxyType.UserData
   }
 

@@ -19,6 +19,7 @@ export { default as WalletDashboard } from './WalletDashboard.vue'
 export { default as ErrorMessage } from './ErrorMessage.vue'
 export { default as Loader } from './Loader.vue'
 export { default as RadioButton } from './RadioButton.vue'
+export { default as InfoIndicator } from './InfoIndicator.vue'
 
 export * from './modals'
 export * from './toasts'
