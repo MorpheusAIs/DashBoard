@@ -93,6 +93,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, reactive, ref, toRef, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
+import { ethers } from 'ethers'
 
 enum ACTIONS {
   approve = 'approve',
@@ -211,7 +212,9 @@ const submit = async (action: ACTIONS): Promise<void> => {
         await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
           props.poolId,
           amountInDecimals,
-          ...(isMultiplierShown.value ? [form.lockPeriod || 0] : []),
+          ...(isMultiplierShown.value
+            ? [form.lockPeriod || 0, ethers.constants.AddressZero]
+            : []),
         )
       emit('stake-tx-sent')
     }
