@@ -123,6 +123,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
 
+const CUT_ADDRESS_LENGTH = 7
+
 enum CHART_TYPE {
   circulingSupply = 'circulating-supply',
   earnedMor = 'earned-mor',
@@ -199,6 +201,7 @@ const refererIndicators = computed(() => {
       title: t('info-dashboard.your-referrer-text'),
       value: abbrCenter(
         (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ?? '-',
+        CUT_ADDRESS_LENGTH,
       ),
       link: `${window.location.origin}${link}`,
     },
