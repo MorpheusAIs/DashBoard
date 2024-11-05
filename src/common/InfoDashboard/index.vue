@@ -66,7 +66,7 @@
             :is-loading="isLoading"
             :value="indicator.value"
           />
-          <template v-if="isChartShown && !isNoReferrer">
+          <template v-if="isChartShown && isNoReferrer">
             <div class="info-dashboard__separator" />
             <div class="info-dashboard__ref-info">
               <info-indicator
@@ -122,6 +122,8 @@ import { ROUTE_NAMES } from '@/enums'
 import { useRoute, useRouter } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
+
+const CUT_ADDRESS_LENGTH = 7
 
 enum CHART_TYPE {
   circulingSupply = 'circulating-supply',
@@ -199,6 +201,7 @@ const refererIndicators = computed(() => {
       title: t('info-dashboard.your-referrer-text'),
       value: abbrCenter(
         (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ?? '-',
+        CUT_ADDRESS_LENGTH,
       ),
       link: `${window.location.origin}${link}`,
     },
