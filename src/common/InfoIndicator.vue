@@ -38,12 +38,13 @@
 
 <script lang="ts" setup>
 import { AppButton, AppIcon, CopyButton } from '@/common'
+import { ICON_NAMES } from '@/enums'
 
 defineProps<{
   title: string
   value: string | number
   isLoading: boolean
-  iconName?: string
+  iconName?: ICON_NAMES
   link?: string
 }>()
 </script>

@@ -30,10 +30,9 @@ export const maxValue = (value: number): ValidationRule =>
 
 export const required = <ValidationRule>withI18nMessage(_required)
 
-export const address = <ValidationRule>withI18nMessage(value => {
-  if (!value) return true
-  return isAddress(value)
-})
+export const address = <ValidationRule>(
+  withI18nMessage(value => !value || isAddress(value))
+)
 
 export const ether = <ValidationRule>withI18nMessage(value => {
   try {
