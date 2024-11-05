@@ -66,7 +66,7 @@
             :is-loading="isLoading"
             :value="indicator.value"
           />
-          <template v-if="isChartShown && isNoReferrer">
+          <template v-if="isChartShown && !isNoReferrer">
             <div class="info-dashboard__separator" />
             <div class="info-dashboard__ref-info">
               <info-indicator
