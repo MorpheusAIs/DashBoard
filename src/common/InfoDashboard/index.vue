@@ -58,31 +58,27 @@
           class="info-dashboard__indicators"
           :class="{ 'info-dashboard__indicators--border': isChartShown }"
         >
-          <li
+          <info-indicator
             v-for="(indicator, idx) in indicators"
             :key="idx"
-            class="info-dashboard__indicator"
-          >
-            <div class="info-dashboard__indicator-title-wrp">
-              <app-icon
-                v-if="indicator.iconName"
-                class="info-dashboard__indicator-icon"
-                :name="indicator.iconName"
+            :icon-name="indicator.iconName"
+            :title="indicator.title"
+            :is-loading="isLoading"
+            :value="indicator.value"
+          />
+          <template v-if="isChartShown && !isNoReferrer">
+            <div class="info-dashboard__separator" />
+            <div class="info-dashboard__ref-info">
+              <info-indicator
+                v-for="(refIndicator, idx) in refererIndicators"
+                :key="idx"
+                :title="refIndicator.title"
+                :value="refIndicator?.value"
+                :link="refIndicator?.link"
+                :is-loading="isLoading"
               />
-              <h5
-                class="info-dashboard__indicator-title"
-                :class="{
-                  'info-dashboard__indicator-title--margin':
-                    !indicator.iconName,
-                }"
-              >
-                {{ indicator.title }}
-              </h5>
             </div>
-            <p class="info-dashboard__indicator-value">
-              {{ indicator.value || '-' }}
-            </p>
-          </li>
+          </template>
         </ul>
         <div v-if="$slots.default" class="info-dashboard__slot-wrp">
           <slot />
@@ -104,9 +100,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from '@/composables'
+import { useI18n, usePool } from '@/composables'
 import { SelectField } from '@/fields'
-import { ErrorHandler } from '@/helpers'
+import { abbrCenter, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import type {
   ChartConfig,
@@ -115,16 +111,20 @@ import type {
   InfoDashboardType,
 } from '@/types'
 import { Time, formatEther } from '@/utils'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
 import { CHART_CONFIG } from './const'
 import { getUserYieldPerDayChartData, getChartData } from './helpers'
 import AppIcon from '../AppIcon.vue'
 import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
-import { AppButton } from '@/common'
+import { AppButton, InfoIndicator } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
 import { errors } from '@/errors'
+import { ethers } from 'ethers'
+import { config } from '@config'
+
+const CUT_ADDRESS_LENGTH = 7
 
 enum CHART_TYPE {
   circulingSupply = 'circulating-supply',
@@ -135,6 +135,8 @@ const CHART_COLORS = {
   [CHART_TYPE.earnedMor]: '#D3E229',
   [CHART_TYPE.circulingSupply]: '#FF7C03',
 }
+
+const REFERRAL_REWARD = 1 //%
 
 const props = withDefaults(
   defineProps<{
@@ -152,6 +154,8 @@ const props = withDefaults(
 const { t } = useI18n()
 const route = useRoute()
 
+const { userPoolData } = usePool(toRef(props.poolId))
+
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const chartType = ref(CHART_TYPE.earnedMor)
@@ -159,6 +163,11 @@ const chartType = ref(CHART_TYPE.earnedMor)
 const isChartDataUpdating = ref(false)
 
 const chartConfig = reactive<ChartConfig>({ ...CHART_CONFIG })
+
+const isNoReferrer = computed(() => {
+  const referrer = (userPoolData.value as Erc1967ProxyType.UserData)?.referrer
+  return !referrer || referrer === ethers.constants.AddressZero
+})
 
 const monthOptions = computed<FieldOption<number>[]>(() => {
   const allMonthOptions = Array.from({ length: 12 }).map((_, idx) => ({
@@ -173,6 +182,30 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
 })
 
 const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
+
+const refererIndicators = computed(() => {
+  const link = `${
+    config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl
+  }/address/${
+    (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ||
+    ethers.constants.AddressZero
+  }`
+
+  return [
+    {
+      title: t('info-dashboard.referee-bonus-text'),
+      value: `${REFERRAL_REWARD}%`,
+    },
+    {
+      title: t('info-dashboard.your-referrer-text'),
+      value: abbrCenter(
+        (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ?? '-',
+        CUT_ADDRESS_LENGTH,
+      ),
+      link,
+    },
+  ]
+})
 
 const chartTitle = computed(() =>
   chartType.value === CHART_TYPE.circulingSupply
@@ -383,76 +416,6 @@ watch(
   }
 }
 
-.info-dashboard__indicator {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: center;
-  grid-gap: toRem(24);
-
-  @include respond-to(medium) {
-    grid-gap: toRem(16);
-  }
-}
-
-.info-dashboard__indicator-title-wrp {
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  grid-gap: toRem(8);
-
-  .info-dashboard--loading & {
-    height: toRem(26);
-    width: 100%;
-
-    @include skeleton;
-
-    @include respond-to(medium) {
-      height: toRem(20);
-    }
-  }
-
-  @include respond-to(medium) {
-    grid-gap: toRem(4);
-  }
-}
-
-.info-dashboard__indicator-icon {
-  height: toRem(24);
-  width: toRem(24);
-
-  @include respond-to(medium) {
-    height: toRem(20);
-    width: toRem(20);
-  }
-}
-
-.info-dashboard__indicator-title {
-  @include body-3-regular;
-
-  &--margin {
-    margin-left: toRem(32);
-  }
-}
-
-.info-dashboard__indicator-value {
-  justify-self: end;
-
-  .info-dashboard--loading & {
-    height: toRem(26);
-    width: 100%;
-
-    @include skeleton;
-
-    @include respond-to(medium) {
-      height: toRem(20);
-    }
-  }
-
-  @include body-3-semi-bold;
-
-  @include text-ellipsis;
-}
-
 .info-dashboard__slot-wrp {
   width: 100%;
   display: flex;
@@ -491,5 +454,18 @@ watch(
   @include respond-to(medium) {
     min-width: toRem(162);
   }
+}
+
+.info-dashboard__ref-info {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(8);
+}
+
+.info-dashboard__separator {
+  margin: toRem(16) 0;
+  height: toRem(2);
+  width: 100%;
+  background: var(--border-tertiary-main);
 }
 </style>

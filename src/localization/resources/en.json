@@ -1,6 +1,7 @@
 {
   "app-navbar": {
     "mor20-ecosystem-link": "MOR20",
+    "referrals-link": "Referrals",
     "contract-faq-link": "Contract FAQ",
     "community-website-link": "Community Website"
   },
@@ -101,6 +102,7 @@
     "amount-placeholder": "Enter {currency} amount",
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
+    "referrer-placeholder": "Referrer Address",
     "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",
@@ -152,7 +154,7 @@
       "available-to-claim-title": "Available to claim",
       "claim-btn": "Claim {token}",
       "dashboard-description--0": "Upon withdrawal, your deposited {token} will be sent to your address. In case of claim, tokens will be minted in the Arbitrum One network. This may take some time.",
-      "dashboard-note--0": "Note: You can withdraw your {token} {daysCount} days after deposit."
+      "dashboard-note--0": "Note: You can withdraw your {token} {time} after deposit."
     }
   },
   "mor20-ecosystem": {
@@ -201,11 +203,9 @@
     "header-note": "Note: Amount of deposited stETH",
     "header-supply-subtitle": "Number of stETH circulating in the project in relation to time",
     "header-earned-subtitle": "Number of earned MOR tokens in relation to time",
-    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet"
-  },
-  "info-bar": {
-    "status--public": "Automated",
-    "status--private": "Non-Automated"
+    "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
+    "referee-bonus-text": "Referee Bonus",
+    "your-referrer-text": "Your Referrer"
   },
   "info-card": {
     "show-more": "Show more"
@@ -621,5 +621,32 @@
     "title": "Edit Contract",
     "submit-btn": "Submit",
     "renounce-btn": "Renounce"
+  },
+  "choose-asset-step": {
+    "title": "Please select the token for deposit:",
+    "cancel-btn": "Cancel",
+    "next-btn": "Next"
+  },
+  "swap-step": {
+    "amount-placeholder": "Enter token amount for swap",
+    "eth-amount-text":  "Approximate stETH amount",
+    "balance-text": "Current balance: ",
+    "estimated-fee-text": "Estimated fee (ETH)",
+    "approve-btn": "Approve",
+    "confirm-btn": "Confirm",
+    "cancel-btn":  "Cancel"
+  },
+  "mainnet-deposit-modal-content": {
+    "swap-lbl": "Step 1/2:",
+    "swap-txt": "Swap for {asset}",
+    "deposit-lbl": "Step 2/2",
+    "deposit-txt": "Deposit {asset}"
+  },
+  "use-swap": {
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "info-indicator": {
+    "coppied-text": "Coppied!"
   }
 }

@@ -4,9 +4,6 @@
       <p class="info-bar__subtitle">
         {{ subtitle }}
       </p>
-      <p class="info-bar__status" :class="[`info-bar__status--${status}`]">
-        {{ $t(`info-bar.status--${status}`) }}
-      </p>
     </div>
     <h1>{{ title }}</h1>
     <div class="info-bar__description-wrp">
@@ -76,29 +73,6 @@ withDefaults(
   text-transform: uppercase;
 
   @include body-2-regular;
-}
-
-.info-bar__status {
-  $color: #15151d;
-
-  color: $color;
-  padding: toRem(4) toRem(12);
-
-  &--public {
-    background: var(--primary-main);
-  }
-
-  &--private {
-    background: linear-gradient(90deg, #e08c5c 0%, #ffbe72 100%);
-  }
-
-  .info-bar--loading & {
-    @include skeleton;
-  }
-
-  @include respond-to(medium) {
-    padding: toRem(2) toRem(14);
-  }
 }
 
 .info-bar__description-wrp {
