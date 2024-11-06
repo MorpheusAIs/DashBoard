@@ -85,6 +85,7 @@ const routes: RouteRecordRaw[] = [
     path: '/referrals',
     name: ROUTE_NAMES.appReferrals,
     component: () => import('@/pages/Referrals/index.vue'),
+    props: { poolId: 0 },
   },
 ]
 

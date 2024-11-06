@@ -25,7 +25,7 @@ export const useNavLinks = () => {
       text: t('app-navbar.referrals-link'),
       route: {
         name: ROUTE_NAMES.appReferrals,
-        query: { address: web3ProviderStore.address },
+        query: { referrer: web3ProviderStore.address },
       },
     },
   ])

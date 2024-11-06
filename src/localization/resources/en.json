@@ -652,5 +652,40 @@
   },
   "info-indicator": {
     "coppied-text": "Coppied!"
+  },
+  "referral-info": {
+    "title": "Referral System",
+    "subtitle": "Rates for Referrals",
+    "description-1": "Create your own referral link, share it with others, and earn bonuses!",
+    "description-2": "Your referral rate depends on the amount of stETH deposited by people using your link. When a user deposits stETH with your referral link, you, as the referrer, can earn up to a 5% bonus in MOR tokens.",
+    "description-3": "Additionally, other users who deposit stETH using your link will receive a 1% bonus on their deposits.",
+    "button-txt": "Become a Referrer"
+  },
+  "referral-info-card": {
+    "title": "Tier {tier}",
+    "deposited-text": "Deposited by Referees:",
+    "less-deposited-text": "less than {to} {symbol}",
+    "from-to-deposited-text": "from {from} to {to} {symbol}",
+    "to-deposited-text": "{from} {symbol} or more",
+    "bonus-text": "Bonus"
+  },
+  "referral-system-info": {
+    "title": "Referral System",
+    "description-1": "Share your referral link with others and earn bonuses!",
+    "description-2": "Your referral rate depends on the amount of stETH deposited by users who use your referral link. The larger the total deposits from referees, the higher your bonus.",
+    "ref-address": "Your Referral Address",
+    "coppied-text": "Coppied!"
+  },
+  "referral-system-rate": {
+    "rate": "Your Rate",
+    "title": "Tier {tier}",
+    "deposited-text": "Deposited by Referees:",
+    "bonus-text": "Bonus:",
+    "earned-text":  "Total {symbol} Earned:",
+    "available-to-claim": "{symbol} Available to Claim",
+    "button-text": "Claim Referral Bonus"
+  },
+  "ref-rates-slider": {
+    "title": "Rates for Referrals"
   }
 }
