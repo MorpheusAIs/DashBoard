@@ -102,7 +102,7 @@
     "amount-placeholder": "Enter {currency} amount",
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
-    "referrer-placeholder": "Referrer",
+    "referrer-placeholder": "Referrer Address",
     "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",
@@ -206,10 +206,6 @@
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
     "referee-bonus-text": "Referee Bonus",
     "your-referrer-text": "Your Referrer"
-  },
-  "info-bar": {
-    "status--public": "Automated",
-    "status--private": "Non-Automated"
   },
   "info-card": {
     "show-more": "Show more"
