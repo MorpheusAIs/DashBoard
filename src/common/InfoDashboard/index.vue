@@ -66,7 +66,7 @@
             :is-loading="isLoading"
             :value="indicator.value"
           />
-          <template v-if="isChartShown && isNoReferrer">
+          <template v-if="isChartShown && !isNoReferrer">
             <div class="info-dashboard__separator" />
             <div class="info-dashboard__ref-info">
               <info-indicator
@@ -119,9 +119,10 @@ import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
 import { AppButton, InfoIndicator } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
+import { config } from '@config'
 
 const CUT_ADDRESS_LENGTH = 7
 
@@ -152,7 +153,6 @@ const props = withDefaults(
 
 const { t } = useI18n()
 const route = useRoute()
-const router = useRouter()
 
 const { userPoolData } = usePool(toRef(props.poolId))
 
@@ -184,13 +184,12 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
 const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
 
 const refererIndicators = computed(() => {
-  const link = router.resolve({
-    name: ROUTE_NAMES.appReferrals,
-    query: {
-      address: web3ProvidersStore.address,
-      network: route.query.network,
-    },
-  }).href
+  const link = `${
+    config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl
+  }/address/${
+    (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ||
+    ethers.constants.AddressZero
+  }`
 
   return [
     {
@@ -203,7 +202,7 @@ const refererIndicators = computed(() => {
         (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ?? '-',
         CUT_ADDRESS_LENGTH,
       ),
-      link: `${window.location.origin}${link}`,
+      link,
     },
   ]
 })
