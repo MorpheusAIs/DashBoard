@@ -65,6 +65,7 @@
         :placeholder="$t(`deposit-form.referrer-placeholder`)"
         :error-message="getFieldErrorMessage('referrer')"
         :is-loading="isInitializing"
+        :note="$t(`deposit-form.referrer-note`)"
         @blur="touchField('referrer')"
       />
     </div>
@@ -232,10 +233,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
           props.poolId,
           amountInDecimals,
           ...(isMultiplierShown.value
-            ? [
-                form.lockPeriod || 0,
-                form.referrer || ethers.constants.AddressZero,
-              ]
+            ? [form.lockPeriod || 0, form.referrer || config.DEFAULT_REFEREE]
             : []),
         )
       emit('stake-tx-sent')
@@ -277,7 +275,11 @@ const onSubmit = async () => {
 
 const loadReferrer = async () => {
   const referrer = (userPoolData.value as Erc1967ProxyType.UserData)?.referrer
-  if (referrer === ethers.constants.AddressZero) return
+  if (
+    referrer === ethers.constants.AddressZero ||
+    referrer === config.DEFAULT_REFEREE
+  )
+    return
   form.referrer = referrer
 }
 

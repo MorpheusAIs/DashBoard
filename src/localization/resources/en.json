@@ -103,6 +103,7 @@
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
     "referrer-placeholder": "Referrer Address",
+    "referrer-note": "Enter your referrer address or leave the field blank.",
     "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",

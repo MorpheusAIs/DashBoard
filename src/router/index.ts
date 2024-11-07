@@ -93,7 +93,11 @@ router.beforeEach((to, from) => {
   if (to.query.network) return
   return {
     ...to,
-    query: { ...to.query, network: from.query.network || NETWORK_IDS.mainnet },
+    query: {
+      ...to.query,
+      network: from.query.network || NETWORK_IDS.mainnet,
+      ...(from.query.referrer ? { referrer: from.query.referrer } : {}),
+    },
   }
 })
 

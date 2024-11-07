@@ -52,6 +52,7 @@
     >
       <div v-if="errorMessage || note" class="input-field__msg-wrp">
         <app-icon
+          v-if="errorMessage"
           class="input-field__msg-icon"
           :name="$icons.exclamationCircle"
         />
@@ -378,7 +379,7 @@ $z-index-side-nodes: 1;
 }
 
 .input-field__note-msg {
-  color: var(--text-primary-light);
+  color: var(--text-tertiary-main);
 }
 
 .input-field__err-msg-transition-enter-active {

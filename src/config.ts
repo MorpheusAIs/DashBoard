@@ -57,6 +57,7 @@ export const config = {
   DESCRIPTION: import.meta.env.VITE_APP_DESCRIPTION,
   URL: import.meta.env.VITE_APP_URL,
   WALLET_CONNECT_PROJECT_ID: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID,
+  DEFAULT_REFEREE: import.meta.env.VITE_APP_DEFAULT_REFEREE,
   BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
   LOG_LEVEL: 'trace' as LogLevelDesc,
   GITHUB_URL:
