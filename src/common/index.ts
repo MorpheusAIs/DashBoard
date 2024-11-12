@@ -20,6 +20,7 @@ export { default as ErrorMessage } from './ErrorMessage.vue'
 export { default as Loader } from './Loader.vue'
 export { default as RadioButton } from './RadioButton.vue'
 export { default as InfoIndicator } from './InfoIndicator.vue'
+export { default as Pagination } from './Pagination.vue'
 
 export * from './modals'
 export * from './toasts'

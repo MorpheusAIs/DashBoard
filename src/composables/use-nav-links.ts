@@ -2,12 +2,10 @@ import { ROUTE_NAMES } from '@/enums'
 import { config } from '@config'
 import { computed } from 'vue'
 import { useI18n } from './use-i18n'
-// TODO: HIDDEN BEFORE REF FUNCTIONALITY
-// import { useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore } from '@/store'
 
 export const useNavLinks = () => {
-  // TODO: HIDDEN BEFORE REF FUNCTIONALITY
-  // const web3ProviderStore = useWeb3ProvidersStore()
+  const web3ProviderStore = useWeb3ProvidersStore()
   const { t } = useI18n()
 
   const links = computed(() => [
@@ -23,14 +21,13 @@ export const useNavLinks = () => {
       text: t('app-navbar.community-website-link'),
       href: config.LANDING_URL,
     },
-    // TODO: HIDDEN BEFORE REF FUNCTIONALITY
-    // {
-    //   text: t('app-navbar.referrals-link'),
-    //   route: {
-    //     name: ROUTE_NAMES.appReferrals,
-    //     query: { address: web3ProviderStore.address },
-    //   },
-    // },
+    {
+      text: t('app-navbar.referrals-link'),
+      route: {
+        name: ROUTE_NAMES.appReferrals,
+        query: { user: web3ProviderStore.address },
+      },
+    },
   ])
 
   return { links }

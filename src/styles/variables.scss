@@ -18,8 +18,10 @@
   --background-secondary-main: #{$background-secondary-main};
   --background-secondary-dark: #{$background-secondary-dark};
 
+  --background-tertiary-light: #{$background-tertiary-light};
   --background-tertiary-main: #{$background-tertiary-main};
   --background-tertiary-dark: #{$background-tertiary-dark};
+
 
   /* status colors */
   --success-light: #{$success-light};
@@ -204,4 +206,8 @@
   --transition-duration-fast: 0.2s;
   --transition-duration-medium: 0.5s;
   --transition-timing-default: cubic-bezier(0.08,0.52,0.52,1);
+
+  /* card colors */
+  --card-border-gradient: #{$card-border-gradient};
+  --card-background-gradient: #{$card-background-gradient};
 }

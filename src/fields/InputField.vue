@@ -51,13 +51,15 @@
       @before-leave="setHeightCSSVar"
     >
       <div v-if="errorMessage || note" class="input-field__msg-wrp">
-        <app-icon
-          class="input-field__msg-icon"
-          :name="$icons.exclamationCircle"
-        />
-        <span v-if="errorMessage" class="input-field__err-msg">
-          {{ errorMessage }}
-        </span>
+        <template v-if="errorMessage">
+          <app-icon
+            class="input-field__msg-icon"
+            :name="$icons.exclamationCircle"
+          />
+          <span class="input-field__err-msg">
+            {{ errorMessage }}
+          </span>
+        </template>
         <span v-else-if="note" class="input-field__note-msg">
           {{ note }}
         </span>
@@ -378,7 +380,7 @@ $z-index-side-nodes: 1;
 }
 
 .input-field__note-msg {
-  color: var(--text-primary-light);
+  color: var(--text-tertiary-main);
 }
 
 .input-field__err-msg-transition-enter-active {
