@@ -5,7 +5,9 @@
     </h5>
     <div class="referral-system-rate__card">
       <h3 class="referral-system-rate__tier">
-        {{ $t('referral-system-rate.title') }}
+        {{
+          $t('referral-system-rate.title', { tier: referralData?.tier ?? 0 })
+        }}
       </h3>
       <div class="referral-system-rate__info-wrp">
         <div
@@ -23,7 +25,7 @@
       </div>
       <div class="referral-system-rate__mor-wrp">
         <h4 class="referral-system-rate__mor-value">
-          {{ `0` }}
+          {{ availableToClaim || 0 }}
         </h4>
         <span class="referral-system-rate__available-to-claim">
           {{
@@ -33,13 +35,16 @@
           }}
         </span>
       </div>
+      <!--TODO: UNCOMMENT WHEN GRAPH WILL BE READY-->
       <app-button
+        v-if="false"
         class="referral-system-rate__button"
         :text="
           $t('referral-system-rate.button-text', {
             symbol: web3ProvidersStore.rewardsTokenSymbol,
           })
         "
+        :disabled="!availableToClaim"
         @click="emit('claim-ref-bonus')"
       />
     </div>
@@ -51,28 +56,65 @@ import { AppButton } from '@/common'
 import { computed } from 'vue'
 import { useI18n } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
+import { ReferralData } from '@/types'
+import { ethers } from 'ethers'
+
+const ROUND_DIGITS = 5
+const PERCENTS_DECIMALS = 23
 
 const emit = defineEmits<{
   (e: 'claim-ref-bonus'): void
 }>()
 
+const props = defineProps<{
+  poolId: number
+  referralData: ReferralData
+}>()
+
 const web3ProvidersStore = useWeb3ProvidersStore()
 const { t } = useI18n()
+
+const availableToClaim = computed(() =>
+  parseFloat(
+    parseFloat(
+      ethers.utils.formatUnits(props.referralData.currentReward),
+    ).toFixed(5),
+  ),
+)
 
 const info = computed(() => [
   {
     title: t('referral-system-rate.deposited-text'),
-    value: `0 ${web3ProvidersStore.depositTokenSymbol}`,
+    value: `${
+      props.referralData?.amountStaked
+        ? ethers.utils.formatUnits(props.referralData?.amountStaked)
+        : 0
+    } ${web3ProvidersStore.depositTokenSymbol}`,
   },
   {
     title: t('referral-system-rate.bonus-text'),
-    value: '0',
+    value: `${
+      props.referralData?.multiplier
+        ? ethers.utils.formatUnits(
+            props.referralData?.multiplier,
+            PERCENTS_DECIMALS,
+          )
+        : 0
+    }%`,
   },
   {
     title: t('referral-system-rate.earned-text', {
       symbol: web3ProvidersStore.rewardsTokenSymbol,
     }),
-    value: '0',
+    value: `${
+      props.referralData?.currentReward
+        ? parseFloat(
+            parseFloat(
+              ethers.utils.formatUnits(props.referralData?.currentReward),
+            ).toFixed(ROUND_DIGITS),
+          )
+        : 0
+    }`,
   },
 ])
 </script>

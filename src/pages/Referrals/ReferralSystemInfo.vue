@@ -32,6 +32,8 @@
         />
       </div>
     </div>
+    <!--TODO: HIDDEN BEFORE GRAPH-->
+    <referees-list v-if="false" class="referral-system-info__referees-list" />
   </div>
 </template>
 
@@ -41,6 +43,7 @@ import { computed } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter, useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
+import RefereesList from '@/pages/Referrals/RefereesList/index.vue'
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 const router = useRouter()
@@ -50,7 +53,7 @@ const refLink = computed(() => {
   const link = router.resolve({
     name: ROUTE_NAMES.appCapital,
     query: {
-      referrer: web3ProvidersStore.address,
+      referrer: route.query.user || web3ProvidersStore.address,
       network: route.query.network,
     },
   }).href
@@ -61,6 +64,10 @@ const refLink = computed(() => {
 <style scoped lang="scss">
 .referral-system-info {
   max-width: toRem(582);
+
+  @include respond-to(medium) {
+    max-width: 100%;
+  }
 }
 
 .referral-system-info__title {
@@ -73,10 +80,18 @@ const refLink = computed(() => {
   display: flex;
   gap: toRem(8);
   margin-top: toRem(8);
+
+  @include respond-to(medium) {
+    justify-content: space-between;
+  }
 }
 
 .referral-system-info__ref-button {
   width: 100%;
+
+  @include respond-to(medium) {
+    width: fit-content;
+  }
 }
 
 .referral-system-info__copy-button {
@@ -106,5 +121,9 @@ const refLink = computed(() => {
 .referral-system-info__ref-link-text {
   font-size: toRem(18);
   color: var(--text-tertiary-main);
+}
+
+.referral-system-info__referees-list {
+  margin-top: toRem(56);
 }
 </style>

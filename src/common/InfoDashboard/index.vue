@@ -185,7 +185,7 @@ const refererIndicators = computed(() => {
   const link = router.resolve({
     name: ROUTE_NAMES.appReferrals,
     query: {
-      referrer: web3ProvidersStore.address,
+      user: (userPoolData.value as Erc1967ProxyType.UserData)?.referrer,
       network: route.query.network,
     },
   }).href

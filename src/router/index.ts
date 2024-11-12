@@ -97,10 +97,15 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   if (to.query.network) return
-  return {
-    ...to,
-    query: { ...to.query, network: from.query.network || NETWORK_IDS.mainnet },
+
+  if (from.query.referrer) {
+    to.query.referrer = from.query.referrer
   }
+
+  to.query.network =
+    to.query.network || from.query.network || NETWORK_IDS.mainnet
+
+  return { ...to, query: { ...to.query } }
 })
 
 export { onBeforeRouteUpdate, router, useRouter, useRoute }

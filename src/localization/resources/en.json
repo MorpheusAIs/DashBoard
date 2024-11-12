@@ -102,7 +102,8 @@
     "amount-placeholder": "Enter {currency} amount",
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
-    "referrer-placeholder": "Referrer",
+    "referrer-placeholder": "Referrer Address",
+    "referrer-note": "Enter your referrer address or leave the field blank",
     "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",
@@ -687,5 +688,21 @@
   },
   "ref-rates-slider": {
     "title": "Rates for Referrals"
+  },
+  "referees-list": {
+    "title": "Your Referees",
+    "address-text": "Address",
+    "deposited-text": "Deposited"
+  },
+  "referral-system": {
+    "error-message": "Something bad happened"
+  },
+  "ref-bonus-modal": {
+    "title": "Claim Referral Bonus",
+    "text-1": "You are about to claim your referral bonus. Please check the information below and confirm the action. Your current reward - {reward}.",
+    "text-2": "Please enter your wallet address for the claim in the field below.",
+    "input-placeholder": "Enter wallet address",
+    "cancel-button": "Cancel",
+    "claim-button": "Claim"
   }
 }

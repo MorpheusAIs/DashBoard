@@ -77,6 +77,10 @@ const refComponent = computed(() =>
 }
 
 .referrals__content-wrp {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
   @include page-wrp;
 }
 </style>

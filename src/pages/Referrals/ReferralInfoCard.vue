@@ -27,7 +27,7 @@ const props = defineProps<{
   tierNumber: number
   fromDeposited: number
   toDeposited: number
-  percent: number
+  percent: number | string
   isLongCard?: boolean
 }>()
 
