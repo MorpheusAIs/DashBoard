@@ -109,6 +109,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, reactive, ref, toRef, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
+import { type Erc1967ProxyType } from '@/types'
+import { ethers } from 'ethers'
 
 enum ACTIONS {
   approve = 'approve',
@@ -143,8 +145,7 @@ const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isReferrerDisabled = computed(
-  () =>
-    route.query?.referrer !== web3ProvidersStore.address || isSubmitting.value,
+  () => ethers.utils.isAddress(route.query?.referrer) || isSubmitting.value,
 )
 
 const action = computed<ACTIONS>(() => {
@@ -312,14 +313,12 @@ watch(
 )
 
 watch(
-  () => route.query?.referrer,
-  () => {
-    if (
-      !route.query?.referrer ||
-      route.query?.referrer === web3ProvidersStore.address
-    )
-      return
-    form.referrer = route.query.referrer
+  [() => route.query?.referrer, userPoolData],
+  async () => {
+    form.referrer =
+      !route.query?.referrer && userPoolData.value
+        ? (userPoolData.value as Erc1967ProxyType.UserData)?.referrer
+        : route.query.referrer
     touchField('referrer')
   },
   { immediate: true },

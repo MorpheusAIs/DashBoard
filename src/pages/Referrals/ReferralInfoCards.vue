@@ -63,5 +63,18 @@ const humanizedTiers = computed(() => {
   display: flex;
   gap: toRem(20);
   justify-content: center;
+
+  @include respond-to(xmedium) {
+    display: grid;
+    max-width: fit-content;
+    margin: 0 auto;
+    grid-template-columns: repeat(2, 1fr);
+    flex-direction: column;
+  }
+
+  @include respond-to(tablet) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 </style>

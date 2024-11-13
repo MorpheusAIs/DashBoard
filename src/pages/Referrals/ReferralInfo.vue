@@ -21,7 +21,7 @@
     <app-button
       class="referral-info__button"
       :text="$t('referral-info.button-txt')"
-      @click="becomeReferrer"
+      @click="updateRefState"
     />
   </div>
 </template>
@@ -36,6 +36,10 @@ defineProps<{
   poolId: number
 }>()
 
+const emit = defineEmits<{
+  (e: 'become-referrer'): void
+}>()
+
 const { t } = useI18n()
 const { becomeReferrer } = useReferral()
 
@@ -44,6 +48,11 @@ const description = computed(() => [
   t('referral-info.description-2'),
   t('referral-info.description-3'),
 ])
+
+const updateRefState = () => {
+  becomeReferrer()
+  emit('become-referrer')
+}
 </script>
 
 <style scoped lang="scss">
@@ -61,6 +70,11 @@ const description = computed(() => [
   max-width: toRem(820);
   margin: toRem(24) auto toRem(48);
   gap: toRem(16);
+
+  @include respond-to(medium) {
+    max-width: 100%;
+    padding: 0 toRem(24);
+  }
 }
 
 .referral-info__description {
@@ -82,5 +96,9 @@ const description = computed(() => [
 .referral-info__button {
   margin: 0 auto toRem(100);
   width: toRem(382);
+
+  @include respond-to(xsmall) {
+    width: toRem(300);
+  }
 }
 </style>
