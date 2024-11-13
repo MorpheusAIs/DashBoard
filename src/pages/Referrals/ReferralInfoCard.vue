@@ -7,7 +7,7 @@
       {{ $t('referral-info-card.deposited-text') }}
     </p>
     <p class="referral-info-card__deposited-value">
-      {{ depositedValueTest }}
+      {{ depositedValueText }}
     </p>
     <h5 class="referral-info-card__percent">
       {{ `${percent}%` }}
@@ -35,22 +35,22 @@ const web3ProviderStore = useWeb3ProvidersStore()
 
 const { t } = useI18n()
 
-const depositedValueTest = computed(() => {
+const depositedValueText = computed(() => {
   if (!props.toDeposited) {
     return t('referral-info-card.to-deposited-text', {
       from: props.fromDeposited,
-      symbol: web3ProviderStore.rewardsTokenSymbol,
+      symbol: web3ProviderStore.depositTokenSymbol,
     })
   }
   return props.fromDeposited
     ? t('referral-info-card.from-to-deposited-text', {
         from: props.fromDeposited,
         to: props.toDeposited,
-        symbol: web3ProviderStore.rewardsTokenSymbol,
+        symbol: web3ProviderStore.depositTokenSymbol,
       })
     : t('referral-info-card.less-deposited-text', {
         to: props.toDeposited,
-        symbol: web3ProviderStore.rewardsTokenSymbol,
+        symbol: web3ProviderStore.depositTokenSymbol,
       })
 })
 </script>

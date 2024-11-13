@@ -32,7 +32,7 @@
         />
       </div>
     </div>
-    <!--TODO: HIDDEN BEFORE GRAPH-->
+    <!--TODO: UNCOMMENT WHEN REF GRAPH WILL BE READY-->
     <referees-list v-if="false" class="referral-system-info__referees-list" />
   </div>
 </template>
