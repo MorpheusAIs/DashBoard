@@ -1,7 +1,11 @@
 <template>
   <div class="referrals">
     <div class="referrals__content-wrp">
-      <component :is="refComponent" :pool-id="poolId" />
+      <component
+        :is="refComponent"
+        :pool-id="poolId"
+        @become-referrer="becomeReferrer"
+      />
     </div>
   </div>
 </template>
@@ -9,18 +13,24 @@
 <script setup lang="ts">
 import ReferralInfo from './ReferralInfo.vue'
 import ReferralSystem from './ReferralSystem.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useReferral } from '@/composables'
 
 defineProps<{
   poolId: number
 }>()
 
+const isRefSystemPage = ref(false)
+
 const { isReferrer } = useReferral()
 
 const refComponent = computed(() =>
-  isReferrer.value ? ReferralSystem : ReferralInfo,
+  isRefSystemPage.value || isReferrer.value ? ReferralSystem : ReferralInfo,
 )
+
+const becomeReferrer = () => {
+  isRefSystemPage.value = true
+}
 </script>
 
 <style scoped lang="scss">
