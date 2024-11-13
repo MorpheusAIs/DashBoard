@@ -315,10 +315,17 @@ watch(
 watch(
   [() => route.query?.referrer, userPoolData],
   async () => {
+    if (route.query?.referrer) {
+      form.referrer = route.query.referrer
+      touchField('referrer')
+      return
+    }
+    const contractReferrer = (userPoolData.value as Erc1967ProxyType.UserData)
+      ?.referrer
     form.referrer =
-      !route.query?.referrer && userPoolData.value
-        ? (userPoolData.value as Erc1967ProxyType.UserData)?.referrer
-        : route.query.referrer
+      contractReferrer === ethers.constants.AddressZero
+        ? config.DEFAULT_REFEREE
+        : contractReferrer
     touchField('referrer')
   },
   { immediate: true },

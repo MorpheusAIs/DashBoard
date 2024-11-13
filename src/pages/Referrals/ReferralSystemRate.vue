@@ -35,7 +35,7 @@
           }}
         </span>
       </div>
-      <!--TODO: UNCOMMENT WHEN GRAPH WILL BE READY-->
+      <!--TODO: UNCOMMENT WHEN REF GRAPH WILL BE READY-->
       <app-button
         v-if="false"
         class="referral-system-rate__button"

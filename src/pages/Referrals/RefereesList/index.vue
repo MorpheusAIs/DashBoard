@@ -66,4 +66,11 @@ const chooseSortingOrder = (order: SORTING_ORDER) => {
   flex-direction: column;
   gap: toRem(10);
 }
+
+.referees-list__pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: toRem(24);
+}
 </style>

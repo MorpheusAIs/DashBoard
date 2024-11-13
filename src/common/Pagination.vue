@@ -9,6 +9,7 @@ import { NavButton, Paginate } from '@brutforce/vue3-paginate'
     wrapper-classes="pagination__list"
     dot-classes="pagination__dots"
     page-classes="pagination__page-button"
+    active-page-classes="pagination__page-button--active"
     :per-page="1"
     :total-pages="25"
     :current-page="1"
@@ -60,6 +61,10 @@ import { NavButton, Paginate } from '@brutforce/vue3-paginate'
     width: toRem(32);
     height: toRem(32);
     color: var(--text-secondary-light);
+
+    svg {
+      max-width: toRem(11);
+    }
   }
 
   :deep(.pagination__page-button) {
@@ -67,6 +72,22 @@ import { NavButton, Paginate } from '@brutforce/vue3-paginate'
     height: toRem(32);
     background: var(--background-secondary-main);
     color: var(--text-secondary-light);
+    font-weight: 500;
+    font-family: var(--app-font-family);
+    transition: opacity 0.2s ease-in-out;
+
+    &:not([disabled]):hover {
+      opacity: 0.5;
+    }
+  }
+
+  :deep(.pagination__page-button--active) {
+    background: linear-gradient(
+      90deg,
+      var(--primary-main) -10.86%,
+      var(--primary-dark) 108.88%
+    );
+    color: var(--text-primary-dark);
   }
 
   :deep(.pagination__navigation-button) {
@@ -75,6 +96,18 @@ import { NavButton, Paginate } from '@brutforce/vue3-paginate'
     background: var(--background-secondary-main);
     color: var(--text-secondary-light);
     transform: rotate(90deg);
+    transition: opacity 0.2s ease-in-out;
+
+    &:not([disabled]):hover,
+    &:not([disabled]):active,
+    &:not([disabled]):focus {
+      color: var(--text-secondary-light);
+      background: var(--background-secondary-main);
+    }
+
+    &:not([disabled]):hover {
+      opacity: 0.5;
+    }
   }
 
   :deep(.pagination__navigation-button--next) {
