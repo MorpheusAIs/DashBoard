@@ -1,6 +1,33 @@
 <script setup lang="ts">
-import { AppButton } from '@/common/index'
+import { AppButton } from '@/common'
 import { NavButton, Paginate } from '@brutforce/vue3-paginate'
+import { DEFAULT_PAGE_LIMIT } from '@/const'
+import { computed } from 'vue'
+
+const DEFAULT_VIEW_LIMIT = 4
+
+const emit = defineEmits<{
+  (e: 'update:current-page', value: number): void
+}>()
+
+const props = withDefaults(
+  defineProps<{
+    totalItems: number
+    currentPage: number
+    pageLimit?: number
+    maxViewedPages?: number
+  }>(),
+  {
+    pageLimit: DEFAULT_PAGE_LIMIT,
+    maxViewedPages: DEFAULT_VIEW_LIMIT,
+  },
+)
+
+const totalPages = computed(() => Math.ceil(props.totalItems / props.pageLimit))
+
+const pageUpdate = (newPage: number) => {
+  emit('update:current-page', newPage)
+}
 </script>
 
 <template>
@@ -11,9 +38,10 @@ import { NavButton, Paginate } from '@brutforce/vue3-paginate'
     page-classes="pagination__page-button"
     active-page-classes="pagination__page-button--active"
     :per-page="1"
-    :total-pages="25"
-    :current-page="1"
-    :max-pages="3"
+    :total-pages="totalPages"
+    :current-page="currentPage"
+    :max-pages="maxViewedPages"
+    @input="pageUpdate"
   >
     <template #prev>
       <nav-button page="prev">

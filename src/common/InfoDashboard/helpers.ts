@@ -7,10 +7,77 @@ import {
   YieldQueryData,
   ChartQueryData,
   ChartData,
+  UserReferral,
+  UserReferralDepositedAmount,
 } from '@/types'
+import { SORTING_ORDER } from '@/enums'
 
 const ONE_DAY_TIMESTAMP = 24 * 60 * 60
 const DECIMAL = BigNumber.from(10).pow(25)
+
+export async function fetchSpecificUserReferrers(
+  poolId: string,
+  referrer: string,
+  skip: number,
+  first: number,
+  orderDirection: SORTING_ORDER,
+  type: NETWORK_IDS,
+): Promise<UserReferral[]> {
+  const queryPattern = _generateUserReferrersPattern(
+    poolId,
+    referrer,
+    first,
+    skip,
+    orderDirection,
+  )
+
+  const apolloClient =
+    type === NETWORK_IDS.mainnet
+      ? config.mainnetApolloClient
+      : config.testnetApolloClient
+
+  const query = gql`
+    query GetSpecificUserReferrers {
+      ${queryPattern}
+    }
+  `
+
+  const { data } = await apolloClient.query({
+    query,
+    variables: {},
+  })
+
+  return data.userReferrers
+}
+
+export async function fetchDepositedAmountUserReferrers(
+  poolId: string | number,
+  referrer: string,
+  type: NETWORK_IDS,
+): Promise<UserReferralDepositedAmount[]> {
+  const queryPattern = _generateDepositAmountUserReferrersPattern(
+    String(poolId),
+    referrer.toLowerCase(),
+  )
+
+  const apolloClient =
+    type === NETWORK_IDS.mainnet
+      ? config.mainnetApolloClient
+      : config.testnetApolloClient
+
+  const query = gql`
+    query GetDepositedAmountUserReferrers {
+      ${queryPattern}
+    }
+  `
+
+  const { data } = await apolloClient.query({
+    query,
+    variables: {},
+  })
+
+  return data.userReferrers
+}
 
 export async function getChartData(
   poolId: number,
@@ -224,5 +291,66 @@ function _generateUserYieldPerDayGraphqlQuery(
 
   return gql`
     ${'{\n' + requests.join('\n') + '\n}'}
+  `
+}
+
+function _generateUserReferrersPattern(
+  poolId: string,
+  referrer: string,
+  first: number,
+  skip: number,
+  orderDirection: SORTING_ORDER,
+) {
+  return orderDirection === SORTING_ORDER.none
+    ? `
+    userReferrers(
+      where: {
+        poolId: "${poolId}",
+        referrer: "${referrer}",
+        amount_gt: "0"
+      },
+      first: ${first},
+      skip: ${skip},
+    ) {
+      amount
+      id
+      poolId
+      user
+    }
+  `
+    : `
+    userReferrers(
+      where: {
+        poolId: "${poolId}",
+        referrer: "${referrer}",
+        amount_gt: "0"
+      },
+      orderBy: amount,
+      first: ${first},
+      skip: ${skip},
+      orderDirection: ${orderDirection}
+    ) {
+      amount
+      id
+      poolId
+      user
+    }
+  `
+}
+
+function _generateDepositAmountUserReferrersPattern(
+  poolId: string,
+  referrer: string,
+) {
+  return `
+    userReferrers(
+      where: {
+        poolId: "${poolId}",
+        referrer: "${referrer}",
+        amount_gt: "0"
+      }
+    ) {
+      amount
+    }
   `
 }

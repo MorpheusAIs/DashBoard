@@ -35,9 +35,8 @@
           }}
         </span>
       </div>
-      <!--TODO: UNCOMMENT WHEN REF GRAPH WILL BE READY-->
       <app-button
-        v-if="false"
+        v-if="!isClaimButtonHidden"
         class="referral-system-rate__button"
         :text="
           $t('referral-system-rate.button-text', {
@@ -58,6 +57,7 @@ import { useI18n } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
 import { ReferralData } from '@/types'
 import { ethers } from 'ethers'
+import { useRoute } from 'vue-router'
 
 const ROUND_DIGITS = 5
 const PERCENTS_DECIMALS = 23
@@ -71,6 +71,7 @@ const props = defineProps<{
   referralData: ReferralData
 }>()
 
+const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
 const { t } = useI18n()
 
@@ -82,11 +83,15 @@ const availableToClaim = computed(() =>
   ),
 )
 
+const isClaimButtonHidden = computed(
+  () => route.query.user && route.query.user !== web3ProvidersStore.address,
+)
+
 const info = computed(() => [
   {
     title: t('referral-system-rate.deposited-text'),
     value: `${
-      props.referralData?.amountStaked
+      props.referralData?.amountStaked?.gt(0)
         ? ethers.utils.formatUnits(props.referralData?.amountStaked)
         : 0
     } ${web3ProvidersStore.depositTokenSymbol}`,
@@ -158,11 +163,19 @@ const info = computed(() => [
 .referral-system-rate__info-title {
   font-size: toRem(18);
   color: var(--text-tertiary-main);
+
+  @include respond-to(small) {
+    font-size: toRem(14);
+  }
 }
 
 .referral-system-rate__info-value {
   font-size: toRem(18);
   font-weight: 700;
+
+  @include respond-to(small) {
+    font-size: toRem(14);
+  }
 }
 
 .referral-system-rate__mor-value {

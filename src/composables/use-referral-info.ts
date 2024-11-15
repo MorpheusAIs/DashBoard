@@ -1,12 +1,25 @@
 import { computed, ref, watch } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
-import { ERC1967Proxy, ReferralData } from '@/types'
+import {
+  ERC1967Proxy,
+  ReferralData,
+  UserReferralDepositedAmount,
+} from '@/types'
+import {
+  fetchDepositedAmountUserReferrers,
+  fetchSpecificUserReferrers,
+} from '@/common/InfoDashboard/helpers'
+import { useRoute } from 'vue-router'
+import { BigNumber, ethers } from 'ethers'
+import { NETWORK_IDS, SORTING_ORDER } from '@/enums'
 
 const TIERS = [0, 1, 2, 3]
 
 export const useReferralInfo = (poolId: number) => {
+  const route = useRoute()
   const web3ProviderStore = useWeb3ProvidersStore()
   const tiers = ref<Record<string, string | number>[]>([])
+  const refsCount = ref(0)
 
   const erc1967Contract = computed(
     () =>
@@ -47,23 +60,68 @@ export const useReferralInfo = (poolId: number) => {
     }
   }
 
-  const getRefData = async (userAddress: string): Promise<ReferralData> => {
-    const [currentReward, multiplier, refData] = await Promise.all([
-      getCurrentReferrerReward(userAddress),
-      getReferrerMultiplier(userAddress),
-      getReferrersData(userAddress),
-    ])
-
-    const foundTier = tiers.value.find(
-      tier => tier.multiplier === multiplier.toString(),
+  const getDepositedAmountByUser = async (userAddress: string) => {
+    const depositedInfo = await fetchDepositedAmountUserReferrers(
+      poolId,
+      userAddress,
+      route.query.network as NETWORK_IDS,
     )
+    refsCount.value = depositedInfo.length
+    return depositedInfo.reduce(
+      (acc: BigNumber, item: UserReferralDepositedAmount) => {
+        acc = acc.add(item.amount)
+        return acc
+      },
+      BigNumber.from(0),
+    )
+  }
+
+  const findTierIndex = (amountStaked: ethers.BigNumber): number => {
+    let resultIndex = 0
+    tiers.value.forEach(tier => {
+      if (amountStaked.gte(BigNumber.from(tier.amount))) {
+        resultIndex = Number(tier.idx)
+      }
+    })
+    return resultIndex
+  }
+
+  const getRefData = async (userAddress: string): Promise<ReferralData> => {
+    const [currentReward, multiplier, refData, depositedAmount] =
+      await Promise.all([
+        getCurrentReferrerReward(userAddress),
+        getReferrerMultiplier(userAddress),
+        getReferrersData(userAddress),
+        getDepositedAmountByUser(userAddress),
+      ])
+
+    const foundTier = findTierIndex(refData.amountStaked)
 
     return {
+      depositedAmount,
       currentReward,
       multiplier,
-      tier: foundTier?.idx ?? '0',
+      tier: foundTier,
       ...refData,
     }
+  }
+
+  const loadReferralDepositData = async (
+    referrer: string,
+    page: number,
+    limit: number,
+    order: SORTING_ORDER,
+    type: NETWORK_IDS,
+  ) => {
+    const skip = (page - 1) * limit
+    return fetchSpecificUserReferrers(
+      String(poolId),
+      referrer,
+      skip,
+      limit,
+      order,
+      type,
+    )
   }
 
   watch(
@@ -75,7 +133,10 @@ export const useReferralInfo = (poolId: number) => {
   )
   return {
     tiers,
+    refsCount,
 
+    getDepositedAmountByUser,
+    loadReferralDepositData,
     getRefData,
   }
 }

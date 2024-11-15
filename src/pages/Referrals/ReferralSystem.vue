@@ -7,7 +7,7 @@
         :message="$t('referral-system.error-message')"
       />
       <template v-else>
-        <referral-system-info />
+        <referral-system-info :pool-id="poolId" />
         <div class="referral-system__rate-wrapper">
           <referral-system-rate
             :pool-id="poolId"
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ReferralSystemInfo from './ReferralSystemInfo.vue'
 import ReferralSystemRate from './ReferralSystemRate.vue'
 import RefRatesSlider from './RefRatesSlider.vue'
@@ -38,7 +38,7 @@ import { ReferralData } from '@/types'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { useReferralInfo } from '@/composables'
-import { ErrorHandler } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { ErrorMessage, Loader } from '@/common'
 import RefBonusModal from '@/pages/Referrals/RefBonusModal.vue'
 
@@ -73,6 +73,15 @@ const init = async () => {
   }
   isLoaded.value = true
 }
+
+onMounted(() => {
+  init()
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, init)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.changedCurrentUserRefReward, onChangeBalances)
+})
 
 watch(
   [

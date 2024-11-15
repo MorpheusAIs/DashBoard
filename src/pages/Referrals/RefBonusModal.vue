@@ -56,9 +56,10 @@ import { config } from '@config'
 import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required } from '@/validators'
-import { storeToRefs, useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { ethers } from 'ethers'
+import { ERC1967Proxy } from '@/types'
 
 const ROUND_DIGITS = 5
 
@@ -66,7 +67,7 @@ const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isShown: boolean
     poolId: number
@@ -81,7 +82,7 @@ withDefaults(
 
 const { t } = useI18n()
 
-const { networkId, rewardsTokenSymbol } = storeToRefs(useWeb3ProvidersStore())
+const web3ProvidersStore = useWeb3ProvidersStore()
 const isSubmitting = ref(false)
 
 const form = reactive({
@@ -93,32 +94,45 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     address: { required, address },
   })
 
-const calculatedReward = computed(
-  () =>
-    `${
-      props.currentReward.toNumber()
-        ? parseFloat(
-            parseFloat(ethers.utils.formatUnits(props.currentReward)).toFixed(
-              ROUND_DIGITS,
-            ),
-          )
-        : 0
-    } ${rewardsTokenSymbol}`,
-)
+const calculatedReward = computed(() => {
+  const currentReward = props.currentReward
+    ? parseFloat(
+        parseFloat(ethers.utils.formatUnits(props.currentReward)).toFixed(
+          ROUND_DIGITS,
+        ),
+      )
+    : 0
+  return `${currentReward} ${web3ProvidersStore.rewardsTokenSymbol}`
+})
 
 const submit = async (): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
 
   try {
+    const fees =
+      // eslint-disable-next-line max-len
+      await web3ProvidersStore.endpointContract.providerBased.value.estimateFees(
+        config.networksMap[web3ProvidersStore.networkId].l2.layerZeroEndpointId,
+        // eslint-disable-next-line max-len
+        await web3ProvidersStore.erc1967ProxyContract.providerBased.value.l1Sender(),
+        '0x'.concat('00'.repeat(64)),
+        false,
+        '0x',
+      )
+
+    const tx = await (
+      web3ProvidersStore.erc1967ProxyContract.signerBased.value as ERC1967Proxy
+    ).claimReferrerTier(props.poolId, form.address, { value: fees.nativeFee })
+
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].l1.explorerUrl,
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
       tx.hash,
     )
 
     bus.emit(
       BUS_EVENTS.info,
-      t('claim-form.tx-sent-message', { explorerTxUrl }),
+      t('ref-bonus-modal.tx-sent-message', { explorerTxUrl }),
     )
 
     closeModal()
@@ -127,10 +141,10 @@ const submit = async (): Promise<void> => {
 
     bus.emit(
       BUS_EVENTS.success,
-      t('claim-form.success-message', { explorerTxUrl }),
+      t('ref-bonus-modal.success-message', { explorerTxUrl }),
     )
 
-    bus.emit(BUS_EVENTS.changedCurrentUserReward)
+    bus.emit(BUS_EVENTS.changedCurrentUserRefReward)
   } catch (error) {
     ErrorHandler.process(error)
   }
