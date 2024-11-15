@@ -43,7 +43,7 @@
             symbol: web3ProvidersStore.rewardsTokenSymbol,
           })
         "
-        :disabled="!availableToClaim"
+        :disabled="!Boolean(availableToClaim)"
         @click="emit('claim-ref-bonus')"
       />
     </div>
@@ -84,7 +84,9 @@ const availableToClaim = computed(() =>
 )
 
 const isClaimButtonHidden = computed(
-  () => route.query.user && route.query.user !== web3ProvidersStore.address,
+  () =>
+    Boolean(route.query.user) &&
+    route.query.user !== web3ProvidersStore.address,
 )
 
 const info = computed(() => [
@@ -112,10 +114,10 @@ const info = computed(() => [
       symbol: web3ProvidersStore.rewardsTokenSymbol,
     }),
     value: `${
-      props.referralData?.currentReward
+      props.referralData?.totalClaimed
         ? parseFloat(
             parseFloat(
-              ethers.utils.formatUnits(props.referralData?.currentReward),
+              ethers.utils.formatUnits(props.referralData?.totalClaimed),
             ).toFixed(ROUND_DIGITS),
           )
         : 0

@@ -8,7 +8,10 @@
         :sorting="sortingOrder"
         @sort="chooseSortingOrder"
       />
-      <div class="referees-list__users-wrapper">
+      <div
+        class="referees-list__users-wrapper"
+        :class="{ 'referees-list__users-wrapper--small': !isPaginationShown }"
+      >
         <template v-if="isLoaded">
           <error-message
             v-if="isLoadFailed"
@@ -25,7 +28,10 @@
                 :deposited-amount="humanizeDepositedAmount(user.amount)"
               />
             </div>
-            <div class="referees-list__pagination-wrapper">
+            <div
+              v-if="isPaginationShown"
+              class="referees-list__pagination-wrapper"
+            >
               <pagination
                 v-model:current-page="currentPage"
                 :total-items="refsCount"
@@ -40,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import RefereeListItem from './RefereeListItem.vue'
 import RefereesListNavigation from './RefereesListNavigation.vue'
 import { SORTING_ORDER } from '@/enums'
@@ -66,6 +72,8 @@ const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const sortingOrder = ref(SORTING_ORDER.none)
 const usersList = ref<UserReferral[]>([])
+
+const isPaginationShown = computed(() => refsCount > DEFAULT_PAGE_LIMIT)
 
 const chooseSortingOrder = (order: SORTING_ORDER) => {
   if (sortingOrder.value === order) {
@@ -150,6 +158,10 @@ watch(
   gap: toRem(10);
   min-height: toRem(410);
   position: relative;
+
+  &--small {
+    min-height: fit-content;
+  }
 }
 
 .referees-list__system-message {
