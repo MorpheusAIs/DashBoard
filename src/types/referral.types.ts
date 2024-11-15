@@ -9,4 +9,16 @@ export type ReferralData = {
   rate: ethers.BigNumber
   pendingRewards: ethers.BigNumber
   lastClaim: ethers.BigNumber
+  depositedAmount?: ethers.BigNumber
+}
+
+export type UserReferral = {
+  amount: string
+  id: string
+  poolId: string
+  user: string
+}
+
+export type UserReferralDepositedAmount = {
+  amount: string
 }

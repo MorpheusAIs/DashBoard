@@ -41,6 +41,10 @@ const concatedAddress = computed(() => abbrCenter(props.address))
   border-image-slice: 1;
   border-image-source: var(--card-border-gradient);
   background: var(--card-background-gradient);
+
+  @include respond-to(small) {
+    grid-template-columns: toRem(20) minmax(max-content, 1fr) toRem(100);
+  }
 }
 
 .referee-list-item__text {
@@ -52,6 +56,10 @@ const concatedAddress = computed(() => abbrCenter(props.address))
 
   &:last-child {
     margin-left: auto;
+  }
+
+  @include respond-to(small) {
+    font-size: toRem(14);
   }
 }
 </style>

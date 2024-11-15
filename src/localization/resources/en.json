@@ -692,7 +692,8 @@
   "referees-list": {
     "title": "Your Referees",
     "address-text": "Address",
-    "deposited-text": "Deposited"
+    "deposited-text": "Deposited",
+    "error-message": "Something bad happened"
   },
   "referral-system": {
     "error-message": "Something bad happened"
@@ -703,6 +704,8 @@
     "text-2": "Please enter your wallet address for the claim in the field below.",
     "input-placeholder": "Enter wallet address",
     "cancel-button": "Cancel",
-    "claim-button": "Claim"
+    "claim-button": "Claim",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   }
 }

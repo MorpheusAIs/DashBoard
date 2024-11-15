@@ -32,22 +32,31 @@
         />
       </div>
     </div>
-    <!--TODO: UNCOMMENT WHEN REF GRAPH WILL BE READY-->
-    <referees-list v-if="false" class="referral-system-info__referees-list" />
+    <referees-list
+      v-if="refsCount"
+      class="referral-system-info__referees-list"
+      :pool-id="poolId"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { AppButton, CopyButton } from '@/common'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter, useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import RefereesList from '@/pages/Referrals/RefereesList/index.vue'
+import { useReferralInfo } from '@/composables'
+
+const props = defineProps<{
+  poolId: number
+}>()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 const router = useRouter()
 const route = useRoute()
+const { refsCount, getDepositedAmountByUser } = useReferralInfo(props.poolId)
 
 const refLink = computed(() => {
   const link = router.resolve({
@@ -59,6 +68,18 @@ const refLink = computed(() => {
   }).href
   return `${window.location.origin}${link}`
 })
+
+watch(
+  [
+    () => route.query.user,
+    () => route.query.network,
+    () => web3ProvidersStore.address,
+  ],
+  getDepositedAmountByUser(route.query.user || web3ProvidersStore.address),
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <style scoped lang="scss">

@@ -8,38 +8,66 @@
         :sorting="sortingOrder"
         @sort="chooseSortingOrder"
       />
-      <div class="referees-list__users">
-        <referee-list-item
-          :number="'1'"
-          :address="'0xbd66ad8376415edd7f4ee0fde32e759a763989e9'"
-          :deposited-amount="'25'"
-        />
-        <referee-list-item
-          :number="'1'"
-          :address="'0xbd66ad8376415edd7f4ee0fde32e759a763989e9'"
-          :deposited-amount="'25'"
-        />
-        <referee-list-item
-          :number="'1'"
-          :address="'0xbd66ad8376415edd7f4ee0fde32e759a763989e9'"
-          :deposited-amount="'25'"
-        />
-      </div>
-      <div class="referees-list__pagination-wrapper">
-        <pagination />
+      <div class="referees-list__users-wrapper">
+        <template v-if="isLoaded">
+          <error-message
+            v-if="isLoadFailed"
+            class="referees-list__system-message"
+            :message="$t('referees-list.error-message')"
+          />
+          <template v-else>
+            <div class="referees-list__users">
+              <referee-list-item
+                v-for="(user, idx) in usersList"
+                :key="user.id"
+                :number="getUserNumberInTable(idx)"
+                :address="user.user"
+                :deposited-amount="humanizeDepositedAmount(user.amount)"
+              />
+            </div>
+            <div class="referees-list__pagination-wrapper">
+              <pagination
+                v-model:current-page="currentPage"
+                :total-items="refsCount"
+              />
+            </div>
+          </template>
+        </template>
+        <loader v-else class="referees-list__system-message" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import RefereeListItem from './RefereeListItem.vue'
 import RefereesListNavigation from './RefereesListNavigation.vue'
 import { SORTING_ORDER } from '@/enums'
-import { Pagination } from '@/common'
+import { ErrorMessage, Loader, Pagination } from '@/common'
+import { useReferralInfo } from '@/composables'
+import { ErrorHandler } from '@/helpers'
+import { useRoute } from 'vue-router'
+import { DEFAULT_PAGE_LIMIT } from '@/const'
+import { UserReferral } from '@/types'
+import { ethers } from 'ethers'
 
+const PRECISION = 5
+
+const props = defineProps<{
+  poolId: number
+}>()
+
+const route = useRoute()
+const { loadReferralDepositDataWithPagination, refsCount } = useReferralInfo(
+  props.poolId,
+)
+
+const currentPage = ref(1)
+const isLoaded = ref(false)
+const isLoadFailed = ref(false)
 const sortingOrder = ref(SORTING_ORDER.none)
+const usersList = ref<UserReferral[]>([])
 
 const chooseSortingOrder = (order: SORTING_ORDER) => {
   if (sortingOrder.value === order) {
@@ -48,6 +76,41 @@ const chooseSortingOrder = (order: SORTING_ORDER) => {
   }
   sortingOrder.value = order
 }
+
+const loadPage = async () => {
+  isLoaded.value = false
+  isLoadFailed.value = false
+  try {
+    usersList.value = await loadReferralDepositDataWithPagination(
+      route.query.user,
+      currentPage.value,
+      DEFAULT_PAGE_LIMIT,
+      sortingOrder.value,
+      route.query.network,
+    )
+  } catch (e) {
+    isLoadFailed.value = true
+    ErrorHandler.process(e)
+  }
+  isLoaded.value = true
+}
+
+const getUserNumberInTable = (numberInTable: number) =>
+  numberInTable + 1 + (currentPage.value - 1) * DEFAULT_PAGE_LIMIT
+
+const humanizeDepositedAmount = (amount: string) =>
+  parseFloat(parseFloat(ethers.utils.formatUnits(amount)).toFixed(PRECISION))
+
+watch(
+  [
+    currentPage,
+    sortingOrder,
+    () => route.query.user,
+    () => route.query.network,
+  ],
+  loadPage,
+  { immediate: true },
+)
 </script>
 
 <style scoped lang="scss">
@@ -55,10 +118,19 @@ const chooseSortingOrder = (order: SORTING_ORDER) => {
   font-size: toRem(32);
   margin-bottom: toRem(24);
   font-weight: 700;
+
+  @include respond-to(medium) {
+    text-align: center;
+  }
 }
 
 .referees-list__content {
+  flex: 1;
   max-width: toRem(582);
+
+  @include respond-to(medium) {
+    margin: 0 auto;
+  }
 }
 
 .referees-list__users {
@@ -71,6 +143,21 @@ const chooseSortingOrder = (order: SORTING_ORDER) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: toRem(24);
+  margin-top: auto;
+}
+
+.referees-list__users-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(10);
+  min-height: toRem(410);
+  position: relative;
+}
+
+.referees-list__system-message {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translateX(50%) translateY(-50%);
 }
 </style>

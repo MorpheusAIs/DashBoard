@@ -64,6 +64,10 @@ const emit = defineEmits<{
   grid-template-columns: toRem(48) minmax(max-content, 1fr) toRem(150);
   gap: toRem(32);
   padding: toRem(24) toRem(48);
+
+  @include respond-to(small) {
+    grid-template-columns: toRem(20) minmax(max-content, 1fr) toRem(100);
+  }
 }
 
 .referees-list-navigation__cel {
@@ -83,6 +87,10 @@ const emit = defineEmits<{
 .referees-list-navigation__cel-text {
   font-size: toRem(16);
   color: var(--text-tertiary-main);
+
+  @include respond-to(small) {
+    font-size: toRem(14);
+  }
 }
 
 .referees-list-navigation__buttons {
