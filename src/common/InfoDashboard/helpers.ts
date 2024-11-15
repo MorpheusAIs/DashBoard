@@ -9,6 +9,7 @@ import {
   ChartData,
   UserReferral,
   UserReferralDepositedAmount,
+  ReferrerTotalClaimed,
 } from '@/types'
 import { SORTING_ORDER } from '@/enums'
 
@@ -48,6 +49,35 @@ export async function fetchSpecificUserReferrers(
   })
 
   return data.userReferrers
+}
+
+export async function fetchReferrersTotalClaimed(
+  poolId: string | number,
+  user: string,
+  type: NETWORK_IDS,
+): Promise<ReferrerTotalClaimed[]> {
+  const queryPattern = _generateReferrersTotalClaimedPattern(
+    String(poolId),
+    user.toLowerCase(),
+  )
+
+  const apolloClient =
+    type === NETWORK_IDS.mainnet
+      ? config.mainnetApolloClient
+      : config.testnetApolloClient
+
+  const query = gql`
+    query GetReferrersTotalClaimed {
+      ${queryPattern}
+    }
+  `
+
+  const { data } = await apolloClient.query({
+    query,
+    variables: {},
+  })
+
+  return data.referrers
 }
 
 export async function fetchDepositedAmountUserReferrers(
@@ -351,6 +381,22 @@ function _generateDepositAmountUserReferrersPattern(
       }
     ) {
       amount
+    }
+  `
+}
+
+function _generateReferrersTotalClaimedPattern(
+  poolId: string,
+  user: string,
+): string {
+  return `
+    referrers(
+      where: {
+        user: "${user}",
+        poolId: "${poolId}"
+      }
+    ) {
+      totalClaimed
     }
   `
 }

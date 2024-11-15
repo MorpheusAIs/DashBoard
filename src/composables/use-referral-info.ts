@@ -7,6 +7,7 @@ import {
 } from '@/types'
 import {
   fetchDepositedAmountUserReferrers,
+  fetchReferrersTotalClaimed,
   fetchSpecificUserReferrers,
 } from '@/common/InfoDashboard/helpers'
 import { useRoute } from 'vue-router'
@@ -86,18 +87,35 @@ export const useReferralInfo = (poolId: number) => {
     return resultIndex
   }
 
+  const getTotalClaimedTokens = async (
+    userAddress: string,
+  ): Promise<BigNumber> => {
+    const data = await fetchReferrersTotalClaimed(
+      poolId,
+      userAddress,
+      route.query.network as NETWORK_IDS,
+    )
+
+    return data.reduce((acc, item) => {
+      acc = acc.add(item.totalClaimed)
+      return acc
+    }, BigNumber.from(0))
+  }
+
   const getRefData = async (userAddress: string): Promise<ReferralData> => {
-    const [currentReward, multiplier, refData, depositedAmount] =
+    const [currentReward, multiplier, refData, depositedAmount, totalClaimed] =
       await Promise.all([
         getCurrentReferrerReward(userAddress),
         getReferrerMultiplier(userAddress),
         getReferrersData(userAddress),
         getDepositedAmountByUser(userAddress),
+        getTotalClaimedTokens(userAddress),
       ])
 
     const foundTier = findTierIndex(refData.amountStaked)
 
     return {
+      totalClaimed,
       depositedAmount,
       currentReward,
       multiplier,
