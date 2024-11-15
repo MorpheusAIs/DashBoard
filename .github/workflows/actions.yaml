@@ -36,6 +36,7 @@ jobs:
           command: build --tag ${{ github.sha }}
           repository: ghcr.io/${{ github.repository_owner }}
 
+
   deploy:
     name: Deploy
     needs: converge
