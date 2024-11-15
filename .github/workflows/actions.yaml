@@ -3,7 +3,6 @@ on:
     branches:
       - "dev"
       - "main"
-      - "fix/change-ci-to-skaffold"
 
 permissions:
   packages: write
