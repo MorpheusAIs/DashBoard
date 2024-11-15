@@ -106,7 +106,7 @@ export const useReferralInfo = (poolId: number) => {
     }
   }
 
-  const loadReferralDepositDataWithPagination = async (
+  const loadReferralDepositData = async (
     referrer: string,
     page: number,
     limit: number,
@@ -136,7 +136,7 @@ export const useReferralInfo = (poolId: number) => {
     refsCount,
 
     getDepositedAmountByUser,
-    loadReferralDepositDataWithPagination,
+    loadReferralDepositData,
     getRefData,
   }
 }

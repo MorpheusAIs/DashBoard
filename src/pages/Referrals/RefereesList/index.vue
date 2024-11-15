@@ -59,9 +59,7 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const { loadReferralDepositDataWithPagination, refsCount } = useReferralInfo(
-  props.poolId,
-)
+const { loadReferralDepositData, refsCount } = useReferralInfo(props.poolId)
 
 const currentPage = ref(1)
 const isLoaded = ref(false)
@@ -81,7 +79,7 @@ const loadPage = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
   try {
-    usersList.value = await loadReferralDepositDataWithPagination(
+    usersList.value = await loadReferralDepositData(
       route.query.user,
       currentPage.value,
       DEFAULT_PAGE_LIMIT,
