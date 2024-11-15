@@ -64,7 +64,7 @@ export const useReferralInfo = (poolId: number) => {
     const depositedInfo = await fetchDepositedAmountUserReferrers(
       poolId,
       userAddress,
-      route.query.network,
+      route.query.network as NETWORK_IDS,
     )
     refsCount.value = depositedInfo.length
     return depositedInfo.reduce(
@@ -80,7 +80,7 @@ export const useReferralInfo = (poolId: number) => {
     let resultIndex = 0
     tiers.value.forEach(tier => {
       if (amountStaked.gte(BigNumber.from(tier.amount))) {
-        resultIndex = tier.idx
+        resultIndex = Number(tier.idx)
       }
     })
     return resultIndex
@@ -101,7 +101,7 @@ export const useReferralInfo = (poolId: number) => {
       depositedAmount,
       currentReward,
       multiplier,
-      tier: foundTier?.idx ?? '0',
+      tier: foundTier,
       ...refData,
     }
   }
@@ -115,7 +115,7 @@ export const useReferralInfo = (poolId: number) => {
   ) => {
     const skip = (page - 1) * limit
     return fetchSpecificUserReferrers(
-      poolId,
+      String(poolId),
       referrer,
       skip,
       limit,
