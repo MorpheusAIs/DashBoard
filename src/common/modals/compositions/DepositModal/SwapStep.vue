@@ -14,7 +14,17 @@
       :error-message="getFieldErrorMessage('amount')"
       :disabled="isLoadFailed || !isLoaded"
       @blur="touchField('amount')"
-    />
+    >
+      <template #nodeRight>
+        <app-button
+          class="swap-step__input-btn"
+          scheme="link"
+          text="max"
+          :disabled="isLoadFailed || !isLoaded || !Number(userBalance)"
+          @click="inputMaxAmount"
+        />
+      </template>
+    </input-field>
     <div class="swap-step__desc-wrp">
       <div class="swap-step__desc">
         <span class="swap-step__desc-text">
@@ -62,7 +72,9 @@ import { ErrorHandler } from '@/helpers'
 import { utils } from 'ethers'
 import { AppButton } from '@/common'
 import { config } from '@config'
+import { parseUnits } from '@/utils'
 
+const MIN_SWAP_AMOUNT = '0.001'
 const PRECISION = 5
 
 const emit = defineEmits<{
@@ -106,7 +118,7 @@ const { estimatedTokenOutAmount, estimatedGasCost, executeTrade } = useSwap(
 const validationRules = computed(() => ({
   amount: {
     required,
-    minEther: minEther(0),
+    minEther: minEther(parseUnits(MIN_SWAP_AMOUNT, 'ether')),
     ...(userBalance.value && {
       maxEther: maxEther(userBalance.value),
     }),
@@ -147,24 +159,20 @@ const humanizeEtherValue = (number: string, symbol: string) =>
   `${parseFloat(Number(number).toFixed(PRECISION))} ${symbol}`
 
 const getUserBalance = async () => {
-  isLoaded.value = false
-  isLoadFailed.value = false
-  try {
-    await web3ProvidersStore.provider.switchChain(ETHEREUM_CHAIN_IDS.ethereum)
-    const balance = await erc20Contract.value.providerBased.value.balanceOf(
-      web3ProvidersStore.address,
-    )
-    const tokenDecimals =
-      await erc20Contract.value.providerBased.value.decimals()
-    userBalance.value = utils.formatUnits(
-      balance.toString(),
-      Number(tokenDecimals.toString()),
-    )
-  } catch (e) {
-    isLoadFailed.value = true
-    ErrorHandler.processWithoutFeedback(e)
-  }
-  isLoaded.value = true
+  await web3ProvidersStore.provider.switchChain(ETHEREUM_CHAIN_IDS.ethereum)
+  const balance = await erc20Contract.value.providerBased.value.balanceOf(
+    web3ProvidersStore.address,
+  )
+  const tokenDecimals = await erc20Contract.value.providerBased.value.decimals()
+
+  userBalance.value = utils.formatUnits(
+    balance.toString(),
+    Number(tokenDecimals.toString()),
+  )
+}
+
+const inputMaxAmount = () => {
+  form.amount = userBalance.value
 }
 
 const submit = async () => {
@@ -178,12 +186,24 @@ const submit = async () => {
   isLoaded.value = true
 }
 
+const init = async () => {
+  isLoaded.value = false
+  isLoadFailed.value = false
+  try {
+    await getUserBalance()
+  } catch (e) {
+    isLoadFailed.value = true
+    ErrorHandler.processWithoutFeedback(e)
+  }
+  isLoaded.value = true
+}
+
 watch(
   [
     () => web3ProvidersStore.provider.chainId,
     () => web3ProvidersStore.provider.selectedAddress,
   ],
-  getUserBalance,
+  init,
   {
     immediate: true,
   },
@@ -248,5 +268,9 @@ watch(
 
 .swap-step__button {
   width: toRem(200);
+}
+
+.swap-step__input-btn {
+  @include body-3-semi-bold;
 }
 </style>

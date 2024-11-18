@@ -82,7 +82,8 @@ const lblText = computed(() =>
     : {
         lbl: t('mainnet-deposit-modal-content.swap-lbl'),
         text: t('mainnet-deposit-modal-content.swap-txt', {
-          asset: chosenAsset.value,
+          input: chosenAsset.value,
+          output: SWAP_ASSETS_NAMES.STETH,
         }),
       },
 )
