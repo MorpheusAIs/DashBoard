@@ -53,7 +53,7 @@
         v-if="isMultiplierShown"
         v-model="form.lockPeriod"
         position="top"
-        :placeholder="$t(`deposit-form.lock-period-placeholder`)"
+        :placeholder="$t('deposit-form.lock-period-placeholder')"
         :error-message="getFieldErrorMessage('lockPeriod')"
         :is-loading="isInitializing"
         :disabled="isSubmitting"
@@ -302,9 +302,12 @@ watch(
   ],
   async () => {
     if (!form.lockPeriod) {
-      form.lockPeriod = String(
+      const claimLockEnd = String(
         userPoolData.value?.claimLockEnd?.toNumber() || '',
       )
+      form.lockPeriod = new Time().isAfter(claimLockEnd)
+        ? new Time().timestamp.toString()
+        : claimLockEnd
     }
     if (isMultiplierShown.value) {
       await fetchExpectedMultiplier(form.lockPeriod)
