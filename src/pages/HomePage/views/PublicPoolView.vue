@@ -178,7 +178,6 @@ const {
   currentTimestamp,
 
   isClaimDisabled,
-  isDepositDisabled,
   isWithdrawDisabled,
   rewardsMultiplier,
 
@@ -201,20 +200,21 @@ const claimLockTime = computed(() => {
     .add(poolData.value.claimLockPeriod)
     .toNumber()
 
-  const withdrawLockEnd = userPoolData.value.lastStake
-    .add(poolData.value.withdrawLockPeriodAfterStake)
-    .toNumber()
-
   const lastClaim = userPoolData.value.lastClaim || ethers.BigNumber.from(0)
+  const lastStake = userPoolData.value.lastStake || ethers.BigNumber.from(0)
 
   const claimLockAfterClaimEnd = lastClaim
     .add(poolData.value.claimLockPeriodAfterClaim || ethers.BigNumber.from(0))
     .toNumber()
 
+  const claimLockAfterStake = lastStake
+    .add(poolData.value.claimLockPeriodAfterStake || ethers.BigNumber.from(0))
+    .toNumber()
+
   const maxLockEnd = Math.max(
     claimLockEnd,
     payoutLockEnd,
-    withdrawLockEnd,
+    claimLockAfterStake,
     claimLockAfterClaimEnd,
   )
 

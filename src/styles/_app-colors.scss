@@ -12,6 +12,7 @@ $background-secondary-light: #eff2ff;
 $background-secondary-main: #313a36;
 $background-secondary-dark: #cad4f5;
 
+$background-tertiary-light: #4A5450;
 $background-tertiary-main: #222322;
 $background-tertiary-dark: #1d201c;
 
@@ -91,3 +92,16 @@ $border-quaternary-main: #7c7c7d;
 
 /* backdrop colors */
 $backdrop-modal: rgba(#000000, 0.5);
+
+/* card colors */
+$card-border-gradient: linear-gradient(
+    95.36deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.48) 100%
+);
+
+$card-background-gradient: linear-gradient(
+    95.36deg,
+    rgba(57, 99, 58, 0.04) 0%,
+    rgba(38, 57, 57, 0.5) 100%
+);

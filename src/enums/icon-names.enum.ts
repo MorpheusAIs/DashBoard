@@ -2,6 +2,7 @@ export enum ICON_NAMES {
   arbitrumAlt = 'arbitrum-alt',
   arbitrum = 'arbitrum',
   arrowLeft = 'arrow-left',
+  triangleTop = 'triangle-top',
   calendar = 'calendar',
   checkCircle = 'check-circle',
   check = 'check',

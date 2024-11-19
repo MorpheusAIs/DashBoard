@@ -122,7 +122,6 @@ import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
-import { config } from '@config'
 
 const CUT_ADDRESS_LENGTH = 7
 
@@ -184,12 +183,13 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
 const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
 
 const refererIndicators = computed(() => {
-  const link = `${
-    config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl
-  }/address/${
-    (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ||
-    ethers.constants.AddressZero
-  }`
+  const link = router.resolve({
+    name: ROUTE_NAMES.appReferrals,
+    query: {
+      user: (userPoolData.value as Erc1967ProxyType.UserData)?.referrer,
+      network: route.query.network,
+    },
+  }).href
 
   return [
     {
