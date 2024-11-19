@@ -83,7 +83,7 @@
             })
           "
           :is-loading="isInitializing || isUserDataUpdating"
-          :disabled="isClaimDisabled"
+          :disabled="isClaimDisabled || !Number(currentUserReward)"
           @click="isClaimModalShown = true"
         />
       </div>
