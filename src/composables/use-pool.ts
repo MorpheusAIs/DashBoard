@@ -40,45 +40,33 @@ export const usePool = (poolId: Ref<number>) => {
   )
 
   const isClaimDisabled = computed<boolean>(() => {
-    if (
-      !poolData.value ||
-      !currentUserReward.value ||
-      currentUserReward.value.isZero()
-    ) {
-      return true
-    }
+    if (!poolData.value || !userPoolData.value) return false
 
-    if (!userPoolData.value) return true
+    const claimLockEnd = userPoolData.value.claimLockEnd?.toNumber() || 0
 
-    if (
-      userPoolData.value.claimLockEnd &&
-      currentTimestamp.value <= userPoolData.value.claimLockEnd.toNumber()
-    ) {
-      return true
-    }
+    const payoutLockEnd = poolData.value.payoutStart
+      .add(poolData.value.claimLockPeriod)
+      .toNumber()
 
-    if (
-      currentTimestamp.value <=
-      poolData.value.payoutStart.add(poolData.value.claimLockPeriod).toNumber()
-    ) {
-      return true
-    }
+    const lastClaim = userPoolData.value.lastClaim || ethers.BigNumber.from(0)
+    const lastStake = userPoolData.value.lastStake || ethers.BigNumber.from(0)
 
-    if (
-      currentTimestamp.value <=
-      userPoolData.value.lastStake
-        .add(poolData.value.withdrawLockPeriodAfterStake)
-        .toNumber()
-    ) {
-      return true
-    }
+    const claimLockAfterClaimEnd = lastClaim
+      .add(poolData.value.claimLockPeriodAfterClaim || ethers.BigNumber.from(0))
+      .toNumber()
 
-    return (
-      currentTimestamp.value <=
-      (userPoolData.value.lastClaim || ethers.BigNumber.from(0))
-        .add(poolData.value.claimLockPeriodAfterClaim)
-        .toNumber()
+    const claimLockAfterStake = lastStake
+      .add(poolData.value.claimLockPeriodAfterStake || ethers.BigNumber.from(0))
+      .toNumber()
+
+    const maxLockEnd = Math.max(
+      claimLockEnd,
+      payoutLockEnd,
+      claimLockAfterStake,
+      claimLockAfterClaimEnd,
     )
+
+    return maxLockEnd > currentTimestamp.value
   })
 
   const isDepositDisabled = computed<boolean>(() => {

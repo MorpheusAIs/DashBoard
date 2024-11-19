@@ -70,6 +70,7 @@ export const config = {
   COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
   HOW_GET_STETH_URL: 'https://stake.lido.fi/',
   WALLET_INSTALL_URL: 'https://metamask.io/download/',
+  DEFAULT_REFEREE: import.meta.env.VITE_APP_DEFAULT_REFEREE,
 
   // Testnet
   ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS: import.meta.env

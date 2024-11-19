@@ -7,6 +7,7 @@ import { config } from '@config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
+import { errors } from '@/errors'
 
 enum BALANCE_CURRENCIES {
   depositToken = 'depositToken',
@@ -149,6 +150,22 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     ),
   )
 
+  const updateBalances = async () => {
+    if (!provider.selectedAddress) throw new errors.UserAddressError()
+
+    const [stEthValue, morValue] = await Promise.all([
+      depositContract.value.providerBased.value.balanceOf(
+        provider.selectedAddress,
+      ),
+      rewardsContract.value.providerBased.value.balanceOf(
+        provider.selectedAddress,
+      ),
+    ])
+
+    balances.depositToken = stEthValue
+    balances.rewardsToken = morValue
+  }
+
   // Actions
   const init = async () => {
     provider.init()
@@ -240,6 +257,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
     dashboardInfo,
     // Actions
+    updateBalances,
     init,
   }
 })

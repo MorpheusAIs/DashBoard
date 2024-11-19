@@ -11,6 +11,9 @@
         class="app-button__icon-left"
         :name="iconLeft"
       />
+      <template v-if="$slots.nodeLeft">
+        <slot name="nodeLeft" />
+      </template>
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -33,6 +36,9 @@
         class="app-button__icon-left"
         :name="iconLeft"
       />
+      <template v-if="$slots.nodeLeft">
+        <slot name="nodeLeft" />
+      </template>
       <template v-if="$slots.default">
         <slot />
       </template>
@@ -61,6 +67,9 @@
         class="app-button__icon-left"
         :name="iconLeft"
       />
+      <template v-if="$slots.nodeLeft">
+        <slot name="nodeLeft" />
+      </template>
       <template v-if="$slots.default">
         <slot />
       </template>

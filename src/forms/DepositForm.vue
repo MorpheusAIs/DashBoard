@@ -275,12 +275,6 @@ const onSubmit = async () => {
   if (action.value == ACTIONS.stake) await submit(ACTIONS.stake)
 }
 
-const loadReferrer = async () => {
-  const referrer = (userPoolData.value as Erc1967ProxyType.UserData)?.referrer
-  if (referrer === ethers.constants.AddressZero) return
-  form.referrer = referrer
-}
-
 const init = async (): Promise<void> => {
   isInitializing.value = true
 
@@ -305,30 +299,37 @@ watch(
   ],
   async () => {
     if (!form.lockPeriod) {
-      form.lockPeriod = String(
+      const claimLockEnd = String(
         userPoolData.value?.claimLockEnd?.toNumber() || '',
       )
+      form.lockPeriod = new Time().isAfter(claimLockEnd)
+        ? new Time().timestamp.toString()
+        : claimLockEnd
     }
     if (isMultiplierShown.value) {
       await fetchExpectedMultiplier(form.lockPeriod)
-
-      if (!route.query?.referrer && !form.referrer) {
-        await loadReferrer()
-      }
     }
   },
 )
 
 watch(
-  () => route.query?.referrer,
-  () => {
-    if (!route.query?.referrer) return
-    form.referrer = route.query.referrer
+  [() => route.query?.referrer, userPoolData],
+  async () => {
+    if (route.query?.referrer) {
+      form.referrer = route.query.referrer
+      touchField('referrer')
+      return
+    }
+    const contractReferrer = (userPoolData.value as Erc1967ProxyType.UserData)
+      ?.referrer
+    form.referrer =
+      contractReferrer === ethers.constants.AddressZero
+        ? config.DEFAULT_REFEREE
+        : contractReferrer
     touchField('referrer')
   },
   { immediate: true },
 )
-
 init()
 </script>
 

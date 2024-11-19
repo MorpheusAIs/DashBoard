@@ -8,6 +8,7 @@ export enum BUS_EVENTS {
   changedUserBalance = 'changed-user-balance',
   changedPoolData = 'changed-pool-data',
   changedCurrentUserReward = 'changed-current-user-reward',
+  changedCurrentUserRefReward = 'changed-current-user-ref-reward',
 }
 
 export type DefaultBusEventMap = {
@@ -18,6 +19,7 @@ export type DefaultBusEventMap = {
   [BUS_EVENTS.changedUserBalance]: unknown
   [BUS_EVENTS.changedPoolData]: unknown
   [BUS_EVENTS.changedCurrentUserReward]: unknown
+  [BUS_EVENTS.changedCurrentUserRefReward]: unknown
 }
 
 export const bus = new EventEmitter<DefaultBusEventMap>()

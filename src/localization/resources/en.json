@@ -103,6 +103,7 @@
     "lock-period-placeholder": "Lock your claim until",
     "cancel-btn": "Cancel",
     "referrer-placeholder": "Referrer Address",
+    "referrer-note": "Enter your referrer address or leave the field blank",
     "expected-multiplier-lbl": "Expected Power Factor:",
     "submit-btn": {
       "deposit": "Deposit",
@@ -206,6 +207,10 @@
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
     "referee-bonus-text": "Referee Bonus",
     "your-referrer-text": "Your Referrer"
+  },
+  "info-bar": {
+    "status--public": "Automated",
+    "status--private": "Non-Automated"
   },
   "info-card": {
     "show-more": "Show more"
@@ -648,5 +653,59 @@
   },
   "info-indicator": {
     "coppied-text": "Coppied!"
+  },
+  "referral-info": {
+    "title": "Referral System",
+    "subtitle": "Rates for Referrals",
+    "description-1": "Create your own referral link, share it with others, and earn bonuses!",
+    "description-2": "Your referral rate depends on the amount of stETH deposited by people using your link. When a user deposits stETH with your referral link, you, as the referrer, can earn up to a 5% bonus in MOR tokens.",
+    "description-3": "Additionally, other users who deposit stETH using your link will receive a 1% bonus on their deposits.",
+    "button-txt": "Become a Referrer"
+  },
+  "referral-info-card": {
+    "title": "Tier {tier}",
+    "deposited-text": "Deposited by Referees:",
+    "less-deposited-text": "less than {to} {symbol}",
+    "from-to-deposited-text": "from {from} to {to} {symbol}",
+    "to-deposited-text": "{from} {symbol} or more",
+    "bonus-text": "Bonus"
+  },
+  "referral-system-info": {
+    "title": "Referral System",
+    "description-1": "Share your referral link with others and earn bonuses!",
+    "description-2": "Your referral rate depends on the amount of stETH deposited by users who use your referral link. The larger the total deposits from referees, the higher your bonus.",
+    "ref-address": "Your Referral Address",
+    "coppied-text": "Coppied!"
+  },
+  "referral-system-rate": {
+    "rate": "Your Rate",
+    "title": "Tier {tier}",
+    "deposited-text": "Deposited by Referees:",
+    "bonus-text": "Bonus:",
+    "earned-text":  "Total {symbol} Earned:",
+    "available-to-claim": "{symbol} Available to Claim",
+    "button-text": "Claim Referral Bonus"
+  },
+  "ref-rates-slider": {
+    "title": "Rates for Referrals"
+  },
+  "referees-list": {
+    "title": "Your Referees",
+    "address-text": "Address",
+    "deposited-text": "Deposited",
+    "error-message": "Something bad happened"
+  },
+  "referral-system": {
+    "error-message": "Something bad happened"
+  },
+  "ref-bonus-modal": {
+    "title": "Claim Referral Bonus",
+    "text-1": "You are about to claim your referral bonus. Please check the information below and confirm the action. Your current reward - {reward}.",
+    "text-2": "Please enter your wallet address for the claim in the field below.",
+    "input-placeholder": "Enter wallet address",
+    "cancel-button": "Cancel",
+    "claim-button": "Claim",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   }
 }

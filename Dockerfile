@@ -1,22 +1,28 @@
-FROM node:16-alpine as builder
+FROM node:20-alpine AS builder
+
 RUN apk --no-cache --update --virtual build-dependencies add \
-    python \
+    python3 \
     make \
     g++
 
-ARG BUILD_VERSION
-WORKDIR /build
-COPY package*.json ./
-COPY yarn*.lock ./
-RUN true \
- && yarn autoclean --init \
- && yarn autoclean --force \
- && yarn install \
- && true
-COPY . .
-RUN yarn lint | tee 1.log | sed -e 's/^/[yarn lint] /' & yarn test | tee 2.log | sed -e 's/^/[yarn test] /' & VITE_BUILD_VERSION="$BUILD_VERSION" yarn build | tee 3.log | sed -e 's/^/[yarn build] /'
+WORKDIR /app
 
-FROM nginx:1.20.2-alpine
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn build
+
+FROM nginx:alpine AS web
+
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=builder /build/dist /usr/share/nginx/html
+
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
