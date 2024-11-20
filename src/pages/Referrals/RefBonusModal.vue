@@ -67,8 +67,6 @@ import {
 import { ethers } from 'ethers'
 import { ERC1967Proxy } from '@/types'
 
-const ROUND_DIGITS = 5
-
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
