@@ -52,13 +52,11 @@ import RefereesListNavigation from './RefereesListNavigation.vue'
 import { SORTING_ORDER } from '@/enums'
 import { ErrorMessage, Loader, Pagination } from '@/common'
 import { useReferralInfo } from '@/composables'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, roundNumber } from '@/helpers'
 import { useRoute } from 'vue-router'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { UserReferral } from '@/types'
 import { ethers } from 'ethers'
-
-const PRECISION = 5
 
 const props = defineProps<{
   poolId: number
@@ -105,7 +103,7 @@ const getUserNumberInTable = (numberInTable: number) =>
   numberInTable + 1 + (currentPage.value - 1) * DEFAULT_PAGE_LIMIT
 
 const humanizeDepositedAmount = (amount: string) =>
-  parseFloat(parseFloat(ethers.utils.formatUnits(amount)).toFixed(PRECISION))
+  roundNumber(ethers.utils.formatUnits(amount))
 
 watch(
   [

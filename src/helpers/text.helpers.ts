@@ -1,3 +1,5 @@
+import { DEFAULT_ROUND_DIGITS } from '@/const'
+
 export function abbrCenter(text: string, amount = 4): string {
   if (text.length <= 10) {
     return text
@@ -15,3 +17,8 @@ export function capitalize(text: string): string {
 
 export const mergeClasses = (...classes: (string | undefined)[]) =>
   classes.join(' ')
+
+export const roundNumber = (
+  number: string | number,
+  roundDigits = DEFAULT_ROUND_DIGITS,
+) => parseFloat(parseFloat(String(number)).toFixed(roundDigits))
