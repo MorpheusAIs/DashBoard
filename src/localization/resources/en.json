@@ -643,7 +643,7 @@
   },
   "mainnet-deposit-modal-content": {
     "swap-lbl": "Step 1/2:",
-    "swap-txt": "Swap for {asset}",
+    "swap-txt": "Swap {input} for {output}",
     "deposit-lbl": "Step 2/2",
     "deposit-txt": "Deposit {asset}"
   },

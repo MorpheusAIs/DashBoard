@@ -1,5 +1,5 @@
 <template>
-  <form class="swap-step" @submit="submit">
+  <form class="swap-step" @submit.prevent="submit">
     <h3 class="swap-step__balance">
       <span class="swap-step__desc-text">
         {{ $t('swap-step.balance-text') }}
