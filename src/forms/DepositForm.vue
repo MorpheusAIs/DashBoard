@@ -275,12 +275,6 @@ const onSubmit = async () => {
   if (action.value == ACTIONS.stake) await submit(ACTIONS.stake)
 }
 
-const loadReferrer = async () => {
-  const referrer = (userPoolData.value as Erc1967ProxyType.UserData)?.referrer
-  if (referrer === ethers.constants.AddressZero) return
-  form.referrer = referrer
-}
-
 const init = async (): Promise<void> => {
   isInitializing.value = true
 
@@ -314,10 +308,6 @@ watch(
     }
     if (isMultiplierShown.value) {
       await fetchExpectedMultiplier(form.lockPeriod)
-
-      if (!route.query?.referrer && !form.referrer) {
-        await loadReferrer()
-      }
     }
   },
 )
