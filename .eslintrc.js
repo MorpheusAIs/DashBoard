@@ -155,4 +155,5 @@ module.exports = {
     'promise/prefer-await-to-then': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'off',
   },
+  ignorePatterns: ['src/types/contracts/**/*', 'src/types/graphql/**/*'],
 }

@@ -1,0 +1,11 @@
+query GetDepositedAmountUserReferrers($poolId: BigInt!, $referrer: Bytes!) {
+  userReferrers(
+    where: {
+      poolId: $poolId,
+      referrer: $referrer,
+      amount_gt: "0"
+    }
+  ) {
+    amount
+  }
+}

@@ -1,0 +1,23 @@
+query GetSpecificUserReferrers(
+  $poolId: BigInt!
+  $referrer: Bytes!
+  $first: Int!
+  $skip: Int!
+  $orderDirection: OrderDirection
+) {
+  userReferrers(
+    where: {
+      poolId: $poolId,
+      referrer: $referrer,
+      amount_gt: "0"
+    },
+    first: $first,
+    skip: $skip,
+    orderDirection: $orderDirection
+  ) {
+    amount
+    id
+    poolId
+    user
+  }
+}

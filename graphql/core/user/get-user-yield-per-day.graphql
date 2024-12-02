@@ -1,0 +1,61 @@
+extend type Query {
+  toBytes(value: BigInt!): Bytes!
+}
+
+query GetUserYieldPerDay(
+  $poolId: BigInt!,
+  $poolIdBytes: Bytes!,
+  $user: Bytes!,
+  $fromTimestamp: BigInt!,
+  $toTimestamp: BigInt!
+) {
+  initialUserInteractions: userInteractions (
+    orderBy: timestamp
+    orderDirection: desc
+    where: {
+      user: $user,
+      poolId: $poolId,
+      timestamp_lt: $fromTimestamp
+    }
+    first: 1
+  ) {
+    timestamp
+    rate
+    deposited
+    claimedRewards
+    pendingRewards
+  }
+
+  userInteractions (
+    orderBy: timestamp
+    orderDirection: asc
+    where: {
+      user: $user,
+      poolId: $poolId,
+      timestamp_gt: $fromTimestamp,
+      timestamp_lt: $toTimestamp
+    }
+  ) {
+    timestamp
+    rate
+    deposited
+    claimedRewards
+    pendingRewards
+  }
+
+  poolInteractions (
+    orderBy: timestamp
+    orderDirection: desc
+    where: {
+      rate_gt: 0,
+      timestamp_lt: $toTimestamp,
+      pool_: {
+        id: $poolIdBytes
+      }
+    }
+    first: 1
+  ) {
+    timestamp
+    rate
+  }
+}
