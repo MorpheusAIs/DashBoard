@@ -16,7 +16,8 @@
     "lint:scripts": "eslint \"{src,config}/**/*.{vue,js,ts}\" --cache --fix --max-warnings=0",
     "preview": "vite preview",
     "rsc": "node scripts/release-sanity-check.mjs",
-    "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contracts"
+    "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contracts",
+    "generate-graphql-types": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.9.10",
@@ -24,6 +25,10 @@
     "@distributedlab/tools": "^1.0.0-rc.13",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/typescript": "^4.1.2",
+    "@graphql-codegen/typescript-document-nodes": "^4.0.12",
+    "@graphql-codegen/typescript-operations": "^4.4.0",
     "@uniswap/sdk-core": "^5.8.0",
     "@uniswap/smart-order-router": "^4.6.0",
     "@uniswap/v2-core": "^1.0.1",

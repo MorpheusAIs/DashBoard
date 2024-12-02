@@ -1,0 +1,10 @@
+query GetTotalStakedPerDay($date: String!, $timestamp: BigInt!) {
+  poolInteractions(
+    first: 1
+    orderDirection: desc
+    where: { timestamp_lte: $timestamp, pool: $date }
+    orderBy: timestamp
+  ) {
+    totalStaked
+  }
+}

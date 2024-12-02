@@ -1,0 +1,10 @@
+query GetReferrersTotalClaimed($poolId: BigInt!, $user: Bytes!) {
+  referrers(
+    where: {
+      user: $user,
+      poolId: $poolId
+    }
+  ) {
+    totalClaimed
+  }
+}
