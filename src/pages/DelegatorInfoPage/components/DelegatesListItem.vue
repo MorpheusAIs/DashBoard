@@ -1,0 +1,171 @@
+<template>
+  <div class="delegates-list-item">
+    <div class="delegates-list-item__content">
+      <div
+        class="delegates-list-item__col"
+        :class="{ 'delegates-list-item__col--username': username }"
+      >
+        <span v-if="username" class="delegates-list-item__row-name">
+          {{ username }}
+
+          <span v-if="isYou" class="delegates-list-item__row-you">{{
+            $t('delegates-list-item.you-text')
+          }}</span>
+        </span>
+        <span class="delegates-list-item__row-address">
+          {{ abbrCenter(user.address) }}
+
+          <span v-if="isYou && !username" class="delegates-list-item__row-you">
+            {{ $t('delegates-list-item.you-text') }}
+          </span>
+        </span>
+      </div>
+      <div class="delegates-list-item__col">
+        <span class="delegates-list-item__text">
+          {{ user.tokensDelegated }}
+        </span>
+      </div>
+      <div class="delegates-list-item__col">
+        <span class="delegates-list-item__text">
+          {{ user.tokensStaked }}
+        </span>
+      </div>
+      <div class="delegates-list-item__col">
+        <span class="delegates-list-item__text">
+          {{ rights }}
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { DelegatesUser } from '@/types'
+import { abbrCenter } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
+import { useI18n } from '@/composables'
+import { DELEGATION_RIGHTS } from '@/enums'
+
+const MOCKED_USERNAMES = {
+  '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9': 'Sorizen',
+}
+
+const props = defineProps<{
+  user: DelegatesUser
+}>()
+
+const { t } = useI18n()
+const web3ProvidersStore = useWeb3ProvidersStore()
+
+const username = computed(() => MOCKED_USERNAMES[props.user.address] ?? '')
+const isYou = computed(() => props.user.address === web3ProvidersStore.address)
+const rights = computed(() => {
+  switch (props.user.delegationRights) {
+    case DELEGATION_RIGHTS.fullRights:
+      return t('delegates-list-item.full-rights-lbl')
+    case DELEGATION_RIGHTS.providerRights:
+      return t('delegates-list-item.provider-rights-lbl')
+    case DELEGATION_RIGHTS.marketplaceRights:
+      return t('delegates-list-item.marketplace-rights-lbl')
+    case DELEGATION_RIGHTS.modelRights:
+      return t('delegates-list-item.model-rights-lbl')
+    case DELEGATION_RIGHTS.sessionRights:
+      return t('delegates-list-item.session-rights-lbl')
+    default:
+      return ''
+  }
+})
+</script>
+
+<style scoped lang="scss">
+.delegates-list-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: toRem(80);
+  padding: toRem(16) toRem(32);
+  border: toRem(1) solid;
+  border-image-slice: 1;
+  border-image-source: var(--card-border-gradient);
+  background: var(--card-background-gradient);
+
+  &:not([disabled]):hover,
+  &:not([disabled]):focus,
+  &:not([disabled]):active {
+    border: toRem(1) solid;
+    border-image-slice: 1;
+    border-image-source: var(--card-border-gradient);
+    background: var(--card-background-gradient);
+  }
+}
+
+.delegates-list-item__content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
+  gap: toRem(36);
+  align-items: center;
+}
+
+.delegates-list-item__col {
+  display: flex;
+  gap: toRem(24);
+  align-items: center;
+  justify-content: flex-end;
+
+  &--username {
+    flex-direction: column;
+    gap: toRem(4);
+    align-items: flex-start;
+  }
+
+  &:first-child {
+    justify-content: flex-start;
+  }
+}
+
+.delegates-list-item__row-name {
+  font-weight: 600;
+  transition: color 0.2s ease-in-out;
+
+  .delegates-list-item:hover &,
+  .delegates-list-item:active &,
+  .delegates-list-item:focus & {
+    color: var(--primary-main);
+  }
+}
+
+.delegates-list-item__row-address {
+  font-size: toRem(18);
+  font-weight: 600;
+  transition: color 0.2s ease-in-out;
+
+  .delegates-list-item__col--username & {
+    font-size: toRem(14);
+    font-weight: 400;
+    color: var(--text-tertiary-main);
+  }
+
+  .delegates-list-item:hover &,
+  .delegates-list-item:active &,
+  .delegates-list-item:focus & {
+    color: var(--primary-main);
+  }
+}
+
+.delegates-list-item__row-you {
+  font-weight: 200;
+  color: var(--primary-main);
+}
+
+.delegates-list-item__text {
+  transition: color 0.2s ease-in-out;
+
+  .delegates-list-item:hover &,
+  .delegates-list-item:active &,
+  .delegates-list-item:focus & {
+    color: var(--primary-main);
+  }
+}
+</style>

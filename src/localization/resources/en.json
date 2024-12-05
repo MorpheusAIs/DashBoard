@@ -707,5 +707,79 @@
     "claim-button": "Claim",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-description": {
+    "title": "Maximize Your\nToken Potential",
+    "subtitle-1": "Delegate your tokens to trusted providers and let them handle the work while your staked balance grows. Take full advantage of staking today!",
+    "bullet-text-1": "Discover detailed stats about providers to make the best choice.",
+    "bullet-text-2": "Delegate in seconds: just select a wallet, set an amount, and define permissions.",
+    "subtitle-2": "Click \"Delegate\" and put your tokens to work today!",
+    "delegate-button": "Delegate"
+  },
+  "delegate-tokens-modal": {
+    "title": "Delegate",
+    "delegate-text": "Available to Delegate",
+    "wallet-input-placeholder":  "Enter wallet address",
+    "mor-input-placeholder":  "Enter {asset} amount",
+    "rights-input-placeholder": "Delegation rights",
+    "full-rights-lbl": "Full Rights",
+    "provider-rights-lbl": "Provider Rights",
+    "model-rights-lbl": "Model Rights",
+    "session-rights-lbl": "Session Rights",
+    "marketplace-rights-lbl": "Marketplace Rights",
+    "confirm-button":  "Confirm",
+    "cancel-button": "Cancel",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-providers": {
+    "title": "Providers",
+    "table-header-1": "Providers",
+    "table-header-2": "{asset} Tokens Staked"
+  },
+  "delegation-providers-navigation": {
+    "address-text": "Name / Address",
+    "staked-text": "{asset} Tokens Staked"
+  },
+  "delegation-providers-item": {
+    "delegate-button": "Delegate",
+    "you-text": "you"
+  },
+  "delegator-info-page":  {
+    "back-button": "Providers"
+  },
+  "delegation-info-title": {
+    "you-text": "You",
+    "your-delegator-text": "Your delegator",
+    "your-provider-text": "Your provider",
+    "coppied-text": "Coppied!"
+  },
+  "delegator-info-cards": {
+    "number-of-delegates-text": "Number Of Delegates",
+    "total-staked-by-delegates": "Total {asset} tokens staked by Delegates",
+    "total-staked-by-provider": "Total {asset} tokens staked by the Provider",
+    "stake-button":  "Stake",
+    "delegate-button": "Delegate"
+  },
+  "delegation-providers-list": {
+    "error-message": "Something went wrong"
+  },
+  "delegates-list": {
+    "title": "Delegates",
+    "error-message": "Something went wrong"
+  },
+  "delegates-list-header": {
+    "address-text": "Name / Address",
+    "delegated-text": "{asset} Tokens Delegated",
+    "staked-text": "{asset} Tokens Staked",
+    "delegation-rights": "Delegation rights"
+  },
+  "delegates-list-item": {
+    "you-text": "You",
+    "full-rights-lbl": "Full Rights",
+    "provider-rights-lbl": "Provider Rights",
+    "model-rights-lbl": "Model Rights",
+    "session-rights-lbl": "Session Rights",
+    "marketplace-rights-lbl": "Marketplace Rights"
   }
 }
