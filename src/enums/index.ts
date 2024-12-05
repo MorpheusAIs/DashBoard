@@ -9,5 +9,6 @@ export * from './contract.enum'
 export * from './contract-inputs.enum'
 export * from './swap.enum'
 export * from './request.enum'
+export * from './delegation.enum'
 
 export { CONTRACT_IDS, NETWORK_IDS } from '@config'
