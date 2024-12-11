@@ -733,13 +733,16 @@
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "delegation-providers": {
-    "title": "Providers",
+    "title": "Subnets",
     "table-header-1": "Providers",
-    "table-header-2": "{asset} Tokens Staked"
+    "table-header-2": "{asset} Tokens Staked",
+    "you-delegated-text": "You Delegated",
+    "other-subnets-text": "Other Subnets"
   },
   "delegation-providers-navigation": {
     "address-text": "Name / Address",
-    "staked-text": "{asset} Tokens Staked"
+    "delegated-text": "{asset} Delegated",
+    "network-fee-text": "Network fee"
   },
   "delegation-providers-item": {
     "delegate-button": "Delegate",
@@ -766,13 +769,13 @@
   },
   "delegates-list": {
     "title": "Delegates",
-    "error-message": "Something went wrong"
+    "error-message": "Something went wrong",
+    "delegate-button": "Delegate"
   },
   "delegates-list-header": {
     "address-text": "Name / Address",
-    "delegated-text": "{asset} Tokens Delegated",
-    "staked-text": "{asset} Tokens Staked",
-    "delegation-rights": "Delegation rights"
+    "delegated-text": "{asset} Delegated",
+    "claimed-text": "{asset} Claimed"
   },
   "delegates-list-item": {
     "you-text": "You",

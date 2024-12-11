@@ -50,15 +50,18 @@ import DelegationProvidersItem from './DelegationProvidersItem.vue'
 const HARDCODED_LIST: DelegationUser = [
   {
     address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
-    tokensStaked: '1000',
+    tokensDelegated: '1000',
+    networkFee: '1.9719%',
   },
   {
     address: '0x8ED80CCF20F1E284eb56F2Ea225636F1aAC647Ce',
-    tokensStaked: '1200',
+    tokensDelegated: '1200',
+    networkFee: '1.9719%',
   },
   {
     address: '0xAbCA5f27ee9249669039612b6119aEB154acaC97',
-    tokensStaked: '1300',
+    tokensDelegated: '1300',
+    networkFee: '1.9719%',
   },
 ]
 

@@ -1,9 +1,22 @@
 <template>
   <div class="delegates-list">
-    <h3 class="delegates-list__title">
-      {{ $t('delegates-list.title') }}
-    </h3>
+    <div class="delegates-list__title-wrapper">
+      <div class="delegates-list__title-text-wrapper">
+        <h3 class="delegates-list__title">
+          {{ $t('delegates-list.title') }}
+        </h3>
+        <div class="delegates-list__amount">
+          {{ usersList.length ?? 0 }}
+        </div>
+      </div>
+      <app-button
+        size="small"
+        :text="$t('delegates-list.delegate-button')"
+        @click="openDelegateModal"
+      />
+    </div>
     <delegates-list-header
+      class="delegates-list__list"
       :sorting="sortingOrder"
       :sorting-type="sortingType"
       @sort="chooseSortingOrder"
@@ -41,36 +54,35 @@
         <loader v-else class="delegates-list__system-message" />
       </div>
     </div>
+    <delegate-tokens-modal v-model:is-shown="isDelegateModalOpened" />
   </div>
 </template>
 <script setup lang="ts">
 import DelegatesListHeader from './DelegatesListHeader.vue'
 import DelegatesListItem from './DelegatesListItem.vue'
-import { ErrorMessage, Loader, Pagination } from '@/common'
+import { AppButton, ErrorMessage, Loader, Pagination } from '@/common'
 import { DelegatesUser } from '@/types'
 import { computed, ref, watch } from 'vue'
-import { DELEGATION_RIGHTS, SORTING_ORDER } from '@/enums'
+import { SORTING_ORDER } from '@/enums'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { ErrorHandler } from '@/helpers'
+import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
 
 const HARDCODED_LIST: DelegatesUser = [
   {
     address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
-    tokensStaked: '1000',
     tokensDelegated: '10.22',
-    delegationRights: DELEGATION_RIGHTS.fullRights,
+    tokensClaimed: '100',
   },
   {
     address: '0x8ED80CCF20F1E284eb56F2Ea225636F1aAC647Ce',
-    tokensStaked: '1200',
     tokensDelegated: '10.22',
-    delegationRights: DELEGATION_RIGHTS.marketplaceRights,
+    tokensClaimed: '100',
   },
   {
     address: '0xAbCA5f27ee9249669039612b6119aEB154acaC97',
-    tokensStaked: '1300',
     tokensDelegated: '10.22',
-    delegationRights: DELEGATION_RIGHTS.providerRights,
+    tokensClaimed: '100',
   },
 ]
 
@@ -79,6 +91,7 @@ const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const sortingOrder = ref(SORTING_ORDER.none)
 const usersList = ref<DelegatesUser[]>(HARDCODED_LIST)
+const isDelegateModalOpened = ref(false)
 
 const isPaginationShown = computed(
   () => usersList.value.length > DEFAULT_PAGE_LIMIT,
@@ -96,10 +109,18 @@ const loadPage = async () => {
   isLoaded.value = true
 }
 
+const openDelegateModal = () => {
+  isDelegateModalOpened.value = true
+}
+
 watch([currentPage, sortingOrder], loadPage, { immediate: true })
 </script>
 
 <style scoped lang="scss">
+.delegates-list {
+  width: 100%;
+}
+
 .delegation-providers-list__content {
   flex: 1;
 
@@ -144,5 +165,37 @@ watch([currentPage, sortingOrder], loadPage, { immediate: true })
   display: flex;
   flex-direction: column;
   gap: toRem(10);
+}
+
+.delegates-list__title-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delegates-list__title-text-wrapper {
+  display: flex;
+  gap: toRem(16);
+  align-items: center;
+}
+
+.delegates-list__amount {
+  display: flex;
+  font-weight: 500;
+  color: var(--text-secondary-light);
+  align-items: center;
+  justify-content: center;
+  width: toRem(37);
+  height: toRem(37);
+  border: toRem(1) solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(
+    95.36deg,
+    rgba(var(--white-rgb), 0.48) 0%,
+    rgba(var(--white-rgb), 0.08) 100%
+  );
+}
+
+.delegates-list__list {
+  margin-top: toRem(24);
 }
 </style>

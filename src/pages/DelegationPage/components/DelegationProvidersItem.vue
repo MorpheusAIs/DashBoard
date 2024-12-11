@@ -32,7 +32,12 @@
       </div>
       <div class="delegation-providers-item__col">
         <span class="delegation-providers-item__text">
-          {{ user.tokensStaked }}
+          {{ user.networkFee }}
+        </span>
+      </div>
+      <div class="delegation-providers-item__col">
+        <span class="delegation-providers-item__text">
+          {{ user.tokensDelegated }}
         </span>
         <app-button
           v-if="isDelegateButtonShown && !isYou"
@@ -120,7 +125,7 @@ const delegate = () => {
 .delegation-providers-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
   gap: toRem(36);
 }
 

@@ -44,6 +44,7 @@ const cards = computed<DelegationUserCard[]>(() => [
 <style scoped lang="scss">
 .delegator-info-cards {
   display: flex;
+  flex-direction: column;
   gap: toRem(20);
 }
 

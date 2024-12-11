@@ -9,8 +9,10 @@
         :route="{ name: $routes.appDelegation }"
       />
       <delegation-info-title class="delegator-info-page__title" />
-      <delegator-info-cards class="delegator-info-page__info-cards" />
-      <delegates-list class="delegator-info-page__list" />
+      <div class="delegator-info-page__content-wrapper">
+        <delegator-info-cards class="delegator-info-page__info-cards" />
+        <delegates-list class="delegator-info-page__list" />
+      </div>
     </div>
   </div>
 </template>
@@ -32,15 +34,18 @@ import DelegatesList from './components/DelegatesList.vue'
   color: var(--text-secondary-light);
 }
 
-.delegator-info-page__wrapper {
-  @include page-wrp;
-}
-
 .delegator-info-page__title {
   margin-top: toRem(56);
 }
 
+.delegator-info-page__content-wrapper {
+  display: flex;
+  gap: toRem(66);
+  justify-content: space-evenly;
+  margin-top: toRem(24);
+}
+
 .delegator-info-page__info-cards {
-  margin: toRem(32) 0;
+  min-width: toRem(400);
 }
 </style>

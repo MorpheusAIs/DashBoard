@@ -27,12 +27,7 @@
       </div>
       <div class="delegates-list-item__col">
         <span class="delegates-list-item__text">
-          {{ user.tokensStaked }}
-        </span>
-      </div>
-      <div class="delegates-list-item__col">
-        <span class="delegates-list-item__text">
-          {{ rights }}
+          {{ user.tokensClaimed }}
         </span>
       </div>
     </div>
@@ -44,8 +39,6 @@ import { computed } from 'vue'
 import { DelegatesUser } from '@/types'
 import { abbrCenter } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { useI18n } from '@/composables'
-import { DELEGATION_RIGHTS } from '@/enums'
 
 const MOCKED_USERNAMES = {
   '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9': 'Sorizen',
@@ -55,27 +48,10 @@ const props = defineProps<{
   user: DelegatesUser
 }>()
 
-const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const username = computed(() => MOCKED_USERNAMES[props.user.address] ?? '')
 const isYou = computed(() => props.user.address === web3ProvidersStore.address)
-const rights = computed(() => {
-  switch (props.user.delegationRights) {
-    case DELEGATION_RIGHTS.fullRights:
-      return t('delegates-list-item.full-rights-lbl')
-    case DELEGATION_RIGHTS.providerRights:
-      return t('delegates-list-item.provider-rights-lbl')
-    case DELEGATION_RIGHTS.marketplaceRights:
-      return t('delegates-list-item.marketplace-rights-lbl')
-    case DELEGATION_RIGHTS.modelRights:
-      return t('delegates-list-item.model-rights-lbl')
-    case DELEGATION_RIGHTS.sessionRights:
-      return t('delegates-list-item.session-rights-lbl')
-    default:
-      return ''
-  }
-})
 </script>
 
 <style scoped lang="scss">
@@ -103,7 +79,7 @@ const rights = computed(() => {
 .delegates-list-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
   gap: toRem(36);
   align-items: center;
 }

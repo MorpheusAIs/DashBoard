@@ -1,8 +1,7 @@
-import { DELEGATION_RIGHTS } from '@/enums'
-
 export type DelegationUser = {
   address: string
-  tokensStaked: string
+  tokensDelegated: string
+  networkFee: string
 }
 
 export type DelegationUserCard = {
@@ -13,7 +12,6 @@ export type DelegationUserCard = {
 
 export type DelegatesUser = {
   address: string
-  tokensStaked: string
   tokensDelegated: string
-  delegationRights: DELEGATION_RIGHTS
+  tokensClaimed: string
 }

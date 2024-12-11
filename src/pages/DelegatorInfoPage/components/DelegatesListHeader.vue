@@ -20,17 +20,10 @@
       <table-sorting-header-column
         :sorting="sorting"
         :text="
-          $t('delegates-list-header.staked-text', {
+          $t('delegates-list-header.claimed-text', {
             asset: web3ProvidersStore.rewardsTokenSymbol,
           })
         "
-        @sort="emit('sort')"
-      />
-    </div>
-    <div class="delegates-list-header__cel">
-      <table-sorting-header-column
-        :sorting="sorting"
-        :text="$t('delegates-list-header.delegation-rights')"
         @sort="emit('sort')"
       />
     </div>
@@ -57,7 +50,7 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .delegates-list-header {
   display: grid;
-  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
   gap: toRem(32);
   padding: toRem(8) toRem(32);
 }
