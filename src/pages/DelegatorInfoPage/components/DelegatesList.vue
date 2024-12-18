@@ -11,66 +11,86 @@
       </div>
       <app-button
         size="small"
-        :text="$t('delegates-list.delegate-button')"
+        :text="$t('delegates-list.stake-button')"
         @click="openDelegateModal"
       />
     </div>
-    <delegates-list-header
-      class="delegates-list__list"
-      :sorting="sortingOrder"
-      :sorting-type="sortingType"
-      @sort="chooseSortingOrder"
+    <no-data-message
+      v-if="isLoaded && !isLoadFailed && !usersList.length"
+      class="delegates-list__no-data-message"
+      :message="$t('delegates-list.no-data-message')"
     />
-    <div class="delegates-list__content">
-      <div
-        class="delegates-list__users-wrapper"
-        :class="{ 'delegates-list__users-wrapper--small': !isPaginationShown }"
-      >
-        <template v-if="isLoaded">
-          <error-message
-            v-if="isLoadFailed"
-            class="delegates-list__system-message"
-            :message="$t('delegates-list.error-message')"
-          />
-          <template v-else>
-            <div class="delegates-list__users">
-              <delegates-list-item
-                v-for="(user, idx) in usersList"
-                :key="idx"
-                :user="user"
-              />
-            </div>
-            <div
-              v-if="isPaginationShown"
-              class="delegates-list__pagination-wrapper"
-            >
-              <pagination
-                v-model:current-page="currentPage"
-                :total-items="refsCount"
-              />
-            </div>
+    <template v-else>
+      <delegates-list-header
+        class="delegates-list__list"
+        :sorting="sortingOrder"
+        :sorting-type="sortingType"
+        @sort="chooseSortingOrder"
+      />
+      <div class="delegates-list__content">
+        <div
+          class="delegates-list__users-wrapper"
+          :class="{
+            'delegates-list__users-wrapper--small': !isPaginationShown,
+          }"
+        >
+          <template v-if="isLoaded">
+            <error-message
+              v-if="isLoadFailed"
+              class="delegates-list__system-message"
+              :message="$t('delegates-list.error-message')"
+            />
+            <template v-else>
+              <div class="delegates-list__users">
+                <delegates-list-item
+                  v-for="(user, idx) in usersList"
+                  :key="idx"
+                  :user="user"
+                />
+              </div>
+              <div
+                v-if="isPaginationShown"
+                class="delegates-list__pagination-wrapper"
+              >
+                <pagination
+                  v-model:current-page="currentPage"
+                  :total-items="refsCount"
+                />
+              </div>
+            </template>
           </template>
-        </template>
-        <loader v-else class="delegates-list__system-message" />
+          <loader v-else class="delegates-list__system-message" />
+        </div>
       </div>
-    </div>
-    <delegate-tokens-modal v-model:is-shown="isDelegateModalOpened" />
+    </template>
+    <delegate-tokens-modal
+      v-model:is-shown="isDelegateModalOpened"
+      :delegate-address="delegateAddress"
+    />
   </div>
 </template>
 <script setup lang="ts">
+import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
 import DelegatesListHeader from './DelegatesListHeader.vue'
 import DelegatesListItem from './DelegatesListItem.vue'
-import { AppButton, ErrorMessage, Loader, Pagination } from '@/common'
+
+import {
+  AppButton,
+  ErrorMessage,
+  Loader,
+  Pagination,
+  NoDataMessage,
+} from '@/common'
 import { DelegatesUser } from '@/types'
 import { computed, ref, watch } from 'vue'
 import { SORTING_ORDER } from '@/enums'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { ErrorHandler } from '@/helpers'
-import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
+import { useRoute } from 'vue-router'
 
-const HARDCODED_LIST: DelegatesUser = [
+const HARDCODED_LIST: DelegatesUser[] = [
   {
-    address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
+    address: '0x9f5b9db875AAaf47D6bAD805CabC7D8E15e75982',
     tokensDelegated: '10.22',
     tokensClaimed: '100',
   },
@@ -85,6 +105,8 @@ const HARDCODED_LIST: DelegatesUser = [
     tokensClaimed: '100',
   },
 ]
+
+const route = useRoute()
 
 const currentPage = ref(1)
 const isLoaded = ref(false)
@@ -113,6 +135,8 @@ const openDelegateModal = () => {
   isDelegateModalOpened.value = true
 }
 
+const delegateAddress = computed(() => String(route.query.userAddress))
+
 watch([currentPage, sortingOrder], loadPage, { immediate: true })
 </script>
 
@@ -134,6 +158,10 @@ watch([currentPage, sortingOrder], loadPage, { immediate: true })
   top: 50%;
   right: 50%;
   transform: translateX(50%) translateY(-50%);
+}
+
+.delegates-list__no-data-message {
+  margin-top: toRem(24);
 }
 
 .delegation-providers-list__users-wrapper {

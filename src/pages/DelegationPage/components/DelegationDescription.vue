@@ -19,24 +19,40 @@
         {{ $t('delegation-description.subtitle-2') }}
       </span>
     </div>
-    <app-button
-      class="delegation-description__button"
-      :text="$t('delegation-description.delegate-button')"
-      @click="openDelegateModal"
-    />
-    <delegate-tokens-modal v-model:is-shown="isModalOpened" />
+    <div class="delegation-description__buttons">
+      <app-button
+        class="delegation-description__button"
+        :text="$t('delegation-description.stake-button')"
+        @click="openDelegateModal"
+      />
+      <app-button
+        class="delegation-description__button"
+        :text="$t('delegation-description.become-subnet-button')"
+        color="secondary"
+        @click="openSubnetModal"
+      />
+    </div>
+    <delegate-tokens-modal v-model:is-shown="isDelegationModalOpened" />
+    <delegate-subnet-modal v-model:is-shown="isSubnetModalOpened" />
   </div>
 </template>
 
 <script setup lang="ts">
+import DelegateTokensModal from './DelegateTokensModal.vue'
+import DelegateSubnetModal from './DelegateSubnetModal.vue'
+
 import { ref } from 'vue'
 import { AppButton } from '@/common'
-import DelegateTokensModal from './DelegateTokensModal.vue'
 
-const isModalOpened = ref(false)
+const isDelegationModalOpened = ref(false)
+const isSubnetModalOpened = ref(false)
 
 const openDelegateModal = () => {
-  isModalOpened.value = true
+  isDelegationModalOpened.value = true
+}
+
+const openSubnetModal = () => {
+  isSubnetModalOpened.value = true
 }
 </script>
 
@@ -56,5 +72,10 @@ const openDelegateModal = () => {
   list-style: initial;
   margin-left: toRem(20);
   line-height: 1.5;
+}
+
+.delegation-description__buttons {
+  display: flex;
+  gap: toRem(24);
 }
 </style>

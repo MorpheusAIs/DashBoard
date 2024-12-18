@@ -1,5 +1,10 @@
 <template>
-  <div class="delegates-list-item">
+  <div
+    class="delegates-list-item"
+    :class="{
+      'delegates-list-item--secondary': isYou,
+    }"
+  >
     <div class="delegates-list-item__content">
       <div
         class="delegates-list-item__col"
@@ -63,7 +68,7 @@ const isYou = computed(() => props.user.address === web3ProvidersStore.address)
   padding: toRem(16) toRem(32);
   border: toRem(1) solid;
   border-image-slice: 1;
-  border-image-source: var(--card-border-gradient);
+  border-image-source: var(--card-border-gradient-reversed);
   background: var(--card-background-gradient);
 
   &:not([disabled]):hover,
@@ -71,8 +76,18 @@ const isYou = computed(() => props.user.address === web3ProvidersStore.address)
   &:not([disabled]):active {
     border: toRem(1) solid;
     border-image-slice: 1;
-    border-image-source: var(--card-border-gradient);
+    border-image-source: var(--card-border-gradient-reversed);
     background: var(--card-background-gradient);
+  }
+
+  &--secondary {
+    border-image-source: var(--card-border-gradient-secondary);
+
+    &:not([disabled]):hover,
+    &:not([disabled]):focus,
+    &:not([disabled]):active {
+      border-image-source: var(--card-border-gradient-secondary);
+    }
   }
 }
 

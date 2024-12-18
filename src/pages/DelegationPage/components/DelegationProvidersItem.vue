@@ -3,6 +3,10 @@
     class="delegation-providers-item"
     scheme="none"
     size="none"
+    :class="{
+      'delegation-providers-item--secondary': secondary,
+      'delegation-providers-item--tertiary': tertiary,
+    }"
     @mouseenter="showDelegateButton"
     @mouseleave="hideDelegateButton"
     @click="goToDelegatorPage"
@@ -39,12 +43,17 @@
         <span class="delegation-providers-item__text">
           {{ user.tokensDelegated }}
         </span>
+      </div>
+      <div class="delegation-providers-item__col">
+        <span class="delegation-providers-item__text">
+          {{ user.tokensClaimed }}
+        </span>
         <app-button
           v-if="isDelegateButtonShown && !isYou"
-          class="delegation-providers-item__delegate-button"
+          class="delegation-providers-item__stake-button"
           size="none"
           color="secondary"
-          :text="$t('delegation-providers-item.delegate-button')"
+          :text="$t('delegation-providers-item.stake-button')"
           @click.stop="delegate"
         />
       </div>
@@ -57,21 +66,24 @@
 </template>
 
 <script setup lang="ts">
+import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
+
 import { computed, ref } from 'vue'
 import { DelegationUser } from '@/types'
 import { AppButton } from '@/common'
 import { abbrCenter } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter } from 'vue-router'
 
 const MOCKED_USERNAMES = {
-  '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9': 'Sorizen',
+  '0x9f5b9db875AAaf47D6bAD805CabC7D8E15e75982': 'Sorizen',
 }
 
 const props = defineProps<{
   user: DelegationUser
+  secondary?: boolean
+  tertiary?: boolean
 }>()
 
 const router = useRouter()
@@ -109,7 +121,7 @@ const delegate = () => {
   padding: toRem(16) toRem(32);
   border: toRem(1) solid;
   border-image-slice: 1;
-  border-image-source: var(--card-border-gradient);
+  border-image-source: var(--card-border-gradient-reversed);
   background: var(--card-background-gradient);
 
   &:not([disabled]):hover,
@@ -117,15 +129,35 @@ const delegate = () => {
   &:not([disabled]):active {
     border: toRem(1) solid;
     border-image-slice: 1;
-    border-image-source: var(--card-border-gradient);
+    border-image-source: var(--card-border-gradient-reversed);
     background: var(--card-background-gradient);
+  }
+
+  &--secondary {
+    border-image-source: var(--card-border-gradient-secondary);
+
+    &:not([disabled]):hover,
+    &:not([disabled]):focus,
+    &:not([disabled]):active {
+      border-image-source: var(--card-border-gradient-secondary);
+    }
+  }
+
+  &--tertiary {
+    border-image-source: var(--card-border-gradient-secondary-reversed);
+
+    &:not([disabled]):hover,
+    &:not([disabled]):focus,
+    &:not([disabled]):active {
+      border-image-source: var(--card-border-gradient-secondary-reversed);
+    }
   }
 }
 
 .delegation-providers-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
   gap: toRem(36);
 }
 
@@ -141,7 +173,7 @@ const delegate = () => {
   }
 }
 
-.delegation-providers-item__delegate-button {
+.delegation-providers-item__stake-button {
   padding: toRem(8) toRem(16);
   font-size: toRem(16);
   font-weight: 500;

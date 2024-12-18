@@ -10,7 +10,7 @@
       />
     </div>
     <div class="delegation-providers__content-wrp">
-      <delegation-providers-item :user="currentUser" />
+      <delegation-providers-item :user="currentUser" :secondary="true" />
       <div v-if="delegatedToUsers.length" class="delegation-providers__content">
         <h5 class="delegation-providers__content-title">
           {{ $t('delegation-providers.you-delegated-text') }}
@@ -18,6 +18,7 @@
         <delegation-providers-item
           v-for="user in delegatedToUsers"
           :key="user.address"
+          :tertiary="true"
           :user="user"
         />
       </div>
@@ -42,8 +43,9 @@ import { DelegationUser } from '@/types'
 const sortingOrder = ref(SORTING_ORDER.none)
 
 const currentUser = computed<DelegationUser>(() => ({
-  address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
+  address: '0x9f5b9db875AAaf47D6bAD805CabC7D8E15e75982',
   tokensDelegated: '1000',
+  tokensClaimed: '500',
   networkFee: '1.9719%',
 }))
 
@@ -51,11 +53,13 @@ const delegatedToUsers = computed<DelegationUser[]>(() => [
   {
     address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
     tokensDelegated: '1000',
+    tokensClaimed: '500',
     networkFee: '1.9719%',
   },
   {
-    address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
+    address: '0x8ED80CCF20F1E284eb56F2Ea225636F1aAC647Ce',
     tokensDelegated: '1000',
+    tokensClaimed: '500',
     networkFee: '1.9719%',
   },
 ])
@@ -78,6 +82,12 @@ const chooseSortingOrder = (order: SORTING_ORDER) => {
   display: flex;
   flex-direction: column;
   gap: toRem(32);
+}
+
+.delegation-providers__content {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(10);
 }
 
 .delegation-providers__content-title {

@@ -1,64 +1,57 @@
 <template>
   <basic-modal
-    class="delegate-tokens-modal"
+    class="delegate-subnet-modal"
     :is-shown="isShown"
     :is-close-by-click-outside="isCloseByClickOutside"
-    :title="$t('delegate-tokens-modal.title')"
+    :title="$t('delegate-subnet-modal.title')"
     @update:is-shown="emit('update:is-shown', $event)"
   >
-    <div class="delegate-tokens-modal__content-wrp">
-      <div class="delegate-tokens-modal__available-wrp">
-        <p class="delegate-tokens-modal__available-text">
-          {{ $t('delegate-tokens-modal.delegate-text') }}
-        </p>
-        <p class="delegate-tokens-modal__available-amount">
-          {{
-            `${depositTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
-          }}
-        </p>
-      </div>
-      <div class="delegate-tokens-modal__inputs-wrp">
+    <div class="delegate-subnet-modal__content-wrp">
+      <div class="delegate-subnet-modal__inputs-wrp">
         <input-field
-          v-model="form.address"
-          class="delegate-tokens-modal__input-field"
-          :placeholder="$t('delegate-tokens-modal.wallet-input-placeholder')"
-          :error-message="getFieldErrorMessage('address')"
-          :disabled="isSubmitting || Boolean(delegateAddress)"
-          @blur="touchField('address')"
+          v-model="form.name"
+          class="delegate-subnet-modal__input-field"
+          :placeholder="$t('delegate-subnet-modal.name-placeholder')"
+          :error-message="getFieldErrorMessage('name')"
+          :disabled="isSubmitting"
+          @blur="touchField('name')"
         />
         <input-field
-          v-model="form.amount"
-          class="delegate-tokens-modal__input-field"
-          :placeholder="
-            $t('delegate-tokens-modal.mor-input-placeholder', {
-              asset: web3ProvidersStore.rewardsTokenSymbol,
-            })
-          "
-          :error-message="getFieldErrorMessage('amount')"
+          v-model="form.link"
+          class="delegate-subnet-modal__input-field"
+          :placeholder="$t('delegate-subnet-modal.link-placeholder')"
+          :error-message="getFieldErrorMessage('link')"
           :disabled="isSubmitting"
-          @blur="touchField('amount')"
-        >
-          <template #nodeRight>
-            <app-button
-              class="delegate-tokens-modal__input-field-btn"
-              scheme="link"
-              text="max"
-              :disabled="isSubmitting || !Number(depositTokenBalance)"
-              @click="inputMaxTokensAmount"
-            />
-          </template>
-        </input-field>
+          @blur="touchField('link')"
+        />
+        <input-field
+          v-model="form.fee"
+          class="delegate-subnet-modal__input-field"
+          :placeholder="$t('delegate-subnet-modal.fee-placeholder')"
+          :note="$t('delegate-subnet-modal.fee-note')"
+          :error-message="getFieldErrorMessage('fee')"
+          :disabled="isSubmitting"
+          @blur="touchField('fee')"
+        />
+        <input-field
+          v-model="form.address"
+          class="delegate-subnet-modal__input-field"
+          :placeholder="$t('delegate-subnet-modal.address-placeholder')"
+          :error-message="getFieldErrorMessage('address')"
+          :disabled="isSubmitting"
+          @blur="touchField('address')"
+        />
       </div>
-      <div class="delegate-tokens-modal__buttons-wrp">
+      <div class="delegate-subnet-modal__buttons-wrp">
         <app-button
-          class="delegate-tokens-modal__btn"
+          class="delegate-subnet-modal__btn"
           color="secondary"
-          :text="$t('delegate-tokens-modal.cancel-button')"
+          :text="$t('delegate-subnet-modal.cancel-button')"
           @click="closeModal"
         />
         <app-button
-          class="delegate-tokens-modal__btn"
-          :text="$t('delegate-tokens-modal.confirm-button')"
+          class="delegate-subnet-modal__btn"
+          :text="$t('delegate-subnet-modal.confirm-button')"
           :disabled="isSubmitting || !isFieldsValid"
           @click="submit"
         />
@@ -73,12 +66,9 @@ import { computed, reactive, ref } from 'vue'
 import { config } from '@config'
 import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
-import { address, required, minEther, maxEther } from '@/validators'
+import { address, required, maxValue, minValue } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
-import { parseUnits } from '@/utils'
-
-const MIN_DELEGATION_AMOUNT = '0.000001'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -87,11 +77,9 @@ const emit = defineEmits<{
 const props = withDefaults(
   defineProps<{
     isShown: boolean
-    delegateAddress?: string
     isCloseByClickOutside?: boolean
   }>(),
   {
-    delegateAddress: '',
     isCloseByClickOutside: true,
   },
 )
@@ -104,16 +92,17 @@ const isSubmitting = ref(false)
 const depositTokenBalance = ref('0')
 
 const form = reactive({
+  name: '',
+  link: '',
+  fee: '',
   address: '',
-  amount: '',
 })
 
 const validationRules = computed(() => ({
+  name: { required },
+  link: { required },
+  fee: { required, minValue: minValue(0), maxValue: maxValue(100) },
   address: { required, address },
-  amount: {
-    minEther: minEther(parseUnits(MIN_DELEGATION_AMOUNT, 'ether')),
-    maxEther: maxEther(depositTokenBalance.value),
-  },
 }))
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -134,7 +123,7 @@ const submit = async (): Promise<void> => {
 
     bus.emit(
       BUS_EVENTS.info,
-      t('delegate-tokens-modal.tx-sent-message', { explorerTxUrl }),
+      t('delegate-subnet-modal.tx-sent-message', { explorerTxUrl }),
     )
 
     closeModal()
@@ -144,7 +133,7 @@ const submit = async (): Promise<void> => {
 
     bus.emit(
       BUS_EVENTS.success,
-      t('delegate-tokens-modal.success-message', { explorerTxUrl }),
+      t('delegate-subnet-modal.success-message', { explorerTxUrl }),
     )
 
     bus.emit(BUS_EVENTS.changedCurrentUserRefReward)
@@ -161,13 +150,8 @@ const closeModal = (): void => {
 }
 
 const clearFields = () => {
-  form.address = props.delegateAddress || ''
-  form.amount = ''
+  form.address = ''
   depositTokenBalance.value = '0'
-}
-
-const inputMaxTokensAmount = () => {
-  form.amount = depositTokenBalance.value
 }
 
 const init = async () => {
@@ -186,7 +170,7 @@ init()
 </script>
 
 <style lang="scss" scoped>
-.delegate-tokens-modal__buttons-wrp {
+.delegate-subnet-modal__buttons-wrp {
   margin-top: toRem(40);
   display: flex;
   align-items: center;
@@ -198,7 +182,7 @@ init()
   }
 }
 
-.delegate-tokens-modal__btn {
+.delegate-subnet-modal__btn {
   min-width: toRem(200);
 
   @include respond-to(medium) {
@@ -211,20 +195,21 @@ init()
   @include body-3-semi-bold;
 }
 
-.delegate-tokens-modal__available-wrp {
+.delegate-subnet-modal__available-wrp {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: toRem(32) 0;
 }
 
-.delegate-tokens-modal__available-amount {
+.delegate-subnet-modal__available-amount {
   font-weight: 700;
 }
 
-.delegate-tokens-modal__inputs-wrp {
+.delegate-subnet-modal__inputs-wrp {
   display: flex;
   flex-direction: column;
   gap: toRem(20);
+  margin-top: toRem(40);
 }
 </style>

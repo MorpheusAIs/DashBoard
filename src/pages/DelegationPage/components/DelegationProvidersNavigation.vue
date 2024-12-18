@@ -9,7 +9,7 @@
     <div class="delegation-providers-navigation__cel">
       <table-sorting-header-column
         :sorting="sorting"
-        :text="$t('delegation-providers-navigation.network-fee-text')"
+        :text="$t('delegation-providers-navigation.subnet-fee-text')"
         @sort="() => {}"
       />
     </div>
@@ -17,7 +17,18 @@
       <table-sorting-header-column
         :sorting="sorting"
         :text="
-          $t('delegation-providers-navigation.delegated-text', {
+          $t('delegation-providers-navigation.staked-text', {
+            asset: web3ProvidersStore.rewardsTokenSymbol,
+          })
+        "
+        @sort="() => {}"
+      />
+    </div>
+    <div class="delegation-providers-navigation__cel">
+      <table-sorting-header-column
+        :sorting="sorting"
+        :text="
+          $t('delegation-providers-navigation.claimed-text', {
             asset: web3ProvidersStore.rewardsTokenSymbol,
           })
         "
@@ -42,7 +53,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 <style scoped lang="scss">
 .delegation-providers-navigation {
   display: grid;
-  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
   gap: toRem(32);
   padding: toRem(8) toRem(32);
 }

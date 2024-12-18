@@ -1,6 +1,7 @@
 export type DelegationUser = {
   address: string
   tokensDelegated: string
+  tokensClaimed: string
   networkFee: string
 }
 

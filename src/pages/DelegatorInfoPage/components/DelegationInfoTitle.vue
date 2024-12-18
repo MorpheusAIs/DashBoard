@@ -44,18 +44,10 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const isYou = computed(
   () => route.query.userAddress === web3ProvidersStore.address,
 )
-const isYourDelegator = computed(() => true)
-const isYourProvider = computed(() => true)
 
 const infoText = computed(() => {
   if (isYou.value) {
-    return t('delegation-info-title.you-text')
-  }
-  if (isYourDelegator.value) {
-    return t('delegation-info-title.your-delegator-text')
-  }
-  if (isYourProvider.value) {
-    return t('delegation-info-title.your-provider-text')
+    return t('delegation-info-title.your-subnet-text')
   }
   return ''
 })

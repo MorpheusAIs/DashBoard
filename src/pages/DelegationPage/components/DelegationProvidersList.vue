@@ -47,20 +47,23 @@ import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { ErrorHandler } from '@/helpers'
 import DelegationProvidersItem from './DelegationProvidersItem.vue'
 
-const HARDCODED_LIST: DelegationUser = [
+const HARDCODED_LIST: DelegationUser[] = [
   {
     address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
     tokensDelegated: '1000',
+    tokensClaimed: '500',
     networkFee: '1.9719%',
   },
   {
     address: '0x8ED80CCF20F1E284eb56F2Ea225636F1aAC647Ce',
     tokensDelegated: '1200',
+    tokensClaimed: '500',
     networkFee: '1.9719%',
   },
   {
     address: '0xAbCA5f27ee9249669039612b6119aEB154acaC97',
     tokensDelegated: '1300',
+    tokensClaimed: '500',
     networkFee: '1.9719%',
   },
 ]
