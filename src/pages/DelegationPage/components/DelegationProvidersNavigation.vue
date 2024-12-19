@@ -53,7 +53,10 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 <style scoped lang="scss">
 .delegation-providers-navigation {
   display: grid;
-  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(3, minmax(toRem(100), 1fr)) minmax(
+      toRem(140),
+      1fr
+    );
   gap: toRem(32);
   padding: toRem(8) toRem(32);
 }

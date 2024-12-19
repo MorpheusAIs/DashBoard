@@ -157,7 +157,10 @@ const delegate = () => {
 .delegation-providers-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(3, minmax(toRem(100), 1fr)) minmax(
+      toRem(140),
+      1fr
+    );
   gap: toRem(36);
 }
 
