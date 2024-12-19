@@ -39,7 +39,8 @@ const tabs = computed<Tab[]>(() => [
   {
     title: t('home-page.compute-tab'),
     id: 'compute',
-    href: config.COMPUTE_CONTRIBUTION_URL,
+    // href: config.COMPUTE_CONTRIBUTION_URL,
+    route: { name: ROUTE_NAMES.appDelegation },
   },
   {
     title: t('home-page.builders-tab'),

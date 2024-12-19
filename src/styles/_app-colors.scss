@@ -100,6 +100,24 @@ $card-border-gradient: linear-gradient(
     rgba(255, 255, 255, 0.48) 100%
 );
 
+$card-border-gradient-reversed: linear-gradient(
+    95.36deg,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+);
+
+$card-border-gradient-secondary: linear-gradient(
+    95.36deg,
+    rgba(3, 255, 133, 0.48) 0%,
+    rgba(3, 255, 133, 0.09) 100%
+);
+
+$card-border-gradient-secondary-reversed: linear-gradient(
+    95.36deg,
+    rgba(3, 255, 133, 0.08) 0%,
+    rgba(3, 255, 133, 0.48) 100%
+);
+
 $card-background-gradient: linear-gradient(
     95.36deg,
     rgba(57, 99, 58, 0.04) 0%,

@@ -209,5 +209,8 @@
 
   /* card colors */
   --card-border-gradient: #{$card-border-gradient};
+  --card-border-gradient-reversed: #{$card-border-gradient-reversed};
+  --card-border-gradient-secondary: #{$card-border-gradient-secondary};
+  --card-border-gradient-secondary-reversed: #{$card-border-gradient-secondary-reversed};
   --card-background-gradient: #{$card-background-gradient};
 }

@@ -33,6 +33,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/HomePage/views/PrivatePoolView.vue'),
         props: { poolId: 1 },
       },
+      {
+        path: '/delegation',
+        name: ROUTE_NAMES.appDelegation,
+        component: () => import('@/pages/DelegationPage/index.vue'),
+        props: { poolId: 0 },
+      },
     ],
   },
   {
@@ -49,6 +55,11 @@ const routes: RouteRecordRaw[] = [
         props: { poolId: 0 },
       },
     ],
+  },
+  {
+    path: '/delegator-info',
+    name: ROUTE_NAMES.appDelegatorInfo,
+    component: () => import('@/pages/DelegatorInfoPage/Index.vue'),
   },
   {
     path: '/mor20-ecosystem',
