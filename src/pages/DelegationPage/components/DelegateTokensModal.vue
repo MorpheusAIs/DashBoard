@@ -185,7 +185,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
       tx.hash,
     )
 
