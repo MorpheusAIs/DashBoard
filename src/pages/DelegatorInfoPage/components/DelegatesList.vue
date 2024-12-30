@@ -54,7 +54,8 @@
               >
                 <pagination
                   v-model:current-page="currentPage"
-                  :total-items="refsCount"
+                  :total-items="totalUsers"
+                  :page-limit="DEFAULT_PAGE_LIMIT"
                 />
               </div>
             </template>
@@ -99,10 +100,9 @@ const sortingOrder = ref(SORTING_ORDER.none)
 const sortingType = ref(DELEGATES_SORTING_TYPES.none)
 const usersList = ref<SubnetProvider[]>([])
 const isDelegateModalOpened = ref(false)
+const totalUsers = ref(0)
 
-const isPaginationShown = computed(
-  () => usersList.value.length > DEFAULT_PAGE_LIMIT,
-)
+const isPaginationShown = computed(() => totalUsers.value > DEFAULT_PAGE_LIMIT)
 
 const loadPage = async () => {
   isLoaded.value = false
@@ -124,6 +124,7 @@ const loadPage = async () => {
     )
 
     usersList.value = data.subnetUsers || []
+    totalUsers.value = Number(data.subnets[0].totalUsers) || 0
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.process(e)

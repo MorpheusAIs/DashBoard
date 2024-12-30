@@ -4,6 +4,7 @@ import {
   SubnetProvider,
   SubnetProviderWithSubnet,
   SubnetCounter,
+  UsersCounter,
 } from '@/types'
 import { gql } from '@apollo/client'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
@@ -97,6 +98,7 @@ export async function fetchProviders(
 
   const { data } = await apolloClient.query<{
     subnetUsers: SubnetProvider[]
+    subnets: UsersCounter[]
   }>({
     query,
     variables: {},
@@ -220,6 +222,9 @@ export function _generateProvidersQuery(
         staked
         claimed
         address
+      }
+      subnets(where: {id: "${subnetId}"}) {
+        totalUsers
       }
     }
   `

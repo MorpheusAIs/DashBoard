@@ -2,6 +2,10 @@ export type SubnetCounter = {
   totalSubnets: string
 }
 
+export type UsersCounter = {
+  totalUsers: string
+}
+
 export type SubnetItem = {
   id: string
   fee: string
