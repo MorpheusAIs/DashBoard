@@ -2,9 +2,6 @@ import { factories, type Provider } from '@/types'
 import { providers } from 'ethers'
 import { computed, unref, type ComputedRef, type MaybeRef } from 'vue'
 import { errors } from '@/errors'
-import { useWeb3ProvidersStore } from '@/store'
-
-const web3ProvidersStore = useWeb3ProvidersStore()
 
 type ContractFactoryKey = keyof typeof factories
 type ContractFactoryClass<K extends ContractFactoryKey = ContractFactoryKey> =
@@ -62,7 +59,7 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
 
     return _factoryClass.connect(
       unrefContractAddress,
-      unrefProvider.getSigner(web3ProvidersStore.address),
+      unrefProvider.getSigner(provider.provider.selectedAddress as string),
     ) as Contract<K>
   })
 
