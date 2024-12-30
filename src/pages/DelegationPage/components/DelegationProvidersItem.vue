@@ -11,7 +11,13 @@
     @mouseleave="hideDelegateButton"
     @click="goToDelegatorPage"
   >
-    <div class="delegation-providers-item__content">
+    <div
+      class="delegation-providers-item__content"
+      :class="{
+        'delegation-providers-item__content--with-button':
+          isDelegateButtonShown,
+      }"
+    >
       <div
         class="delegation-providers-item__col"
         :class="{ 'delegation-providers-item__col--username': user.name }"
@@ -49,9 +55,8 @@
           {{ totalClaimed }}
         </span>
       </div>
-      <div class="delegation-providers-item__col">
+      <div v-if="isDelegateButtonShown" class="delegation-providers-item__col">
         <app-button
-          v-if="isDelegateButtonShown && !isYou"
           class="delegation-providers-item__stake-button"
           size="none"
           color="secondary"
@@ -112,7 +117,7 @@ const totalClaimed = computed(() =>
 )
 
 const showDelegateButton = () => {
-  isDelegateButtonShown.value = true
+  isDelegateButtonShown.value = !isYou.value
 }
 
 const hideDelegateButton = () => {
@@ -174,17 +179,23 @@ const delegate = () => {
 .delegation-providers-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns:
-    minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
-    toRem(80);
+  grid-template-columns: minmax(toRem(100), 1fr) repeat(
+      3,
+      minmax(toRem(80), 1fr)
+    );
   gap: toRem(16);
+
+  &--with-button {
+    grid-template-columns:
+      minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
+      minmax(toRem(70), 1fr);
+  }
 }
 
 .delegation-providers-item__col {
   display: flex;
   gap: toRem(24);
   align-items: center;
-  justify-content: flex-end;
 
   &--username {
     flex-direction: column;

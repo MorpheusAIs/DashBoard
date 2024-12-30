@@ -72,9 +72,10 @@ const changeSorting = (order: SORTING_ORDER, type: DELEGATES_SORTING_TYPES) => {
 <style scoped lang="scss">
 .delegation-providers-navigation {
   display: grid;
-  grid-template-columns:
-    minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
-    toRem(80);
+  grid-template-columns: minmax(toRem(100), 1fr) repeat(
+      3,
+      minmax(toRem(80), 1fr)
+    );
   gap: toRem(16);
   padding: toRem(8) toRem(32);
 }

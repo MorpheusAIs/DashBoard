@@ -89,6 +89,8 @@ export const config = {
   SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS,
   TESTNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_TESTNET_GRAPHQL_API_URL,
+  TESTNET_GRAPHQL_SECOND_API_URL: import.meta.env
+    .VITE_APP_TESTNET_GRAPHQL_SECOND_API_URL,
 
   // Mainnet
   ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS: import.meta.env
@@ -106,6 +108,8 @@ export const config = {
   SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS,
   MAINNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_MAINNET_GRAPHQL_API_URL,
+  MAINNET_GRAPHQL_SECOND_API_URL: import.meta.env
+    .VITE_APP_MAINNET_GRAPHQL_SECOND_API_URL,
 
   metadata: {} as Metadata,
 
@@ -115,6 +119,9 @@ export const config = {
 
   mainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
   testnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+
+  secondMainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+  secondTestnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
@@ -259,6 +266,16 @@ config.mainnetApolloClient = new ApolloClient({
 
 config.testnetApolloClient = new ApolloClient({
   link: createHttpLink({ uri: config.TESTNET_GRAPHQL_API_URL }),
+  cache: new InMemoryCache(),
+})
+
+config.secondMainnetApolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.MAINNET_GRAPHQL_SECOND_API_URL }),
+  cache: new InMemoryCache(),
+})
+
+config.secondTestnetApolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.TESTNET_GRAPHQL_SECOND_API_URL }),
   cache: new InMemoryCache(),
 })
 

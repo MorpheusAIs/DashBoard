@@ -229,7 +229,7 @@
     "field-error_maxEther": "Insufficient amount of tokens",
     "field-error_minEther": "Field must be greater than or equal to {min}",
     "field-error_minValue": "The entered value is less than the minimum value",
-    "field-error_maxValue": "The entered value is greater than the maximum value"
+    "field-error_maxValue": "The entered value is greater than the {max}"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",
