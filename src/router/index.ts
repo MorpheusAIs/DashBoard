@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/delegation',
         name: ROUTE_NAMES.appDelegation,
-        component: () => import('@/pages/DelegationPage/index.vue'),
+        component: () => import('@/pages/DelegationPage/Index.vue'),
         props: { poolId: 0 },
       },
     ],
