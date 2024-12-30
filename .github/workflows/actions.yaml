@@ -4,6 +4,9 @@ on:
       - "dev"
       - "main"
 
+permissions:
+  packages: write
+
 jobs:
   converge:
     name: Skaffold Build To Github
