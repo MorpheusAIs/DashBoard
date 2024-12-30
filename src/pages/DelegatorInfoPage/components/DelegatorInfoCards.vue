@@ -20,6 +20,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { BN } from '@distributedlab/tools'
 import { DelegationUserCard, SubnetItem } from '@/types'
 import { useRoute } from 'vue-router'
+import { config } from '@/config'
 
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -107,6 +108,10 @@ const subnetContract = computed(() =>
 
 const claim = async () => {
   try {
+    await web3ProvidersStore.provider.selectChain(
+      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+    )
+
     await subnetContract.value.signerBased.value.claim(
       web3ProvidersStore.address,
       rewards.value,
@@ -121,6 +126,10 @@ const loadPage = async () => {
   isLoadFailed.value = false
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+    )
+
     const [data, reward] = await Promise.all([
       fetchSubnet(
         web3ProvidersStore.networkId,

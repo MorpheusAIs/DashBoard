@@ -84,7 +84,6 @@ import {
   trimStringNumber,
 } from '@/helpers'
 import { parseUnits } from '@/utils'
-import { useRoute } from 'vue-router'
 import { BN } from '@distributedlab/tools'
 
 const MIN_DELEGATION_AMOUNT = '0.000001'
@@ -106,7 +105,6 @@ const props = withDefaults(
 )
 
 const { t } = useI18n()
-const route = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -146,14 +144,6 @@ const validationRules = computed(() => ({
   },
 }))
 
-const subnetContract = computed(() =>
-  useContract(
-    'Subnet__factory',
-    route.query.subnetAddress as string,
-    web3ProvidersStore.l2Provider,
-  ),
-)
-
 formValidationData.value = useFormValidation(form, validationRules)
 
 const submit = async (): Promise<void> => {
@@ -161,6 +151,18 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+    )
+
+    const subnetContract = computed(() =>
+      useContract(
+        'Subnet__factory',
+        form.address as string,
+        web3ProvidersStore.l2Provider,
+      ),
+    )
+
     const allowance =
       await web3ProvidersStore.rewardsContract.signerBased.value.allowance(
         web3ProvidersStore.address,
