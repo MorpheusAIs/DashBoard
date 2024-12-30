@@ -27,7 +27,7 @@
             >
               <pagination
                 v-model:current-page="currentPage"
-                :total-items="filteredSubnets.length"
+                :total-items="totalSubnets"
                 :page-limit="DEFAULT_PAGE_LIMIT"
               />
             </div>
@@ -62,13 +62,14 @@ const currentPage = ref(1)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const subnetsList = ref<SubnetItem[]>([])
+const totalSubnets = ref(0)
 
 const filteredSubnets = computed(() =>
   subnetsList.value.filter(subnet => !props.filteredIds.includes(subnet.id)),
 )
 
 const isPaginationShown = computed(
-  () => subnetsList.value.length > DEFAULT_PAGE_LIMIT,
+  () => totalSubnets.value > DEFAULT_PAGE_LIMIT,
 )
 
 const loadPage = async () => {
@@ -94,6 +95,7 @@ const loadPage = async () => {
     )
 
     subnetsList.value = data.subnets || []
+    totalSubnets.value = Number(data.counters[0].totalSubnets) || 0
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.process(e)

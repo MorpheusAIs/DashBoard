@@ -1,3 +1,7 @@
+export type SubnetCounter = {
+  totalSubnets: string
+}
+
 export type SubnetItem = {
   id: string
   fee: string
@@ -5,6 +9,7 @@ export type SubnetItem = {
   owner: string
   totalClaimed: string
   totalStaked: string
+  totalUsers: string
 }
 
 export type SubnetProvider = {

@@ -1,5 +1,10 @@
 import { config, NETWORK_IDS } from '@config'
-import { SubnetItem, SubnetProvider, SubnetProviderWithSubnet } from '@/types'
+import {
+  SubnetItem,
+  SubnetProvider,
+  SubnetProviderWithSubnet,
+  SubnetCounter,
+} from '@/types'
 import { gql } from '@apollo/client'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
 
@@ -42,6 +47,7 @@ export async function fetchSubnets(
 
   const { data } = await apolloClient.query<{
     subnets: SubnetItem[]
+    counters: SubnetCounter[]
   }>({
     query,
     variables: {},
@@ -185,6 +191,10 @@ export function _generateSubnetsQuery(
         owner
         totalStaked
         totalClaimed
+      }
+      counters {
+        id
+        totalSubnets
       }
     }
   `

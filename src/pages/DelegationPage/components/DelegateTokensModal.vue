@@ -13,7 +13,7 @@
         </p>
         <p class="delegate-tokens-modal__available-amount">
           {{
-            `${depositTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
+            `${rewardsTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
           }}
         </p>
       </div>
@@ -22,9 +22,9 @@
           v-model="form.address"
           class="delegate-tokens-modal__input-field"
           :placeholder="$t('delegate-tokens-modal.wallet-input-placeholder')"
-          :error-message="getFieldErrorMessage('address')"
+          :error-message="formValidationData.getFieldErrorMessage('address')"
           :disabled="isSubmitting || Boolean(delegateAddress)"
-          @blur="touchField('address')"
+          @blur="formValidationData.touchField('address')"
         />
         <input-field
           v-model="form.amount"
@@ -34,16 +34,16 @@
               asset: web3ProvidersStore.rewardsTokenSymbol,
             })
           "
-          :error-message="getFieldErrorMessage('amount')"
+          :error-message="formValidationData.getFieldErrorMessage('amount')"
           :disabled="isSubmitting"
-          @blur="touchField('amount')"
+          @blur="formValidationData.touchField('amount')"
         >
           <template #nodeRight>
             <app-button
               class="delegate-tokens-modal__input-field-btn"
               scheme="link"
               text="max"
-              :disabled="isSubmitting || !Number(depositTokenBalance)"
+              :disabled="isSubmitting || !Number(rewardsTokenBalance)"
               @click="inputMaxTokensAmount"
             />
           </template>
@@ -59,7 +59,7 @@
         <app-button
           class="delegate-tokens-modal__btn"
           :text="$t('delegate-tokens-modal.confirm-button')"
-          :disabled="isSubmitting || !isFieldsValid"
+          :disabled="isSubmitting || !formValidationData.isFieldsValid"
           @click="submit"
         />
       </div>
@@ -71,14 +71,21 @@
 import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
 
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { config } from '@config'
 import { useContract, useFormValidation, useI18n } from '@/composables'
 import { address, required, minEther, maxEther } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
-import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import {
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  getEthExplorerTxUrl,
+  trimStringNumber,
+} from '@/helpers'
 import { parseUnits } from '@/utils'
 import { useRoute } from 'vue-router'
+import { BN } from '@distributedlab/tools'
 
 const MIN_DELEGATION_AMOUNT = '0.000001'
 
@@ -104,21 +111,38 @@ const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isSubmitting = ref(false)
+const formValidationData = ref<ReturnType<typeof useFormValidation>>({
+  isFormValid: () => false,
+  // eslint-disable-next-line
+  // @ts-ignore
+  isFieldsValid: false,
+  getFieldErrorMessage: () => '',
+  touchField: () => {
+    return
+  },
+  resetValidation: () => {
+    return
+  },
+})
 
 const form = reactive({
   address: '',
   amount: '',
 })
 
-const depositTokenBalance = computed(
-  () => web3ProvidersStore.balances.depositToken?.toString() || '0',
+const rewardsTokenBalance = computed(() =>
+  trimStringNumber(
+    BN.fromRaw(web3ProvidersStore.balances.rewardsToken?.toString() || '0')
+      .div(BN.fromRaw(10).pow(18))
+      .toString(),
+  ),
 )
 
 const validationRules = computed(() => ({
   address: { required, address },
   amount: {
     minEther: minEther(parseUnits(MIN_DELEGATION_AMOUNT, 'ether')),
-    maxEther: maxEther(depositTokenBalance.value),
+    maxEther: maxEther(rewardsTokenBalance.value),
   },
 }))
 
@@ -130,14 +154,30 @@ const subnetContract = computed(() =>
   ),
 )
 
-const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
-  useFormValidation(form, validationRules)
+formValidationData.value = useFormValidation(form, validationRules)
 
 const submit = async (): Promise<void> => {
-  if (!isFormValid()) return
+  if (!formValidationData.value.isFormValid()) return
   isSubmitting.value = true
 
   try {
+    const allowance =
+      await web3ProvidersStore.rewardsContract.signerBased.value.allowance(
+        web3ProvidersStore.address,
+        form.address,
+      )
+
+    if (allowance.lt(parseUnits(rewardsTokenBalance.value, 'ether'))) {
+      const contract = web3ProvidersStore.rewardsContract.signerBased.value
+
+      const allowanceTx = await contract.increaseAllowance(
+        form.address,
+        parseUnits(rewardsTokenBalance.value, 'ether'),
+      )
+
+      await allowanceTx.wait()
+    }
+
     const tx = await subnetContract.value.signerBased.value.stake(
       parseUnits(form.amount, 'ether'),
     )
@@ -180,14 +220,21 @@ const clearFields = () => {
 }
 
 const inputMaxTokensAmount = () => {
-  form.amount = depositTokenBalance.value
+  form.amount = rewardsTokenBalance.value
 }
 
-const init = () => {
+const init = async () => {
   if (props.delegateAddress) {
     form.address = props.delegateAddress
   }
 }
+
+watch(
+  () => web3ProvidersStore.balances.rewardsToken,
+  () => {
+    formValidationData.value = useFormValidation(form, validationRules)
+  },
+)
 
 init()
 </script>
