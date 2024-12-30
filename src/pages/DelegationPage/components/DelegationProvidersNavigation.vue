@@ -75,7 +75,7 @@ const changeSorting = (order: SORTING_ORDER, type: DELEGATES_SORTING_TYPES) => {
   grid-template-columns:
     minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
     toRem(80);
-  gap: toRem(32);
+  gap: toRem(16);
   padding: toRem(8) toRem(32);
 }
 

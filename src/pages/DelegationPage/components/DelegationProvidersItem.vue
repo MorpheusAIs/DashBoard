@@ -177,13 +177,14 @@ const delegate = () => {
   grid-template-columns:
     minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
     toRem(80);
-  gap: toRem(36);
+  gap: toRem(16);
 }
 
 .delegation-providers-item__col {
   display: flex;
   gap: toRem(24);
   align-items: center;
+  justify-content: center;
 
   &--username {
     flex-direction: column;
