@@ -57,9 +57,19 @@ export function useContract<K extends ContractFactoryKey = ContractFactoryKey>(
       ) as Contract<K>
     }
 
+    if (unrefProvider instanceof providers.Web3Provider) {
+      return _factoryClass.connect(
+        unrefContractAddress,
+        unrefProvider.getSigner(
+          (unrefProvider.provider as { selectedAddress: string })
+            .selectedAddress,
+        ),
+      ) as Contract<K>
+    }
+
     return _factoryClass.connect(
       unrefContractAddress,
-      unrefProvider.getSigner(provider.provider.selectedAddress as string),
+      unrefProvider.getSigner(),
     ) as Contract<K>
   })
 
