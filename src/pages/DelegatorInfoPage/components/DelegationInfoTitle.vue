@@ -14,10 +14,10 @@
             'delegation-info-title__address--username': username,
           }"
         >
-          {{ abbrCenter(route.query.userAddress, CUT_LENGTH) }}
+          {{ abbrCenter(route.query.subnetAddress, CUT_LENGTH) }}
         </h3>
         <copy-button
-          :content="route.query.userAddress"
+          :content="route.query.subnetAddress"
           :message="$t('delegation-info-title.coppied-text')"
         />
       </div>
@@ -42,7 +42,9 @@ const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
 const isYou = computed(
-  () => route.query.userAddress === web3ProvidersStore.address,
+  () =>
+    String(route.query.subnetAddress).toLowerCase() ===
+    web3ProvidersStore.address.toLowerCase(),
 )
 
 const infoText = computed(() => {
@@ -52,7 +54,9 @@ const infoText = computed(() => {
   return ''
 })
 
-const username = computed(() => MOCKED_USERNAMES[route.query.userAddress] ?? '')
+const username = computed(
+  () => MOCKED_USERNAMES[route.query.subnetAddress] ?? '',
+)
 </script>
 
 <style scoped lang="scss">

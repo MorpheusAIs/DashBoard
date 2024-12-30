@@ -41,6 +41,17 @@
           :disabled="isSubmitting"
           @blur="touchField('address')"
         />
+        <datetime-field
+          v-model="form.deregistrationDate"
+          class="delegate-subnet-modal__input-field"
+          position="top"
+          :placeholder="
+            $t('delegate-subnet-modal.deregistration-date-placeholder')
+          "
+          :error-message="getFieldErrorMessage('deregistrationDate')"
+          :disabled="isSubmitting"
+          @blur="touchField('deregistrationDate')"
+        />
       </div>
       <div class="delegate-subnet-modal__buttons-wrp">
         <app-button
@@ -62,13 +73,15 @@
 
 <script lang="ts" setup>
 import { AppButton, BasicModal } from '@/common'
+import { InputField, DatetimeField } from '@/fields'
+
 import { computed, reactive, ref } from 'vue'
 import { config } from '@config'
-import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required, maxValue, minValue } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import { BigNumber } from '@/utils'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -78,9 +91,11 @@ const props = withDefaults(
   defineProps<{
     isShown: boolean
     isCloseByClickOutside?: boolean
+    delegateAddress?: string
   }>(),
   {
     isCloseByClickOutside: true,
+    delegateAddress: '',
   },
 )
 
@@ -89,13 +104,13 @@ const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isSubmitting = ref(false)
-const depositTokenBalance = ref('0')
 
 const form = reactive({
   name: '',
   link: '',
   fee: '',
   address: '',
+  deregistrationDate: '',
 })
 
 const validationRules = computed(() => ({
@@ -103,6 +118,10 @@ const validationRules = computed(() => ({
   link: { required },
   fee: { required, minValue: minValue(0), maxValue: maxValue(100) },
   address: { required, address },
+  deregistrationDate: {
+    required,
+    minValue: minValue(new Date().getTime() / 1000),
+  },
 }))
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -113,11 +132,20 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    // TODO: ADD FUNCTIONALITY
-    // const tx = await
+    /* eslint-disable */
+    const tx =
+      await web3ProvidersStore.subnetFactoryContract.signerBased.value.deployProxy(
+        form.address,
+        BigNumber.from(form.fee).mul(BigNumber.from(10).pow(23)).toString(),
+        form.name,
+        form.link,
+        form.deregistrationDate,
+      )
+
+    /* eslint-enable */
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
       tx.hash,
     )
 
@@ -128,15 +156,14 @@ const submit = async (): Promise<void> => {
 
     closeModal()
 
-    // TODO: ADD FUNCTIONALITY
-    // await tx.wait()
+    await tx.wait()
 
     bus.emit(
       BUS_EVENTS.success,
       t('delegate-subnet-modal.success-message', { explorerTxUrl }),
     )
 
-    bus.emit(BUS_EVENTS.changedCurrentUserRefReward)
+    bus.emit(BUS_EVENTS.changedDelegation)
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -151,19 +178,14 @@ const closeModal = (): void => {
 
 const clearFields = () => {
   form.address = ''
-  depositTokenBalance.value = '0'
 }
 
-const init = async () => {
+const init = () => {
   if (props.delegateAddress) {
     form.address = props.delegateAddress
   }
 
-  const amount =
-    await web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
-      web3ProvidersStore.address,
-    )
-  depositTokenBalance.value = amount.toString()
+  form.address = web3ProvidersStore.address
 }
 
 init()

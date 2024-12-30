@@ -14,20 +14,20 @@
     <div class="delegation-providers-item__content">
       <div
         class="delegation-providers-item__col"
-        :class="{ 'delegation-providers-item__col--username': username }"
+        :class="{ 'delegation-providers-item__col--username': user.name }"
       >
-        <span v-if="username" class="delegation-providers-item__row-name">
-          {{ username }}
-
+        <span v-if="user.name" class="delegation-providers-item__row-name">
           <span v-if="isYou" class="delegation-providers-item__row-you">{{
             $t('delegation-providers-item.you-text')
           }}</span>
+
+          {{ user.name }}
         </span>
         <span class="delegation-providers-item__row-address">
-          {{ abbrCenter(user.address) }}
+          {{ abbrCenter(user.id) }}
 
           <span
-            v-if="isYou && !username"
+            v-if="isYou && !user.name"
             class="delegation-providers-item__row-you"
           >
             {{ $t('delegation-providers-item.you-text') }}
@@ -36,18 +36,20 @@
       </div>
       <div class="delegation-providers-item__col">
         <span class="delegation-providers-item__text">
-          {{ user.networkFee }}
+          {{ fee }}
         </span>
       </div>
       <div class="delegation-providers-item__col">
         <span class="delegation-providers-item__text">
-          {{ user.tokensDelegated }}
+          {{ totalStaked }}
         </span>
       </div>
       <div class="delegation-providers-item__col">
         <span class="delegation-providers-item__text">
-          {{ user.tokensClaimed }}
+          {{ totalClaimed }}
         </span>
+      </div>
+      <div class="delegation-providers-item__col">
         <app-button
           v-if="isDelegateButtonShown && !isYou"
           class="delegation-providers-item__stake-button"
@@ -60,7 +62,7 @@
     </div>
     <delegate-tokens-modal
       v-model:is-shown="isDelegateModalShown"
-      :delegate-address="user.address"
+      :delegate-address="user.id"
     />
   </app-button>
 </template>
@@ -69,19 +71,16 @@
 import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
 
 import { computed, ref } from 'vue'
-import { DelegationUser } from '@/types'
+import { SubnetItem } from '@/types'
 import { AppButton } from '@/common'
-import { abbrCenter } from '@/helpers'
+import { abbrCenter, trimStringNumber } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter } from 'vue-router'
-
-const MOCKED_USERNAMES = {
-  '0x9f5b9db875AAaf47D6bAD805CabC7D8E15e75982': 'Sorizen',
-}
+import { BN } from '@distributedlab/tools'
 
 const props = defineProps<{
-  user: DelegationUser
+  user: SubnetItem
   secondary?: boolean
   tertiary?: boolean
 }>()
@@ -91,8 +90,26 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const isDelegateButtonShown = ref(false)
 const isDelegateModalShown = ref(false)
 
-const username = computed(() => MOCKED_USERNAMES[props.user.address] ?? '')
-const isYou = computed(() => props.user.address === web3ProvidersStore.address)
+const isYou = computed(
+  () =>
+    props.user.owner.toLowerCase() === web3ProvidersStore.address.toLowerCase(),
+)
+const fee = computed(
+  () =>
+    trimStringNumber(
+      BN.fromRaw(props.user.fee).div(BN.fromRaw(10).pow(23)).toString(),
+    ) + '%',
+)
+const totalStaked = computed(() =>
+  trimStringNumber(
+    BN.fromRaw(props.user.totalStaked).div(BN.fromRaw(10).pow(18)).toString(),
+  ),
+)
+const totalClaimed = computed(() =>
+  trimStringNumber(
+    BN.fromRaw(props.user.totalClaimed).div(BN.fromRaw(10).pow(18)).toString(),
+  ),
+)
 
 const showDelegateButton = () => {
   isDelegateButtonShown.value = true
@@ -105,7 +122,7 @@ const hideDelegateButton = () => {
 const goToDelegatorPage = () => {
   router.push({
     name: ROUTE_NAMES.appDelegatorInfo,
-    query: { userAddress: props.user.address },
+    query: { subnetAddress: props.user.id },
   })
 }
 
@@ -117,7 +134,7 @@ const delegate = () => {
 <style scoped lang="scss">
 .delegation-providers-item {
   width: 100%;
-  height: toRem(80);
+  min-height: toRem(80);
   padding: toRem(16) toRem(32);
   border: toRem(1) solid;
   border-image-slice: 1;
@@ -157,10 +174,9 @@ const delegate = () => {
 .delegation-providers-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(toRem(100), 1fr)) minmax(
-      toRem(140),
-      1fr
-    );
+  grid-template-columns:
+    minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
+    toRem(80);
   gap: toRem(36);
 }
 
@@ -185,6 +201,9 @@ const delegate = () => {
 .delegation-providers-item__row-name {
   font-weight: 600;
   transition: color 0.2s ease-in-out;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
 
   .delegation-providers-item:hover &,
   .delegation-providers-item:active &,

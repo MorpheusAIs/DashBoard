@@ -16,7 +16,7 @@
           <template v-else>
             <div class="delegation-providers-list__users">
               <delegation-providers-item
-                v-for="(user, idx) in usersList"
+                v-for="(user, idx) in filteredSubnets"
                 :key="idx"
                 :user="user"
               />
@@ -27,70 +27,96 @@
             >
               <pagination
                 v-model:current-page="currentPage"
-                :total-items="refsCount"
+                :total-items="filteredSubnets.length"
+                :page-limit="DEFAULT_PAGE_LIMIT"
               />
             </div>
           </template>
         </template>
-        <loader v-else class="delegation-providers-list__system-message" />
+        <loader v-else class="delegation-providers-list__loader" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ErrorMessage, Loader, Pagination } from '@/common'
-import { computed, ref, watch } from 'vue'
-import { SORTING_ORDER } from '@/enums'
-import { DelegationUser } from '@/types'
-import { DEFAULT_PAGE_LIMIT } from '@/const'
-import { ErrorHandler } from '@/helpers'
 import DelegationProvidersItem from './DelegationProvidersItem.vue'
 
-const HARDCODED_LIST: DelegationUser[] = [
-  {
-    address: '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9',
-    tokensDelegated: '1000',
-    tokensClaimed: '500',
-    networkFee: '1.9719%',
-  },
-  {
-    address: '0x8ED80CCF20F1E284eb56F2Ea225636F1aAC647Ce',
-    tokensDelegated: '1200',
-    tokensClaimed: '500',
-    networkFee: '1.9719%',
-  },
-  {
-    address: '0xAbCA5f27ee9249669039612b6119aEB154acaC97',
-    tokensDelegated: '1300',
-    tokensClaimed: '500',
-    networkFee: '1.9719%',
-  },
-]
+import { ErrorMessage, Loader, Pagination } from '@/common'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
+import { SubnetItem } from '@/types'
+import { DEFAULT_PAGE_LIMIT } from '@/const'
+import { bus, BUS_EVENTS, ErrorHandler, fetchSubnets } from '@/helpers'
+import { useWeb3ProvidersStore } from '@/store'
+
+const props = defineProps<{
+  filteredIds: string[]
+  sortingOrder: SORTING_ORDER
+  sortingType: DELEGATES_SORTING_TYPES
+}>()
+
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const currentPage = ref(1)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-const sortingOrder = ref(SORTING_ORDER.none)
-const usersList = ref<DelegationUser[]>(HARDCODED_LIST)
+const subnetsList = ref<SubnetItem[]>([])
+
+const filteredSubnets = computed(() =>
+  subnetsList.value.filter(subnet => !props.filteredIds.includes(subnet.id)),
+)
 
 const isPaginationShown = computed(
-  () => usersList.value.length > DEFAULT_PAGE_LIMIT,
+  () => subnetsList.value.length > DEFAULT_PAGE_LIMIT,
 )
 
 const loadPage = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
+
   try {
-    await new Promise(resolve => resolve())
+    subnetsList.value = []
+
+    const data = await fetchSubnets(
+      web3ProvidersStore.networkId,
+      web3ProvidersStore.address,
+      {
+        ...(props.sortingOrder !== SORTING_ORDER.none && {
+          order: props.sortingOrder,
+        }),
+        ...(props.sortingType !== DELEGATES_SORTING_TYPES.none && {
+          type: props.sortingType,
+        }),
+        skip: (currentPage.value - 1) * DEFAULT_PAGE_LIMIT,
+        first: DEFAULT_PAGE_LIMIT,
+      },
+    )
+
+    subnetsList.value = data.subnets || []
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.process(e)
   }
+
   isLoaded.value = true
 }
 
-watch([currentPage, sortingOrder], loadPage, { immediate: true })
+onMounted(() => {
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, loadPage)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.changedCurrentUserRefReward, () => [])
+})
+
+watch(
+  () => [currentPage.value, props.sortingOrder, props.sortingType],
+  loadPage,
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <style scoped lang="scss">

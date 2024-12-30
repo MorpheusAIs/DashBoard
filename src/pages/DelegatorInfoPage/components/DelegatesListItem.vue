@@ -6,33 +6,23 @@
     }"
   >
     <div class="delegates-list-item__content">
-      <div
-        class="delegates-list-item__col"
-        :class="{ 'delegates-list-item__col--username': username }"
-      >
-        <span v-if="username" class="delegates-list-item__row-name">
-          {{ username }}
-
-          <span v-if="isYou" class="delegates-list-item__row-you">{{
-            $t('delegates-list-item.you-text')
-          }}</span>
-        </span>
-        <span class="delegates-list-item__row-address">
+      <div class="delegates-list-item__col">
+        <span class="delegates-list-item__row-address" :title="user.address">
           {{ abbrCenter(user.address) }}
 
-          <span v-if="isYou && !username" class="delegates-list-item__row-you">
+          <span v-if="isYou" class="delegates-list-item__row-you">
             {{ $t('delegates-list-item.you-text') }}
           </span>
         </span>
       </div>
       <div class="delegates-list-item__col">
         <span class="delegates-list-item__text">
-          {{ user.tokensDelegated }}
+          {{ staked }}
         </span>
       </div>
       <div class="delegates-list-item__col">
         <span class="delegates-list-item__text">
-          {{ user.tokensClaimed }}
+          {{ claimed }}
         </span>
       </div>
     </div>
@@ -41,22 +31,32 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DelegatesUser } from '@/types'
-import { abbrCenter } from '@/helpers'
+import { SubnetProvider } from '@/types'
+import { abbrCenter, trimStringNumber } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-
-const MOCKED_USERNAMES = {
-  '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9': 'Sorizen',
-}
+import { BN } from '@distributedlab/tools'
 
 const props = defineProps<{
-  user: DelegatesUser
+  user: SubnetProvider
 }>()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const username = computed(() => MOCKED_USERNAMES[props.user.address] ?? '')
-const isYou = computed(() => props.user.address === web3ProvidersStore.address)
+const isYou = computed(
+  () =>
+    props.user.address.toLowerCase() ===
+    web3ProvidersStore.address.toLowerCase(),
+)
+const staked = computed(() =>
+  trimStringNumber(
+    BN.fromRaw(props.user.staked).div(BN.fromRaw(10).pow(18)).toString(),
+  ),
+)
+const claimed = computed(() =>
+  trimStringNumber(
+    BN.fromRaw(props.user.claimed).div(BN.fromRaw(10).pow(18)).toString(),
+  ),
+)
 </script>
 
 <style scoped lang="scss">
@@ -105,25 +105,8 @@ const isYou = computed(() => props.user.address === web3ProvidersStore.address)
   align-items: center;
   justify-content: flex-end;
 
-  &--username {
-    flex-direction: column;
-    gap: toRem(4);
-    align-items: flex-start;
-  }
-
   &:first-child {
     justify-content: flex-start;
-  }
-}
-
-.delegates-list-item__row-name {
-  font-weight: 600;
-  transition: color 0.2s ease-in-out;
-
-  .delegates-list-item:hover &,
-  .delegates-list-item:active &,
-  .delegates-list-item:focus & {
-    color: var(--primary-main);
   }
 }
 

@@ -81,38 +81,23 @@ import {
   Pagination,
   NoDataMessage,
 } from '@/common'
-import { DelegatesUser } from '@/types'
+import { SubnetProvider } from '@/types'
 import { computed, ref, watch } from 'vue'
-import { SORTING_ORDER } from '@/enums'
+import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
-import { ErrorHandler } from '@/helpers'
+import { ErrorHandler, fetchProviders } from '@/helpers'
 import { useRoute } from 'vue-router'
-
-const HARDCODED_LIST: DelegatesUser[] = [
-  {
-    address: '0x9f5b9db875AAaf47D6bAD805CabC7D8E15e75982',
-    tokensDelegated: '10.22',
-    tokensClaimed: '100',
-  },
-  {
-    address: '0x8ED80CCF20F1E284eb56F2Ea225636F1aAC647Ce',
-    tokensDelegated: '10.22',
-    tokensClaimed: '100',
-  },
-  {
-    address: '0xAbCA5f27ee9249669039612b6119aEB154acaC97',
-    tokensDelegated: '10.22',
-    tokensClaimed: '100',
-  },
-]
+import { useWeb3ProvidersStore } from '@/store'
 
 const route = useRoute()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const currentPage = ref(1)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const sortingOrder = ref(SORTING_ORDER.none)
-const usersList = ref<DelegatesUser[]>(HARDCODED_LIST)
+const sortingType = ref(DELEGATES_SORTING_TYPES.none)
+const usersList = ref<SubnetProvider[]>([])
 const isDelegateModalOpened = ref(false)
 
 const isPaginationShown = computed(
@@ -123,7 +108,22 @@ const loadPage = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
   try {
-    await new Promise(resolve => resolve())
+    const data = await fetchProviders(
+      web3ProvidersStore.networkId,
+      String(route.query.subnetAddress),
+      {
+        ...(sortingOrder.value !== SORTING_ORDER.none && {
+          order: sortingOrder.value,
+        }),
+        ...(sortingType.value !== DELEGATES_SORTING_TYPES.none && {
+          type: sortingType.value,
+        }),
+        skip: (currentPage.value - 1) * DEFAULT_PAGE_LIMIT,
+        first: DEFAULT_PAGE_LIMIT,
+      },
+    )
+
+    usersList.value = data.subnetUsers || []
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.process(e)
@@ -135,7 +135,21 @@ const openDelegateModal = () => {
   isDelegateModalOpened.value = true
 }
 
-const delegateAddress = computed(() => String(route.query.userAddress))
+const chooseSortingOrder = (
+  order: SORTING_ORDER,
+  type: DELEGATES_SORTING_TYPES,
+) => {
+  if (sortingOrder.value === order && sortingType.value === type) {
+    sortingOrder.value = SORTING_ORDER.none
+    sortingType.value = DELEGATES_SORTING_TYPES.none
+    return
+  }
+
+  sortingOrder.value = order
+  sortingType.value = type
+}
+
+const delegateAddress = computed(() => String(route.query.subnetAddress))
 
 watch([currentPage, sortingOrder], loadPage, { immediate: true })
 </script>

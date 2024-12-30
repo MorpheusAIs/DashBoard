@@ -7,24 +7,32 @@
     </div>
     <div class="delegates-list-header__cel">
       <table-sorting-header-column
-        :sorting="sorting"
+        :sorting="
+          sortingType === DELEGATES_SORTING_TYPES.staked
+            ? sorting
+            : SORTING_ORDER.none
+        "
         :text="
           $t('delegates-list-header.delegated-text', {
             asset: web3ProvidersStore.rewardsTokenSymbol,
           })
         "
-        @sort="emit('sort')"
+        @sort="e => changeSorting(e, DELEGATES_SORTING_TYPES.staked)"
       />
     </div>
     <div class="delegates-list-header__cel">
       <table-sorting-header-column
-        :sorting="sorting"
+        :sorting="
+          sortingType === DELEGATES_SORTING_TYPES.claimed
+            ? sorting
+            : SORTING_ORDER.none
+        "
         :text="
           $t('delegates-list-header.claimed-text', {
             asset: web3ProvidersStore.rewardsTokenSymbol,
           })
         "
-        @sort="emit('sort')"
+        @sort="e => changeSorting(e, DELEGATES_SORTING_TYPES.claimed)"
       />
     </div>
   </div>
@@ -43,8 +51,12 @@ defineProps<{
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const emit = defineEmits<{
-  (e: 'sort', SORTING_ORDER): void
+  (e: 'sort', order: SORTING_ORDER, type: DELEGATES_SORTING_TYPES): void
 }>()
+
+const changeSorting = (order: SORTING_ORDER, type: DELEGATES_SORTING_TYPES) => {
+  emit('sort', order, type)
+}
 </script>
 
 <style scoped lang="scss">

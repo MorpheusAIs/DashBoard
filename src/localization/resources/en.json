@@ -734,6 +734,7 @@
     "fee-placeholder": "Set a profit fee for the Subnet",
     "fee-note": "Fee is charged from Stakers when rewards are claimed",
     "address-placeholder": "Specify the address to which the fee will be sent",
+    "deregistration-date-placeholder": "Specify the date of deregistration",
     "confirm-button":  "Confirm",
     "cancel-button": "Cancel",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",

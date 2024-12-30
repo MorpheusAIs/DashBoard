@@ -23,6 +23,7 @@ export enum CONTRACT_IDS {
   endpoint = 'endpoint',
   l1Factory = 'l1-factory',
   l2Factory = 'l2-factory',
+  subnetFactory = 'subnet-factory',
 }
 
 export enum NETWORK_IDS {
@@ -85,6 +86,8 @@ export const config = {
     .VITE_APP_L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
   L2_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
+  SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS,
   TESTNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_TESTNET_GRAPHQL_API_URL,
 
   // Mainnet
@@ -100,6 +103,8 @@ export const config = {
     .VITE_APP_L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
   L2_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
+  SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS,
   MAINNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_MAINNET_GRAPHQL_API_URL,
 
   metadata: {} as Metadata,
@@ -162,6 +167,8 @@ config.networksMap = {
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l1Factory]: config.L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.subnetFactory]:
+        config.SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS,
     },
   },
   [NETWORK_IDS.testnet]: {
@@ -192,6 +199,8 @@ config.networksMap = {
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l1Factory]: config.L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.subnetFactory]:
+        config.SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS,
     },
   },
 }

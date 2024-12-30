@@ -12,6 +12,8 @@ export type { L2MessageReceiver } from "./L2MessageReceiver";
 export type { L2TokenReceiver } from "./L2TokenReceiver";
 export type { MOR1967 } from "./MOR1967";
 export type { MOR20 } from "./MOR20";
+export type { Subnet } from "./Subnet";
+export type { SubnetFactory } from "./SubnetFactory";
 export type { UniswapV2Factory } from "./UniswapV2Factory";
 export type { UniswapV2Pair } from "./UniswapV2Pair";
 export type { UniswapV2Router } from "./UniswapV2Router";
@@ -27,6 +29,8 @@ export { L2MessageReceiver__factory } from "./factories/L2MessageReceiver__facto
 export { L2TokenReceiver__factory } from "./factories/L2TokenReceiver__factory";
 export { MOR1967__factory } from "./factories/MOR1967__factory";
 export { MOR20__factory } from "./factories/MOR20__factory";
+export { Subnet__factory } from "./factories/Subnet__factory";
+export { SubnetFactory__factory } from "./factories/SubnetFactory__factory";
 export { UniswapV2Factory__factory } from "./factories/UniswapV2Factory__factory";
 export { UniswapV2Pair__factory } from "./factories/UniswapV2Pair__factory";
 export { UniswapV2Router__factory } from "./factories/UniswapV2Router__factory";

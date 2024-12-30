@@ -69,14 +69,16 @@
 
 <script lang="ts" setup>
 import { AppButton, BasicModal } from '@/common'
+import { InputField } from '@/fields'
+
 import { computed, reactive, ref } from 'vue'
 import { config } from '@config'
-import { InputField } from '@/fields'
-import { useFormValidation, useI18n } from '@/composables'
+import { useContract, useFormValidation, useI18n } from '@/composables'
 import { address, required, minEther, maxEther } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { parseUnits } from '@/utils'
+import { useRoute } from 'vue-router'
 
 const MIN_DELEGATION_AMOUNT = '0.000001'
 
@@ -97,16 +99,20 @@ const props = withDefaults(
 )
 
 const { t } = useI18n()
+const route = useRoute()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isSubmitting = ref(false)
-const depositTokenBalance = ref('0')
 
 const form = reactive({
   address: '',
   amount: '',
 })
+
+const depositTokenBalance = computed(
+  () => web3ProvidersStore.balances.depositToken?.toString() || '0',
+)
 
 const validationRules = computed(() => ({
   address: { required, address },
@@ -116,6 +122,14 @@ const validationRules = computed(() => ({
   },
 }))
 
+const subnetContract = computed(() =>
+  useContract(
+    'Subnet__factory',
+    route.query.subnetAddress as string,
+    web3ProvidersStore.l2Provider,
+  ),
+)
+
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, validationRules)
 
@@ -124,8 +138,9 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    // TODO: ADD FUNCTIONALITY
-    // const tx = await
+    const tx = await subnetContract.value.signerBased.value.stake(
+      parseUnits(form.amount, 'ether'),
+    )
 
     const explorerTxUrl = getEthExplorerTxUrl(
       config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
@@ -139,15 +154,14 @@ const submit = async (): Promise<void> => {
 
     closeModal()
 
-    // TODO: ADD FUNCTIONALITY
-    // await tx.wait()
+    await tx.wait()
 
     bus.emit(
       BUS_EVENTS.success,
       t('delegate-tokens-modal.success-message', { explorerTxUrl }),
     )
 
-    bus.emit(BUS_EVENTS.changedCurrentUserRefReward)
+    bus.emit(BUS_EVENTS.changedDelegation)
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -163,23 +177,16 @@ const closeModal = (): void => {
 const clearFields = () => {
   form.address = props.delegateAddress || ''
   form.amount = ''
-  depositTokenBalance.value = '0'
 }
 
 const inputMaxTokensAmount = () => {
   form.amount = depositTokenBalance.value
 }
 
-const init = async () => {
+const init = () => {
   if (props.delegateAddress) {
     form.address = props.delegateAddress
   }
-
-  const amount =
-    await web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
-      web3ProvidersStore.address,
-    )
-  depositTokenBalance.value = amount.toString()
 }
 
 init()
