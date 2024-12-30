@@ -184,7 +184,7 @@ const delegate = () => {
   display: flex;
   gap: toRem(24);
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 
   &--username {
     flex-direction: column;
