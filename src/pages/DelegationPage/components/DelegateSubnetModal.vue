@@ -132,6 +132,10 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+    )
+
     /* eslint-disable */
     const tx =
       await web3ProvidersStore.subnetFactoryContract.signerBased.value.deployProxy(
