@@ -14,13 +14,14 @@
     <div
       class="delegation-providers-item__content"
       :class="{
-        'delegation-providers-item__content--with-button':
-          isDelegateButtonShown,
+        'delegation-providers-item__content--with-btn': isDelegateButtonShown,
       }"
     >
       <div
         class="delegation-providers-item__col"
-        :class="{ 'delegation-providers-item__col--username': user.name }"
+        :class="{
+          'delegation-providers-item__col--username': user.name,
+        }"
       >
         <span v-if="user.name" class="delegation-providers-item__row-name">
           <span v-if="isYou" class="delegation-providers-item__row-you">{{
@@ -55,15 +56,21 @@
           {{ totalClaimed }}
         </span>
       </div>
-      <div v-if="isDelegateButtonShown" class="delegation-providers-item__col">
-        <app-button
-          class="delegation-providers-item__stake-button"
-          size="none"
-          color="secondary"
-          :text="$t('delegation-providers-item.stake-button')"
-          @click.stop="delegate"
-        />
-      </div>
+    </div>
+    <div
+      class="delegation-providers-item__stake-button-wrp"
+      :class="{
+        'delegation-providers-item__stake-button-wrp--hidden':
+          !isDelegateButtonShown,
+      }"
+    >
+      <app-button
+        class="delegation-providers-item__stake-button"
+        size="none"
+        color="secondary"
+        :text="$t('delegation-providers-item.stake-button')"
+        @click.stop="delegate"
+      />
     </div>
     <delegate-tokens-modal
       v-model:is-shown="isDelegateModalShown"
@@ -117,7 +124,7 @@ const totalClaimed = computed(() =>
 )
 
 const showDelegateButton = () => {
-  isDelegateButtonShown.value = !isYou.value
+  isDelegateButtonShown.value = true
 }
 
 const hideDelegateButton = () => {
@@ -141,6 +148,7 @@ const delegate = () => {
   width: 100%;
   min-height: toRem(80);
   padding: toRem(16) toRem(32);
+  position: relative;
   border: toRem(1) solid;
   border-image-slice: 1;
   border-image-source: var(--card-border-gradient-reversed);
@@ -184,11 +192,10 @@ const delegate = () => {
       minmax(toRem(80), 1fr)
     );
   gap: toRem(16);
+  transition: 0.1s;
 
-  &--with-button {
-    grid-template-columns:
-      minmax(toRem(100), 1fr) repeat(3, minmax(toRem(80), 1fr))
-      minmax(toRem(70), 1fr);
+  &--with-btn {
+    margin-right: toRem(112); // 80 + 32
   }
 }
 
@@ -201,6 +208,17 @@ const delegate = () => {
     flex-direction: column;
     gap: toRem(4);
     align-items: flex-start;
+  }
+}
+
+.delegation-providers-item__stake-button-wrp {
+  position: absolute;
+  right: toRem(32);
+  top: 50%;
+  transform: translateY(-50%);
+
+  &--hidden {
+    display: none;
   }
 }
 

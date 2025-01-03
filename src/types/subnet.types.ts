@@ -4,6 +4,7 @@ export type SubnetCounter = {
 
 export type UsersCounter = {
   totalUsers: string
+  fee: string
 }
 
 export type SubnetItem = {

@@ -4,20 +4,20 @@
       {{ infoText }}
     </div>
     <div class="delegation-info-title__user-wrapper">
-      <h3 v-if="username" class="delegation-info-title__username">
-        {{ username }}
+      <h3 v-if="subnet?.name" class="delegation-info-title__username">
+        {{ subnet?.name }}
       </h3>
       <div class="delegation-info-title__address-wrapper">
         <h3
           class="delegation-info-title__address"
           :class="{
-            'delegation-info-title__address--username': username,
+            'delegation-info-title__address--username': subnet?.name,
           }"
         >
-          {{ abbrCenter(route.query.subnetAddress, CUT_LENGTH) }}
+          {{ abbrCenter(String(route.query.subnetAddress), CUT_LENGTH) }}
         </h3>
         <copy-button
-          :content="route.query.subnetAddress"
+          :content="String(route.query.subnetAddress)"
           :message="$t('delegation-info-title.coppied-text')"
         />
       </div>
@@ -27,23 +27,22 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { useI18n } from '@/composables'
-import { abbrCenter } from '@/helpers'
+import { abbrCenter, fetchSubnet } from '@/helpers'
 import { CopyButton } from '@/common'
+import { SubnetItem } from '@/types'
 
 const CUT_LENGTH = 5
-const MOCKED_USERNAMES = {
-  '0xbD66AD8376415edD7F4eE0fDE32E759A763989E9': 'Sorizen',
-}
 
 const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
+const subnet = ref<SubnetItem>()
 const isYou = computed(
   () =>
-    String(route.query.subnetAddress).toLowerCase() ===
+    subnet.value?.owner.toLowerCase() ===
     web3ProvidersStore.address.toLowerCase(),
 )
 
@@ -54,9 +53,16 @@ const infoText = computed(() => {
   return ''
 })
 
-const username = computed(
-  () => MOCKED_USERNAMES[route.query.subnetAddress] ?? '',
-)
+const init = async () => {
+  subnet.value = (
+    await fetchSubnet(
+      web3ProvidersStore.networkId,
+      route.query.subnetAddress as string,
+    )
+  ).subnets[0]
+}
+
+init()
 </script>
 
 <style scoped lang="scss">

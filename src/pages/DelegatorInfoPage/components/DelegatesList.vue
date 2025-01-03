@@ -45,6 +45,7 @@
                 <delegates-list-item
                   v-for="(user, idx) in usersList"
                   :key="idx"
+                  :fee="fee"
                   :user="user"
                 />
               </div>
@@ -101,6 +102,7 @@ const sortingType = ref(DELEGATES_SORTING_TYPES.none)
 const usersList = ref<SubnetProvider[]>([])
 const isDelegateModalOpened = ref(false)
 const totalUsers = ref(0)
+const fee = ref('0')
 
 const isPaginationShown = computed(() => totalUsers.value > DEFAULT_PAGE_LIMIT)
 
@@ -116,7 +118,12 @@ const loadPage = async () => {
           order: sortingOrder.value,
         }),
         ...(sortingType.value !== DELEGATES_SORTING_TYPES.none && {
-          type: sortingType.value,
+          type:
+            // fee is not actual sorting type here
+            // so we need to change it to claimed
+            sortingType.value === DELEGATES_SORTING_TYPES.fee
+              ? DELEGATES_SORTING_TYPES.claimed
+              : sortingType.value,
         }),
         skip: (currentPage.value - 1) * DEFAULT_PAGE_LIMIT,
         first: DEFAULT_PAGE_LIMIT,
@@ -125,6 +132,7 @@ const loadPage = async () => {
 
     usersList.value = data.subnetUsers || []
     totalUsers.value = Number(data.subnets[0].totalUsers) || 0
+    fee.value = data.subnets[0].fee
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.process(e)

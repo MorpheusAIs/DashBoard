@@ -35,6 +35,21 @@
         @sort="e => changeSorting(e, DELEGATES_SORTING_TYPES.claimed)"
       />
     </div>
+    <div class="delegates-list-header__cel">
+      <table-sorting-header-column
+        :sorting="
+          sortingType === DELEGATES_SORTING_TYPES.fee
+            ? sorting
+            : SORTING_ORDER.none
+        "
+        :text="
+          $t('delegates-list-header.fee-text', {
+            asset: web3ProvidersStore.rewardsTokenSymbol,
+          })
+        "
+        @sort="e => changeSorting(e, DELEGATES_SORTING_TYPES.fee)"
+      />
+    </div>
   </div>
 </template>
 
@@ -62,7 +77,7 @@ const changeSorting = (order: SORTING_ORDER, type: DELEGATES_SORTING_TYPES) => {
 <style scoped lang="scss">
 .delegates-list-header {
   display: grid;
-  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
   gap: toRem(32);
   padding: toRem(8) toRem(32);
 }

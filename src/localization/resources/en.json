@@ -721,7 +721,7 @@
   "delegate-tokens-modal": {
     "title": "Delegate",
     "delegate-text": "Available to Delegate",
-    "wallet-input-placeholder":  "Enter wallet address",
+    "wallet-input-placeholder":  "Enter subnet address",
     "mor-input-placeholder":  "Enter {asset} amount",
     "confirm-button":  "Confirm",
     "cancel-button": "Cancel",
@@ -769,8 +769,11 @@
     "reward": "Your {asset} Reward",
     "total-claimed": "Total {asset} Claimed",
     "total-staked": "Total {asset} Staked",
+    "total-fee": "Total Fee Charged in {asset}",
     "subnet-fee": "Subnet fee",
-    "claim-button": "Claim"
+    "claim-button": "Claim",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "delegation-providers-list": {
     "error-message": "Something went wrong"
@@ -784,7 +787,8 @@
   "delegates-list-header": {
     "address-text": "Name / Address",
     "delegated-text": "{asset} Delegated",
-    "claimed-text": "{asset} Claimed"
+    "claimed-text": "{asset} Claimed",
+    "fee-text": "Fee Charged"
   },
   "delegates-list-item": {
     "you-text": "you",

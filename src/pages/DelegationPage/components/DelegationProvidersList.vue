@@ -27,7 +27,7 @@
             >
               <pagination
                 v-model:current-page="currentPage"
-                :total-items="totalSubnets"
+                :total-items="paginationItemsLength"
                 :page-limit="DEFAULT_PAGE_LIMIT"
               />
             </div>
@@ -68,8 +68,12 @@ const filteredSubnets = computed(() =>
   subnetsList.value.filter(subnet => !props.filteredIds.includes(subnet.id)),
 )
 
+const paginationItemsLength = computed(
+  () => totalSubnets.value - props.filteredIds.length,
+)
+
 const isPaginationShown = computed(
-  () => totalSubnets.value > DEFAULT_PAGE_LIMIT,
+  () => paginationItemsLength.value > DEFAULT_PAGE_LIMIT,
 )
 
 const loadPage = async () => {
@@ -106,14 +110,21 @@ const loadPage = async () => {
 
 onMounted(() => {
   bus.on(BUS_EVENTS.changedCurrentUserRefReward, loadPage)
+  bus.on(BUS_EVENTS.changedDelegation, loadPage)
 })
 
 onBeforeUnmount(() => {
   bus.off(BUS_EVENTS.changedCurrentUserRefReward, () => [])
+  bus.off(BUS_EVENTS.changedDelegation, () => [])
 })
 
 watch(
-  () => [currentPage.value, props.sortingOrder, props.sortingType],
+  () => [
+    currentPage.value,
+    props.sortingOrder,
+    props.sortingType,
+    web3ProvidersStore.address,
+  ],
   loadPage,
   {
     immediate: true,

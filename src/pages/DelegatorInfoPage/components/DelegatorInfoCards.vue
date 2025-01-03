@@ -15,7 +15,14 @@ import DelegatorInfoCard from './DelegatorInfoCard.vue'
 
 import { useContract, useI18n } from '@/composables'
 import { computed, ref } from 'vue'
-import { ErrorHandler, fetchSubnet, trimStringNumber } from '@/helpers'
+import {
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  fetchSubnet,
+  getEthExplorerTxUrl,
+  trimStringNumber,
+} from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { BN } from '@distributedlab/tools'
 import { DelegationUserCard, SubnetItem } from '@/types'
@@ -60,10 +67,22 @@ const cards = computed<DelegationUserCard[]>(() => [
     amount: totalStaked.value,
   },
   {
+    title: t('delegator-info-cards.total-fee', {
+      asset: web3ProvidersStore.rewardsTokenSymbol,
+    }),
+    amount: totalFees.value,
+  },
+  {
     title: t('delegator-info-cards.subnet-fee'),
     amount: fee.value,
   },
 ])
+
+const getFeeAmount = (amount: string) => {
+  return BN.fromRaw(subnet.value?.fee || 0)
+    .mul(BN.fromRaw(0.1).pow(25))
+    .mul(BN.fromRaw(amount))
+}
 
 const fee = computed(
   () =>
@@ -73,27 +92,33 @@ const fee = computed(
         .toString(),
     ) + '%',
 )
-const totalStaked = computed(() =>
-  trimStringNumber(
+const totalStaked = computed(() => {
+  return trimStringNumber(
     BN.fromRaw(subnet.value?.totalStaked || 0)
       .div(BN.fromRaw(10).pow(18))
       .toString(),
-  ),
-)
-const totalClaimed = computed(() =>
-  trimStringNumber(
-    BN.fromRaw(subnet.value?.totalClaimed || 0)
-      .div(BN.fromRaw(10).pow(18))
-      .toString(),
-  ),
-)
+  )
+})
+const totalClaimed = computed(() => {
+  const totalClaimed = BN.fromRaw(subnet.value?.totalClaimed || 0).div(
+    BN.fromRaw(10).pow(18),
+  )
+  const fee = getFeeAmount(totalClaimed.toString())
+
+  return trimStringNumber(totalClaimed.sub(fee).toString())
+})
+const totalFees = computed(() => {
+  const totalClaimed = BN.fromRaw(subnet.value?.totalClaimed || 0).div(
+    BN.fromRaw(10).pow(18),
+  )
+  const fee = getFeeAmount(totalClaimed.toString())
+
+  return trimStringNumber(fee.toString())
+})
 
 const rewardsShown = computed(() => {
-  const reward = BN.fromRaw(rewards?.value || 0)
-  const fee = BN.fromRaw(subnet.value?.fee || 0)
-    .mul(BN.fromRaw(0.1).pow(25))
-    .mul(reward)
-  // const fee = BN.fromRaw(0)
+  const reward = BN.fromRaw(rewards?.value || 0).div(BN.fromRaw(10).pow(18))
+  const fee = getFeeAmount(reward.toString())
 
   return trimStringNumber(reward.sub(fee).toString())
 })
@@ -112,10 +137,29 @@ const claim = async () => {
       config.networksMap[web3ProvidersStore.networkId].l2.chainId,
     )
 
-    await subnetContract.value.signerBased.value.claim(
+    const tx = await subnetContract.value.signerBased.value.claim(
       web3ProvidersStore.address,
       rewards.value,
     )
+
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      tx.hash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.info,
+      t('delegator-info-cards.tx-sent-message', { explorerTxUrl }),
+    )
+
+    await tx.wait()
+
+    bus.emit(
+      BUS_EVENTS.success,
+      t('delegator-info-cards.success-message', { explorerTxUrl }),
+    )
+
+    bus.emit(BUS_EVENTS.changedCurrentUserRefReward)
   } catch (e) {
     ErrorHandler.process(e)
   }

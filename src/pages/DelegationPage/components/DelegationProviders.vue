@@ -56,8 +56,8 @@ import DelegationProvidersList from './DelegationProvidersList.vue'
 import DelegationProvidersItem from './DelegationProvidersItem.vue'
 
 import { SORTING_ORDER, DELEGATES_SORTING_TYPES } from '@/enums'
-import { computed, ref, watch } from 'vue'
-import { ErrorHandler, fetchOwnSubnets } from '@/helpers'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { bus, BUS_EVENTS, ErrorHandler, fetchOwnSubnets } from '@/helpers'
 import { SubnetItem } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
 
@@ -120,8 +120,22 @@ const init = async () => {
   isLoaded.value = true
 }
 
-watch(() => [sortingOrder.value, sortingType.value], init, {
-  immediate: true,
+watch(
+  () => [sortingOrder.value, sortingType.value, web3ProvidersStore.address],
+  init,
+  {
+    immediate: true,
+  },
+)
+
+onMounted(() => {
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, init)
+  bus.on(BUS_EVENTS.changedDelegation, init)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.changedCurrentUserRefReward, init)
+  bus.off(BUS_EVENTS.changedDelegation, init)
 })
 </script>
 

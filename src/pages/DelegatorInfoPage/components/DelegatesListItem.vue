@@ -25,6 +25,11 @@
           {{ claimed }}
         </span>
       </div>
+      <div class="delegates-list-item__col">
+        <span class="delegates-list-item__text">
+          {{ trimStringNumber(fee.toString()) }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +43,7 @@ import { BN } from '@distributedlab/tools'
 
 const props = defineProps<{
   user: SubnetProvider
+  fee: string
 }>()
 
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -47,16 +53,23 @@ const isYou = computed(
     props.user.address.toLowerCase() ===
     web3ProvidersStore.address.toLowerCase(),
 )
+
+const fee = computed(() => {
+  const claimed = BN.fromRaw(props.user.claimed).div(BN.fromRaw(10).pow(18))
+  return BN.fromRaw(props.fee).div(BN.fromRaw(10).pow(25)).mul(claimed)
+})
+
 const staked = computed(() =>
   trimStringNumber(
     BN.fromRaw(props.user.staked).div(BN.fromRaw(10).pow(18)).toString(),
   ),
 )
-const claimed = computed(() =>
-  trimStringNumber(
-    BN.fromRaw(props.user.claimed).div(BN.fromRaw(10).pow(18)).toString(),
-  ),
-)
+
+const claimed = computed(() => {
+  const claimed = BN.fromRaw(props.user.claimed).div(BN.fromRaw(10).pow(18))
+
+  return trimStringNumber(claimed.sub(fee.value).toString())
+})
 </script>
 
 <style scoped lang="scss">
@@ -94,7 +107,7 @@ const claimed = computed(() =>
 .delegates-list-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(toRem(100), 1fr));
+  grid-template-columns: repeat(4, minmax(toRem(100), 1fr));
   gap: toRem(36);
   align-items: center;
 }

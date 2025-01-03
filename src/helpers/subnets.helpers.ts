@@ -224,6 +224,7 @@ export function _generateProvidersQuery(
         address
       }
       subnets(where: {id: "${subnetId}"}) {
+        fee
         totalUsers
       }
     }
