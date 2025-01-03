@@ -9,6 +9,7 @@ export enum BUS_EVENTS {
   changedPoolData = 'changed-pool-data',
   changedCurrentUserReward = 'changed-current-user-reward',
   changedCurrentUserRefReward = 'changed-current-user-ref-reward',
+  changedDelegation = 'changed-delegation',
 }
 
 export type DefaultBusEventMap = {
@@ -20,6 +21,7 @@ export type DefaultBusEventMap = {
   [BUS_EVENTS.changedPoolData]: unknown
   [BUS_EVENTS.changedCurrentUserReward]: unknown
   [BUS_EVENTS.changedCurrentUserRefReward]: unknown
+  [BUS_EVENTS.changedDelegation]: unknown
 }
 
 export const bus = new EventEmitter<DefaultBusEventMap>()

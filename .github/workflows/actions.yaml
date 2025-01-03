@@ -3,6 +3,7 @@ on:
     branches:
       - "dev"
       - "main"
+      - "feature/delegation"
 
 permissions:
   packages: write
