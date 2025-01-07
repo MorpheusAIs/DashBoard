@@ -1,0 +1,99 @@
+<template>
+  <div class="builders-table">
+    <div class="builders-table__header">
+      <div class="builders-table__header-item">
+        <span class="builders-table__header-item-text">ID</span>
+      </div>
+      <div class="builders-table__header-item">
+        <span class="builders-table__header-item-text">Name</span>
+      </div>
+      <div class="builders-table__header-item">
+        <span class="builders-table__header-item-text">Start time</span>
+        <app-icon
+          :name="$icons.sort"
+          class="builders-table__header-item-icon"
+        />
+      </div>
+      <div class="builders-table__header-item">
+        <span class="builders-table__header-item-text">Min MOR Deposit</span>
+        <app-icon
+          :name="$icons.sort"
+          class="builders-table__header-item-icon"
+        />
+      </div>
+      <div class="builders-table__header-item">
+        <span class="builders-table__header-item-text">Total MOR Staked</span>
+        <app-icon
+          :name="$icons.sort"
+          class="builders-table__header-item-icon"
+        />
+      </div>
+      <div class="builders-table__header-item">
+        <span class="builders-table__header-item-text">Lock Period</span>
+        <app-icon
+          :name="$icons.sort"
+          class="builders-table__header-item-icon"
+        />
+      </div>
+    </div>
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+    <builders-table-item />
+  </div>
+</template>
+
+<script setup lang="ts">
+import BuildersTableItem from '@/pages/Builders/components/buildersTableItem.vue'
+import { AppIcon } from '@/common'
+</script>
+
+<style scoped lang="scss">
+.builders-table {
+  display: flex;
+  flex-direction: column;
+  gap: toRem(10);
+  width: 100%;
+}
+
+.builders-table__header {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 0 toRem(32);
+}
+
+.builders-table__header-item {
+  display: flex;
+  align-items: center;
+  gap: toRem(8);
+  max-width: toRem(150);
+
+  &:last-child {
+    justify-self: end;
+  }
+}
+
+.builders-table__header-item-text {
+  font-size: toRem(16);
+  line-height: toRem(24);
+  color: var(--text-tertiary-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.builders-table__header-item-icon {
+  max-width: toRem(24);
+  max-height: toRem(24);
+  width: toRem(24);
+  height: toRem(24);
+  min-width: toRem(24);
+  min-height: toRem(24);
+}
+</style>

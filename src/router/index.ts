@@ -33,6 +33,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/HomePage/views/PrivatePoolView.vue'),
         props: { poolId: 1 },
       },
+      {
+        path: 'builders',
+        name: ROUTE_NAMES.appBuilders,
+        component: () => import('@/pages/Builders/index.vue'),
+      },
     ],
   },
   {

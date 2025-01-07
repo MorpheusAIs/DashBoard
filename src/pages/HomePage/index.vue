@@ -49,7 +49,8 @@ const tabs = computed<Tab[]>(() => [
         href: config.COMMUNITY_CONTRIBUTION_URL,
       },
       [NETWORK_IDS.testnet]: {
-        route: { name: ROUTE_NAMES.appCommunity },
+        // route: { name: ROUTE_NAMES.appCommunity },
+        route: { name: ROUTE_NAMES.appBuilders },
       },
     }[web3ProvidersStore.networkId],
   },

@@ -23,4 +23,5 @@ export enum ICON_NAMES {
   xCircle = 'x-circle',
   x = 'x',
   archive = 'archive',
+  sort = 'sort',
 }

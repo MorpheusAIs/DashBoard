@@ -8,6 +8,7 @@ export enum ROUTE_NAMES {
   contractInfo = 'contract-info',
   appMor20EcosystemProtocolCreation = 'app-mor20-ecosystem-protocol-creation',
   appReferrals = 'app-referrals',
+  appBuilders = 'app-builders',
 }
 
 export enum CONTRACT_INFO_ACTIONS {
