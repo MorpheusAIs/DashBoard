@@ -7,34 +7,34 @@
       <div class="builders-table__header-item">
         <span class="builders-table__header-item-text">Name</span>
       </div>
-      <div class="builders-table__header-item">
+      <buttin class="builders-table__header-item">
         <span class="builders-table__header-item-text">Start time</span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
-      </div>
-      <div class="builders-table__header-item">
+      </buttin>
+      <button class="builders-table__header-item">
         <span class="builders-table__header-item-text">Min MOR Deposit</span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
-      </div>
-      <div class="builders-table__header-item">
+      </button>
+      <button class="builders-table__header-item">
         <span class="builders-table__header-item-text">Total MOR Staked</span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
-      </div>
-      <div class="builders-table__header-item">
+      </button>
+      <button class="builders-table__header-item">
         <span class="builders-table__header-item-text">Lock Period</span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
-      </div>
+      </button>
     </div>
     <builders-table-item />
     <builders-table-item />
@@ -89,11 +89,6 @@ import { AppIcon } from '@/common'
 }
 
 .builders-table__header-item-icon {
-  max-width: toRem(24);
-  max-height: toRem(24);
-  width: toRem(24);
-  height: toRem(24);
-  min-width: toRem(24);
-  min-height: toRem(24);
+  @include square(24);
 }
 </style>

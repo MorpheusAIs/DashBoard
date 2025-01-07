@@ -9,9 +9,9 @@
         an existing Builder using your stake Start staking now and claim your
         rewards!
       </span>
-      <span class="builders__hero-desc-underline"
-        >Start staking now and claim your rewards!</span
-      >
+      <span class="builders__hero-desc-underline">
+        Start staking now and claim your rewards!
+      </span>
       <div class="builders__hero-actions">
         <app-button>Stake</app-button>
         <app-button scheme="filled" color="secondary">
@@ -23,12 +23,15 @@
     <builders-table />
 
     <pagination :total-items="100" :current-page="1" />
+
+    <stake-modal :is-shown="true" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { AppButton, Pagination } from '@/common'
 import BuildersTable from '@/pages/Builders/components/buildersTable.vue'
+import StakeModal from '@/pages/Builders/components/StakeModal.vue'
 </script>
 
 <style scoped lang="scss">

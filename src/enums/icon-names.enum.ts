@@ -24,4 +24,5 @@ export enum ICON_NAMES {
   x = 'x',
   archive = 'archive',
   sort = 'sort',
+  info = 'info',
 }
