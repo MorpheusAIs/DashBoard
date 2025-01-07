@@ -24,7 +24,8 @@
 
     <pagination :total-items="100" :current-page="1" />
 
-    <stake-modal :is-shown="true" />
+    <stake-modal :is-shown="false" />
+    <builder-form :is-shown="true" />
   </div>
 </template>
 
@@ -32,6 +33,7 @@
 import { AppButton, Pagination } from '@/common'
 import BuildersTable from '@/pages/Builders/components/buildersTable.vue'
 import StakeModal from '@/pages/Builders/components/StakeModal.vue'
+import BuilderForm from '@/pages/Builders/components/BuilderForm.vue'
 </script>
 
 <style scoped lang="scss">
