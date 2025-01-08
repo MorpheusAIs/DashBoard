@@ -1,6 +1,6 @@
 <template>
-  <div class="builders-table">
-    <div class="builders-table__header">
+  <div class="flex w-full flex-col gap-2">
+    <div class="grid grid-cols-6 items-center px-8">
       <div class="builders-table__header-item">
         <span class="builders-table__header-item-text">ID</span>
       </div>
@@ -54,20 +54,6 @@ import { AppIcon } from '@/common'
 </script>
 
 <style scoped lang="scss">
-.builders-table {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(10);
-  width: 100%;
-}
-
-.builders-table__header {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  padding: 0 toRem(32);
-}
-
 .builders-table__header-item {
   display: flex;
   align-items: center;

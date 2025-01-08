@@ -1,6 +1,8 @@
 <template>
-  <div class="builders-list">
-    <div class="builders-list__hero">
+  <div class="flex w-full flex-col items-center">
+    <div
+      class="flex max-w-[700px] flex-col items-center justify-center gap-6 pb-6 pt-16 text-center"
+    >
       <h2 class="builders-list__hero-title">Create or Stake in a Builder</h2>
       <span class="builders-list__hero-desc">
         You can become a Builder or participate in an existing one to start
@@ -12,7 +14,7 @@
       <span class="builders-list__hero-desc-underline">
         Start staking now and claim your rewards!
       </span>
-      <div class="builders-list__hero-actions">
+      <div class="flex items-center gap-6">
         <app-button>Stake</app-button>
         <app-button scheme="filled" color="secondary">
           Become a builder
@@ -20,11 +22,11 @@
       </div>
     </div>
 
-    <builders-table />
+    <builders-table class="mt-16" />
 
-    <pagination :total-items="100" :current-page="1" />
+    <pagination :total-items="100" :current-page="1" class="mt-6" />
 
-    <builders-stake-modal :is-shown="true" />
+    <builders-stake-modal :is-shown="false" />
     <builder-form-modal :is-shown="false" />
   </div>
 </template>
@@ -34,27 +36,13 @@ import { AppButton, Pagination } from '@/common'
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
 import BuilderFormModal from '@/pages/Builders/pages/BuildersList/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
+
+defineOptions({
+  inheritAttrs: false,
+})
 </script>
 
 <style scoped lang="scss">
-.home-page .builders-list.home-page__view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.builders-list__hero {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-  gap: toRem(24);
-  max-width: toRem(700);
-  padding-top: toRem(64);
-  padding-bottom: toRem(24);
-}
-
 .builders-list__hero-title {
   font-size: toRem(54);
   font-weight: 700;
@@ -71,10 +59,5 @@ import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/B
   font-size: toRem(17);
   line-height: toRem(25.5);
   margin-bottom: toRem(8);
-}
-
-.builders-list__hero-actions {
-  display: flex;
-  gap: toRem(24);
 }
 </style>

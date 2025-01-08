@@ -1,13 +1,13 @@
 <template>
   <basic-modal :is-shown="isShown" title="Withdrawal">
-    <div class="stake-modal__details">
+    <div class="mt-8 flex flex-col gap-3">
       <div class="stake-modal__details-row">
         <span class="stake-modal__details-label">Available to Stake</span>
         <span class="stake-modal__details-value">3 667 456.748 MOR</span>
       </div>
     </div>
 
-    <div class="stake-modal__inputs">
+    <div class="mt-8 flex flex-col gap-5">
       <input-field placeholder="Builder ID" model-value="" />
       <input-field placeholder="MOR amount" model-value="">
         <template #nodeRight>
@@ -18,7 +18,7 @@
       </input-field>
     </div>
 
-    <div class="stake-modal__actions">
+    <div class="mt-10 flex items-center justify-center gap-4">
       <app-button scheme="filled" color="secondary"> Cancel </app-button>
       <app-button>Confirm</app-button>
     </div>
@@ -42,13 +42,6 @@ const setMaxAmount = () => {}
 </script>
 
 <style scoped lang="scss">
-.stake-modal__details {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(12);
-  margin-top: toRem(32);
-}
-
 .stake-modal__details-row {
   display: flex;
   align-items: center;
@@ -66,37 +59,6 @@ const setMaxAmount = () => {}
   font-size: toRem(20);
   font-weight: 700;
   line-height: toRem(30);
-}
-
-.stake-modal__inputs {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(20);
-  margin-top: toRem(32);
-}
-
-.stake-modal__callout {
-  display: flex;
-  align-items: center;
-  gap: toRem(16);
-  margin-top: toRem(40);
-}
-
-.stake-modal__callout-icon {
-  @include square(24);
-}
-
-.stake-modal__callout-text {
-  font-size: toRem(20);
-  line-height: toRem(30);
-}
-
-.stake-modal__actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: toRem(16);
-  margin-top: toRem(40);
 }
 
 .stake-modal__inputs-max-btn {

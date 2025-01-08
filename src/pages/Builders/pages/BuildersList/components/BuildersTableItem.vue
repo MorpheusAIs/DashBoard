@@ -1,5 +1,7 @@
 <template>
-  <div class="builders-table-item">
+  <div
+    class="builders-table-item grid h-[72px] w-full grid-cols-6 items-center px-8 py-6"
+  >
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
@@ -43,11 +45,6 @@ import { abbrCenter } from '@/helpers'
 
 <style scoped lang="scss">
 .builders-table-item {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  height: toRem(72);
-  width: 100%;
   background: linear-gradient(
     95.36deg,
     rgba(57, 99, 58, 0.04) 0%,
@@ -69,8 +66,6 @@ import { abbrCenter } from '@/helpers'
       rgba(3, 255, 133, 0.08) 100%
     );
   }
-
-  padding: toRem(24) toRem(32);
 }
 
 .builders-table-item__col {
