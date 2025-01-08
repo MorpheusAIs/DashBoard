@@ -37,8 +37,20 @@ const routes: RouteRecordRaw[] = [
         path: 'builders',
         name: ROUTE_NAMES.appBuilders,
         component: () => import('@/pages/Builders/index.vue'),
+        children: [
+          {
+            path: '',
+            name: ROUTE_NAMES.appBuildersList,
+            component: () => import('@/pages/Builders/pages/BuildersList.vue'),
+          },
+        ],
       },
     ],
+  },
+  {
+    path: '/builders/:id',
+    name: ROUTE_NAMES.appBuildersItem,
+    component: () => import('@/pages/Builders/pages/BuildersItem.vue'),
   },
   {
     path: '/dashboard',

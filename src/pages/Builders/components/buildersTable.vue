@@ -7,13 +7,13 @@
       <div class="builders-table__header-item">
         <span class="builders-table__header-item-text">Name</span>
       </div>
-      <buttin class="builders-table__header-item">
+      <button class="builders-table__header-item">
         <span class="builders-table__header-item-text">Start time</span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
-      </buttin>
+      </button>
       <button class="builders-table__header-item">
         <span class="builders-table__header-item-text">Min MOR Deposit</span>
         <app-icon
