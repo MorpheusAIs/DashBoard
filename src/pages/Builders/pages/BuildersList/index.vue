@@ -15,8 +15,24 @@
         Start staking now and claim your rewards!
       </span>
       <div class="flex items-center gap-6">
-        <app-button>Stake</app-button>
-        <app-button scheme="filled" color="secondary">
+        <app-button
+          @click="
+            () => {
+              isStakeModalShown = true
+            }
+          "
+        >
+          Stake
+        </app-button>
+        <app-button
+          scheme="filled"
+          color="secondary"
+          @click="
+            () => {
+              isCreateBuilderModalShown = true
+            }
+          "
+        >
           Become a builder
         </app-button>
       </div>
@@ -32,8 +48,8 @@
       class="mt-6"
     />
 
-    <builders-stake-modal :is-shown="false" />
-    <builder-form-modal :is-shown="false" />
+    <builders-stake-modal v-model:is-shown="isStakeModalShown" />
+    <builder-form-modal v-model:is-shown="isCreateBuilderModalShown" />
   </div>
 </template>
 
@@ -59,6 +75,9 @@ defineOptions({
 const route = useRoute()
 
 const currentPage = ref(1)
+
+const isStakeModalShown = ref(false)
+const isCreateBuilderModalShown = ref(false)
 
 const buildersProjects = ref<GetBuildersProjectsQuery['buildersProjects']>([])
 

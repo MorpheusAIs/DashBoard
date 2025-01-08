@@ -1,5 +1,9 @@
 <template>
-  <basic-modal :is-shown="isShown" title="Stake">
+  <basic-modal
+    :is-shown="isShown"
+    @update:is-shown="emit('update:is-shown', $event)"
+    title="Stake"
+  >
     <div class="gap3 mt-8 flex flex-col">
       <div class="flex items-center justify-between">
         <span class="stake-modal__details-label">Available to Stake</span>
@@ -39,6 +43,7 @@
 <script setup lang="ts">
 import { AppButton, AppIcon, BasicModal } from '@/common'
 import { InputField } from '@/fields'
+import AppModal from '../../../../../common/AppModal.vue'
 
 withDefaults(
   defineProps<{
@@ -50,6 +55,10 @@ withDefaults(
 )
 
 const setMaxAmount = () => {}
+
+const emit = defineEmits<{
+  (e: 'update:is-shown', v: boolean): void
+}>()
 </script>
 
 <style scoped lang="scss">

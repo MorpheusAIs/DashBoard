@@ -1,5 +1,9 @@
 <template>
-  <basic-modal :is-shown="isShown" title="Become a Builder">
+  <basic-modal
+    :is-shown="isShown"
+    @update:is-shown="emit('update:is-shown', $event)"
+    title="Become a Builder"
+  >
     <div class="mt-8 flex flex-col gap-5">
       <input-field placeholder="Builder name" model-value="" />
       <input-field placeholder="Minimum deposit" model-value="" />
@@ -39,6 +43,10 @@ withDefaults(
     isShown: true,
   },
 )
+
+const emit = defineEmits<{
+  (e: 'update:is-shown', v: boolean): void
+}>()
 </script>
 
 <style scoped lang="scss"></style>

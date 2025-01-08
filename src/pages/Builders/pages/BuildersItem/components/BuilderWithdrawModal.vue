@@ -1,5 +1,9 @@
 <template>
-  <basic-modal :is-shown="isShown" title="Withdrawal">
+  <basic-modal
+    :is-shown="isShown"
+    @update:is-shown="emit('update:is-shown', $event)"
+    title="Withdrawal"
+  >
     <div class="mt-8 flex flex-col gap-3">
       <div class="stake-modal__details-row">
         <span class="stake-modal__details-label">Available to Stake</span>
@@ -39,6 +43,10 @@ withDefaults(
 )
 
 const setMaxAmount = () => {}
+
+const emit = defineEmits<{
+  (e: 'update:is-shown', v: boolean): void
+}>()
 </script>
 
 <style scoped lang="scss">

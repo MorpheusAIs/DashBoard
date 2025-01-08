@@ -79,7 +79,16 @@
                 Available MOR for Withdrawal
               </span>
 
-              <app-button size="small" disabled> Withdraw </app-button>
+              <app-button
+                size="small"
+                @click="
+                  () => {
+                    isWithdrawModalShown = true
+                  }
+                "
+              >
+                Withdraw
+              </app-button>
             </div>
             <div class="flex items-center gap-8">
               <span class="text-textPrimary"> 3.9719 </span>
@@ -190,7 +199,7 @@
     </div>
   </div>
 
-  <builder-withdraw-modal :is-shown="false" />
+  <builder-withdraw-modal v-model:is-shown="isWithdrawModalShown" />
 </template>
 
 <script setup lang="ts">
@@ -221,6 +230,8 @@ defineOptions({
 })
 
 const route = useRoute()
+
+const isWithdrawModalShown = ref(false)
 
 const buildersProject = ref<GetBuildersProjectQuery['buildersProject']>()
 const stakers = ref<GetBuildersProjectUsersQuery['buildersUsers']>([])
