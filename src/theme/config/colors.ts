@@ -10,149 +10,181 @@ const getRgba = (hex: string, opacity: number) => {
 }
 
 export const lightPalette = {
-  primaryDarker: '#53CD6A',
-  primaryDark: '#69DE7F',
-  primaryMain: '#82ED96',
-  primaryLight: getRgba('#82ED96', 0.12),
-  primaryLighter: getRgba('#82ED96', 0.06),
+  /* background colors */
+  backgroundPrimaryLight: '#ffffff',
+  backgroundPrimaryMain: '#fbfcff',
+  backgroundPrimaryDark: '#f5f6ff',
 
-  secondaryDarker: '#A45CD1',
-  secondaryDark: '#B876E1',
-  secondaryMain: '#CD90F3',
-  secondaryLight: getRgba('#CD90F3', 0.12),
-  secondaryLighter: getRgba('#CD90F3', 0.06),
+  backgroundSecondaryLight: '#eff2ff',
+  backgroundSecondaryMain: '#313a36',
+  backgroundSecondaryDark: '#cad4f5',
 
-  successDarker: '#0F8F6F',
-  successDark: '#0AA17B',
-  successMain: '#00B487',
-  successLight: getRgba('#00B487', 0.12),
-  successLighter: getRgba('#00B487', 0.06),
+  backgroundTertiaryLight: '#4A5450',
+  backgroundTertiaryMain: '#222322',
+  backgroundTertiaryDark: '#1d201c',
 
-  errorDarker: '#C83733',
-  errorDark: '#DD3B36',
-  errorMain: '#F23F3A',
-  errorLight: getRgba('#F23F3A', 0.12),
-  errorLighter: getRgba('#F23F3A', 0.06),
+  /* status colors */
+  successLight: '#edfff2',
+  successMain: '#5cc56e',
+  successDark: '#278337',
 
-  warningDarker: '#C09027',
-  warningDark: '#E1AC3B',
-  warningMain: '#FFC548',
-  warningLight: getRgba('#FFC548', 0.12),
-  warningLighter: getRgba('#FFC548', 0.06),
+  errorLight: '#fff2f2',
+  errorMain: '#e3905e',
+  errorDark: '#b3261e',
 
-  infoDarker: '#3494BE',
-  infoDark: '#3B9FCB',
-  infoMain: '#3DA7D5',
-  infoLight: getRgba('#3DA7D5', 0.12),
-  infoLighter: getRgba('#3DA7D5', 0.06),
+  warningLight: '#fff9e9',
+  warningMain: '#f6851b',
+  warningDark: '#e6661f',
 
-  textPrimary: '#282828',
-  textSecondary: getRgba('#282828', 0.56),
-  textPlaceholder: getRgba('#282828', 0.44),
-  textDisabled: getRgba('#282828', 0.28),
+  infoLight: '#eff2ff',
+  infoMain: '#40c4ff',
+  infoDark: '#0094cc',
 
-  componentPrimary: getRgba('#282828', 0.05),
-  componentHovered: getRgba('#282828', 0.1),
-  componentPressed: getRgba('#282828', 0.15),
-  componentSelected: getRgba('#282828', 0.05),
-  componentDisabled: getRgba('#282828', 0.05),
+  disablePrimaryMain: '#dbdbdb',
+  disablePrimaryDark: '#808080',
 
-  backgroundPrimary: '#ffffff',
-  backgroundContainer: '#FAFAFA',
-  backgroundPure: '#ffffff',
-  backgroundSurface1: '#ffffff',
-  backgroundSurface2: '#ffffff',
+  disableSecondaryMain: '#838383',
+  disableSecondaryDark: '#353736',
 
-  baseBlack: '#282828',
-  baseWhite: '#ffffff',
-  baseBackground: getRgba('#112A0A', 0.28),
+  disableTertiaryLight: '#838383',
+  disableTertiaryMain: '#454447',
+  disableTertiaryDark: '#292e2c',
 
-  invertedDark: '#282828',
-  invertedLight: '#FFFFFF',
+  /* brand colors */
+  primaryLight: '#e2ecfc',
+  primaryMain: '#03ff85',
+  primaryDark: '#1cac77',
 
-  additionalOpacited: getRgba('#FFFFFF', 0.7),
-  additionalGradient1:
-    'linear-gradient(87.63deg, #45C45C -1.41%, #39CDA0 113.73%);',
-  additionalGradient2:
-    'linear-gradient(87.63deg, #82ED95 -1.41%, #82EDC0 113.73%);',
-  additionalGradient3:
-    'linear-gradient(87.63deg, #AC95DC -1.41%, #CD90F3 113.73%);',
-  additionalGradient4:
-    'linear-gradient(87.63deg, #383838 -1.41%, #282828 113.73%);',
+  secondaryLight: '#c2c9dc',
+  secondaryMain: '#8d91a5',
+  secondaryDark: '#5b6271',
+
+  /* typography colors */
+  textPrimaryLight: '#575761',
+  textPrimaryMain: '#2d3441',
+  textPrimaryDark: '#000000',
+
+  textSecondaryLight: '#ffffff',
+  textSecondaryMain: '#fdf9ff',
+  textSecondaryDark: '#444b58',
+
+  textTertiaryMain: '#cccccc',
+
+  textPrimaryInvertLight: '#fbfcff',
+  textPrimaryInvertMain: '#fbfcff',
+  textPrimaryInvertDark: '#fbfbff',
+
+  textSecondaryInvertLight: getRgba('#fffbfe', 0.5),
+  textSecondaryInvertMain: getRgba('#fffbfe', 0.5),
+  textSecondaryInvertDark: getRgba('#fffbfe', 0.5),
+
+  /* border colors */
+  borderPrimaryLight: '#fdf9ff',
+  borderPrimaryMain: '#908e93',
+  borderPrimaryDark: '#45484f',
+
+  borderSecondaryLight: '#e0e0ec',
+  borderSecondaryMain: '#c4c4d0',
+  borderSecondaryDark: '#a9abb4',
+
+  borderTertiaryLight: '#989898',
+  borderTertiaryMain: '#494949',
+
+  borderQuaternaryLight: '#cacaca',
+  borderQuaternaryMain: '#7c7c7d',
+
+  /* backdrop colors */
+  backdropModal: getRgba('#000000', 0.5),
 }
 
 export type BaseTheme = typeof lightPalette
 
 export const darkPalette: BaseTheme = {
-  primaryDarker: '#53CD6A',
-  primaryDark: '#69DE7F',
-  primaryMain: '#82ED96',
-  primaryLight: getRgba('#82ED96', 0.12),
-  primaryLighter: getRgba('#82ED96', 0.06),
+  /* background colors */
+  backgroundPrimaryLight: '#ffffff',
+  backgroundPrimaryMain: '#fbfcff',
+  backgroundPrimaryDark: '#f5f6ff',
 
-  secondaryDarker: '#A45CD1',
-  secondaryDark: '#B876E1',
-  secondaryMain: '#CD90F3',
-  secondaryLight: getRgba('#CD90F3', 0.12),
-  secondaryLighter: getRgba('#CD90F3', 0.06),
+  backgroundSecondaryLight: '#eff2ff',
+  backgroundSecondaryMain: '#313a36',
+  backgroundSecondaryDark: '#cad4f5',
 
-  successDarker: '#33D2AA',
-  successDark: '#20C79D',
-  successMain: '#0EBB90',
-  successLight: getRgba('#0EBB90', 0.12),
-  successLighter: getRgba('#0EBB90', 0.06),
+  backgroundTertiaryLight: '#4A5450',
+  backgroundTertiaryMain: '#222322',
+  backgroundTertiaryDark: '#1d201c',
 
-  errorDarker: '#F1736F',
-  errorDark: '#EA615D',
-  errorMain: '#E0514D',
-  errorLight: getRgba('#E0514D', 0.12),
-  errorLighter: getRgba('#E0514D', 0.06),
+  /* status colors */
+  successLight: '#edfff2',
+  successMain: '#5cc56e',
+  successDark: '#278337',
 
-  warningDarker: '#FFD478',
-  warningDark: '#FACA63',
-  warningMain: '#F9C452',
-  warningLight: getRgba('#F9C452', 0.12),
-  warningLighter: getRgba('#F9C452', 0.06),
+  errorLight: '#fff2f2',
+  errorMain: '#e3905e',
+  errorDark: '#b3261e',
 
-  infoDarker: '#65C2EA',
-  infoDark: '#57B7E1',
-  infoMain: '#4CB0DB',
-  infoLight: getRgba('#4CB0DB', 0.12),
-  infoLighter: getRgba('#4CB0DB', 0.06),
+  warningLight: '#fff9e9',
+  warningMain: '#f6851b',
+  warningDark: '#e6661f',
 
-  textPrimary: '#ffffff',
-  textSecondary: getRgba('#ffffff', 0.56),
-  textPlaceholder: getRgba('#ffffff', 0.44),
-  textDisabled: getRgba('#ffffff', 0.28),
+  infoLight: '#eff2ff',
+  infoMain: '#40c4ff',
+  infoDark: '#0094cc',
 
-  componentPrimary: getRgba('#ffffff', 0.05),
-  componentHovered: getRgba('#ffffff', 0.1),
-  componentPressed: getRgba('#ffffff', 0.15),
-  componentSelected: getRgba('#ffffff', 0.05),
-  componentDisabled: getRgba('#ffffff', 0.05),
+  disablePrimaryMain: '#dbdbdb',
+  disablePrimaryDark: '#808080',
 
-  backgroundPrimary: '#111111',
-  backgroundContainer: '#171717',
-  backgroundPure: '#111111',
-  backgroundSurface1: '#292929',
-  backgroundSurface2: '#3D3D3D',
+  disableSecondaryMain: '#838383',
+  disableSecondaryDark: '#353736',
 
-  baseBlack: '#131313',
-  baseWhite: '#FFFFFF',
-  baseBackground: getRgba('#112A0A', 0.28),
+  disableTertiaryLight: '#838383',
+  disableTertiaryMain: '#454447',
+  disableTertiaryDark: '#292e2c',
 
-  invertedDark: '#F3F6F2',
-  invertedLight: '#282828',
+  /* brand colors */
+  primaryLight: '#e2ecfc',
+  primaryMain: '#03ff85',
+  primaryDark: '#1cac77',
 
-  additionalOpacited: getRgba('#000000', 0.7),
-  additionalGradient1:
-    'linear-gradient(87.63deg, #45C45C -1.41%, #39CDA0 113.73%);',
-  additionalGradient2:
-    'linear-gradient(87.63deg, #82ED95 -1.41%, #82EDC0 113.73%);',
-  additionalGradient3:
-    'linear-gradient(87.63deg, #AC95DC -1.41%, #CD90F3 113.73%);',
-  additionalGradient4:
-    'linear-gradient(87.63deg, #383838 -1.41%, #282828 113.73%);',
+  secondaryLight: '#c2c9dc',
+  secondaryMain: '#8d91a5',
+  secondaryDark: '#5b6271',
+
+  /* typography colors */
+  textPrimaryLight: '#575761',
+  textPrimaryMain: '#2d3441',
+  textPrimaryDark: '#000000',
+
+  textSecondaryLight: '#ffffff',
+  textSecondaryMain: '#fdf9ff',
+  textSecondaryDark: '#444b58',
+
+  textTertiaryMain: '#cccccc',
+
+  textPrimaryInvertLight: '#fbfcff',
+  textPrimaryInvertMain: '#fbfcff',
+  textPrimaryInvertDark: '#fbfbff',
+
+  textSecondaryInvertLight: getRgba('#fffbfe', 0.5),
+  textSecondaryInvertMain: getRgba('#fffbfe', 0.5),
+  textSecondaryInvertDark: getRgba('#fffbfe', 0.5),
+
+  /* border colors */
+  borderPrimaryLight: '#fdf9ff',
+  borderPrimaryMain: '#908e93',
+  borderPrimaryDark: '#45484f',
+
+  borderSecondaryLight: '#e0e0ec',
+  borderSecondaryMain: '#c4c4d0',
+  borderSecondaryDark: '#a9abb4',
+
+  borderTertiaryLight: '#989898',
+  borderTertiaryMain: '#494949',
+
+  borderQuaternaryLight: '#cacaca',
+  borderQuaternaryMain: '#7c7c7d',
+
+  /* backdrop colors */
+  backdropModal: getRgba('#000000', 0.5),
 }
 
 export const cssVars = {
@@ -173,71 +205,64 @@ export const cssVars = {
 }
 
 export const colorsScheme: BaseTheme = {
-  primaryDarker: 'var(--primary-darker)',
-  primaryDark: 'var(--primary-dark)',
-  primaryMain: 'var(--primary-main)',
-  primaryLight: 'var(--primary-light)',
-  primaryLighter: 'var(--primary-lighter)',
-
-  secondaryDarker: 'var(--secondary-darker)',
-  secondaryDark: 'var(--secondary-dark)',
-  secondaryMain: 'var(--secondary-main)',
-  secondaryLight: 'var(--secondary-light)',
-  secondaryLighter: 'var(--secondary-lighter)',
-
-  successDarker: 'var(--success-darker)',
-  successDark: 'var(--success-dark)',
-  successMain: 'var(--success-main)',
+  backgroundPrimaryLight: 'var(--background-primary-light)',
+  backgroundPrimaryMain: 'var(--background-primary-main)',
+  backgroundPrimaryDark: 'var(--background-primary-dark)',
+  backgroundSecondaryLight: 'var(--background-secondary-light)',
+  backgroundSecondaryMain: 'var(--background-secondary-main)',
+  backgroundSecondaryDark: 'var(--background-secondary-dark)',
+  backgroundTertiaryLight: 'var(--background-tertiary-light)',
+  backgroundTertiaryMain: 'var(--background-tertiary-main)',
+  backgroundTertiaryDark: 'var(--background-tertiary-dark)',
   successLight: 'var(--success-light)',
-  successLighter: 'var(--success-lighter)',
-
-  errorDarker: 'var(--error-darker)',
-  errorDark: 'var(--error-dark)',
-  errorMain: 'var(--error-main)',
+  successMain: 'var(--success-main)',
+  successDark: 'var(--success-dark)',
   errorLight: 'var(--error-light)',
-  errorLighter: 'var(--error-lighter)',
-
-  warningDarker: 'var(--warning-darker)',
-  warningDark: 'var(--warning-dark)',
-  warningMain: 'var(--warning-main)',
+  errorMain: 'var(--error-main)',
+  errorDark: 'var(--error-dark)',
   warningLight: 'var(--warning-light)',
-  warningLighter: 'var(--warning-lighter)',
-
-  infoDarker: 'var(--info-darker)',
-  infoDark: 'var(--info-dark)',
-  infoMain: 'var(--info-main)',
+  warningMain: 'var(--warning-main)',
+  warningDark: 'var(--warning-dark)',
   infoLight: 'var(--info-light)',
-  infoLighter: 'var(--info-lighter)',
-
-  textPrimary: 'var(--text-primary)',
-  textSecondary: 'var(--text-secondary)',
-  textPlaceholder: 'var(--text-placeholder)',
-  textDisabled: 'var(--text-disabled)',
-
-  componentPrimary: 'var(--component-primary)',
-  componentHovered: 'var(--component-hovered)',
-  componentPressed: 'var(--component-pressed)',
-  componentSelected: 'var(--component-selected)',
-  componentDisabled: 'var(--component-disabled)',
-
-  backgroundPrimary: 'var(--background-primary)',
-  backgroundContainer: 'var(--background-container)',
-  backgroundPure: 'var(--background-pure)',
-  backgroundSurface1: 'var(--background-surface-1)',
-  backgroundSurface2: 'var(--background-surface-2)',
-
-  baseBlack: 'var(--base-black)',
-  baseWhite: 'var(--base-white)',
-  baseBackground: 'var(--base-background)',
-
-  invertedDark: 'var(--inverted-dark)',
-  invertedLight: 'var(--inverted-light)',
-
-  additionalOpacited: 'var(--additional-opacited)',
-  additionalGradient1: 'var(--additional-gradient-1)',
-  additionalGradient2: 'var(--additional-gradient-2)',
-  additionalGradient3: 'var(--additional-gradient-3)',
-  additionalGradient4: 'var(--additional-gradient-4)',
+  infoMain: 'var(--info-main)',
+  infoDark: 'var(--info-dark)',
+  disablePrimaryMain: 'var(--disable-primary-main)',
+  disablePrimaryDark: 'var(--disable-primary-dark)',
+  disableSecondaryMain: 'var(--disable-secondary-main)',
+  disableSecondaryDark: 'var(--disable-secondary-dark)',
+  disableTertiaryLight: 'var(--disable-tertiary-light)',
+  disableTertiaryMain: 'var(--disable-tertiary-main)',
+  disableTertiaryDark: 'var(--disable-tertiary-dark)',
+  primaryLight: 'var(--primary-light)',
+  primaryMain: 'var(--primary-main)',
+  primaryDark: 'var(--primary-dark)',
+  secondaryLight: 'var(--secondary-light)',
+  secondaryMain: 'var(--secondary-main)',
+  secondaryDark: 'var(--secondary-dark)',
+  textPrimaryLight: 'var(--text-primary-light)',
+  textPrimaryMain: 'var(--text-primary-main)',
+  textPrimaryDark: 'var(--text-primary-dark)',
+  textSecondaryLight: 'var(--text-secondary-light)',
+  textSecondaryMain: 'var(--text-secondary-main)',
+  textSecondaryDark: 'var(--text-secondary-dark)',
+  textTertiaryMain: 'var(--text-tertiary-main)',
+  textPrimaryInvertLight: 'var(--text-primary-invert-light)',
+  textPrimaryInvertMain: 'var(--text-primary-invert-main)',
+  textPrimaryInvertDark: 'var(--text-primary-invert-dark)',
+  textSecondaryInvertLight: 'var(--text-secondary-invert-light)',
+  textSecondaryInvertMain: 'var(--text-secondary-invert-main)',
+  textSecondaryInvertDark: 'var(--text-secondary-invert-dark)',
+  borderPrimaryLight: 'var(--border-primary-light)',
+  borderPrimaryMain: 'var(--border-primary-main)',
+  borderPrimaryDark: 'var(--border-primary-dark)',
+  borderSecondaryLight: 'var(--border-secondary-light)',
+  borderSecondaryMain: 'var(--border-secondary-main)',
+  borderSecondaryDark: 'var(--border-secondary-dark)',
+  borderTertiaryLight: 'var(--border-tertiary-light)',
+  borderTertiaryMain: 'var(--border-tertiary-main)',
+  borderQuaternaryLight: 'var(--border-quaternary-light)',
+  borderQuaternaryMain: 'var(--border-quaternary-main)',
+  backdropModal: 'var(--backdrop-modal)',
 }
 
 export const colors: ThemeConfig['colors'] = colorsScheme

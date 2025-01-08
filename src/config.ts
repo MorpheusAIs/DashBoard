@@ -110,6 +110,8 @@ export const config = {
 
   mainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
   testnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+
+  testnetBuildersApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
@@ -250,6 +252,13 @@ config.mainnetApolloClient = new ApolloClient({
 
 config.testnetApolloClient = new ApolloClient({
   link: createHttpLink({ uri: config.TESTNET_GRAPHQL_API_URL }),
+  cache: new InMemoryCache(),
+})
+
+config.testnetBuildersApolloClient = new ApolloClient({
+  link: createHttpLink({
+    uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node-testnet/version/latest',
+  }),
   cache: new InMemoryCache(),
 })
 

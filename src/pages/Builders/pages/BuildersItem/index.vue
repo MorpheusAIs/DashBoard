@@ -1,8 +1,11 @@
 <template>
   <div class="flex flex-col overflow-y-auto">
-    <button class="flex items-center gap-2">
-      <app-icon :name="$icons.arrowLeft" class="size-4 text-textPrimary" />
-      <span class="text-textPrimary">Subnets</span>
+    <button class="flex items-center gap-2" @click="$router.go(-1)">
+      <app-icon
+        :name="$icons.arrowLeft"
+        class="size-4 text-textSecondaryLight"
+      />
+      <span class="text-textPrimary">Back</span>
     </button>
 
     <div class="mt-14 flex flex-col">
@@ -12,7 +15,7 @@
         Your Builder
       </span>
       <div class="flex items-center gap-8">
-        <span class="typography-h1">Kyle Back Up</span>
+        <span class="typography-h1">{{ buildersProject?.name }}</span>
 
         <div class="flex items-center gap-2">
           <span class="text-primaryMain">Edit</span>
@@ -22,7 +25,7 @@
 
       <div class="flex items-center gap-2">
         <span class="text-textPrimary">
-          {{ abbrCenter('0xaksjdnfkajsdnfkajsdnfkajsndfkjn') }}
+          {{ buildersProject && abbrCenter(buildersProject.admin) }}
         </span>
         <copy-button content="asdfasdf" message="aasdfasdf" />
       </div>
@@ -35,21 +38,34 @@
             <span class="text-textPrimary"> Start time </span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-textPrimary"> 01.01.2024 </span>
-            <span class="text-textPrimary"> 05:12 </span>
+            <span class="text-textPrimary">
+              {{
+                buildersProject && humanizeTime(buildersProject.startsAt / 1000)
+              }}
+            </span>
+
+            <!--            <span class="text-textPrimary"> 01.01.2024 </span>-->
+            <!--            <span class="text-textPrimary"> 05:12 </span>-->
           </div>
         </div>
       </app-gradient-border-card>
       <app-gradient-border-card class="flex-1">
         <div class="flex flex-col gap-8 p-6">
           <span class="text-textPrimary"> Min MOR Deposit </span>
-          <span class="text-textPrimary"> 253.9719 </span>
+          <span class="text-textPrimary">
+            {{ buildersProject && formatEther(buildersProject.minimalDeposit) }}
+          </span>
         </div>
       </app-gradient-border-card>
       <app-gradient-border-card class="flex-1">
         <div class="flex flex-col gap-8 p-6">
           <span class="text-textPrimary"> Lock Period After Stake </span>
-          <span class="text-textPrimary"> 40d 20h 20m 15s</span>
+          <span class="text-textPrimary">
+            {{
+              buildersProject &&
+              humanizeTime(buildersProject.claimLockEnd / 1000)
+            }}</span
+          >
         </div>
       </app-gradient-border-card>
     </div>
@@ -80,13 +96,17 @@
         <app-gradient-border-card class="">
           <div class="flex flex-col gap-8 p-6">
             <span class="text-textPrimary"> Total MOR Claimed </span>
-            <span class="text-textPrimary"> 253.9719 </span>
+            <span class="text-textPrimary">
+              {{ buildersProject && formatEther(buildersProject.totalClaimed) }}
+            </span>
           </div>
         </app-gradient-border-card>
         <app-gradient-border-card class="">
           <div class="flex flex-col gap-8 p-6">
             <span class="text-textPrimary"> Total MOR Staked </span>
-            <span class="text-textPrimary"> 253.9719 </span>
+            <span class="text-textPrimary">
+              {{ buildersProject && formatEther(buildersProject.totalStaked) }}
+            </span>
           </div>
         </app-gradient-border-card>
         <app-gradient-border-card class="">
@@ -97,8 +117,14 @@
               <app-button size="small" disabled> Claim </app-button>
             </div>
             <div class="flex items-center gap-8">
-              <span class="text-textPrimary"> 01.01.2024 </span>
-              <span class="text-textPrimary"> 05:12 </span>
+              <span class="text-textPrimary">
+                {{
+                  buildersProject &&
+                  humanizeTime(buildersProject.claimLockEnd / 1000)
+                }}
+              </span>
+              <!--              <span class="text-textPrimary"> 01.01.2024 </span>-->
+              <!--              <span class="text-textPrimary"> 05:12 </span>-->
             </div>
             <div class="flex items-center gap-2">
               <span class="text-textSecondary"> Admin address: </span>
@@ -117,9 +143,9 @@
           <div class="flex items-center gap-4">
             <span class="span text-textPrimary">Stakers</span>
             <app-gradient-border-card
-              class="bg-transparent p-2 text-textPrimary"
+              class="text-textPrimary bg-transparent p-2"
             >
-              23
+              {{ stakers.length }}
             </app-gradient-border-card>
           </div>
           <app-button>Stake</app-button>
@@ -138,13 +164,17 @@
           </div>
 
           <div class="flex flex-col gap-2">
-            <app-gradient-border-card v-for="i in 10" :key="i">
+            <app-gradient-border-card v-for="el in stakers" :key="el.id">
               <div class="grid grid-cols-2">
                 <div class="px-20 py-8">
-                  <span class="text-textPrimary">0xb51...AFe2</span>
+                  <span class="text-textPrimary">
+                    {{ abbrCenter(el.address) }}
+                  </span>
                 </div>
                 <div class="px-20 py-8 text-end">
-                  <span class="text-textPrimary">253.9719</span>
+                  <span class="text-textPrimary">
+                    {{ formatEther(el.staked) }}
+                  </span>
                 </div>
               </div>
             </app-gradient-border-card>
@@ -152,8 +182,8 @@
 
           <pagination
             class="mt-6 self-center"
-            total-items="100"
-            current-page="0"
+            :total-items="100"
+            :current-page="0"
           />
         </div>
       </div>
@@ -171,12 +201,66 @@ import {
   CopyButton,
   Pagination,
 } from '@/common'
-import { abbrCenter } from '@/helpers'
+import { abbrCenter, humanizeTime } from '@/helpers'
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
+import { ref, watch } from 'vue'
+import {
+  GetBuildersProject,
+  GetBuildersProjectQuery,
+  GetBuildersProjectQueryVariables,
+  GetBuildersProjectUsers,
+  GetBuildersProjectUsersQuery,
+  GetBuildersProjectUsersQueryVariables,
+} from '@/types/graphql'
+import { config } from '@config'
+import { useRoute } from 'vue-router'
+import { formatEther } from '@/utils'
 
 defineOptions({
   inheritAttrs: true,
 })
+
+const route = useRoute()
+
+const buildersProject = ref<GetBuildersProjectQuery['buildersProject']>()
+const stakers = ref<GetBuildersProjectUsersQuery['buildersUsers']>([])
+
+const loadProjects = async () => {
+  const [{ data: buildersProjectsResponse }] = await Promise.all([
+    config.testnetBuildersApolloClient.query<
+      GetBuildersProjectQuery,
+      GetBuildersProjectQueryVariables
+    >({
+      query: GetBuildersProject,
+      fetchPolicy: 'network-only',
+      variables: {
+        id: route.params.id as string,
+      },
+    }),
+  ])
+
+  const { data: usersResponse } =
+    await config.testnetBuildersApolloClient.query<
+      GetBuildersProjectUsersQuery,
+      GetBuildersProjectUsersQueryVariables
+    >({
+      query: GetBuildersProjectUsers,
+      fetchPolicy: 'network-only',
+      variables: {
+        buildersProjectId: buildersProjectsResponse.buildersProject
+          ?.id as string,
+      },
+    })
+
+  buildersProject.value = buildersProjectsResponse.buildersProject
+  stakers.value = usersResponse.buildersUsers
+}
+
+watch(
+  [() => route.query.user, () => route.query.network],
+  () => loadProjects(),
+  { immediate: true },
+)
 </script>
 
 <style lang="scss">

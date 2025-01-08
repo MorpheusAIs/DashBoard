@@ -36,21 +36,25 @@
         />
       </button>
     </div>
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
-    <builders-table-item />
+    <builders-table-item
+      v-for="(el, index) in buildersProjects"
+      :key="index"
+      :builder-project="el"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import BuildersTableItem from './BuildersTableItem.vue'
 import { AppIcon } from '@/common'
+import { GetBuildersProjectsQuery } from '@/types/graphql'
+
+withDefaults(
+  defineProps<{
+    buildersProjects: GetBuildersProjectsQuery['buildersProjects']
+  }>(),
+  {},
+)
 </script>
 
 <style scoped lang="scss">

@@ -16,7 +16,8 @@
     "lint:scripts": "eslint \"{src,config}/**/*.{vue,js,ts}\" --cache --fix --max-warnings=0",
     "preview": "vite preview",
     "rsc": "node scripts/release-sanity-check.mjs",
-    "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contracts"
+    "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contracts",
+    "generate-graphql-types": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.9.10",
@@ -97,7 +98,13 @@
     "vite-plugin-node-polyfills": "^0.9.0",
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-eslint-parser": "^9.0.2",
-    "yorkie": "^2.0.0"
+    "yorkie": "^2.0.0",
+    "@graphql-codegen/cli": "2.16.1",
+    "@graphql-codegen/client-preset": "1.2.3",
+    "@graphql-codegen/typescript": "2.8.5",
+    "@graphql-codegen/typescript-document-nodes": "2.3.10",
+    "@graphql-codegen/typescript-operations": "^2.5.10",
+    "@graphql-codegen/typescript-vue-apollo": "^3.3.6"
   },
   "engines": {
     "node": "20.x"

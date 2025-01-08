@@ -1,46 +1,68 @@
 <template>
-  <div
+  <RouterLink
     class="builders-table-item grid h-[72px] w-full grid-cols-6 items-center px-8 py-6"
+    :to="{ name: $routes.appBuildersItem, params: { id: builderProject.id } }"
   >
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ abbrCenter('0xb51aosudh0a9sdkfamsdkAFe2') }}
+          {{ abbrCenter(builderProject.admin) }}
         </span>
-        <copy-button content="asdfasdf" message="aasdfasdf" />
+        <copy-button :content="builderProject.admin" message="copied" />
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text"> Kyle Back Up </span>
+        <span class="builders-table-item__col-text">
+          {{ builderProject.name }}
+        </span>
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text"> 01.01.2024 05:12 </span>
+        <span class="builders-table-item__col-text">
+          {{ humanizeTime(builderProject.startsAt / 1000) }}
+        </span>
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text"> 253.9719 </span>
+        <span class="builders-table-item__col-text">
+          {{ formatEther(builderProject.minimalDeposit) }}
+        </span>
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text"> 253.9719 </span>
+        <span class="builders-table-item__col-text">
+          {{ formatEther(builderProject.totalStaked) }}
+        </span>
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text"> 40d 20h 20m 15s </span>
+        <span class="builders-table-item__col-text">
+          {{
+            humanizeTime(builderProject.withdrawLockPeriodAfterDeposit / 1000)
+          }}
+        </span>
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
 import { CopyButton } from '@/common'
-import { abbrCenter } from '@/helpers'
+import { abbrCenter, humanizeTime } from '@/helpers'
+import { GetBuildersProjectsQuery } from '@/types/graphql'
+import { formatEther } from '@/utils'
+
+withDefaults(
+  defineProps<{
+    builderProject: GetBuildersProjectsQuery['buildersProjects'][0]
+  }>(),
+  {},
+)
 </script>
 
 <style scoped lang="scss">
@@ -86,5 +108,7 @@ import { abbrCenter } from '@/helpers'
   font-weight: 400;
   line-height: 25.5px;
   color: var(--text-primary-invert-main);
+
+  @apply line-clamp-1;
 }
 </style>
