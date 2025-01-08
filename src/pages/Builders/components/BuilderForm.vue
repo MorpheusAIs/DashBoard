@@ -1,6 +1,6 @@
 <template>
   <basic-modal :is-shown="isShown" title="Become a Builder">
-    <div class="builder-form__inputs">
+    <div class="mt-8 flex flex-col gap-5">
       <input-field placeholder="Builder name" model-value="" />
       <input-field placeholder="Minimum deposit" model-value="" />
       <input-field
@@ -20,7 +20,7 @@
       />
     </div>
 
-    <div class="builder-form__actions">
+    <div class="mt-10 flex items-center justify-center gap-4">
       <app-button scheme="filled" color="secondary"> Cancel </app-button>
       <app-button>Confirm</app-button>
     </div>
@@ -41,28 +41,4 @@ withDefaults(
 )
 </script>
 
-<style scoped lang="scss">
-.builder-form__inputs {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(20);
-  margin-top: toRem(32);
-}
-
-.builder-form__actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: toRem(16);
-  margin-top: toRem(40);
-}
-
-.builder-form__inputs-max-btn {
-  color: var(--primary-main);
-  font-size: toRem(18);
-  font-weight: 700;
-  line-height: toRem(24);
-
-  @include square(48);
-}
-</style>
+<style scoped lang="scss"></style>
