@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import BuildersTableItem from '@/pages/Builders/components/buildersTableItem.vue'
+import BuildersTableItem from './BuildersTableItem.vue'
 import { AppIcon } from '@/common'
 </script>
 

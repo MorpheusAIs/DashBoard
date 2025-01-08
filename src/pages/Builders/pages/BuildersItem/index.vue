@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="mx-[var(--app-padding-left)] mt-6 flex flex-col overflow-y-auto pb-20"
-  >
+  <div class="flex flex-col overflow-y-auto">
     <button class="flex items-center gap-2">
       <app-icon :name="$icons.arrowLeft" class="size-4 text-textPrimary" />
       <span class="text-textPrimary">Subnets</span>
@@ -161,6 +159,8 @@
       </div>
     </div>
   </div>
+
+  <builder-withdraw-modal :is-shown="false" />
 </template>
 
 <script setup lang="ts">
@@ -172,10 +172,15 @@ import {
   Pagination,
 } from '@/common'
 import { abbrCenter } from '@/helpers'
+import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
 
 defineOptions({
-  // inheritAttrs: false,
+  inheritAttrs: true,
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+main {
+  padding-top: toRem(24);
+}
+</style>

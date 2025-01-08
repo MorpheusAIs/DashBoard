@@ -41,16 +41,18 @@ const routes: RouteRecordRaw[] = [
           {
             path: '',
             name: ROUTE_NAMES.appBuildersList,
-            component: () => import('@/pages/Builders/pages/BuildersList.vue'),
+            component: () =>
+              import('@/pages/Builders/pages/BuildersList/index.vue'),
+          },
+          {
+            path: ':id',
+            name: ROUTE_NAMES.appBuildersItem,
+            component: () =>
+              import('@/pages/Builders/pages/BuildersItem/index.vue'),
           },
         ],
       },
     ],
-  },
-  {
-    path: '/builders/:id',
-    name: ROUTE_NAMES.appBuildersItem,
-    component: () => import('@/pages/Builders/pages/BuildersItem.vue'),
   },
   {
     path: '/dashboard',

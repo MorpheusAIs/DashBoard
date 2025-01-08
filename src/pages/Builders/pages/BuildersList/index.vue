@@ -24,16 +24,16 @@
 
     <pagination :total-items="100" :current-page="1" />
 
-    <stake-modal :is-shown="false" />
-    <builder-form :is-shown="false" />
+    <builders-stake-modal :is-shown="true" />
+    <builder-form-modal :is-shown="false" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { AppButton, Pagination } from '@/common'
-import BuildersTable from '@/pages/Builders/components/buildersTable.vue'
-import StakeModal from '@/pages/Builders/components/StakeModal.vue'
-import BuilderForm from '@/pages/Builders/components/BuilderForm.vue'
+import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
+import BuilderFormModal from '@/pages/Builders/pages/BuildersList/components/BuilderFormModal.vue'
+import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
 </script>
 
 <style scoped lang="scss">

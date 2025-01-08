@@ -1,7 +1,7 @@
 <template>
   <main class="home-page">
     <div class="home-page__content-wrp">
-      <app-tabs v-if="isTabsShown" :tabs="tabs" />
+      <app-tabs v-if="isTabsShown" :tabs="tabs" class="home-page__tabs" />
       <router-view v-slot="{ Component }" class="home-page__view">
         <keep-alive>
           <component :is="Component" :key="$route.fullPath" />
@@ -57,7 +57,10 @@ const tabs = computed<Tab[]>(() => [
 ])
 
 const isTabsShown = computed(
-  () => route.name !== ROUTE_NAMES.appDashboardCapital,
+  () =>
+    ![ROUTE_NAMES.appDashboardCapital, ROUTE_NAMES.appBuildersItem].find(
+      el => el === route.name,
+    ),
 )
 </script>
 
@@ -117,8 +120,11 @@ const isTabsShown = computed(
   @include page-wrp;
 }
 
+.home-page__tabs {
+  margin-bottom: toRem(64);
+}
+
 .home-page .home-page__view {
-  margin-top: toRem(64);
   display: grid;
   grid-template-columns: 1fr minmax(0, toRem(704));
   grid-gap: toRem(30);
