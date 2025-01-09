@@ -40,11 +40,18 @@
               <p class="info-dashboard__header-subtitle">
                 {{ chartSubtitle }}
               </p>
-              <select-field
-                v-model="selectedMonth"
-                scheme="secondary"
-                :value-options="monthOptions"
-              />
+              <div class="info-dashboard__header-fields">
+                <select-field
+                  v-model="selectedMonth"
+                  scheme="secondary"
+                  :value-options="monthOptions"
+                />
+                <select-field
+                  v-model="selectedYear"
+                  scheme="secondary"
+                  :value-options="yearOptions"
+                />
+              </div>
             </div>
             <app-chart
               class="info-dashboard__app-chart"
@@ -168,6 +175,18 @@ const isNoReferrer = computed(() => {
   return !referrer || referrer === ethers.constants.AddressZero
 })
 
+const yearOptions = computed<FieldOption<number>[]>(() => {
+  const currentTime = new Time()
+  const currentYear = currentTime.get('year')
+
+  return Array.from({ length: currentYear - 2024 + 1 }).map((_, idx) => ({
+    title: String(2024 + idx),
+    value: 2024 + idx,
+  }))
+})
+
+const selectedYear = ref(yearOptions.value[yearOptions.value.length - 1])
+
 const monthOptions = computed<FieldOption<number>[]>(() => {
   const allMonthOptions = Array.from({ length: 12 }).map((_, idx) => ({
     title: t(`months.${idx}`),
@@ -177,7 +196,11 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
   const currentTime = new Time()
   const month = currentTime.get('month')
 
-  return allMonthOptions.slice(1, month + 1)
+  const firstSlice = selectedYear.value.value === 2024 ? 1 : 0
+  const secondSlice =
+    selectedYear.value.value === currentTime.get('year') ? month + 1 : 12
+
+  return allMonthOptions.slice(firstSlice, secondSlice)
 })
 
 const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
@@ -223,11 +246,12 @@ const isChartShown = computed(
   () => route.name !== ROUTE_NAMES.appDashboardCapital,
 )
 
-const updateSupplyChartData = async (month: number) => {
+const updateSupplyChartData = async (month: number, year: number) => {
   const chartData = await getChartData(
     props.poolId,
     props.poolData!.payoutStart,
     month,
+    year,
     route.query.network,
   )
 
@@ -246,11 +270,13 @@ const updateSupplyChartData = async (month: number) => {
     CHART_COLORS[CHART_TYPE.circulingSupply]
 }
 
-const updateEarnedMorChartData = async (month: number) => {
+const updateEarnedMorChartData = async (month: number, year: number) => {
   const chartData = await getUserYieldPerDayChartData(
     props.poolId,
-    web3ProvidersStore.address,
+    // web3ProvidersStore.address,
+    '0x3a58CDa77664E3d4909faca039fe76bD266820D1',
     month,
+    year,
     route.query.network,
   )
 
@@ -267,15 +293,15 @@ const updateEarnedMorChartData = async (month: number) => {
     CHART_COLORS[CHART_TYPE.earnedMor]
 }
 
-const updateChartData = async (month: number) => {
+const updateChartData = async (month: number, year: number) => {
   isChartDataUpdating.value = true
 
   try {
     if (!props.poolData) throw new errors.PoolDataNotFoundError()
 
     chartType.value === CHART_TYPE.circulingSupply
-      ? await updateSupplyChartData(month)
-      : await updateEarnedMorChartData(month)
+      ? await updateSupplyChartData(month, year)
+      : await updateEarnedMorChartData(month, year)
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -288,13 +314,29 @@ const changeChartType = (chartToSet: CHART_TYPE) => {
 }
 
 onMounted(() => {
-  if (props.poolData) updateChartData(selectedMonth.value.value)
+  if (props.poolData)
+    updateChartData(
+      selectedMonth.value?.value || 0,
+      selectedYear.value?.value || new Time().get('year'),
+    )
 })
 
 watch(
-  [selectedMonth, () => props.poolData, chartType],
+  [selectedMonth, selectedYear, () => props.poolData, chartType],
   async ([newSelectedMonth]) => {
-    await updateChartData(newSelectedMonth.value)
+    await updateChartData(
+      newSelectedMonth?.value || 0,
+      selectedYear.value?.value || new Time().get('year'),
+    )
+  },
+)
+
+watch(
+  () => selectedYear.value,
+  () => {
+    if (monthOptions.value.includes(selectedMonth.value)) return
+
+    selectedMonth.value = monthOptions.value[0]
   },
 )
 </script>
@@ -398,6 +440,11 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.info-dashboard__header-fields {
+  display: flex;
+  gap: toRem(8);
 }
 
 .info-dashboard .info-dashboard__app-chart {
