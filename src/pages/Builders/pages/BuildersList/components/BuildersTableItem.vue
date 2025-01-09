@@ -19,9 +19,12 @@
       </div>
     </div>
     <div class="builders-table-item__col">
-      <div class="builders-table-item__col-content">
+      <div
+        class="builders-table-item__col-content"
+        :title="time(+builderProject.startsAt).format(DOT_TIME_FORMAT)"
+      >
         <span class="builders-table-item__col-text">
-          {{ humanizeTime(builderProject.startsAt / 1000) }}
+          {{ time(+builderProject.startsAt).format(DOT_TIME_FORMAT) }}
         </span>
       </div>
     </div>
@@ -56,6 +59,8 @@ import { CopyButton } from '@/common'
 import { abbrCenter, humanizeTime } from '@/helpers'
 import { GetBuildersProjectsQuery } from '@/types/graphql'
 import { formatEther } from '@/utils'
+import { DOT_TIME_FORMAT } from '@/const'
+import { time } from '@distributedlab/tools'
 
 withDefaults(
   defineProps<{
