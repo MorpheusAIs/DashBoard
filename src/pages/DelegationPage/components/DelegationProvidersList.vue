@@ -47,7 +47,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
 import { SubnetItem } from '@/types'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
-import { bus, BUS_EVENTS, ErrorHandler, fetchSubnets } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler, fetchSubnets, sleep } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 
 const props = defineProps<{
@@ -109,8 +109,14 @@ const loadPage = async () => {
 }
 
 onMounted(() => {
-  bus.on(BUS_EVENTS.changedCurrentUserRefReward, loadPage)
-  bus.on(BUS_EVENTS.changedDelegation, loadPage)
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, async () => {
+    await sleep(1000)
+    loadPage()
+  })
+  bus.on(BUS_EVENTS.changedDelegation, async () => {
+    await sleep(1000)
+    loadPage()
+  })
 })
 
 onBeforeUnmount(() => {

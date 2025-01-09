@@ -84,10 +84,10 @@ import {
   NoDataMessage,
 } from '@/common'
 import { SubnetProvider } from '@/types'
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
-import { ErrorHandler, fetchProviders } from '@/helpers'
+import { bus, BUS_EVENTS, ErrorHandler, fetchProviders, sleep } from '@/helpers'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 
@@ -161,6 +161,21 @@ const chooseSortingOrder = (
 const delegateAddress = computed(() => String(route.query.subnetAddress))
 
 watch([currentPage, sortingOrder], loadPage, { immediate: true })
+
+onMounted(() => {
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, async () => {
+    await sleep(1000)
+    loadPage()
+  })
+  bus.on(BUS_EVENTS.changedDelegation, async () => {
+    await sleep(1000)
+    loadPage()
+  })
+})
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.changedCurrentUserRefReward, () => [])
+  bus.off(BUS_EVENTS.changedDelegation, () => [])
+})
 </script>
 
 <style scoped lang="scss">

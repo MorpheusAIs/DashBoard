@@ -14,13 +14,14 @@
 import DelegatorInfoCard from './DelegatorInfoCard.vue'
 
 import { useContract, useI18n } from '@/composables'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import {
   bus,
   BUS_EVENTS,
   ErrorHandler,
   fetchSubnet,
   getEthExplorerTxUrl,
+  sleep,
   trimStringNumber,
 } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
@@ -196,6 +197,22 @@ const loadPage = async () => {
 }
 
 loadPage()
+
+onMounted(() => {
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, async () => {
+    await sleep(1000)
+    loadPage()
+  })
+  bus.on(BUS_EVENTS.changedDelegation, async () => {
+    await sleep(1000)
+    loadPage()
+  })
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.changedCurrentUserRefReward, () => [])
+  bus.off(BUS_EVENTS.changedDelegation, () => [])
+})
 </script>
 
 <style scoped lang="scss">

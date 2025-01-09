@@ -57,7 +57,14 @@ import DelegationProvidersItem from './DelegationProvidersItem.vue'
 
 import { SORTING_ORDER, DELEGATES_SORTING_TYPES } from '@/enums'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { bus, BUS_EVENTS, ErrorHandler, fetchOwnSubnets } from '@/helpers'
+
+import {
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  fetchOwnSubnets,
+  sleep,
+} from '@/helpers'
 import { SubnetItem } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
 
@@ -129,8 +136,14 @@ watch(
 )
 
 onMounted(() => {
-  bus.on(BUS_EVENTS.changedCurrentUserRefReward, init)
-  bus.on(BUS_EVENTS.changedDelegation, init)
+  bus.on(BUS_EVENTS.changedCurrentUserRefReward, async () => {
+    await sleep(1000)
+    init()
+  })
+  bus.on(BUS_EVENTS.changedDelegation, async () => {
+    await sleep(1000)
+    init()
+  })
 })
 
 onBeforeUnmount(() => {

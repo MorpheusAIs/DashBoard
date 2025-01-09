@@ -272,11 +272,23 @@ config.testnetApolloClient = new ApolloClient({
 config.secondMainnetApolloClient = new ApolloClient({
   link: createHttpLink({ uri: config.MAINNET_GRAPHQL_SECOND_API_URL }),
   cache: new InMemoryCache(),
+  queryDeduplication: false,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 })
 
 config.secondTestnetApolloClient = new ApolloClient({
   link: createHttpLink({ uri: config.TESTNET_GRAPHQL_SECOND_API_URL }),
   cache: new InMemoryCache(),
+  queryDeduplication: false,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 })
 
 function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
