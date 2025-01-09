@@ -129,6 +129,7 @@ import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
+import { config } from '@config'
 
 const CUT_ADDRESS_LENGTH = 7
 
@@ -179,10 +180,12 @@ const yearOptions = computed<FieldOption<number>[]>(() => {
   const currentTime = new Time()
   const currentYear = currentTime.get('year')
 
-  return Array.from({ length: currentYear - 2024 + 1 }).map((_, idx) => ({
-    title: String(2024 + idx),
-    value: 2024 + idx,
-  }))
+  return Array.from({ length: currentYear - config.yearOfLaunch + 1 }).map(
+    (_, idx) => ({
+      title: String(config.yearOfLaunch + idx),
+      value: config.yearOfLaunch + idx,
+    }),
+  )
 })
 
 const selectedYear = ref(yearOptions.value[yearOptions.value.length - 1])
@@ -196,7 +199,8 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
   const currentTime = new Time()
   const month = currentTime.get('month')
 
-  const firstSlice = selectedYear.value.value === 2024 ? 1 : 0
+  const firstSlice =
+    selectedYear.value.value === config.yearOfLaunch ? config.monthOfLaunch : 0
   const secondSlice =
     selectedYear.value.value === currentTime.get('year') ? month + 1 : 12
 
