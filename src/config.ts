@@ -122,6 +122,9 @@ export const config = {
 
   secondMainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
   secondTestnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+
+  yearOfLaunch: 2024,
+  monthOfLaunch: 1,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))

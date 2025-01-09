@@ -27,4 +27,5 @@ export type UserData = {
   claimLockEnd?: BigNumber
   claimLockStart?: BigNumber
   virtualDeposited?: BigNumber
+  referrer?: string
 }

@@ -61,11 +61,10 @@
       />
       <input-field
         v-model="form.referrer"
-        :disabled="isReferrerDisabled"
-        :placeholder="$t('deposit-form.referrer-placeholder')"
+        :disabled="Boolean($route.query?.referrer) || isSubmitting"
+        :placeholder="$t(`deposit-form.referrer-placeholder`)"
         :error-message="getFieldErrorMessage('referrer')"
         :is-loading="isInitializing"
-        :note="$t('deposit-form.referrer-note')"
         @blur="touchField('referrer')"
       />
     </div>
@@ -109,7 +108,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, reactive, ref, toRef, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
-import { type Erc1967ProxyType } from '@/types'
 import { ethers } from 'ethers'
 
 enum ACTIONS {
@@ -143,10 +141,6 @@ const depositTokenAllowance = ref('')
 const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
   usePool(toRef(props.poolId))
 const web3ProvidersStore = useWeb3ProvidersStore()
-
-const isReferrerDisabled = computed(
-  () => ethers.utils.isAddress(route.query?.referrer) || isSubmitting.value,
-)
 
 const action = computed<ACTIONS>(() => {
   if (isFieldsValid.value) {
@@ -238,7 +232,10 @@ const submit = async (action: ACTIONS): Promise<void> => {
           props.poolId,
           amountInDecimals,
           ...(isMultiplierShown.value
-            ? [form.lockPeriod || 0, form.referrer || config.DEFAULT_REFEREE]
+            ? [
+                form.lockPeriod || 0,
+                form.referrer || ethers.constants.AddressZero,
+              ]
             : []),
         )
       emit('stake-tx-sent')
@@ -333,7 +330,6 @@ watch(
   },
   { immediate: true },
 )
-
 init()
 </script>
 

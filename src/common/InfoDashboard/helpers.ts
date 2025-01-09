@@ -113,10 +113,16 @@ export async function getChartData(
   poolId: number,
   poolStartedAt: BigNumber,
   month: number,
+  year: number,
   type: NETWORK_IDS,
 ): Promise<ChartData> {
   const query = {
-    query: _generateTotalStakedPerDayGraphqlQuery(poolId, poolStartedAt, month),
+    query: _generateTotalStakedPerDayGraphqlQuery(
+      poolId,
+      poolStartedAt,
+      month,
+      year,
+    ),
   }
 
   const apolloClient =
@@ -136,6 +142,7 @@ function _generateTotalStakedPerDayGraphqlQuery(
   poolId: number,
   poolStartedAt: BigNumber,
   month: number,
+  year: number,
 ) {
   const REQUEST_PATTERN = `d{{date}}:
     poolInteractions(
@@ -147,17 +154,21 @@ function _generateTotalStakedPerDayGraphqlQuery(
         totalStaked
       }`
 
-  const monthTime = new Time(String(month + 1), 'M')
+  const monthTime = new Time(new Date(year, month))
   const currentTime = new Time()
   const poolStartedAtTime = new Time(poolStartedAt.toNumber())
 
-  const startDate = monthTime.isSame(poolStartedAtTime, 'month')
-    ? poolStartedAtTime.get('date')
-    : 1
+  const startDate =
+    monthTime.isSame(poolStartedAtTime, 'month') &&
+    monthTime.isSame(currentTime, 'year')
+      ? poolStartedAtTime.get('date')
+      : 1
 
-  const endDate = currentTime.isSame(monthTime, 'month')
-    ? currentTime.get('date')
-    : monthTime.dayjs.daysInMonth()
+  const endDate =
+    currentTime.isSame(monthTime, 'month') &&
+    monthTime.isSame(currentTime, 'year')
+      ? currentTime.get('date')
+      : monthTime.dayjs.daysInMonth()
 
   const requests = []
   for (let date = startDate; date <= endDate; date++) {
@@ -202,10 +213,11 @@ export async function getUserYieldPerDayChartData(
   poolId: number,
   user: string,
   month: number,
+  year: number,
   type: NETWORK_IDS,
 ): Promise<ChartData> {
   const query = {
-    query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month),
+    query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month, year),
   }
 
   const apolloClient =
@@ -269,9 +281,10 @@ function _generateUserYieldPerDayGraphqlQuery(
   user: string,
   // TODO: add month
   month: number,
+  year: number,
 ) {
-  const fromDate = new Time(String(month + 1), 'M').toDate()
-  const toDate = new Time(String(month + 2), 'M').toDate()
+  const fromDate = new Date(year, month, 1)
+  const toDate = new Date(year, month, 31)
   const fromTimestamp = fromDate.getTime() / 1000
   const toTimestamp = toDate.getTime() / 1000
 
@@ -310,7 +323,6 @@ function _generateUserYieldPerDayGraphqlQuery(
     }
   `
 
-  const year = new Date().getFullYear()
   const currentMonth = new Date().getMonth()
 
   const dateInMonth =

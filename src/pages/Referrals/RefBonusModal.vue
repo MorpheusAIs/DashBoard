@@ -57,11 +57,15 @@ import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
-import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import {
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  getEthExplorerTxUrl,
+  roundNumber,
+} from '@/helpers'
 import { ethers } from 'ethers'
 import { ERC1967Proxy } from '@/types'
-
-const ROUND_DIGITS = 5
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -96,11 +100,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 
 const calculatedReward = computed(() => {
   const currentReward = props.currentReward
-    ? parseFloat(
-        parseFloat(ethers.utils.formatUnits(props.currentReward)).toFixed(
-          ROUND_DIGITS,
-        ),
-      )
+    ? roundNumber(ethers.utils.formatUnits(props.currentReward))
     : 0
   return `${currentReward} ${web3ProvidersStore.rewardsTokenSymbol}`
 })
