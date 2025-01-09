@@ -273,8 +273,7 @@ const updateSupplyChartData = async (month: number, year: number) => {
 const updateEarnedMorChartData = async (month: number, year: number) => {
   const chartData = await getUserYieldPerDayChartData(
     props.poolId,
-    // web3ProvidersStore.address,
-    '0x3a58CDa77664E3d4909faca039fe76bD266820D1',
+    web3ProvidersStore.address,
     month,
     year,
     route.query.network,
