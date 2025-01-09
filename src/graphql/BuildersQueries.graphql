@@ -17,9 +17,21 @@ query getBuildersProjects($first: Int = 10, $skip: Int = 10) {
   }
 }
 
+query getBuildersProjectsByIds($id_in: [Bytes!] = "") {
+  buildersProjects(where: {id_in: $id_in}) {
+    ...BuilderProject
+  }
+}
+
 query getBuildersProject($id: ID = "") {
   buildersProject(id: $id) {
     ...BuilderProject
+  }
+}
+
+query GetAccountUserBuildersProjectsIds($address: Bytes = "") {
+  buildersUsers(where: {address: $address}) {
+    buildersProjectId
   }
 }
 

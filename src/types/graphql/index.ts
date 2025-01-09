@@ -871,12 +871,26 @@ export type GetBuildersProjectsQueryVariables = Exact<{
 
 export type GetBuildersProjectsQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }> };
 
+export type GetBuildersProjectsByIdsQueryVariables = Exact<{
+  id_in?: InputMaybe<Array<Scalars['Bytes']> | Scalars['Bytes']>;
+}>;
+
+
+export type GetBuildersProjectsByIdsQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }> };
+
 export type GetBuildersProjectQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
 }>;
 
 
 export type GetBuildersProjectQuery = { __typename?: 'Query', buildersProject?: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } | null };
+
+export type GetAccountUserBuildersProjectsIdsQueryVariables = Exact<{
+  address?: InputMaybe<Scalars['Bytes']>;
+}>;
+
+
+export type GetAccountUserBuildersProjectsIdsQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', buildersProjectId: any }> };
 
 export type GetBuildersProjectUsersQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -916,6 +930,13 @@ export const GetBuildersProjects = gql`
   }
 }
     ${BuilderProject}`;
+export const GetBuildersProjectsByIds = gql`
+    query getBuildersProjectsByIds($id_in: [Bytes!] = "") {
+  buildersProjects(where: {id_in: $id_in}) {
+    ...BuilderProject
+  }
+}
+    ${BuilderProject}`;
 export const GetBuildersProject = gql`
     query getBuildersProject($id: ID = "") {
   buildersProject(id: $id) {
@@ -923,6 +944,13 @@ export const GetBuildersProject = gql`
   }
 }
     ${BuilderProject}`;
+export const GetAccountUserBuildersProjectsIds = gql`
+    query GetAccountUserBuildersProjectsIds($address: Bytes = "") {
+  buildersUsers(where: {address: $address}) {
+    buildersProjectId
+  }
+}
+    `;
 export const GetBuildersProjectUsers = gql`
     query getBuildersProjectUsers($first: Int = 10, $skip: Int = 10, $buildersProjectId: Bytes = "") {
   buildersUsers(

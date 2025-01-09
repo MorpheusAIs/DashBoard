@@ -40,6 +40,12 @@
     />
 
     <builder-form-modal v-model:is-shown="isCreateBuilderModalShown" />
+
+    <builders-table
+      v-if="userAccountBuildersProjects.length"
+      class="mt-16 w-full"
+      :builders-projects="userAccountBuildersProjects"
+    />
   </div>
 </template>
 
@@ -50,13 +56,20 @@ import BuilderFormModal from '@/pages/Builders/pages/BuildersList/components/Bui
 import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
 import { config } from '@config'
 import {
+  GetAccountUserBuildersProjectsIds,
+  GetAccountUserBuildersProjectsIdsQuery,
+  GetAccountUserBuildersProjectsIdsQueryVariables,
   GetBuildersProjects,
+  GetBuildersProjectsByIds,
+  GetBuildersProjectsByIdsQuery,
+  GetBuildersProjectsByIdsQueryVariables,
   GetBuildersProjectsQuery,
   GetBuildersProjectsQueryVariables,
 } from '@/types/graphql'
 import { ref, watch } from 'vue'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { useRoute } from 'vue-router'
+import { useWeb3ProvidersStore } from '@/store'
 
 defineOptions({
   inheritAttrs: false,
@@ -64,13 +77,58 @@ defineOptions({
 
 const route = useRoute()
 
+const { provider } = useWeb3ProvidersStore()
+
 const currentPage = ref(1)
 
 const isCreateBuilderModalShown = ref(false)
 
 const buildersProjects = ref<GetBuildersProjectsQuery['buildersProjects']>([])
 
-const loadProjects = async (limit = DEFAULT_PAGE_LIMIT, offset = 0) => {
+const userAccountBuildersProjects = ref<
+  GetBuildersProjectsQuery['buildersProjects']
+>([])
+
+const loadAccountUserBuildersProjects = async () => {
+  const { data: accountUserBuildersProjectsIds } =
+    await config.testnetBuildersApolloClient.query<
+      GetAccountUserBuildersProjectsIdsQuery,
+      GetAccountUserBuildersProjectsIdsQueryVariables
+    >({
+      query: GetAccountUserBuildersProjectsIds,
+      fetchPolicy: 'network-only',
+      variables: {
+        address: provider.selectedAddress,
+      },
+    })
+
+  const { data: accountUserBuildersProjects } =
+    await config.testnetBuildersApolloClient.query<
+      GetBuildersProjectsByIdsQuery,
+      GetBuildersProjectsByIdsQueryVariables
+    >({
+      query: GetBuildersProjectsByIds,
+      fetchPolicy: 'network-only',
+      variables: {
+        id_in: accountUserBuildersProjectsIds.buildersUsers.map(
+          el => el.buildersProjectId,
+        ),
+      },
+    })
+
+  userAccountBuildersProjects.value =
+    accountUserBuildersProjects.buildersProjects
+}
+
+watch(
+  () => provider.selectedAddress,
+  () => loadAccountUserBuildersProjects(),
+  {
+    immediate: true,
+  },
+)
+
+const loadProjects = async (limit = DEFAULT_PAGE_LIMIT) => {
   const { data } = await config.testnetBuildersApolloClient.query<
     GetBuildersProjectsQuery,
     GetBuildersProjectsQueryVariables
