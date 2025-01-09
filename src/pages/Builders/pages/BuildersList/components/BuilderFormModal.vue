@@ -5,8 +5,16 @@
     title="Become a Builder"
   >
     <div class="mt-8 flex flex-col gap-5">
-      <input-field placeholder="Builder name" model-value="" />
-      <input-field placeholder="Minimum deposit" model-value="" />
+      <input-field
+        placeholder="Builder name"
+        model-value=""
+        note="What is the name of your project? This is how users will find your project."
+      />
+      <input-field
+        placeholder="Minimum deposit"
+        model-value=""
+        note="This is the minimum amount of MOR users can deposit when staking to your project."
+      />
       <input-field
         placeholder="Lock period after stake"
         note="After each stake, the user will not be able to withdraw their tokens for that period"

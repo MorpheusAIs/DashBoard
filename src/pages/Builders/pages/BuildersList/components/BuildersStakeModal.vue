@@ -2,35 +2,53 @@
   <basic-modal
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
-    title="Stake"
+    title="Stake MOR"
   >
-    <div class="gap3 mt-8 flex flex-col">
-      <div class="flex items-center justify-between">
-        <span class="stake-modal__details-label">Available to Stake</span>
-        <span class="stake-modal__details-value">3 667 456.748 MOR</span>
-      </div>
-      <div class="flex items-center justify-between">
-        <span class="stake-modal__details-label">Available to Stake</span>
-        <span class="stake-modal__details-value">3 667 456.748 MOR</span>
-      </div>
-    </div>
-
     <div class="mt-8 flex flex-col gap-5">
-      <input-field placeholder="Builder ID" model-value="" />
-      <input-field placeholder="MOR amount" model-value="">
-        <template #nodeRight>
-          <button class="stake-modal__inputs-max-btn" @click="setMaxAmount">
-            max
-          </button>
-        </template>
-      </input-field>
+      <div class="flex flex-col items-end gap-3">
+        <input-field placeholder="MOR amount" model-value="">
+          <template #nodeRight>
+            <button class="stake-modal__inputs-max-btn" @click="setMaxAmount">
+              max
+            </button>
+          </template>
+        </input-field>
+
+        <div class="flex items-center justify-between gap-2">
+          <span class="stake-modal__details-label">Available to Stake</span>
+          <span class="stake-modal__details-value">3 667 456.748 MOR</span>
+        </div>
+      </div>
     </div>
 
-    <div class="mt-10 flex items-center gap-4">
-      <app-icon :name="$icons.info" class="size-6" />
-      <span class="stake-modal__callout-text">
-        Token withdrawal will be available 90 days after the deposit
-      </span>
+    <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
+      <div
+        class="flex items-center justify-between"
+        v-for="(el, i) in builderDetails.slice(0, 3)"
+        :key="i"
+      >
+        <span class="text-textSecondaryMain typography-body3">
+          {{ el.label }}
+        </span>
+        <span class="font-bold text-textSecondaryMain typography-body3">
+          {{ el.value }}
+        </span>
+      </div>
+
+      <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
+
+      <div
+        class="flex items-center justify-between"
+        v-for="(el, i) in builderDetails.slice(3)"
+        :key="i"
+      >
+        <span class="text-textSecondaryMain typography-body3">
+          {{ el.label }}
+        </span>
+        <span class="font-bold text-textSecondaryMain typography-body3">
+          {{ el.value }}
+        </span>
+      </div>
     </div>
 
     <div class="mt-10 flex items-center justify-center gap-4">
@@ -41,9 +59,8 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton, AppIcon, BasicModal } from '@/common'
+import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
-import AppModal from '../../../../../common/AppModal.vue'
 
 withDefaults(
   defineProps<{
@@ -53,6 +70,29 @@ withDefaults(
     isShown: true,
   },
 )
+
+const builderDetails = [
+  {
+    label: 'Builder',
+    value: 'Venice',
+  },
+  {
+    label: 'Min Deposit',
+    value: '25.0 MOR',
+  },
+  {
+    label: 'Lock Period',
+    value: '30 Days',
+  },
+  {
+    label: 'New Stake Amount',
+    value: '0.0 MOR',
+  },
+  {
+    label: 'New Unlock Date',
+    value: 'Mar 26, 2025 at 13:00',
+  },
+]
 
 const setMaxAmount = () => {}
 

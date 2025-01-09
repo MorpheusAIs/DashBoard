@@ -1,18 +1,14 @@
 <template>
-  <RouterLink
-    class="builders-table-item grid h-[72px] w-full grid-cols-6 items-center px-8 py-6"
-    :to="{ name: $routes.appBuildersItem, params: { id: builderProject.id } }"
+  <div
+    class="builders-table-item relative grid h-[72px] w-full grid-cols-6 items-center px-8 py-4"
   >
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text">
-          {{ abbrCenter(builderProject.admin) }}
-        </span>
-        <copy-button :content="builderProject.admin" message="copied" />
-      </div>
-    </div>
-    <div class="builders-table-item__col">
-      <div class="builders-table-item__col-content">
+        <div
+          class="flex size-10 min-w-10 items-center justify-center bg-errorMain"
+        >
+          {{ builderProject.name[0] }}
+        </div>
         <span class="builders-table-item__col-text">
           {{ builderProject.name }}
         </span>
@@ -51,16 +47,37 @@
         </span>
       </div>
     </div>
-  </RouterLink>
+    <div class="builders-table-item__col">
+      <RouterLink
+        class="absolute left-0 top-0 z-10 size-full"
+        :to="{
+          name: $routes.appBuildersItem,
+          params: { id: builderProject.id },
+        }"
+      ></RouterLink>
+      <app-button
+        class="z-20"
+        color="secondary"
+        size="small"
+        @click="handleStake"
+      >
+        Stake
+      </app-button>
+    </div>
+  </div>
+
+  <builders-stake-modal v-model:is-shown="isStakeModalShown" />
 </template>
 
 <script setup lang="ts">
-import { CopyButton } from '@/common'
-import { abbrCenter, humanizeTime } from '@/helpers'
+import { AppButton } from '@/common'
+import { humanizeTime } from '@/helpers'
 import { GetBuildersProjectsQuery } from '@/types/graphql'
 import { formatEther } from '@/utils'
 import { DOT_TIME_FORMAT } from '@/const'
 import { time } from '@distributedlab/tools'
+import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
+import { ref } from 'vue'
 
 withDefaults(
   defineProps<{
@@ -68,6 +85,12 @@ withDefaults(
   }>(),
   {},
 )
+
+const isStakeModalShown = ref(false)
+
+const handleStake = async () => {
+  isStakeModalShown.value = true
+}
 </script>
 
 <style scoped lang="scss">
@@ -96,16 +119,15 @@ withDefaults(
 }
 
 .builders-table-item__col {
-  &:last-child {
-    justify-self: end;
+  @apply flex items-center gap-2 justify-self-end;
+
+  &:first-child {
+    justify-self: start;
   }
 }
 
 .builders-table-item__col-content {
-  display: flex;
-  align-items: center;
-  gap: toRem(8);
-  max-width: toRem(150);
+  @apply flex max-w-[150px] items-center gap-2 pr-2;
 }
 
 .builders-table-item__col-text {

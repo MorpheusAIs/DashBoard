@@ -2,9 +2,6 @@
   <div class="flex w-full flex-col gap-2">
     <div class="grid grid-cols-6 items-center px-8">
       <div class="builders-table__header-item">
-        <span class="builders-table__header-item-text">ID</span>
-      </div>
-      <div class="builders-table__header-item">
         <span class="builders-table__header-item-text">Name</span>
       </div>
       <button class="builders-table__header-item">
@@ -35,6 +32,7 @@
           class="builders-table__header-item-icon"
         />
       </button>
+      <div class=""></div>
     </div>
     <builders-table-item
       v-for="(el, index) in buildersProjects"
@@ -61,11 +59,12 @@ withDefaults(
 .builders-table__header-item {
   display: flex;
   align-items: center;
+  justify-self: end;
   gap: toRem(8);
   max-width: toRem(150);
 
-  &:last-child {
-    justify-self: end;
+  &:first-child {
+    justify-self: start;
   }
 }
 
