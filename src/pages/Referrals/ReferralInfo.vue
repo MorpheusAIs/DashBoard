@@ -20,8 +20,8 @@
     </div>
     <app-button
       class="referral-info__button"
-      :text="$t('referral-info.button-txt')"
-      @click="updateRefState"
+      :text="buttonText"
+      @click="tryUpdateRefState"
     />
   </div>
 </template>
@@ -53,16 +53,29 @@ const description = computed(() => [
   t('referral-info.description-3'),
 ])
 
-const updateRefState = async () => {
-  try {
-    if (!web3ProvidersStore.provider.isConnected)
-      await web3ProvidersStore.provider.connect()
+const updateRefState = () => {
+  becomeReferrer()
+  emit('become-referrer')
+}
 
-    becomeReferrer()
-    emit('become-referrer')
-  } catch (e) {
-    ErrorHandler.process(e)
+const buttonText = computed(() => {
+  return web3ProvidersStore.provider.isConnected
+    ? t('referral-info.button-txt')
+    : t('referral-info.connect-wallet')
+})
+
+const tryUpdateRefState = async () => {
+  if (!web3ProvidersStore.provider.isConnected) {
+    try {
+      await web3ProvidersStore.provider.connect()
+    } catch (e) {
+      ErrorHandler.process(e)
+    }
+
+    return
   }
+
+  updateRefState()
 }
 </script>
 

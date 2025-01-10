@@ -13,8 +13,9 @@
 <script setup lang="ts">
 import ReferralInfo from './ReferralInfo.vue'
 import ReferralSystem from './ReferralSystem.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useReferral } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
 
 defineProps<{
   poolId: number
@@ -23,6 +24,7 @@ defineProps<{
 const isRefSystemPage = ref(false)
 
 const { isReferrer } = useReferral()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const refComponent = computed(() =>
   isRefSystemPage.value || isReferrer.value ? ReferralSystem : ReferralInfo,
@@ -31,6 +33,13 @@ const refComponent = computed(() =>
 const becomeReferrer = () => {
   isRefSystemPage.value = true
 }
+
+watch(
+  () => web3ProvidersStore.provider.isConnected,
+  val => {
+    isRefSystemPage.value = val
+  },
+)
 </script>
 
 <style scoped lang="scss">
