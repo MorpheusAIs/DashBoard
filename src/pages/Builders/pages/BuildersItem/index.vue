@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col overflow-y-auto">
+  <div :class="cn('flex flex-row overflow-y-auto', 'md:flex-col')">
     <button class="flex items-center gap-2" @click="$router.go(-1)">
       <app-icon
         :name="$icons.arrowLeft"
@@ -93,7 +93,9 @@
                   }
                 "
                 :disabled="
-                  !withdrawalUnlockTime || withdrawalUnlockTime.isBefore(time())
+                  !withdrawalUnlockTime ||
+                  withdrawalUnlockTime.isBefore(time()) ||
+                  !+buildersProjectUserAccount?.staked
                 "
               >
                 Withdraw
@@ -230,7 +232,10 @@
     </div>
   </div>
 
-  <builder-withdraw-modal v-model:is-shown="isWithdrawModalShown" />
+  <builder-withdraw-modal
+    v-model:is-shown="isWithdrawModalShown"
+    :builder-project="buildersProject"
+  />
 </template>
 
 <script setup lang="ts">
@@ -261,6 +266,7 @@ import { formatEther } from '@/utils'
 import { time } from '@distributedlab/tools'
 import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
+import { cn } from '@/theme/utils'
 
 defineOptions({
   inheritAttrs: true,

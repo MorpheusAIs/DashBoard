@@ -15,7 +15,11 @@
             :disabled="isSubmitting"
           >
             <template #nodeRight>
-              <button class="stake-modal__inputs-max-btn" @click="setMaxAmount">
+              <button
+                type="button"
+                class="stake-modal__inputs-max-btn"
+                @click="setMaxAmount"
+              >
                 {{ $t('builders-stake-modal.stake-amount-max-btn') }}
               </button>
             </template>
@@ -64,11 +68,11 @@
         <app-button
           scheme="filled"
           color="secondary"
-          :disabled="!isFieldsValid"
+          @click="emit('update:is-shown', false)"
         >
           {{ $t('builders-stake-modal.cancel-btn') }}
         </app-button>
-        <app-button type="submit">
+        <app-button type="submit" :disabled="!isFieldsValid">
           {{ $t('builders-stake-modal.submit-btn') }}
         </app-button>
       </div>

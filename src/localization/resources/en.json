@@ -734,5 +734,15 @@
     "available-to-stake-balance": "Available to Stake",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm"
+  },
+  "builder-withdraw-modal": {
+    "builder-lbl": "Builder",
+    "current-stake-lbl": "Current Stake",
+    "stake-after-withdrawal-lbl": "Stake After Withdrawal",
+    "stake-amount-plh": "MOR amount",
+    "stake-amount-max-btn": "max",
+    "available-to-stake-balance": "Available to Stake",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm"
   }
 }
