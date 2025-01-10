@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import ReferralInfo from './ReferralInfo.vue'
 import ReferralSystem from './ReferralSystem.vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useReferral } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
 
@@ -27,19 +27,14 @@ const { isReferrer } = useReferral()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const refComponent = computed(() =>
-  isRefSystemPage.value || isReferrer.value ? ReferralSystem : ReferralInfo,
+  (isRefSystemPage.value || isReferrer.value) && web3ProvidersStore.address
+    ? ReferralSystem
+    : ReferralInfo,
 )
 
 const becomeReferrer = () => {
   isRefSystemPage.value = true
 }
-
-watch(
-  () => web3ProvidersStore.provider.isConnected,
-  val => {
-    isRefSystemPage.value = val
-  },
-)
 </script>
 
 <style scoped lang="scss">
