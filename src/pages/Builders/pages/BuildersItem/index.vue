@@ -10,29 +10,44 @@
 
     <div class="mt-14 flex flex-col">
       <span
-        class="self-start bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)] px-3 py-1 text-[#15151D]"
+        :class="
+          cn(
+            'self-start px-3 py-1 text-[#15151D]',
+            'bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)]',
+          )
+        "
       >
         Your Builder
       </span>
-      <div class="flex items-center gap-8">
-        <span class="typography-h1">{{ buildersProject?.name }}</span>
+      <div v-if="isLoaded" class="flex items-center gap-8">
+        <span class="typography-h1">
+          {{ buildersData.buildersProject?.name }}
+        </span>
 
-        <div class="flex items-center gap-2">
+        <button
+          class="flex items-center gap-2"
+          @click="isEditModalShown = true"
+        >
           <span class="text-primaryMain">Edit</span>
           <app-icon :name="$icons.edit" class="size-6 text-primaryMain" />
-        </div>
+        </button>
       </div>
+      <skeleton class="my-4 h-[80px] w-[250px]" v-else />
 
-      <div class="flex items-center gap-2">
+      <div v-if="isLoaded" class="flex items-center gap-2">
         <span class="text-textSecondaryMain">
-          {{ buildersProject && abbrCenter(buildersProject.admin) }}
+          {{ abbrCenter(buildersData.buildersProject?.admin) }}
         </span>
         <copy-button content="asdfasdf" message="aasdfasdf" />
       </div>
+      <skeleton class="w-[350px]" v-else />
     </div>
 
     <div class="mt-6 grid grid-cols-3 gap-[18px]">
-      <app-gradient-border-card class="flex-1">
+      <app-gradient-border-card
+        v-if="isLoaded"
+        :class="cn('min-h-[150px] flex-1')"
+      >
         <div class="flex flex-col gap-8 p-6">
           <div class="flex items-center justify-between">
             <span class="text-textSecondaryMain typography-body3">
@@ -42,43 +57,47 @@
           <div class="flex items-center gap-2">
             <span class="line-clamp-1 text-textSecondaryMain typography-h2">
               {{
-                buildersProject &&
-                time(+buildersProject.startsAt).format(DOT_TIME_FORMAT)
+                time(+buildersData.buildersProject?.startsAt).format(
+                  DOT_TIME_FORMAT,
+                )
               }}
             </span>
           </div>
         </div>
       </app-gradient-border-card>
-      <app-gradient-border-card class="flex-1">
+      <skeleton class="h-[160px]" v-else />
+      <app-gradient-border-card v-if="isLoaded" class="flex-1">
         <div class="flex flex-col gap-8 p-6">
           <span class="text-textSecondaryMain typography-body3">
             Min MOR Deposit
           </span>
           <span class="text-textSecondaryMain typography-h2">
-            {{ buildersProject && formatEther(buildersProject.minimalDeposit) }}
+            {{ formatEther(buildersData.buildersProject?.minimalDeposit) }}
           </span>
         </div>
       </app-gradient-border-card>
-      <app-gradient-border-card class="flex-1">
+      <skeleton class="h-[160px]" v-else />
+      <app-gradient-border-card v-if="isLoaded" class="flex-1">
         <div class="flex flex-col gap-8 p-6">
           <span class="text-textSecondaryMain typography-body3">
             Lock Period After Stake
           </span>
           <span class="text-textSecondaryMain typography-h2">
             {{
-              buildersProject &&
               humanizeTime(
-                buildersProject.withdrawLockPeriodAfterDeposit / 1000,
+                buildersData.buildersProject?.withdrawLockPeriodAfterDeposit /
+                  1000,
               )
             }}</span
           >
         </div>
       </app-gradient-border-card>
+      <skeleton class="h-[160px]" v-else />
     </div>
 
     <div class="mt-14 flex gap-[18px]">
       <div class="flex flex-[0.34] flex-col gap-[18px]">
-        <app-gradient-border-card>
+        <app-gradient-border-card v-if="isLoaded">
           <div class="flex flex-col gap-8 p-6">
             <div class="flex justify-between">
               <span class="text-textSecondaryMain typography-body3">
@@ -95,7 +114,7 @@
                 :disabled="
                   !withdrawalUnlockTime ||
                   withdrawalUnlockTime.isBefore(time()) ||
-                  !+buildersProjectUserAccount?.staked
+                  !+buildersData.buildersProjectUserAccount?.staked
                 "
               >
                 Withdraw
@@ -104,9 +123,11 @@
             <div class="flex items-center gap-8">
               <span class="text-textSecondaryMain typography-h2">
                 {{
-                  buildersProjectUserAccount?.staked
-                    ? formatEther(buildersProjectUserAccount?.staked)
-                    : 0
+                  buildersData.buildersProjectUserAccount?.staked
+                    ? formatEther(
+                        buildersData.buildersProjectUserAccount?.staked,
+                      )
+                    : '0'
                 }}
               </span>
             </div>
@@ -120,27 +141,30 @@
             </div>
           </div>
         </app-gradient-border-card>
-        <app-gradient-border-card class="">
+        <skeleton class="h-[160px]" v-else />
+        <app-gradient-border-card v-if="isLoaded" class="">
           <div class="flex flex-col gap-8 p-6">
             <span class="text-textSecondaryMain typography-body3">
               Total MOR Claimed
             </span>
             <span class="text-textSecondaryMain typography-h2">
-              {{ buildersProject && formatEther(buildersProject.totalClaimed) }}
+              {{ formatEther(buildersData.buildersProject?.totalClaimed) }}
             </span>
           </div>
         </app-gradient-border-card>
-        <app-gradient-border-card class="">
+        <skeleton class="h-[160px]" v-else />
+        <app-gradient-border-card v-if="isLoaded" class="">
           <div class="flex flex-col gap-8 p-6">
             <span class="text-textSecondaryMain typography-body3">
               Total MOR Staked
             </span>
             <span class="text-textSecondaryMain typography-h2">
-              {{ buildersProject && formatEther(buildersProject.totalStaked) }}
+              {{ formatEther(buildersData.buildersProject?.totalStaked) }}
             </span>
           </div>
         </app-gradient-border-card>
-        <app-gradient-border-card>
+        <skeleton class="h-[160px]" v-else />
+        <app-gradient-border-card v-if="isLoaded">
           <div class="flex flex-col gap-8 p-6">
             <div class="flex justify-between">
               <span class="text-textSecondaryMain typography-body3">
@@ -151,9 +175,11 @@
                 v-if="isUserAccountAdmin"
                 size="small"
                 :disabled="
-                  !buildersProject ||
-                  !+buildersProject.claimLockEnd ||
-                  time(buildersProject.claimLockEnd).isAfter(time())
+                  !buildersData.buildersProject ||
+                  !+buildersData.buildersProject.claimLockEnd ||
+                  time(buildersData.buildersProject.claimLockEnd).isAfter(
+                    time(),
+                  )
                 "
               >
                 Claim
@@ -162,8 +188,9 @@
             <div class="flex items-center gap-8">
               <span class="text-textSecondaryMain typography-h2">
                 {{
-                  buildersProject &&
-                  time(buildersProject.claimLockEnd).format(DOT_TIME_FORMAT)
+                  time(buildersData.buildersProject?.claimLockEnd).format(
+                    DOT_TIME_FORMAT,
+                  )
                 }}
               </span>
             </div>
@@ -171,17 +198,21 @@
               <span class="text-textSecondary"> Admin address: </span>
               <div class="flex items-center gap-2">
                 <span class="text-textSecondaryMain">
-                  {{ abbrCenter('0xaksjdnfkajsdnfkajsdnfkajsndfkjn') }}
+                  {{ abbrCenter(buildersData.buildersProject?.admin) }}
                 </span>
-                <copy-button content="asdfasdf" message="aasdfasdf" />
+                <copy-button
+                  :content="buildersData.buildersProject?.admin"
+                  message="Copied"
+                />
               </div>
             </div>
           </div>
         </app-gradient-border-card>
+        <skeleton class="h-[160px]" v-else />
       </div>
       <div class="col-span-2 flex flex-[0.65] flex-col gap-6 pl-12">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
+          <div v-if="isLoaded" class="flex items-center gap-4">
             <span class="span text-textSecondaryMain">Stakers</span>
             <app-gradient-border-card
               class="bg-transparent p-2 text-textSecondaryMain"
@@ -189,52 +220,86 @@
               {{ buildersProject?.totalUsers }}
             </app-gradient-border-card>
           </div>
-          <app-button>Stake</app-button>
+          <div v-else class="flex items-center gap-4">
+            <skeleton class="w-[160px]" />
+            <skeleton class="w-[35px]" />
+          </div>
+
+          <app-button :disabled="!isLoaded" @click="isStakeModalShown = true">
+            Stake
+          </app-button>
         </div>
 
         <div class="flex flex-1 flex-col">
-          <div class="mb-2 grid grid-cols-2 items-center justify-between">
-            <div class="px-20">
-              <span class="text-textSecondary">Name / Address</span>
-            </div>
-
-            <button class="flex items-center justify-end gap-2 px-20">
-              <span class="text-textSecondary">Start time</span>
-              <app-icon :name="$icons.sort" class="size-6" />
-            </button>
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <app-gradient-border-card v-for="el in stakers" :key="el.id">
-              <div class="grid grid-cols-2">
-                <div class="px-20 py-8">
-                  <span class="text-textSecondaryMain">
-                    {{ abbrCenter(el.address) }}
-                  </span>
+          <template v-if="isLoaded">
+            <template v-if="stakers?.length">
+              <div class="mb-2 grid grid-cols-2 items-center justify-between">
+                <div class="px-20">
+                  <span class="text-textSecondary">Name / Address</span>
                 </div>
-                <div class="px-20 py-8 text-end">
-                  <span class="text-textSecondaryMain">
-                    {{ formatEther(el.staked) }}
-                  </span>
-                </div>
+
+                <button class="flex items-center justify-end gap-2 px-20">
+                  <span class="text-textSecondary">Start time</span>
+                  <app-icon :name="$icons.sort" class="size-6" />
+                </button>
               </div>
-            </app-gradient-border-card>
-          </div>
 
-          <pagination
-            v-model:current-page="stakersCurrentPage"
-            :page-limit="DEFAULT_PAGE_LIMIT"
-            :total-items="buildersProject?.totalUsers"
-            class="mt-6 self-center"
-          />
+              <div class="flex flex-col gap-2">
+                <app-gradient-border-card v-for="el in stakers" :key="el.id">
+                  <div class="grid grid-cols-2">
+                    <div class="px-20 py-8">
+                      <span class="text-textSecondaryMain">
+                        {{ abbrCenter(el.address) }}
+                      </span>
+                    </div>
+                    <div class="px-20 py-8 text-end">
+                      <span class="text-textSecondaryMain">
+                        {{ formatEther(el.staked) }}
+                      </span>
+                    </div>
+                  </div>
+                </app-gradient-border-card>
+              </div>
+
+              <pagination
+                v-if="isLoaded && !isLoadFailed"
+                v-model:current-page="stakersCurrentPage"
+                :page-limit="DEFAULT_PAGE_LIMIT"
+                :total-items="buildersData.buildersProject?.totalUsers"
+                class="mt-6 self-center"
+              />
+            </template>
+            <template v-else>
+              <no-data-message
+                title="No stakers found"
+                message="Be the first staker"
+              />
+            </template>
+          </template>
+          <template v-else>
+            <div class="flex flex-col gap-2">
+              <skeleton v-for="i in 10" :key="i" class="h-16 animate-pulse" />
+            </div>
+          </template>
         </div>
       </div>
     </div>
   </div>
 
   <builder-withdraw-modal
+    v-if="buildersData.buildersProject"
     v-model:is-shown="isWithdrawModalShown"
-    :builder-project="buildersProject"
+    :builder-project="buildersData.buildersProject"
+  />
+  <builder-form-modal
+    v-if="buildersData.buildersProject"
+    v-model:is-shown="isEditModalShown"
+    :builders-project="buildersData.buildersProject"
+  />
+  <builders-stake-modal
+    v-model:is-shown="isStakeModalShown"
+    v-if="buildersData.buildersProject"
+    :builder-project="buildersData.buildersProject"
   />
 </template>
 
@@ -244,9 +309,11 @@ import {
   AppGradientBorderCard,
   AppIcon,
   CopyButton,
+  NoDataMessage,
   Pagination,
+  Skeleton,
 } from '@/common'
-import { abbrCenter, humanizeTime } from '@/helpers'
+import { abbrCenter, ErrorHandler, humanizeTime } from '@/helpers'
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
 import { computed, ref, watch } from 'vue'
 import {
@@ -267,99 +334,116 @@ import { time } from '@distributedlab/tools'
 import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { cn } from '@/theme/utils'
+import { useLoad } from '@/composables'
+import BuilderFormModal from '@/pages/Builders/pages/BuildersList/components/BuilderFormModal.vue'
+import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
 
 defineOptions({
   inheritAttrs: true,
 })
 
 const route = useRoute()
+const { provider } = useWeb3ProvidersStore()
 
 const isWithdrawModalShown = ref(false)
+const isEditModalShown = ref(false)
+const isStakeModalShown = ref(false)
+
 const stakersCurrentPage = ref(1)
 
 const stakers = ref<GetBuildersProjectUsersQuery['buildersUsers']>([])
-const buildersProject = ref<GetBuildersProjectQuery['buildersProject']>()
-const buildersProjectUserAccount =
-  ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
 
-const { provider } = useWeb3ProvidersStore()
+const {
+  data: buildersData,
+  isLoaded,
+  isLoadFailed,
+} = useLoad<{
+  buildersProject: GetBuildersProjectQuery['buildersProject'] | null
+  buildersProjectUserAccount:
+    | GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+    | null
+}>(
+  { buildersProject: null, buildersProjectUserAccount: null },
+  async () => {
+    const [{ data: buildersProjectsResponse }] = await Promise.all([
+      config.testnetBuildersApolloClient.query<
+        GetBuildersProjectQuery,
+        GetBuildersProjectQueryVariables
+      >({
+        query: GetBuildersProject,
+        fetchPolicy: 'network-only',
+        variables: {
+          id: route.params.id as string,
+        },
+      }),
+    ])
+
+    const { data: userAccountInProject } =
+      await config.testnetBuildersApolloClient.query<
+        GetUserAccountBuildersProjectQuery,
+        GetUserAccountBuildersProjectQueryVariables
+      >({
+        query: GetUserAccountBuildersProject,
+        fetchPolicy: 'network-only',
+        variables: {
+          address: provider.selectedAddress,
+          buildersProjectId: buildersProjectsResponse.buildersProject?.id,
+        },
+      })
+
+    return {
+      buildersProject: buildersProjectsResponse.buildersProject,
+      buildersProjectUserAccount: userAccountInProject.buildersUsers[0],
+    }
+  },
+  {
+    isLoadOnMount: true,
+  },
+)
 
 const isUserAccountAdmin = computed(
-  () => provider.selectedAddress === buildersProject.value?.admin,
+  () => provider.selectedAddress === buildersData.value.buildersProject?.admin,
 )
 
 const withdrawalUnlockTime = computed(() => {
-  if (!buildersProjectUserAccount.value || !buildersProject.value) return
+  if (
+    !buildersData.value.buildersProjectUserAccount ||
+    !buildersData.value.buildersProject
+  )
+    return
 
-  return time(buildersProjectUserAccount.value.lastStake).add(
-    buildersProject.value.withdrawLockPeriodAfterDeposit,
+  return time(buildersData.value.buildersProjectUserAccount.lastStake).add(
+    buildersData.value.buildersProject.withdrawLockPeriodAfterDeposit,
     'seconds',
   )
 })
 
-const load = async () => {
-  const [{ data: buildersProjectsResponse }] = await Promise.all([
-    config.testnetBuildersApolloClient.query<
-      GetBuildersProjectQuery,
-      GetBuildersProjectQueryVariables
+const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
+  try {
+    const { data } = await config.testnetBuildersApolloClient.query<
+      GetBuildersProjectUsersQuery,
+      GetBuildersProjectUsersQueryVariables
     >({
-      query: GetBuildersProject,
+      query: GetBuildersProjectUsers,
       fetchPolicy: 'network-only',
       variables: {
-        id: route.params.id as string,
-      },
-    }),
-  ])
-
-  const { data: userAccountInProject } =
-    await config.testnetBuildersApolloClient.query<
-      GetUserAccountBuildersProjectQuery,
-      GetUserAccountBuildersProjectQueryVariables
-    >({
-      query: GetUserAccountBuildersProject,
-      fetchPolicy: 'network-only',
-      variables: {
-        address: provider.selectedAddress,
-        buildersProjectId: buildersProjectsResponse.buildersProject?.id,
+        first: limit,
+        skip: stakersCurrentPage.value * limit - limit,
+        buildersProjectId: buildersData.value.buildersProject?.id,
       },
     })
 
-  buildersProject.value = buildersProjectsResponse.buildersProject
-  buildersProjectUserAccount.value = userAccountInProject.buildersUsers?.[0]
+    stakers.value = data.buildersUsers
+  } catch (error) {
+    ErrorHandler.processWithoutFeedback(error)
+  }
 }
-
-const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
-  const { data } = await config.testnetBuildersApolloClient.query<
-    GetBuildersProjectUsersQuery,
-    GetBuildersProjectUsersQueryVariables
-  >({
-    query: GetBuildersProjectUsers,
-    fetchPolicy: 'network-only',
-    variables: {
-      first: limit,
-      skip: stakersCurrentPage.value * limit - limit,
-      buildersProjectId: buildersProject.value?.id,
-    },
-  })
-
-  stakers.value = data.buildersUsers
-}
-
-watch(
-  [() => route.query.user, () => route.query.network],
-  () => {
-    load()
-  },
-  {
-    immediate: true,
-  },
-)
 
 watch(
   [
     () => route.query.user,
     () => route.query.network,
-    buildersProject,
+    () => buildersData.value.buildersProject,
     stakersCurrentPage,
   ],
   () => {

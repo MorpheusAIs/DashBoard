@@ -52,11 +52,11 @@
         <app-button
           scheme="filled"
           color="secondary"
-          :disabled="!isFieldsValid"
+          @click="emit('update:is-shown', false)"
         >
           {{ $t('builder-form-modal.cancel-btn') }}
         </app-button>
-        <app-button type="submit">
+        <app-button type="submit" :disabled="!isFieldsValid">
           {{ $t('builder-form-modal.submit-btn') }}
         </app-button>
       </div>
@@ -81,13 +81,16 @@ import { required } from '@/validators'
 import { config } from '@config'
 import { Provider } from '@/types'
 import type { BigNumberish } from 'ethers'
+import { GetBuildersProjectQuery } from '@/types/graphql'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     isShown?: boolean
+    buildersProject?: GetBuildersProjectQuery['buildersProject']
   }>(),
   {
     isShown: true,
+    buildersProject: null,
   },
 )
 
@@ -101,12 +104,20 @@ const { networkId, provider } = storeToRefs(useWeb3ProvidersStore())
 
 const isSubmitting = ref(false)
 
-const form = reactive({
-  name: '',
-  depositAmount: '',
-  lockPeriodAfterStake: '',
-  startAt: '',
-  claimLockEndTime: '',
+const form = reactive<{
+  name: string
+  depositAmount: string
+  lockPeriodAfterStake: string
+  startAt: string
+  claimLockEndTime: string
+}>({
+  name: props.buildersProject?.name ?? '',
+  depositAmount: props.buildersProject?.minimalDeposit,
+  lockPeriodAfterStake: props.buildersProject?.withdrawLockPeriodAfterDeposit,
+  startAt: props.buildersProject?.startsAt,
+  claimLockEndTime: +props.buildersProject?.claimLockEnd
+    ? props.buildersProject?.claimLockEnd
+    : '',
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
