@@ -707,5 +707,20 @@
     "claim-button": "Claim",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "builder-form-modal": {
+    "creation-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "name-plh": "Builder name",
+    "name-note": "What is the name of your project? This is how users will find your project.",
+    "min-deposit-plh": "Minimum deposit",
+    "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
+    "lock-period-after-stake-plh": "Lock period after stake",
+    "lock-period-after-stake-not": "After each stake, the user will not be able to withdraw their tokens for that period",
+    "start-at-plh": "Start time",
+    "start-at-note": "It will be possible to change the Builder settings up to this point. The stake will not be available until this time",
+    "claim-lock-end-plh": "Claim lock ends",
+    "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm"
   }
 }
