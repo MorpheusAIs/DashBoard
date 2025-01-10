@@ -71,7 +71,7 @@ const updateRefState = async () => {
   }
 
   becomeReferrer()
-  emit('become-referrer')()
+  emit('become-referrer')
 }
 </script>
 
