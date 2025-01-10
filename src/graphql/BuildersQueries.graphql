@@ -48,5 +48,6 @@ query getUserAccountBuildersProject($buildersProjectId: Bytes = "", $address: By
   buildersUsers(where: {buildersProjectId: $buildersProjectId, address: $address}) {
     id
     staked
+    lastStake
   }
 }

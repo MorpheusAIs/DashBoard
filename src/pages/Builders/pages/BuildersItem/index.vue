@@ -78,7 +78,7 @@
 
     <div class="mt-14 flex gap-[18px]">
       <div class="flex flex-[0.34] flex-col gap-[18px]">
-        <app-gradient-border-card v-if="isUserAccountAdmin">
+        <app-gradient-border-card>
           <div class="flex flex-col gap-8 p-6">
             <div class="flex justify-between">
               <span class="text-textSecondaryMain typography-body3">
@@ -91,6 +91,9 @@
                   () => {
                     isWithdrawModalShown = true
                   }
+                "
+                :disabled="
+                  !withdrawalUnlockTime || withdrawalUnlockTime.isBefore(time())
                 "
               >
                 Withdraw
@@ -108,7 +111,9 @@
             <div class="flex items-center gap-2">
               <span class="text-textSecondary"> Unlock Time: </span>
               <div class="flex items-center gap-2">
-                <span class="text-textSecondaryMain"> {{ time() }} </span>
+                <span class="text-textSecondaryMain">
+                  {{ withdrawalUnlockTime?.format(DOT_TIME_FORMAT) }}
+                </span>
               </div>
             </div>
           </div>
@@ -133,14 +138,24 @@
             </span>
           </div>
         </app-gradient-border-card>
-        <app-gradient-border-card class="">
+        <app-gradient-border-card>
           <div class="flex flex-col gap-8 p-6">
             <div class="flex justify-between">
               <span class="text-textSecondaryMain typography-body3">
                 Claim lock ends
               </span>
 
-              <app-button size="small" disabled> Claim </app-button>
+              <app-button
+                v-if="isUserAccountAdmin"
+                size="small"
+                :disabled="
+                  !buildersProject ||
+                  !+buildersProject.claimLockEnd ||
+                  time(buildersProject.claimLockEnd).isAfter(time())
+                "
+              >
+                Claim
+              </app-button>
             </div>
             <div class="flex items-center gap-8">
               <span class="text-textSecondaryMain typography-h2">
@@ -149,8 +164,6 @@
                   time(buildersProject.claimLockEnd).format(DOT_TIME_FORMAT)
                 }}
               </span>
-              <!--              <span class="text-textPrimary"> 01.01.2024 </span>-->
-              <!--              <span class="text-textPrimary"> 05:12 </span>-->
             </div>
             <div class="flex items-center gap-2">
               <span class="text-textSecondary"> Admin address: </span>
@@ -268,6 +281,15 @@ const { provider } = useWeb3ProvidersStore()
 const isUserAccountAdmin = computed(
   () => provider.selectedAddress === buildersProject.value?.admin,
 )
+
+const withdrawalUnlockTime = computed(() => {
+  if (!buildersProjectUserAccount.value || !buildersProject.value) return
+
+  return time(buildersProjectUserAccount.value.lastStake).add(
+    buildersProject.value.withdrawLockPeriodAfterDeposit,
+    'seconds',
+  )
+})
 
 const load = async () => {
   const [{ data: buildersProjectsResponse }] = await Promise.all([

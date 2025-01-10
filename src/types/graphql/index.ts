@@ -168,6 +168,7 @@ export type BuildersUser = {
   address: Scalars['Bytes'];
   buildersProjectId: Scalars['Bytes'];
   id: Scalars['Bytes'];
+  lastStake: Scalars['BigInt'];
   staked: Scalars['BigInt'];
 };
 
@@ -205,6 +206,14 @@ export type BuildersUser_Filter = {
   id_not?: InputMaybe<Scalars['Bytes']>;
   id_not_contains?: InputMaybe<Scalars['Bytes']>;
   id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  lastStake?: InputMaybe<Scalars['BigInt']>;
+  lastStake_gt?: InputMaybe<Scalars['BigInt']>;
+  lastStake_gte?: InputMaybe<Scalars['BigInt']>;
+  lastStake_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  lastStake_lt?: InputMaybe<Scalars['BigInt']>;
+  lastStake_lte?: InputMaybe<Scalars['BigInt']>;
+  lastStake_not?: InputMaybe<Scalars['BigInt']>;
+  lastStake_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   or?: InputMaybe<Array<InputMaybe<BuildersUser_Filter>>>;
   staked?: InputMaybe<Scalars['BigInt']>;
   staked_gt?: InputMaybe<Scalars['BigInt']>;
@@ -220,12 +229,14 @@ export enum BuildersUser_OrderBy {
   Address = 'address',
   BuildersProjectId = 'buildersProjectId',
   Id = 'id',
+  LastStake = 'lastStake',
   Staked = 'staked'
 }
 
 export type Counter = {
   __typename?: 'Counter';
   id: Scalars['Bytes'];
+  totalBuildersProjects: Scalars['BigInt'];
   totalSubnets: Scalars['BigInt'];
 };
 
@@ -244,6 +255,14 @@ export type Counter_Filter = {
   id_not_contains?: InputMaybe<Scalars['Bytes']>;
   id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   or?: InputMaybe<Array<InputMaybe<Counter_Filter>>>;
+  totalBuildersProjects?: InputMaybe<Scalars['BigInt']>;
+  totalBuildersProjects_gt?: InputMaybe<Scalars['BigInt']>;
+  totalBuildersProjects_gte?: InputMaybe<Scalars['BigInt']>;
+  totalBuildersProjects_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalBuildersProjects_lt?: InputMaybe<Scalars['BigInt']>;
+  totalBuildersProjects_lte?: InputMaybe<Scalars['BigInt']>;
+  totalBuildersProjects_not?: InputMaybe<Scalars['BigInt']>;
+  totalBuildersProjects_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   totalSubnets?: InputMaybe<Scalars['BigInt']>;
   totalSubnets_gt?: InputMaybe<Scalars['BigInt']>;
   totalSubnets_gte?: InputMaybe<Scalars['BigInt']>;
@@ -256,6 +275,7 @@ export type Counter_Filter = {
 
 export enum Counter_OrderBy {
   Id = 'id',
+  TotalBuildersProjects = 'totalBuildersProjects',
   TotalSubnets = 'totalSubnets'
 }
 
@@ -907,7 +927,7 @@ export type GetUserAccountBuildersProjectQueryVariables = Exact<{
 }>;
 
 
-export type GetUserAccountBuildersProjectQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', id: any, staked: any }> };
+export type GetUserAccountBuildersProjectQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', id: any, staked: any, lastStake: any }> };
 
 export const BuilderProject = gql`
     fragment BuilderProject on BuildersProject {
@@ -970,6 +990,7 @@ export const GetUserAccountBuildersProject = gql`
   buildersUsers(where: {buildersProjectId: $buildersProjectId, address: $address}) {
     id
     staked
+    lastStake
   }
 }
     `;
