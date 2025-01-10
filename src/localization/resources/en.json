@@ -722,5 +722,17 @@
     "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm"
+  },
+  "builders-stake-modal": {
+    "builder-lbl": "Builder",
+    "min-deposit-lbl": "Min Deposit",
+    "lock-period-lbl": "Lock Period",
+    "new-stake-amount-lbl": "New Stake Amount",
+    "new-unlock-date-lbl": "New Unlock Date",
+    "stake-amount-plh": "MOR amount",
+    "stake-amount-max-btn": "max",
+    "available-to-stake-balance": "Available to Stake",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm"
   }
 }

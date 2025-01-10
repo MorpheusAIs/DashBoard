@@ -66,7 +66,10 @@
     </div>
   </div>
 
-  <builders-stake-modal v-model:is-shown="isStakeModalShown" />
+  <builders-stake-modal
+    v-model:is-shown="isStakeModalShown"
+    :builder-project="builderProject"
+  />
 </template>
 
 <script setup lang="ts">
