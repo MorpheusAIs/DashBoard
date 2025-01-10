@@ -116,6 +116,9 @@ export const config = {
   mainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
   testnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 
+  yearOfLaunch: 2024,
+  monthOfLaunch: 1,
+
   mainnetBuildersApolloClient: {} as ApolloClient<NormalizedCacheObject>,
   testnetBuildersApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
