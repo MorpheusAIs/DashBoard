@@ -661,7 +661,8 @@
     "description-1": "Create your own referral link, share it with others, and earn bonuses!",
     "description-2": "Your referral rate depends on the amount of stETH deposited by people using your link. When a user deposits stETH with your referral link, you, as the referrer, can earn up to a 5% bonus in MOR tokens.",
     "description-3": "Additionally, other users who deposit stETH using your link will receive a 1% bonus on their deposits.",
-    "button-txt": "Become a Referrer"
+    "button-txt": "Become a Referrer",
+    "connect-wallet": "Connect Wallet to see your Referral System"
   },
   "referral-info-card": {
     "title": "Tier {tier}",
