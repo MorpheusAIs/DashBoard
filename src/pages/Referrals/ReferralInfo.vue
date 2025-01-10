@@ -54,16 +54,16 @@ const description = computed(() => [
 ])
 
 const updateRefState = async () => {
-  if (web3ProvidersStore.provider.isConnected) {
-    becomeReferrer()
-    emit('become-referrer')
-  } else {
+  if (!web3ProvidersStore.provider.isConnected) {
     try {
       await web3ProvidersStore.provider.connect()
     } catch (e) {
       ErrorHandler.process(e)
     }
   }
+
+  becomeReferrer()
+  emit('become-referrer')
 }
 </script>
 
