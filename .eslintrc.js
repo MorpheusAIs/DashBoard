@@ -33,7 +33,7 @@ module.exports = {
     withDefaults: 'readonly',
   },
   rules: {
-    "prettier/prettier": ["error", {}, { usePrettierrc: true }],
+    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'vue-i18n/no-v-html': 'off',
     'vue-i18n/no-dynamic-keys': 'warn',
     'vue-i18n/no-missing-keys': 'warn',
@@ -68,8 +68,8 @@ module.exports = {
     'max-len': [
       1,
       {
-        code: 80,
-        comments: 80,
+        code: 100,
+        comments: 100,
         ignoreUrls: true,
         ignoreStrings: true,
         ignoreTemplateLiterals: true,

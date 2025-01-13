@@ -2,31 +2,41 @@
   <div class="flex w-full flex-col gap-2">
     <div class="grid grid-cols-6 items-center px-8">
       <div class="builders-table__header-item">
-        <span class="builders-table__header-item-text">Name</span>
+        <span class="builders-table__header-item-text">
+          {{ $t('builders-table.name-th') }}
+        </span>
       </div>
       <button class="builders-table__header-item">
-        <span class="builders-table__header-item-text">Start time</span>
+        <span class="builders-table__header-item-text">
+          {{ $t('builders-table.starts-time-th') }}
+        </span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
       </button>
       <button class="builders-table__header-item">
-        <span class="builders-table__header-item-text">Min MOR Deposit</span>
+        <span class="builders-table__header-item-text">
+          {{ $t('builders-table.min-deposit-th') }}
+        </span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
       </button>
       <button class="builders-table__header-item">
-        <span class="builders-table__header-item-text">Total MOR Staked</span>
+        <span class="builders-table__header-item-text">
+          {{ $t('builders-table.total-staked-th') }}
+        </span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"
         />
       </button>
       <button class="builders-table__header-item">
-        <span class="builders-table__header-item-text">Lock Period</span>
+        <span class="builders-table__header-item-text">
+          {{ $t('builders-table.withdraw-lock-period-th') }}
+        </span>
         <app-icon
           :name="$icons.sort"
           class="builders-table__header-item-icon"

@@ -724,6 +724,8 @@
     "submit-btn": "Confirm"
   },
   "builders-stake-modal": {
+    "modal-title": "Stake MOR",
+    "available-to-stake-balance-value": "{amount} MOR",
     "builder-lbl": "Builder",
     "min-deposit-lbl": "Min Deposit",
     "lock-period-lbl": "Lock Period",
@@ -753,5 +755,35 @@
     "loading-projects-error-msg": "Something bad happened",
     "builders-projects-empty-msg": "There are no projects yet",
     "loading-account-projects-error-msg": "Something bad happened"
+  },
+  "builders-table": {
+    "name-th": "Name",
+    "start-time-th": "Start time",
+    "min-deposit-th": "Min MOR Deposit",
+    "total-staked-th": "Total MOR Staked",
+    "lock-period-th": "Lock period"
+  },
+  "builders-table-item": {
+    "stake-btn": "Stake"
+  },
+  "builders-item": {
+    "back-btn": "Back",
+    "your-builder-lbl": "Your Builder",
+    "edit-btn": "Edit",
+    "start-time-lbl": "Start time",
+    "min-deposit-lbl": "Min MOR Deposit",
+    "lock-period-lbl": "Lock Period After Stake",
+    "available-for-withdrawal-lbl": "Available MOR for Withdrawal",
+    "withdraw-btn": "Withdraw",
+    "unlock-time-lbl": "Unlock Time:",
+    "total-claimed-lbl": "Total MOR Claimed",
+    "total-staked-lbl": "Total MOR Staked",
+    "claim-lock-ends-lbl": "Claim lock ends",
+    "claim-btn": "Claim",
+    "admin-addr-lbl": "Admin address:",
+    "stakers-lbl": "Stakers",
+    "stake-btn": "Stake",
+    "staker-addr-name-th": "Name / Address",
+    "start-time-th": "Start time"
   }
 }

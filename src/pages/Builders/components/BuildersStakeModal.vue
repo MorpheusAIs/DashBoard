@@ -2,7 +2,7 @@
   <basic-modal
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
-    title="Stake MOR"
+    :title="$t('modal-title')"
     :is-close-by-click-outside="!isSubmitting"
     :has-close-button="!isSubmitting"
   >
@@ -31,7 +31,13 @@
             <span class="stake-modal__details-label">
               {{ $t('builders-stake-modal.available-to-stake-balance') }}
             </span>
-            <span class="stake-modal__details-value">3 667 456.748 MOR</span>
+            <span class="stake-modal__details-value">
+              {{
+                $t('builders-stake-modal.available-to-stake-balance-value', {
+                  amount: formatEther(balances.rewardsToken ?? 0),
+                })
+              }}
+            </span>
           </div>
         </div>
       </div>
@@ -89,18 +95,16 @@ import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, reactive, ref, watch } from 'vue'
-import { numeric, required } from '@/validators'
+import { maxValue, numeric, required } from '@/validators'
 import {
   bus,
   BUS_EVENTS,
-  createBuildersContract,
   ErrorHandler,
   getEthExplorerTxUrl,
   humanizeTime,
 } from '@/helpers'
 import { config } from '@config'
-import { Provider } from '@/types'
-import { formatEther, parseUnits, toEther } from '@/utils'
+import { formatEther, parseUnits } from '@/utils'
 import {
   GetBuildersProjectQuery,
   GetUserAccountBuildersProject,
@@ -109,7 +113,6 @@ import {
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
-import { providers } from 'ethers'
 
 const props = withDefaults(
   defineProps<{
@@ -128,9 +131,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, provider, rewardsContract, buildersContract } = storeToRefs(
-  useWeb3ProvidersStore(),
-)
+const { networkId, provider, rewardsContract, buildersContract, balances } =
+  storeToRefs(useWeb3ProvidersStore())
 
 const buildersProjectUserAccount =
   ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
@@ -143,7 +145,11 @@ const form = reactive({
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
-    stakeAmount: { required, numeric },
+    stakeAmount: {
+      required,
+      numeric,
+      max: maxValue(+formatEther(balances.value.rewardsToken ?? 0)),
+    },
   })
 
 const builderDetails = computed(() => [
@@ -198,7 +204,9 @@ const loadUserAccountInProject = async () => {
   buildersProjectUserAccount.value = userAccountInProject.buildersUsers?.[0]
 }
 
-const setMaxAmount = () => {}
+const setMaxAmount = () => {
+  form.stakeAmount = formatEther(balances.value.rewardsToken ?? 0)
+}
 
 const submit = async () => {
   if (!isFormValid()) return

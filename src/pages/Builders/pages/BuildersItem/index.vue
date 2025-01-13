@@ -5,7 +5,9 @@
         :name="$icons.arrowLeft"
         class="size-4 text-textSecondaryLight"
       />
-      <span class="text-textSecondaryMain">Back</span>
+      <span class="text-textSecondaryMain">
+        {{ $t('builders-item.back-btn') }}
+      </span>
     </button>
 
     <div class="mt-14 flex flex-col">
@@ -17,7 +19,7 @@
           )
         "
       >
-        Your Builder
+        {{ $t('builders-item.your-builder-lbl') }}
       </span>
       <div v-if="isLoaded" class="flex items-center gap-8">
         <span class="typography-h1">
@@ -28,7 +30,9 @@
           class="flex items-center gap-2"
           @click="isEditModalShown = true"
         >
-          <span class="text-primaryMain">Edit</span>
+          <span class="text-primaryMain">
+            {{ $t('builders-item.edit-btn') }}
+          </span>
           <app-icon :name="$icons.edit" class="size-6 text-primaryMain" />
         </button>
       </div>
@@ -51,7 +55,7 @@
         <div class="flex flex-col gap-8 p-6">
           <div class="flex items-center justify-between">
             <span class="text-textSecondaryMain typography-body3">
-              Start time
+              {{ $t('builders-item.start-time-lbl') }}
             </span>
           </div>
           <div class="flex items-center gap-2">
@@ -69,7 +73,7 @@
       <app-gradient-border-card v-if="isLoaded" class="flex-1">
         <div class="flex flex-col gap-8 p-6">
           <span class="text-textSecondaryMain typography-body3">
-            Min MOR Deposit
+            {{ $t('builders-item.min-deposit-lbl') }}
           </span>
           <span class="text-textSecondaryMain typography-h2">
             {{ formatEther(buildersData.buildersProject?.minimalDeposit) }}
@@ -80,7 +84,7 @@
       <app-gradient-border-card v-if="isLoaded" class="flex-1">
         <div class="flex flex-col gap-8 p-6">
           <span class="text-textSecondaryMain typography-body3">
-            Lock Period After Stake
+            {{ $t('builders-item.lock-period-lbl') }}
           </span>
           <span class="text-textSecondaryMain typography-h2">
             {{
@@ -101,7 +105,7 @@
           <div class="flex flex-col gap-8 p-6">
             <div class="flex justify-between">
               <span class="text-textSecondaryMain typography-body3">
-                Available MOR for Withdrawal
+                {{ $t('builders-item.available-for-withdrawal-lbl') }}
               </span>
 
               <app-button
@@ -117,22 +121,22 @@
                   !+buildersData.buildersProjectUserAccount?.staked
                 "
               >
-                Withdraw
+                {{ $t('builders-item.withdraw-btn') }}
               </app-button>
             </div>
             <div class="flex items-center gap-8">
               <span class="text-textSecondaryMain typography-h2">
                 {{
-                  buildersData.buildersProjectUserAccount?.staked
-                    ? formatEther(
-                        buildersData.buildersProjectUserAccount?.staked,
-                      )
-                    : '0'
+                  formatEther(
+                    buildersData.buildersProjectUserAccount?.staked ?? 0,
+                  )
                 }}
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-textSecondary"> Unlock Time: </span>
+              <span class="text-textSecondary">
+                {{ $t('builders-item.unlock-time-lbl') }}
+              </span>
               <div class="flex items-center gap-2">
                 <span class="text-textSecondaryMain">
                   {{ withdrawalUnlockTime?.format(DOT_TIME_FORMAT) }}
@@ -145,7 +149,7 @@
         <app-gradient-border-card v-if="isLoaded" class="">
           <div class="flex flex-col gap-8 p-6">
             <span class="text-textSecondaryMain typography-body3">
-              Total MOR Claimed
+              {{ $t('builders-item.total-claimed-lbl') }}
             </span>
             <span class="text-textSecondaryMain typography-h2">
               {{ formatEther(buildersData.buildersProject?.totalClaimed) }}
@@ -156,7 +160,7 @@
         <app-gradient-border-card v-if="isLoaded" class="">
           <div class="flex flex-col gap-8 p-6">
             <span class="text-textSecondaryMain typography-body3">
-              Total MOR Staked
+              {{ $t('builders-item.total-staked-lbl') }}
             </span>
             <span class="text-textSecondaryMain typography-h2">
               {{ formatEther(buildersData.buildersProject?.totalStaked) }}
@@ -168,7 +172,7 @@
           <div class="flex flex-col gap-8 p-6">
             <div class="flex justify-between">
               <span class="text-textSecondaryMain typography-body3">
-                Claim lock ends
+                {{ $t('builders-item.claim-lock-ends-lbl') }}
               </span>
 
               <app-button
@@ -182,7 +186,7 @@
                   )
                 "
               >
-                Claim
+                {{ $t('builders-item.claim-btn') }}
               </app-button>
             </div>
             <div class="flex items-center gap-8">
@@ -195,7 +199,9 @@
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-textSecondary"> Admin address: </span>
+              <span class="text-textSecondary">
+                {{ $t('builders-item.admin-addr-lbl') }}
+              </span>
               <div class="flex items-center gap-2">
                 <span class="text-textSecondaryMain">
                   {{ abbrCenter(buildersData.buildersProject?.admin) }}
@@ -213,7 +219,9 @@
       <div class="col-span-2 flex flex-[0.65] flex-col gap-6 pl-12">
         <div class="flex items-center justify-between">
           <div v-if="isLoaded" class="flex items-center gap-4">
-            <span class="span text-textSecondaryMain">Stakers</span>
+            <span class="span text-textSecondaryMain">
+              {{ $t('builders-item.stakers-lbl') }}
+            </span>
             <app-gradient-border-card
               class="bg-transparent p-2 text-textSecondaryMain"
             >
@@ -226,7 +234,7 @@
           </div>
 
           <app-button :disabled="!isLoaded" @click="isStakeModalShown = true">
-            Stake
+            {{ $t('builders-item.stake-btn') }}
           </app-button>
         </div>
 
@@ -235,11 +243,15 @@
             <template v-if="stakers?.length">
               <div class="mb-2 grid grid-cols-2 items-center justify-between">
                 <div class="px-20">
-                  <span class="text-textSecondary">Name / Address</span>
+                  <span class="text-textSecondary">
+                    {{ $t('builders-item.staker-addr-name-th') }}
+                  </span>
                 </div>
 
                 <button class="flex items-center justify-end gap-2 px-20">
-                  <span class="text-textSecondary">Start time</span>
+                  <span class="text-textSecondary">
+                    {{ $t('builders-item.start-time-th') }}
+                  </span>
                   <app-icon :name="$icons.sort" class="size-6" />
                 </button>
               </div>

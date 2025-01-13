@@ -155,7 +155,7 @@ $media-breakpoints: (
   }
 }
 
-@mixin square($width) {
+@mixin square ($width) {
   max-width: toRem($width);
   max-height: toRem($width);
   width: toRem($width);

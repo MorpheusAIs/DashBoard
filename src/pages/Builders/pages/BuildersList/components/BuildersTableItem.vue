@@ -61,7 +61,7 @@
         size="small"
         @click="isStakeModalShown = true"
       >
-        Stake
+        {{ $t('builders-table-item.stake-btn') }}
       </app-button>
     </div>
   </div>
@@ -111,7 +111,6 @@ const handleStaked = async () => {
   );
   border: toRem(1) solid;
   border-image-slice: 1;
-
   border-image-source: linear-gradient(
     95.36deg,
     rgba(255, 255, 255, 0.48) 0%,
@@ -140,9 +139,9 @@ const handleStaked = async () => {
 }
 
 .builders-table-item__col-text {
-  font-size: 17px;
+  font-size: toRem(18);
   font-weight: 400;
-  line-height: 25.5px;
+  line-height: toRem(24);
   color: var(--text-primary-invert-main);
 
   @apply line-clamp-1;

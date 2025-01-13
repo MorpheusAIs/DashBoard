@@ -1,12 +1,19 @@
 <template>
   <div
-    :class="`app-gradient-border-card app-gradient-border-card--${gradientDirection}`"
+    :class="
+      cn(
+        `app-gradient-border-card`,
+        `app-gradient-border-card--${gradientDirection}`,
+      )
+    "
   >
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
+import { cn } from '@/theme/utils'
+
 withDefaults(
   defineProps<{
     gradientDirection?: 'left' | 'right'
@@ -25,7 +32,6 @@ withDefaults(
     rgba(57, 99, 58, 0.04) 0%,
     rgba(38, 57, 57, 0.5) 56.4%
   );
-
   border: toRem(1) solid;
   border-image-slice: 1;
 
