@@ -2,7 +2,7 @@
   <basic-modal
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
-    :title="$t('modal-title')"
+    :title="$t('builders-stake-modal.modal-title')"
     :is-close-by-click-outside="!isSubmitting"
     :has-close-button="!isSubmitting"
   >
@@ -21,6 +21,7 @@
                 type="button"
                 class="stake-modal__inputs-max-btn"
                 @click="setMaxAmount"
+                :disabled="isSubmitting"
               >
                 {{ $t('builders-stake-modal.stake-amount-max-btn') }}
               </button>
@@ -148,7 +149,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     stakeAmount: {
       required,
       numeric,
-      max: maxValue(+formatEther(balances.value.rewardsToken ?? 0)),
+      maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
     },
   })
 
@@ -163,9 +164,7 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-stake-modal.lock-period-lbl'),
-    value: humanizeTime(
-      props.builderProject?.withdrawLockPeriodAfterDeposit / 1000,
-    ),
+    value: humanizeTime(props.builderProject?.withdrawLockPeriodAfterDeposit),
   },
   {
     label: t('builders-stake-modal.new-stake-amount-lbl'),
@@ -177,7 +176,7 @@ const builderDetails = computed(() => [
       ? time()
           .add(
             duration(
-              props.builderProject?.withdrawLockPeriodAfterDeposit / 1000,
+              +props.builderProject?.withdrawLockPeriodAfterDeposit,
               'seconds',
             ).asSeconds,
             'seconds',

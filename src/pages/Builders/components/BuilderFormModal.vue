@@ -31,6 +31,8 @@
           :error-message="getFieldErrorMessage('lockPeriodAfterStake')"
           @blur="touchField('lockPeriodAfterStake')"
           :disabled="isSubmitting"
+          :min="minimalWithdrawLockPeriod"
+          type="number"
         />
         <datetime-field
           v-model="form.startAt"
@@ -73,7 +75,7 @@ import { InputField, DatetimeField } from '@/fields'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { reactive, ref } from 'vue'
-import { useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { required } from '@/validators'
 import { config } from '@config'
 import { GetBuildersProjectQuery } from '@/types/graphql'
@@ -101,6 +103,16 @@ const { networkId, provider, buildersContract } = storeToRefs(
   useWeb3ProvidersStore(),
 )
 
+const { data: minimalWithdrawLockPeriod } = useLoad(
+  0,
+  async () => {
+    return (
+      await buildersContract.value.providerBased.value.minimalWithdrawLockPeriod()
+    ).toNumber()
+  },
+  {},
+)
+
 const isSubmitting = ref(false)
 
 const form = reactive<{
@@ -123,7 +135,9 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
     name: { required },
     depositAmount: { required },
-    lockPeriodAfterStake: { required },
+    lockPeriodAfterStake: {
+      required,
+    },
     startAt: { required },
     claimLockEndTime: { required },
   })
@@ -146,9 +160,9 @@ const submit = async () => {
       await buildersContract.value?.signerBased.value.createBuilderPool({
         name: form.name,
         admin: provider.value.selectedAddress,
-        poolStart: +form.startAt * 1000,
-        withdrawLockPeriodAfterDeposit: +form.lockPeriodAfterStake * 1000,
-        claimLockEnd: +form.claimLockEndTime * 1000,
+        poolStart: +form.startAt,
+        withdrawLockPeriodAfterDeposit: +form.lockPeriodAfterStake,
+        claimLockEnd: +form.claimLockEndTime,
         minimalDeposit: parseUnits(form.depositAmount),
       })
 

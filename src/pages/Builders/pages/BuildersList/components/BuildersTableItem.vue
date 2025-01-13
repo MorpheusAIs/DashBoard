@@ -41,9 +41,7 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{
-            humanizeTime(builderProject.withdrawLockPeriodAfterDeposit / 1000)
-          }}
+          {{ humanizeTime(builderProject.withdrawLockPeriodAfterDeposit) }}
         </span>
       </div>
     </div>

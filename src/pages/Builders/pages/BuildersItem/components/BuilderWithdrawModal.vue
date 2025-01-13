@@ -2,7 +2,9 @@
   <basic-modal
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
-    title="Withdraw MOR"
+    :title="$t('builder-withdraw-modal.modal-title')"
+    :is-close-by-click-outside="!isSubmitting"
+    :has-close-button="!isSubmitting"
   >
     <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto">
       <div class="mt-8 flex flex-col gap-5">
@@ -19,6 +21,7 @@
                 type="button"
                 class="stake-modal__inputs-max-btn"
                 @click="setMaxAmount"
+                :disabled="isSubmitting"
               >
                 {{ $t('builder-withdraw-modal.withdraw-amount-max-btn') }}
               </button>
@@ -60,10 +63,11 @@
           scheme="filled"
           color="secondary"
           @click="emit('update:is-shown', false)"
+          :disabled="isSubmitting"
         >
           {{ $t('builder-withdraw-modal.cancel-btn') }}
         </app-button>
-        <app-button type="submit" :disabled="!isFieldsValid">
+        <app-button type="submit" :disabled="!isFieldsValid || !isSubmitting">
           {{ $t('builder-withdraw-modal.submit-btn') }}
         </app-button>
       </div>
@@ -76,29 +80,21 @@ import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import {
   GetBuildersProjectQuery,
-  GetUserAccountBuildersProject,
   GetUserAccountBuildersProjectQuery,
-  GetUserAccountBuildersProjectQueryVariables,
 } from '@/types/graphql'
-import { numeric, required } from '@/validators'
-import { formatEther, parseUnits, toEther } from '@/utils'
-import {
-  bus,
-  BUS_EVENTS,
-  createBuildersContract,
-  ErrorHandler,
-  getEthExplorerTxUrl,
-} from '@/helpers'
+import { maxValue, numeric, required } from '@/validators'
+import { formatEther, parseUnits } from '@/utils'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { config } from '@config'
-import { Provider } from '@/types'
 import { BigNumber } from 'ethers'
 
 const props = withDefaults(
   defineProps<{
     builderProject: GetBuildersProjectQuery['buildersProject']
+    buildersProjectUserAccount: GetUserAccountBuildersProjectQuery['buildersUsers'][0]
     isShown?: boolean
   }>(),
   {
@@ -112,10 +108,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, provider } = storeToRefs(useWeb3ProvidersStore())
-
-const buildersProjectUserAccount =
-  ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
+const { networkId, buildersContract } = storeToRefs(useWeb3ProvidersStore())
 
 const isSubmitting = ref(false)
 
@@ -125,12 +118,18 @@ const form = reactive({
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(form, {
-    withdrawAmount: { required, numeric },
+    withdrawAmount: {
+      required,
+      numeric,
+      maxValue: maxValue(
+        +formatEther(props.buildersProjectUserAccount.staked || 0),
+      ),
+    },
   })
 
 const builderDetails = computed(() => {
   const balanceAfterWithdrawal = BigNumber.from(
-    buildersProjectUserAccount.value?.staked ?? 0,
+    props.buildersProjectUserAccount.staked ?? 0,
   ).sub(parseUnits(form.withdrawAmount || '0'))
 
   return [
@@ -141,7 +140,7 @@ const builderDetails = computed(() => {
     {
       label: t('builder-withdraw-modal.current-withdraw-lbl'),
       value: t('builder-withdraw-modal.available-to-withdraw-amount', {
-        amount: formatEther(buildersProjectUserAccount.value?.staked || 0),
+        amount: formatEther(props.buildersProjectUserAccount.staked || 0),
       }),
     },
     {
@@ -155,33 +154,9 @@ const builderDetails = computed(() => {
   ]
 })
 
-const buildersContract = computed(() => {
-  if (!provider.value.rawProvider) return
-
-  return createBuildersContract(
-    config.networksMap[networkId.value].contractAddressesMap.builders,
-    provider.value.rawProvider as unknown as Provider,
-  )
-})
-
-const loadUserAccountInProject = async () => {
-  const { data: userAccountInProject } =
-    await config.testnetBuildersApolloClient.query<
-      GetUserAccountBuildersProjectQuery,
-      GetUserAccountBuildersProjectQueryVariables
-    >({
-      query: GetUserAccountBuildersProject,
-      fetchPolicy: 'network-only',
-      variables: {
-        address: provider.value.selectedAddress,
-        buildersProjectId: props.builderProject?.id,
-      },
-    })
-
-  buildersProjectUserAccount.value = userAccountInProject.buildersUsers?.[0]
+const setMaxAmount = () => {
+  form.withdrawAmount = formatEther(props.buildersProjectUserAccount.staked)
 }
-
-const setMaxAmount = () => {}
 
 const submit = async () => {
   if (!isFormValid()) return
@@ -189,9 +164,9 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
-    const tx = await buildersContract.value?.contractInstance.withdraw(
+    const tx = await buildersContract.value?.signerBased.value.withdraw(
       props.builderProject?.id,
-      toEther(form.withdrawAmount),
+      parseUnits(form.withdrawAmount),
     )
 
     if (!tx) throw new TypeError('Transaction is not defined')
@@ -203,7 +178,7 @@ const submit = async () => {
 
     bus.emit(
       BUS_EVENTS.success,
-      t('builder-withdraw-modal.stake-success-msg', { explorerTxUrl }),
+      t('builder-withdraw-modal.withdraw-success-msg', { explorerTxUrl }),
     )
   } catch (error) {
     ErrorHandler.process(error)
@@ -211,16 +186,6 @@ const submit = async () => {
 
   isSubmitting.value = false
 }
-
-watch(
-  [() => provider.value.selectedAddress],
-  () => {
-    loadUserAccountInProject()
-  },
-  {
-    immediate: true,
-  },
-)
 </script>
 
 <style scoped lang="scss">

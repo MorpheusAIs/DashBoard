@@ -59,7 +59,7 @@
             </span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="line-clamp-1 text-textSecondaryMain typography-h2">
+            <span class="text-textSecondaryMain typography-h2">
               {{
                 time(+buildersData.buildersProject?.startsAt).format(
                   DOT_TIME_FORMAT,
@@ -89,8 +89,7 @@
           <span class="text-textSecondaryMain typography-h2">
             {{
               humanizeTime(
-                buildersData.buildersProject?.withdrawLockPeriodAfterDeposit /
-                  1000,
+                +buildersData.buildersProject?.withdrawLockPeriodAfterDeposit,
               )
             }}</span
           >
@@ -185,6 +184,7 @@
                     time(),
                   )
                 "
+                @click="claim"
               >
                 {{ $t('builders-item.claim-btn') }}
               </app-button>
@@ -192,7 +192,7 @@
             <div class="flex items-center gap-8">
               <span class="text-textSecondaryMain typography-h2">
                 {{
-                  time(buildersData.buildersProject?.claimLockEnd).format(
+                  time(+buildersData.buildersProject?.claimLockEnd).format(
                     DOT_TIME_FORMAT,
                   )
                 }}
@@ -299,9 +299,12 @@
   </div>
 
   <builder-withdraw-modal
-    v-if="buildersData.buildersProject"
+    v-if="
+      buildersData.buildersProject && buildersData.buildersProjectUserAccount
+    "
     v-model:is-shown="isWithdrawModalShown"
     :builder-project="buildersData.buildersProject"
+    :builders-project-user-account="buildersData.buildersProjectUserAccount"
   />
   <builder-form-modal
     v-if="buildersData.buildersProject"
@@ -326,7 +329,14 @@ import {
   Pagination,
   Skeleton,
 } from '@/common'
-import { abbrCenter, ErrorHandler, humanizeTime } from '@/helpers'
+import {
+  abbrCenter,
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  getEthExplorerTxUrl,
+  humanizeTime,
+} from '@/helpers'
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
 import { computed, ref, watch } from 'vue'
 import {
@@ -350,13 +360,16 @@ import { cn } from '@/theme/utils'
 import { useLoad } from '@/composables'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
+import { storeToRefs } from 'pinia'
 
 defineOptions({
   inheritAttrs: true,
 })
 
 const route = useRoute()
-const { provider } = useWeb3ProvidersStore()
+const { provider, buildersContract, networkId } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const isWithdrawModalShown = ref(false)
 const isEditModalShown = ref(false)
@@ -400,7 +413,7 @@ const {
         query: GetUserAccountBuildersProject,
         fetchPolicy: 'network-only',
         variables: {
-          address: provider.selectedAddress,
+          address: provider.value.selectedAddress,
           buildersProjectId: buildersProjectsResponse.buildersProject?.id,
         },
       })
@@ -416,7 +429,9 @@ const {
 )
 
 const isUserAccountAdmin = computed(
-  () => provider.selectedAddress === buildersData.value.buildersProject?.admin,
+  () =>
+    provider.value.selectedAddress?.toLowerCase() ===
+    buildersData.value.buildersProject?.admin?.toLowerCase(),
 )
 
 const withdrawalUnlockTime = computed(() => {
@@ -426,9 +441,7 @@ const withdrawalUnlockTime = computed(() => {
   )
     return
 
-  return time(
-    buildersData.value.buildersProjectUserAccount.lastStake * 1000,
-  ).add(
+  return time(+buildersData.value.buildersProjectUserAccount.lastStake).add(
     buildersData.value.buildersProject.withdrawLockPeriodAfterDeposit,
     'seconds',
   )
@@ -473,6 +486,31 @@ watch(
 const handleStaked = async () => {
   await update()
   isStakeModalShown.value = false
+}
+
+const claim = async () => {
+  try {
+    const tx = await buildersContract.value.signerBased.value.claim(
+      buildersData.value.buildersProject?.id,
+      provider.value.selectedAddress,
+    )
+
+    const txReceipt = await tx.wait()
+
+    if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
+
+    const explorerTxUrl = getEthExplorerTxUrl(
+      config.networksMap[networkId.value].l1.explorerUrl,
+      txReceipt.transactionHash,
+    )
+
+    bus.emit(
+      BUS_EVENTS.success,
+      t('builders-item.claim-success-msg', { explorerTxUrl }),
+    )
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
 }
 </script>
 
