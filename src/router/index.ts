@@ -35,22 +35,15 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'builders',
-        name: ROUTE_NAMES.appBuilders,
-        component: () => import('@/pages/Builders/index.vue'),
-        children: [
-          {
-            path: '',
-            name: ROUTE_NAMES.appBuildersList,
-            component: () =>
-              import('@/pages/Builders/pages/BuildersList/index.vue'),
-          },
-          {
-            path: ':id',
-            name: ROUTE_NAMES.appBuildersItem,
-            component: () =>
-              import('@/pages/Builders/pages/BuildersItem/index.vue'),
-          },
-        ],
+        name: ROUTE_NAMES.appBuildersList,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersList/index.vue'),
+      },
+      {
+        path: 'builders/:id',
+        name: ROUTE_NAMES.appBuildersItem,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersItem/index.vue'),
       },
     ],
   },
