@@ -1,7 +1,7 @@
 <template>
   <main class="main-page" :class="{ 'main-page--loading': isInitializing }">
     <transition name="fade" mode="out-in">
-      <div class="main-page__wrp" :key="($route.query.network as string)">
+      <div class="main-page__wrp" :key="$route.query.network as string">
         <transition name="fade" mode="out-in">
           <div v-if="(protocol && cards.length) || isInitializing">
             <h2 class="main-page__title">

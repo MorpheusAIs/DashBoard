@@ -143,23 +143,26 @@ onMounted(() => {
   bus.on(BUS_EVENTS.changedUserBalance, onChangeBalances)
   bus.on(BUS_EVENTS.changedPoolData, onChangeBalances)
   bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeBalances)
-  _morUpdateIntervalId = setInterval(async () => {
-    if (
-      !web3ProvidersStore.isConnected ||
-      !web3ProvidersStore.provider.selectedAddress
-    )
-      return
-    const address = web3ProvidersStore.provider.selectedAddress
+  _morUpdateIntervalId = setInterval(
+    async () => {
+      if (
+        !web3ProvidersStore.isConnected ||
+        !web3ProvidersStore.provider.selectedAddress
+      )
+        return
+      const address = web3ProvidersStore.provider.selectedAddress
 
-    try {
-      web3ProvidersStore.balances.rewardsToken =
-        await web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
-          address,
-        )
-    } catch (error) {
-      ErrorHandler.process(error)
-    }
-  }, 5 * 60 * 1000)
+      try {
+        web3ProvidersStore.balances.rewardsToken =
+          await web3ProvidersStore.rewardsContract.providerBased.value.balanceOf(
+            address,
+          )
+      } catch (error) {
+        ErrorHandler.process(error)
+      }
+    },
+    5 * 60 * 1000,
+  )
 })
 
 onBeforeUnmount(() => {
@@ -226,7 +229,9 @@ watch(() => web3ProvidersStore.networkId, init)
   &:not([disabled]):focus,
   &:not([disabled]):active {
     background: #515c57;
-    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
+    box-shadow:
+      $shadow-hover,
+      inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 }
 

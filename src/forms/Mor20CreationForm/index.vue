@@ -99,7 +99,7 @@ const currentStepComponent = computed(
       [STEP_IDS.general]: GeneralStep,
       [STEP_IDS.arbitrum]: ArbitrumStep,
       [STEP_IDS.ethereum]: EthereumStep,
-    }[currentStep.value.id]),
+    })[currentStep.value.id],
 )
 
 const submitBtnText = computed<string>(() =>

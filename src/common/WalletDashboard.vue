@@ -240,7 +240,9 @@ onMounted(() => {
 
     background: $background-color;
     border-color: $background-color;
-    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
+    box-shadow:
+      $shadow-hover,
+      inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 }
 

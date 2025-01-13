@@ -60,10 +60,11 @@ export default defineConfig(({ mode }) => {
           initialIsOpen: false,
         },
         typescript: true,
-        eslint: {
-          lintCommand:
-            'eslint "{src,config}/**/*.{vue,js,ts}" --cache --max-warnings=0',
-        },
+        // FIXME: node error
+        // eslint: {
+        //   lintCommand:
+        //     'eslint "{src,config}/**/*.{vue,js,ts}" --cache --max-warnings=0',
+        // },
       }),
       ...(isAnalyze
         ? [

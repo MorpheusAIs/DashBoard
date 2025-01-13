@@ -1,8 +1,22 @@
 <template>
-  <div :class="['skeleton', `skeleton--${scheme}`]" v-bind="$attrs" />
+  <div
+    :class="
+      cn(
+        'skeleton',
+        'relative w-full overflow-hidden bg-backgroundSecondaryMain',
+        `skeleton--${scheme}`,
+        scheme === 'circle' && 'rounded-full',
+        scheme === 'thin' && 'min-h-5',
+        scheme === 'medium' && 'min-h-8',
+      )
+    "
+    v-bind="$attrs"
+  />
 </template>
 
 <script lang="ts" setup>
+import { cn } from '@/theme/utils'
+
 withDefaults(
   defineProps<{
     scheme?: 'thin' | 'medium' | 'circle'
@@ -15,18 +29,11 @@ withDefaults(
 
 <style lang="scss" scoped>
 .skeleton {
-  overflow: hidden;
-  position: relative;
-  background: var(--background-secondary-light);
-  border-radius: toRem(4);
-  width: 100%;
-  height: 100%;
-
   &:after {
     content: '';
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
+
+    @apply absolute inset-0 -translate-x-full;
+
     background-image: linear-gradient(
       90deg,
       rgba(var(--white-rgb), 0) 0,
@@ -41,18 +48,6 @@ withDefaults(
     100% {
       transform: translateX(100%);
     }
-  }
-
-  &--circle {
-    border-radius: 50%;
-  }
-
-  &--thin {
-    height: toRem(20);
-  }
-
-  &--medium {
-    height: toRem(32);
   }
 }
 </style>

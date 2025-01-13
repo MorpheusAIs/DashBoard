@@ -166,6 +166,14 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     balances.rewardsToken = morValue
   }
 
+  const buildersContract = computed(() =>
+    useContract(
+      'Builders__factory',
+      config.networksMap[networkId.value].contractAddressesMap['builders'],
+      l2Provider.value,
+    ),
+  )
+
   // Actions
   const init = async () => {
     provider.init()
@@ -250,6 +258,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     depositContract,
     rewardsContract,
     endpointContract,
+    buildersContract,
     l1FactoryContract,
     l2FactoryContract,
     rewardsTokenSymbol,

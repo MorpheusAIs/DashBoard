@@ -294,6 +294,14 @@ export function useSwap(
         ? wethContract.value.signerBased.value
         : tokenToSendContract.value.signerBased.value
 
+    const balance = await sentTokenContract.balanceOf(
+      web3ProvidersStore.address,
+    )
+
+    if (balance.lt(amountIn.quotient.toString())) {
+      amountIn = CurrencyAmount.fromRawAmount(fromToken, balance.toString())
+    }
+
     const allowance = await sentTokenContract.allowance(
       web3ProvidersStore.address,
       V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],

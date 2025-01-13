@@ -370,7 +370,8 @@ $button-transition: var(--transition-duration-fast)
 
       &:not([disabled]):focus,
       &:not([disabled]):active {
-        box-shadow: $box-shadow-hover,
+        box-shadow:
+          $box-shadow-hover,
           inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
       }
     }
