@@ -9,7 +9,7 @@
         <div class="flex flex-col items-end gap-3">
           <input-field
             v-model="form.withdrawAmount"
-            :placeholder="$t('builder-withdraw-modal.stake-amount-plh')"
+            :placeholder="$t('builder-withdraw-modal.withdraw-amount-plh')"
             :error-message="getFieldErrorMessage('withdrawAmount')"
             @blur="touchField('withdrawAmount')"
             :disabled="isSubmitting"
@@ -20,16 +20,22 @@
                 class="stake-modal__inputs-max-btn"
                 @click="setMaxAmount"
               >
-                {{ $t('builder-withdraw-modal.stake-amount-max-btn') }}
+                {{ $t('builder-withdraw-modal.withdraw-amount-max-btn') }}
               </button>
             </template>
           </input-field>
 
           <div class="flex items-center justify-between gap-2">
             <span class="stake-modal__details-label">
-              {{ $t('builder-withdraw-modal.available-to-stake-balance') }}
+              {{ $t('builder-withdraw-modal.available-to-withdraw-balance') }}
             </span>
-            <span class="stake-modal__details-value">3 667 456.748 MOR</span>
+            <span class="stake-modal__details-value">
+              {{
+                $t('builder-withdraw-modal.available-to-withdraw-amount', {
+                  amount: formatEther(buildersProjectUserAccount?.staked ?? 0),
+                })
+              }}
+            </span>
           </div>
         </div>
       </div>
@@ -78,7 +84,7 @@ import {
   GetUserAccountBuildersProjectQueryVariables,
 } from '@/types/graphql'
 import { numeric, required } from '@/validators'
-import { formatEther, toEther } from '@/utils'
+import { formatEther, parseUnits, toEther } from '@/utils'
 import {
   bus,
   BUS_EVENTS,
@@ -88,6 +94,7 @@ import {
 } from '@/helpers'
 import { config } from '@config'
 import { Provider } from '@/types'
+import { BigNumber } from 'ethers'
 
 const props = withDefaults(
   defineProps<{
@@ -121,26 +128,32 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     withdrawAmount: { required, numeric },
   })
 
-const builderDetails = computed(() => [
-  {
-    label: t('builder-withdraw-modal.builder-lbl'),
-    value: props.builderProject?.name,
-  },
-  {
-    label: t('builder-withdraw-modal.current-stake-lbl'),
-    value: `${formatEther(buildersProjectUserAccount.value?.staked || 0)} MOR`,
-  },
-  {
-    label: t('builder-withdraw-modal.stake-after-withdrawal-lbl'),
-    value:
-      +buildersProjectUserAccount.value?.staked > +toEther(+form.withdrawAmount)
-        ? `${formatEther(
-            (buildersProjectUserAccount.value?.staked || 0) -
-              +toEther(+form.withdrawAmount),
-          )} MOR`
-        : '0 MOR',
-  },
-])
+const builderDetails = computed(() => {
+  const balanceAfterWithdrawal = BigNumber.from(
+    buildersProjectUserAccount.value?.staked ?? 0,
+  ).sub(parseUnits(form.withdrawAmount || '0'))
+
+  return [
+    {
+      label: t('builder-withdraw-modal.builder-lbl'),
+      value: props.builderProject?.name,
+    },
+    {
+      label: t('builder-withdraw-modal.current-withdraw-lbl'),
+      value: t('builder-withdraw-modal.available-to-withdraw-amount', {
+        amount: formatEther(buildersProjectUserAccount.value?.staked || 0),
+      }),
+    },
+    {
+      label: t('builder-withdraw-modal.balance-after-withdrawal-lbl'),
+      value: t('builder-withdraw-modal.balance-after-withdrawal-value', {
+        amount: balanceAfterWithdrawal.isNegative()
+          ? '-'
+          : formatEther(balanceAfterWithdrawal),
+      }),
+    },
+  ]
+})
 
 const buildersContract = computed(() => {
   if (!provider.value.rawProvider) return

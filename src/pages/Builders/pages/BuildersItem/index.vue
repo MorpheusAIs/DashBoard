@@ -312,6 +312,7 @@
     v-model:is-shown="isStakeModalShown"
     v-if="buildersData.buildersProject"
     :builder-project="buildersData.buildersProject"
+    @staked="handleStaked"
   />
 </template>
 
@@ -369,6 +370,7 @@ const {
   data: buildersData,
   isLoaded,
   isLoadFailed,
+  update,
 } = useLoad<{
   buildersProject: GetBuildersProjectQuery['buildersProject'] | null
   buildersProjectUserAccount:
@@ -424,7 +426,9 @@ const withdrawalUnlockTime = computed(() => {
   )
     return
 
-  return time(buildersData.value.buildersProjectUserAccount.lastStake).add(
+  return time(
+    buildersData.value.buildersProjectUserAccount.lastStake * 1000,
+  ).add(
     buildersData.value.buildersProject.withdrawLockPeriodAfterDeposit,
     'seconds',
   )
@@ -465,6 +469,11 @@ watch(
     immediate: true,
   },
 )
+
+const handleStaked = async () => {
+  await update()
+  isStakeModalShown.value = false
+}
 </script>
 
 <style lang="scss">

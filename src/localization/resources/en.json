@@ -739,11 +739,13 @@
   },
   "builder-withdraw-modal": {
     "builder-lbl": "Builder",
-    "current-stake-lbl": "Current Stake",
-    "stake-after-withdrawal-lbl": "Stake After Withdrawal",
-    "stake-amount-plh": "MOR amount",
-    "stake-amount-max-btn": "max",
-    "available-to-stake-balance": "Available to Stake",
+    "current-withdraw-lbl": "Current Stake",
+    "balance-after-withdrawal-lbl": "Stake After Withdrawal",
+    "balance-after-withdrawal-value": "{amount} MOR",
+    "withdraw-amount-plh": "MOR amount",
+    "withdraw-amount-max-btn": "max",
+    "available-to-withdraw-balance": "Available to Withdraw",
+    "available-to-withdraw-amount": "{amount} MOR",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm"
   },
