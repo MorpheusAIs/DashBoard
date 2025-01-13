@@ -777,7 +777,8 @@
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "delegation-providers-list": {
-    "error-message": "Something went wrong"
+    "error-message": "Something went wrong",
+    "no-data-msg": "No subnets yet"
   },
   "delegates-list": {
     "title": "Stakers",

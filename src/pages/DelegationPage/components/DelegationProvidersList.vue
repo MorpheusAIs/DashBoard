@@ -1,6 +1,6 @@
 <template>
   <div class="delegation-providers-list">
-    <div class="delegation-providers-list__content">
+    <div v-if="isSubnetsShown" class="delegation-providers-list__content">
       <div
         class="delegation-providers-list__users-wrapper"
         :class="{
@@ -36,13 +36,18 @@
         <loader v-else class="delegation-providers-list__loader" />
       </div>
     </div>
+    <no-data-message
+      v-else
+      class="delegation-providers-list__no-data-msg"
+      :message="$t('delegation-providers-list.no-data-msg')"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import DelegationProvidersItem from './DelegationProvidersItem.vue'
 
-import { ErrorMessage, Loader, Pagination } from '@/common'
+import { ErrorMessage, Loader, Pagination, NoDataMessage } from '@/common'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
 import { SubnetItem } from '@/types'
@@ -66,6 +71,10 @@ const totalSubnets = ref(0)
 
 const filteredSubnets = computed(() =>
   subnetsList.value.filter(subnet => !props.filteredIds.includes(subnet.id)),
+)
+
+const isSubnetsShown = computed(
+  () => subnetsList.value.length > 0 && totalSubnets.value > 0,
 )
 
 const paginationItemsLength = computed(
@@ -99,7 +108,7 @@ const loadPage = async () => {
     )
 
     subnetsList.value = data.subnets || []
-    totalSubnets.value = Number(data.counters[0].totalSubnets) || 0
+    totalSubnets.value = Number(data.counters?.[0]?.totalSubnets) || 0
   } catch (e) {
     isLoadFailed.value = true
     ErrorHandler.process(e)
@@ -177,5 +186,9 @@ watch(
   align-items: center;
   justify-content: center;
   margin-top: auto;
+}
+
+.delegation-providers-list__no-data-msg {
+  margin-top: toRem(24);
 }
 </style>

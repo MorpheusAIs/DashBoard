@@ -145,6 +145,7 @@ const delegate = () => {
 
 <style scoped lang="scss">
 .delegation-providers-item {
+  min-width: fit-content;
   width: 100%;
   min-height: toRem(80);
   padding: toRem(16) toRem(32);
@@ -196,10 +197,16 @@ const delegate = () => {
 
   &--with-btn {
     margin-right: toRem(112); // 80 + 32
+    grid-template-columns: minmax(toRem(72), 1fr) repeat(
+        3,
+        minmax(toRem(52), 1fr)
+      );
   }
 }
 
 .delegation-providers-item__col {
+  @include text-ellipsis;
+
   display: flex;
   gap: toRem(24);
   align-items: center;

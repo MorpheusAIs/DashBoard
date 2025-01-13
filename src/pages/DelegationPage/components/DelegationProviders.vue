@@ -153,6 +153,15 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
+.delegation-providers {
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+  }
+}
+
 .delegation-providers__table-header {
   margin-top: toRem(24);
 }
