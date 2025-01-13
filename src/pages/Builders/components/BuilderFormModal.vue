@@ -3,6 +3,8 @@
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
     title="Become a Builder"
+    :is-close-by-click-outside="!isSubmitting"
+    :has-close-button="!isSubmitting"
   >
     <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto">
       <div class="mt-8 flex flex-col gap-5">
@@ -53,10 +55,11 @@
           scheme="filled"
           color="secondary"
           @click="emit('update:is-shown', false)"
+          :disabled="isSubmitting"
         >
           {{ $t('builder-form-modal.cancel-btn') }}
         </app-button>
-        <app-button type="submit" :disabled="!isFieldsValid">
+        <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
           {{ $t('builder-form-modal.submit-btn') }}
         </app-button>
       </div>

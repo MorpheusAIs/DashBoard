@@ -3,16 +3,14 @@
     <div
       class="flex max-w-[700px] flex-col items-center justify-center gap-6 pb-6 pt-16 text-center"
     >
-      <h2 class="typography-h1">Create or Stake in a Builder</h2>
+      <h2 class="typography-h1">
+        {{ $t('builders-list.title') }}
+      </h2>
       <span class="builders-list__hero-desc">
-        You can become a Builder or participate in an existing one to start
-        earning rewards. When you create a Builder, you can set custom
-        parameters including token lock time and reward details. Or you can join
-        an existing Builder using your stake Start staking now and claim your
-        rewards!
+        {{ $t('builders-list.description') }}
       </span>
       <span class="builders-list__hero-desc-underline">
-        Start staking now and claim your rewards!
+        {{ $t('builders-list.description-underline') }}
       </span>
       <div class="flex items-center gap-6">
         <app-button
@@ -24,36 +22,83 @@
             }
           "
         >
-          Become a builder
+          {{ $t('builders-list.create-builder-btn') }}
         </app-button>
       </div>
     </div>
 
-    <builders-table class="mt-16" :builders-projects="buildersProjects" />
+    <template v-if="buildersProjectsState.isLoaded.value">
+      <template v-if="buildersProjectsState.isLoadFailed.value">
+        <error-message
+          :message="$t('builders-list.loading-projects-error-msg')"
+        />
+      </template>
+      <template v-else-if="buildersProjects.length">
+        <builders-table class="mt-16" :builders-projects="buildersProjects" />
+      </template>
+      <template v-else>
+        <no-data-message
+          :message="$t('builders-list.builders-projects-empty-msg')"
+        />
+      </template>
+    </template>
+    <skeleton-table
+      v-else
+      :rows="DEFAULT_PAGE_LIMIT"
+      sizing="1fr"
+      :schemes="['medium']"
+      common-skeleton-class-names="min-h-[72px]"
+    />
 
-    <!--FIXME: replace total-items mocked value-->
     <pagination
+      v-if="
+        buildersCounters?.totalBuildersProjects &&
+        buildersProjectsState.isLoaded.value
+      "
       v-model:current-page="currentPage"
       :page-limit="DEFAULT_PAGE_LIMIT"
-      :total-items="buildersProjects.length * 10"
+      :total-items="+buildersCounters?.totalBuildersProjects"
       class="mt-6"
     />
+
+    <div class="mt-16 w-full">
+      <template v-if="userAccountBuildersProjectsState.isLoaded.value">
+        <template v-if="userAccountBuildersProjectsState.isLoadFailed.value">
+          <error-message
+            :message="$t('builders-list.loading-account-projects-error-msg')"
+          />
+        </template>
+        <template v-else-if="userAccountBuildersProjects.length">
+          <builders-table
+            class="w-full"
+            :builders-projects="userAccountBuildersProjects"
+          />
+        </template>
+      </template>
+      <skeleton-table
+        v-else
+        :rows="DEFAULT_PAGE_LIMIT"
+        sizing="1fr"
+        :schemes="['medium']"
+        common-skeleton-class-names="min-h-[72px]"
+      />
+    </div>
 
     <builder-form-modal
       v-model:is-shown="isCreateBuilderModalShown"
       @builder-created="handleBuilderCreated"
     />
-
-    <builders-table
-      v-if="userAccountBuildersProjects.length"
-      class="mt-16 w-full"
-      :builders-projects="userAccountBuildersProjects"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { AppButton, Pagination } from '@/common'
+import {
+  AppButton,
+  ErrorMessage,
+  NoDataMessage,
+  Pagination,
+  SkeletonTable,
+} from '@/common'
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import { config } from '@config'
@@ -61,6 +106,9 @@ import {
   GetAccountUserBuildersProjectsIds,
   GetAccountUserBuildersProjectsIdsQuery,
   GetAccountUserBuildersProjectsIdsQueryVariables,
+  GetBuildersCounters,
+  GetBuildersCountersQuery,
+  GetBuildersCountersQueryVariables,
   GetBuildersProjects,
   GetBuildersProjectsByIds,
   GetBuildersProjectsByIdsQuery,
@@ -68,11 +116,12 @@ import {
   GetBuildersProjectsQuery,
   GetBuildersProjectsQueryVariables,
 } from '@/types/graphql'
-import { ref, watch } from 'vue'
+import { ref, provide } from 'vue'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
+import { useLoad } from '@/composables'
 
 defineOptions({
   inheritAttrs: false,
@@ -87,71 +136,95 @@ const currentPage = ref(1)
 
 const isCreateBuilderModalShown = ref(false)
 
-const buildersProjects = ref<GetBuildersProjectsQuery['buildersProjects']>([])
-
-const userAccountBuildersProjects = ref<
-  GetBuildersProjectsQuery['buildersProjects']
->([])
-
-const loadAccountUserBuildersProjects = async () => {
-  const { data: accountUserBuildersProjectsIds } =
-    await config.testnetBuildersApolloClient.query<
-      GetAccountUserBuildersProjectsIdsQuery,
-      GetAccountUserBuildersProjectsIdsQueryVariables
+const { data: buildersCounters } = useLoad<
+  GetBuildersCountersQuery['counters'][0] | undefined
+>(
+  undefined,
+  async () => {
+    const { data } = await config.testnetBuildersApolloClient.query<
+      GetBuildersCountersQuery,
+      GetBuildersCountersQueryVariables
     >({
-      query: GetAccountUserBuildersProjectsIds,
+      query: GetBuildersCounters,
+      fetchPolicy: 'network-only',
+      variables: {},
+    })
+
+    return data.counters[0]
+  },
+  {},
+)
+
+const {
+  data: buildersProjects,
+  reload: reloadBuildersProjects,
+  update: updateBuildersProjects,
+  ...buildersProjectsState
+} = useLoad<GetBuildersProjectsQuery['buildersProjects']>(
+  [],
+  async () => {
+    const { data } = await config.testnetBuildersApolloClient.query<
+      GetBuildersProjectsQuery,
+      GetBuildersProjectsQueryVariables
+    >({
+      query: GetBuildersProjects,
       fetchPolicy: 'network-only',
       variables: {
-        address: provider.selectedAddress,
+        first: DEFAULT_PAGE_LIMIT,
+        skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
       },
     })
 
-  const { data: accountUserBuildersProjects } =
-    await config.testnetBuildersApolloClient.query<
-      GetBuildersProjectsByIdsQuery,
-      GetBuildersProjectsByIdsQueryVariables
-    >({
-      query: GetBuildersProjectsByIds,
-      fetchPolicy: 'network-only',
-      variables: {
-        id_in: accountUserBuildersProjectsIds.buildersUsers.map(
-          el => el.buildersProjectId,
-        ),
-      },
-    })
-
-  userAccountBuildersProjects.value =
-    accountUserBuildersProjects.buildersProjects
-}
-
-watch(
-  () => provider.selectedAddress,
-  () => loadAccountUserBuildersProjects(),
+    return data.buildersProjects
+  },
   {
-    immediate: true,
+    reloadArgs: [
+      currentPage,
+      () => route.query.user,
+      () => route.query.network,
+    ],
   },
 )
 
-const loadProjects = async (limit = DEFAULT_PAGE_LIMIT) => {
-  const { data } = await config.testnetBuildersApolloClient.query<
-    GetBuildersProjectsQuery,
-    GetBuildersProjectsQueryVariables
-  >({
-    query: GetBuildersProjects,
-    fetchPolicy: 'network-only',
-    variables: {
-      first: limit,
-      skip: currentPage.value * limit - limit,
-    },
-  })
+const {
+  data: userAccountBuildersProjects,
+  reload: reloadUserAccountBuildersProjects,
+  update: updateUserAccountBuildersProjects,
+  ...userAccountBuildersProjectsState
+} = useLoad(
+  [],
+  async () => {
+    const { data: accountUserBuildersProjectsIds } =
+      await config.testnetBuildersApolloClient.query<
+        GetAccountUserBuildersProjectsIdsQuery,
+        GetAccountUserBuildersProjectsIdsQueryVariables
+      >({
+        query: GetAccountUserBuildersProjectsIds,
+        fetchPolicy: 'network-only',
+        variables: {
+          address: provider.selectedAddress,
+        },
+      })
 
-  buildersProjects.value = data.buildersProjects
-}
+    const { data: accountUserBuildersProjects } =
+      await config.testnetBuildersApolloClient.query<
+        GetBuildersProjectsByIdsQuery,
+        GetBuildersProjectsByIdsQueryVariables
+      >({
+        query: GetBuildersProjectsByIds,
+        fetchPolicy: 'network-only',
+        variables: {
+          id_in: accountUserBuildersProjectsIds.buildersUsers.map(
+            el => el.buildersProjectId,
+          ),
+        },
+      })
 
-watch(
-  [currentPage, () => route.query.user, () => route.query.network],
-  () => loadProjects(),
-  { immediate: true },
+    return accountUserBuildersProjects.buildersProjects
+  },
+  {
+    reloadArgs: [provider.selectedAddress],
+  },
 )
 
 const handleBuilderCreated = async (poolId: string) => {
@@ -163,6 +236,11 @@ const handleBuilderCreated = async (poolId: string) => {
     },
   })
 }
+
+provide('reloadBuildersProjects', reloadBuildersProjects)
+provide('updateBuildersProjects', updateBuildersProjects)
+provide('reloadUserAccountBuildersProjects', reloadUserAccountBuildersProjects)
+provide('updateUserAccountBuildersProjects', updateUserAccountBuildersProjects)
 </script>
 
 <style scoped lang="scss">

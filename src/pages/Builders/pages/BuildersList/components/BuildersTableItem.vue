@@ -59,7 +59,7 @@
         class="z-20"
         color="secondary"
         size="small"
-        @click="handleStake"
+        @click="isStakeModalShown = true"
       >
         Stake
       </app-button>
@@ -69,6 +69,7 @@
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
     :builder-project="builderProject"
+    @staked="handleStaked"
   />
 </template>
 
@@ -80,7 +81,7 @@ import { formatEther } from '@/utils'
 import { DOT_TIME_FORMAT } from '@/const'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 
 withDefaults(
   defineProps<{
@@ -89,10 +90,15 @@ withDefaults(
   {},
 )
 
+const reloadBuildersProjects = inject<() => Promise<void>>(
+  'reloadBuildersProjects',
+)
+
 const isStakeModalShown = ref(false)
 
-const handleStake = async () => {
-  isStakeModalShown.value = true
+const handleStaked = async () => {
+  isStakeModalShown.value = false
+  reloadBuildersProjects?.()
 }
 </script>
 

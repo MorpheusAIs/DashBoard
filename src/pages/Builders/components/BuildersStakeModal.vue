@@ -3,6 +3,8 @@
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
     title="Stake MOR"
+    :is-close-by-click-outside="!isSubmitting"
+    :has-close-button="!isSubmitting"
   >
     <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto">
       <div class="mt-8 flex flex-col gap-5">
@@ -69,10 +71,11 @@
           scheme="filled"
           color="secondary"
           @click="emit('update:is-shown', false)"
+          :disabled="isSubmitting"
         >
           {{ $t('builders-stake-modal.cancel-btn') }}
         </app-button>
-        <app-button type="submit" :disabled="!isFieldsValid">
+        <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
           {{ $t('builders-stake-modal.submit-btn') }}
         </app-button>
       </div>
@@ -120,6 +123,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
+  (e: 'staked'): void
 }>()
 
 const { t } = useI18n()
@@ -234,6 +238,8 @@ const submit = async () => {
       BUS_EVENTS.success,
       t('builders-stake-modal.stake-success-msg', { explorerTxUrl }),
     )
+
+    emit('staked')
   } catch (error) {
     ErrorHandler.process(error)
   }

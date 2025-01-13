@@ -744,5 +744,14 @@
     "available-to-stake-balance": "Available to Stake",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm"
+  },
+  "builders-list": {
+    "title": "Create or Stake in a Builder",
+    "description": "You can become a Builder or participate in an existing one to start earning rewards. When you create a Builder, you can set custom parameters including token lock time and reward details. Or you can join an existing Builder using your stake Start staking now and claim your rewards!",
+    "description-underline": "Start staking now and claim your rewards!",
+    "create-builder-btn": "Become a builder",
+    "loading-projects-error-msg": "Something bad happened",
+    "builders-projects-empty-msg": "There are no projects yet",
+    "loading-account-projects-error-msg": "Something bad happened"
   }
 }
