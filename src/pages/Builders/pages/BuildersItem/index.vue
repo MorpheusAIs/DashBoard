@@ -109,15 +109,10 @@
 
               <app-button
                 size="small"
-                @click="
-                  () => {
-                    isWithdrawModalShown = true
-                  }
-                "
+                @click="isWithdrawModalShown = true"
                 :disabled="
-                  !withdrawalUnlockTime ||
-                  withdrawalUnlockTime.isBefore(time()) ||
-                  !+buildersData.buildersProjectUserAccount?.staked
+                  !buildersData.buildersProjectUserAccount?.staked ||
+                  withdrawalUnlockTime?.isAfter(time())
                 "
               >
                 {{ $t('builders-item.withdraw-btn') }}
@@ -179,8 +174,8 @@
                 size="small"
                 :disabled="
                   !buildersData.buildersProject ||
-                  !+buildersData.buildersProject.claimLockEnd ||
-                  time(buildersData.buildersProject.claimLockEnd).isAfter(
+                  !buildersData.buildersProject.claimLockEnd ||
+                  time(+buildersData.buildersProject.claimLockEnd).isAfter(
                     time(),
                   )
                 "
@@ -233,7 +228,10 @@
             <skeleton class="w-[35px]" />
           </div>
 
-          <app-button :disabled="!isLoaded" @click="isStakeModalShown = true">
+          <app-button
+            :disabled="!isLoaded || balances.rewardsToken?.isZero()"
+            @click="isStakeModalShown = true"
+          >
             {{ $t('builders-item.stake-btn') }}
           </app-button>
         </div>
@@ -241,15 +239,24 @@
         <div class="flex flex-1 flex-col">
           <template v-if="isLoaded">
             <template v-if="stakers?.length">
-              <div class="mb-2 grid grid-cols-2 items-center justify-between">
-                <div class="px-20">
-                  <span class="text-textSecondary">
+              <div
+                class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
+              >
+                <div class="">
+                  <span class="text-textTertiaryMain">
                     {{ $t('builders-item.staker-addr-name-th') }}
                   </span>
                 </div>
 
-                <button class="flex items-center justify-end gap-2 px-20">
-                  <span class="text-textSecondary">
+                <button class="flex items-center justify-end gap-2">
+                  <span class="text-textTertiaryMain">
+                    {{ $t('builders-item.staked-th') }}
+                  </span>
+                  <app-icon :name="$icons.sort" class="size-6" />
+                </button>
+
+                <button class="flex items-center justify-end gap-2">
+                  <span class="text-textTertiaryMain">
                     {{ $t('builders-item.start-time-th') }}
                   </span>
                   <app-icon :name="$icons.sort" class="size-6" />
@@ -258,13 +265,19 @@
 
               <div class="flex flex-col gap-2">
                 <app-gradient-border-card v-for="el in stakers" :key="el.id">
-                  <div class="grid grid-cols-2">
-                    <div class="px-20 py-8">
+                  <div class="grid grid-cols-3 gap-2 px-10">
+                    <div class="flex items-center gap-2 py-8">
                       <span class="text-textSecondaryMain">
                         {{ abbrCenter(el.address) }}
                       </span>
+                      <copy-button :content="el.address" :message="'copied'" />
                     </div>
-                    <div class="px-20 py-8 text-end">
+                    <div class="py-8 text-end">
+                      <span class="text-textSecondaryMain">
+                        {{ formatEther(el.staked) }}
+                      </span>
+                    </div>
+                    <div class="py-8 text-end">
                       <span class="text-textSecondaryMain">
                         {{ formatEther(el.staked) }}
                       </span>
@@ -274,7 +287,11 @@
               </div>
 
               <pagination
-                v-if="isLoaded && !isLoadFailed"
+                v-if="
+                  isLoaded &&
+                  !isLoadFailed &&
+                  stakers.length >= DEFAULT_PAGE_LIMIT
+                "
                 v-model:current-page="stakersCurrentPage"
                 :page-limit="DEFAULT_PAGE_LIMIT"
                 :total-items="buildersData.buildersProject?.totalUsers"
@@ -305,11 +322,13 @@
     v-model:is-shown="isWithdrawModalShown"
     :builder-project="buildersData.buildersProject"
     :builders-project-user-account="buildersData.buildersProjectUserAccount"
+    @submitted="handleWithdrawalSubmitted"
   />
   <builder-form-modal
     v-if="buildersData.buildersProject"
     v-model:is-shown="isEditModalShown"
     :builders-project="buildersData.buildersProject"
+    @submitted="handleBuilderPoolUpdated"
   />
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
@@ -357,7 +376,7 @@ import { time } from '@distributedlab/tools'
 import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { cn } from '@/theme/utils'
-import { useLoad } from '@/composables'
+import { useI18n, useLoad } from '@/composables'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
@@ -367,9 +386,11 @@ defineOptions({
 })
 
 const route = useRoute()
-const { provider, buildersContract, networkId } = storeToRefs(
+const { provider, buildersContract, networkId, balances } = storeToRefs(
   useWeb3ProvidersStore(),
 )
+
+const { t } = useI18n()
 
 const isWithdrawModalShown = ref(false)
 const isEditModalShown = ref(false)
@@ -441,6 +462,8 @@ const withdrawalUnlockTime = computed(() => {
   )
     return
 
+  if (!+buildersData.value.buildersProjectUserAccount.lastStake) return
+
   return time(+buildersData.value.buildersProjectUserAccount.lastStake).add(
     buildersData.value.buildersProject.withdrawLockPeriodAfterDeposit,
     'seconds',
@@ -488,6 +511,11 @@ const handleStaked = async () => {
   isStakeModalShown.value = false
 }
 
+const handleWithdrawalSubmitted = async () => {
+  await update()
+  isWithdrawModalShown.value = false
+}
+
 const claim = async () => {
   try {
     const tx = await buildersContract.value.signerBased.value.claim(
@@ -511,6 +539,11 @@ const claim = async () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+}
+
+const handleBuilderPoolUpdated = async () => {
+  await update()
+  isEditModalShown.value = false
 }
 </script>
 

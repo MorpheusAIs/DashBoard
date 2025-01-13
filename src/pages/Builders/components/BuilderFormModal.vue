@@ -2,7 +2,13 @@
   <basic-modal
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
-    title="Become a Builder"
+    :title="
+      buildersProject
+        ? $t('builder-form-modal.update-title', {
+            name: buildersProject.name,
+          })
+        : $t('builder-form-modal.create-title')
+    "
     :is-close-by-click-outside="!isSubmitting"
     :has-close-button="!isSubmitting"
   >
@@ -94,7 +100,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
-  (e: 'builder-created', poolId: string): void
+  (e: 'submitted', poolId: string): void
 }>()
 
 const { t } = useI18n()
@@ -156,15 +162,23 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
-    const tx =
-      await buildersContract.value?.signerBased.value.createBuilderPool({
-        name: form.name,
-        admin: provider.value.selectedAddress,
-        poolStart: +form.startAt,
-        withdrawLockPeriodAfterDeposit: +form.lockPeriodAfterStake,
-        claimLockEnd: +form.claimLockEndTime,
-        minimalDeposit: parseUnits(form.depositAmount),
-      })
+    const tx = props.buildersProject
+      ? await buildersContract.value?.signerBased.value.editBuilderPool({
+          name: form.name,
+          admin: provider.value.selectedAddress,
+          poolStart: +form.startAt,
+          withdrawLockPeriodAfterDeposit: +form.lockPeriodAfterStake,
+          claimLockEnd: +form.claimLockEndTime,
+          minimalDeposit: parseUnits(form.depositAmount),
+        })
+      : await buildersContract.value?.signerBased.value.createBuilderPool({
+          name: form.name,
+          admin: provider.value.selectedAddress,
+          poolStart: +form.startAt,
+          withdrawLockPeriodAfterDeposit: +form.lockPeriodAfterStake,
+          claimLockEnd: +form.claimLockEndTime,
+          minimalDeposit: parseUnits(form.depositAmount),
+        })
 
     const txReceipt = await tx.wait()
 
@@ -188,11 +202,11 @@ const submit = async () => {
 
     bus.emit(
       BUS_EVENTS.success,
-      t('builder-form-modal.creation-success-msg', { explorerTxUrl }),
+      t('builder-form-modal.confirm-success-msg', { explorerTxUrl }),
     )
 
     clearForm()
-    emit('builder-created', poolId)
+    emit('submitted', poolId)
   } catch (error) {
     ErrorHandler.process(error)
   }

@@ -710,7 +710,9 @@
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "builder-form-modal": {
-    "creation-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "create-title": "Become a builder",
+    "update-title": "Update {name}",
+    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "name-plh": "Builder name",
     "name-note": "What is the name of your project? This is how users will find your project.",
     "min-deposit-plh": "Minimum deposit",
@@ -791,6 +793,7 @@
     "stakers-lbl": "Stakers",
     "stake-btn": "Stake",
     "staker-addr-name-th": "Name / Address",
+    "staked-th": "MOR Staked",
     "start-time-th": "Start time",
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   }

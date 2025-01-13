@@ -86,7 +86,7 @@
 
     <builder-form-modal
       v-model:is-shown="isCreateBuilderModalShown"
-      @builder-created="handleBuilderCreated"
+      @submitted="handleBuilderCreated"
     />
   </div>
 </template>

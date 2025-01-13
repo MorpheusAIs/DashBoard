@@ -207,6 +207,10 @@ const setMaxAmount = () => {
   form.stakeAmount = formatEther(balances.value.rewardsToken ?? 0)
 }
 
+const clearForm = () => {
+  form.stakeAmount = ''
+}
+
 const submit = async () => {
   if (!isFormValid()) return
 
@@ -241,6 +245,7 @@ const submit = async () => {
       txReceipt.transactionHash,
     )
 
+    clearForm()
     bus.emit(
       BUS_EVENTS.success,
       t('builders-stake-modal.stake-success-msg', { explorerTxUrl }),

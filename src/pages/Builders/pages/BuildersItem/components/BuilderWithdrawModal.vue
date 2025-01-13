@@ -67,7 +67,7 @@
         >
           {{ $t('builder-withdraw-modal.cancel-btn') }}
         </app-button>
-        <app-button type="submit" :disabled="!isFieldsValid || !isSubmitting">
+        <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
           {{ $t('builder-withdraw-modal.submit-btn') }}
         </app-button>
       </div>
@@ -104,6 +104,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
+  (e: 'submitted'): void
 }>()
 
 const { t } = useI18n()
@@ -158,6 +159,10 @@ const setMaxAmount = () => {
   form.withdrawAmount = formatEther(props.buildersProjectUserAccount.staked)
 }
 
+const clearForm = () => {
+  form.withdrawAmount = ''
+}
+
 const submit = async () => {
   if (!isFormValid()) return
 
@@ -176,10 +181,12 @@ const submit = async () => {
       tx.hash,
     )
 
+    clearForm()
     bus.emit(
       BUS_EVENTS.success,
       t('builder-withdraw-modal.withdraw-success-msg', { explorerTxUrl }),
     )
+    emit('submitted')
   } catch (error) {
     ErrorHandler.process(error)
   }
