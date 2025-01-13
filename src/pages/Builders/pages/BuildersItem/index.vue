@@ -27,8 +27,14 @@
         </span>
 
         <button
+          v-if="isUserAccountAdmin"
           class="flex items-center gap-2"
           @click="isEditModalShown = true"
+          :disabled="
+            time(+buildersData.buildersProject?.startsAt)
+              .add(editPoolDeadline?.toNumber() ?? 0, 'seconds')
+              .isBefore(time())
+          "
         >
           <span class="text-primaryMain">
             {{ $t('builders-item.edit-btn') }}
@@ -399,6 +405,10 @@ const isStakeModalShown = ref(false)
 const stakersCurrentPage = ref(1)
 
 const stakers = ref<GetBuildersProjectUsersQuery['buildersUsers']>([])
+
+const { data: editPoolDeadline } = useLoad(undefined, async () =>
+  buildersContract.value.providerBased.value.editPoolDeadline(),
+)
 
 const {
   data: buildersData,

@@ -245,13 +245,13 @@ const submit = async () => {
       txReceipt.transactionHash,
     )
 
-    clearForm()
     bus.emit(
       BUS_EVENTS.success,
       t('builders-stake-modal.stake-success-msg', { explorerTxUrl }),
     )
 
     emit('staked')
+    clearForm()
   } catch (error) {
     ErrorHandler.process(error)
   }

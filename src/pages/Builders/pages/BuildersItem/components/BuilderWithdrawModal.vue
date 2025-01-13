@@ -181,12 +181,12 @@ const submit = async () => {
       tx.hash,
     )
 
-    clearForm()
     bus.emit(
       BUS_EVENTS.success,
       t('builder-withdraw-modal.withdraw-success-msg', { explorerTxUrl }),
     )
     emit('submitted')
+    clearForm()
   } catch (error) {
     ErrorHandler.process(error)
   }

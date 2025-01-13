@@ -20,7 +20,7 @@
           :note="$t('builder-form-modal.name-note')"
           :error-message="getFieldErrorMessage('name')"
           @blur="touchField('name')"
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || !!buildersProject"
         />
         <input-field
           v-model="form.depositAmount"
@@ -85,7 +85,7 @@ import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { required } from '@/validators'
 import { config } from '@config'
 import { GetBuildersProjectQuery } from '@/types/graphql'
-import { parseUnits } from '@/utils'
+import { formatEther, parseUnits } from '@/utils'
 
 const props = withDefaults(
   defineProps<{
@@ -129,7 +129,7 @@ const form = reactive<{
   claimLockEndTime: string
 }>({
   name: props.buildersProject?.name ?? '',
-  depositAmount: props.buildersProject?.minimalDeposit,
+  depositAmount: formatEther(props.buildersProject?.minimalDeposit ?? 0),
   lockPeriodAfterStake: props.buildersProject?.withdrawLockPeriodAfterDeposit,
   startAt: props.buildersProject?.startsAt,
   claimLockEndTime: +props.buildersProject?.claimLockEnd
@@ -205,8 +205,8 @@ const submit = async () => {
       t('builder-form-modal.confirm-success-msg', { explorerTxUrl }),
     )
 
-    clearForm()
     emit('submitted', poolId)
+    clearForm()
   } catch (error) {
     ErrorHandler.process(error)
   }
