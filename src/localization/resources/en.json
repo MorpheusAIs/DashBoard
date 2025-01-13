@@ -770,6 +770,7 @@
     "start-time-th": "Start time",
     "min-deposit-th": "Min MOR Deposit",
     "total-staked-th": "Total MOR Staked",
+    "withdraw-lock-period-th": "Withdraw lock period",
     "lock-period-th": "Lock period"
   },
   "builders-table-item": {
