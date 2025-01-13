@@ -1,324 +1,343 @@
 <template>
   <div :class="cn('flex flex-row overflow-y-auto', 'md:flex-col')">
-    <button class="flex items-center gap-2" @click="$router.go(-1)">
-      <app-icon
-        :name="$icons.arrowLeft"
-        class="size-4 text-textSecondaryLight"
+    <template v-if="isLoadFailed">
+      <error-message
+        :message="$t('builders-item.page-err-msg')"
+        class="self-center"
       />
-      <span class="text-textSecondaryMain">
-        {{ $t('builders-item.back-btn') }}
-      </span>
-    </button>
-
-    <div class="mt-14 flex flex-col">
-      <span
-        :class="
-          cn(
-            'self-start px-3 py-1 text-[#15151D]',
-            'bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)]',
-          )
-        "
-      >
-        {{ $t('builders-item.your-builder-lbl') }}
-      </span>
-      <div v-if="isLoaded" class="flex items-center gap-8">
-        <span class="typography-h1">
-          {{ buildersData.buildersProject?.name }}
+    </template>
+    <template v-else>
+      <button class="flex items-center gap-2" @click="$router.go(-1)">
+        <app-icon
+          :name="$icons.arrowLeft"
+          class="size-4 text-textSecondaryLight"
+        />
+        <span class="text-textSecondaryMain">
+          {{ $t('builders-item.back-btn') }}
         </span>
+      </button>
 
-        <button
-          v-if="isUserAccountAdmin"
-          class="flex items-center gap-2"
-          @click="isEditModalShown = true"
-          :disabled="
-            time(+buildersData.buildersProject?.startsAt)
-              .add(editPoolDeadline?.toNumber() ?? 0, 'seconds')
-              .isBefore(time())
+      <div class="mt-14 flex flex-col">
+        <span
+          :class="
+            cn(
+              'self-start px-3 py-1 text-[#15151D]',
+              'bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)]',
+            )
           "
         >
-          <span class="text-primaryMain">
-            {{ $t('builders-item.edit-btn') }}
-          </span>
-          <app-icon :name="$icons.edit" class="size-6 text-primaryMain" />
-        </button>
-      </div>
-      <skeleton class="my-4 h-[80px] w-[250px]" v-else />
-
-      <div v-if="isLoaded" class="flex items-center gap-2">
-        <span class="text-textSecondaryMain">
-          {{ abbrCenter(buildersData.buildersProject?.admin) }}
+          {{ $t('builders-item.your-builder-lbl') }}
         </span>
-        <copy-button content="asdfasdf" message="aasdfasdf" />
-      </div>
-      <skeleton class="w-[350px]" v-else />
-    </div>
+        <div v-if="isLoaded" class="flex items-center gap-8">
+          <span class="typography-h1">
+            {{ buildersData.buildersProject?.name }}
+          </span>
 
-    <div class="mt-6 grid grid-cols-3 gap-[18px]">
-      <app-gradient-border-card
-        v-if="isLoaded"
-        :class="cn('min-h-[150px] flex-1')"
-      >
-        <div class="flex flex-col gap-8 p-6">
-          <div class="flex items-center justify-between">
-            <span class="text-textSecondaryMain typography-body3">
-              {{ $t('builders-item.start-time-lbl') }}
-            </span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-textSecondaryMain typography-h2">
-              {{
-                time(+buildersData.buildersProject?.startsAt).format(
-                  DOT_TIME_FORMAT,
-                )
-              }}
-            </span>
-          </div>
-        </div>
-      </app-gradient-border-card>
-      <skeleton class="h-[160px]" v-else />
-      <app-gradient-border-card v-if="isLoaded" class="flex-1">
-        <div class="flex flex-col gap-8 p-6">
-          <span class="text-textSecondaryMain typography-body3">
-            {{ $t('builders-item.min-deposit-lbl') }}
-          </span>
-          <span class="text-textSecondaryMain typography-h2">
-            {{ formatEther(buildersData.buildersProject?.minimalDeposit) }}
-          </span>
-        </div>
-      </app-gradient-border-card>
-      <skeleton class="h-[160px]" v-else />
-      <app-gradient-border-card v-if="isLoaded" class="flex-1">
-        <div class="flex flex-col gap-8 p-6">
-          <span class="text-textSecondaryMain typography-body3">
-            {{ $t('builders-item.lock-period-lbl') }}
-          </span>
-          <span class="text-textSecondaryMain typography-h2">
-            {{
-              humanizeTime(
-                +buildersData.buildersProject?.withdrawLockPeriodAfterDeposit,
-              )
-            }}</span
+          <button
+            v-if="isUserAccountAdmin"
+            class="flex items-center gap-2"
+            @click="isEditModalShown = true"
+            :disabled="
+              time(+buildersData.buildersProject?.startsAt)
+                .add(editPoolDeadline?.toNumber() ?? 0, 'seconds')
+                .isBefore(time()) || isClaimSubmitting
+            "
           >
+            <span class="text-primaryMain">
+              {{ $t('builders-item.edit-btn') }}
+            </span>
+            <app-icon :name="$icons.edit" class="size-6 text-primaryMain" />
+          </button>
         </div>
-      </app-gradient-border-card>
-      <skeleton class="h-[160px]" v-else />
-    </div>
+        <skeleton class="my-4 h-[80px] w-[250px]" v-else />
 
-    <div class="mt-14 flex gap-[18px]">
-      <div class="flex flex-[0.34] flex-col gap-[18px]">
-        <app-gradient-border-card v-if="isLoaded">
+        <div v-if="isLoaded" class="flex items-center gap-2">
+          <span class="text-textSecondaryMain">
+            {{ abbrCenter(buildersData.buildersProject?.admin) }}
+          </span>
+          <copy-button content="asdfasdf" message="aasdfasdf" />
+        </div>
+        <skeleton class="w-[350px]" v-else />
+      </div>
+
+      <div class="mt-6 grid grid-cols-3 gap-[18px]">
+        <app-gradient-border-card
+          v-if="isLoaded"
+          :class="cn('min-h-[150px] flex-1')"
+        >
           <div class="flex flex-col gap-8 p-6">
-            <div class="flex justify-between">
+            <div class="flex items-center justify-between">
               <span class="text-textSecondaryMain typography-body3">
-                {{ $t('builders-item.available-for-withdrawal-lbl') }}
-              </span>
-
-              <app-button
-                size="small"
-                @click="isWithdrawModalShown = true"
-                :disabled="
-                  !buildersData.buildersProjectUserAccount?.staked ||
-                  withdrawalUnlockTime?.isAfter(time())
-                "
-              >
-                {{ $t('builders-item.withdraw-btn') }}
-              </app-button>
-            </div>
-            <div class="flex items-center gap-8">
-              <span class="text-textSecondaryMain typography-h2">
-                {{
-                  formatEther(
-                    buildersData.buildersProjectUserAccount?.staked ?? 0,
-                  )
-                }}
+                {{ $t('builders-item.start-time-lbl') }}
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-textSecondary">
-                {{ $t('builders-item.unlock-time-lbl') }}
-              </span>
-              <div class="flex items-center gap-2">
-                <span class="text-textSecondaryMain">
-                  {{ withdrawalUnlockTime?.format(DOT_TIME_FORMAT) }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </app-gradient-border-card>
-        <skeleton class="h-[160px]" v-else />
-        <app-gradient-border-card v-if="isLoaded" class="">
-          <div class="flex flex-col gap-8 p-6">
-            <span class="text-textSecondaryMain typography-body3">
-              {{ $t('builders-item.total-claimed-lbl') }}
-            </span>
-            <span class="text-textSecondaryMain typography-h2">
-              {{ formatEther(buildersData.buildersProject?.totalClaimed) }}
-            </span>
-          </div>
-        </app-gradient-border-card>
-        <skeleton class="h-[160px]" v-else />
-        <app-gradient-border-card v-if="isLoaded" class="">
-          <div class="flex flex-col gap-8 p-6">
-            <span class="text-textSecondaryMain typography-body3">
-              {{ $t('builders-item.total-staked-lbl') }}
-            </span>
-            <span class="text-textSecondaryMain typography-h2">
-              {{ formatEther(buildersData.buildersProject?.totalStaked) }}
-            </span>
-          </div>
-        </app-gradient-border-card>
-        <skeleton class="h-[160px]" v-else />
-        <app-gradient-border-card v-if="isLoaded">
-          <div class="flex flex-col gap-8 p-6">
-            <div class="flex justify-between">
-              <span class="text-textSecondaryMain typography-body3">
-                {{ $t('builders-item.claim-lock-ends-lbl') }}
-              </span>
-
-              <app-button
-                v-if="isUserAccountAdmin"
-                size="small"
-                :disabled="
-                  !buildersData.buildersProject ||
-                  !buildersData.buildersProject.claimLockEnd ||
-                  time(+buildersData.buildersProject.claimLockEnd).isAfter(
-                    time(),
-                  )
-                "
-                @click="claim"
-              >
-                {{ $t('builders-item.claim-btn') }}
-              </app-button>
-            </div>
-            <div class="flex items-center gap-8">
               <span class="text-textSecondaryMain typography-h2">
                 {{
-                  time(+buildersData.buildersProject?.claimLockEnd).format(
+                  time(+buildersData.buildersProject?.startsAt).format(
                     DOT_TIME_FORMAT,
                   )
                 }}
               </span>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-textSecondary">
-                {{ $t('builders-item.admin-addr-lbl') }}
-              </span>
-              <div class="flex items-center gap-2">
-                <span class="text-textSecondaryMain">
-                  {{ abbrCenter(buildersData.buildersProject?.admin) }}
-                </span>
-                <copy-button
-                  :content="buildersData.buildersProject?.admin"
-                  message="Copied"
-                />
-              </div>
-            </div>
+          </div>
+        </app-gradient-border-card>
+        <skeleton class="h-[160px]" v-else />
+        <app-gradient-border-card v-if="isLoaded" class="flex-1">
+          <div class="flex flex-col gap-8 overflow-hidden p-6">
+            <span class="text-textSecondaryMain typography-body3">
+              {{ $t('builders-item.min-deposit-lbl') }}
+            </span>
+            <span
+              class="w-full overflow-hidden text-ellipsis text-textSecondaryMain typography-h2"
+            >
+              {{ formatEther(buildersData.buildersProject?.minimalDeposit) }}
+            </span>
+          </div>
+        </app-gradient-border-card>
+        <skeleton class="h-[160px]" v-else />
+        <app-gradient-border-card v-if="isLoaded" class="flex-1">
+          <div class="flex flex-col gap-8 p-6">
+            <span class="text-textSecondaryMain typography-body3">
+              {{ $t('builders-item.lock-period-lbl') }}
+            </span>
+            <span class="text-textSecondaryMain typography-h2">
+              {{
+                humanizeTime(
+                  +buildersData.buildersProject?.withdrawLockPeriodAfterDeposit,
+                )
+              }}</span
+            >
           </div>
         </app-gradient-border-card>
         <skeleton class="h-[160px]" v-else />
       </div>
-      <div class="col-span-2 flex flex-[0.65] flex-col gap-6 pl-12">
-        <div class="flex items-center justify-between">
-          <div v-if="isLoaded" class="flex items-center gap-4">
-            <span class="span text-textSecondaryMain">
-              {{ $t('builders-item.stakers-lbl') }}
-            </span>
-            <app-gradient-border-card
-              class="bg-transparent p-2 text-textSecondaryMain"
-            >
-              {{ buildersData?.buildersProject?.totalUsers }}
-            </app-gradient-border-card>
-          </div>
-          <div v-else class="flex items-center gap-4">
-            <skeleton class="w-[160px]" />
-            <skeleton class="w-[35px]" />
-          </div>
 
-          <app-button
-            :disabled="!isLoaded || balances.rewardsToken?.isZero()"
-            @click="isStakeModalShown = true"
-          >
-            {{ $t('builders-item.stake-btn') }}
-          </app-button>
-        </div>
+      <div class="mt-14 flex gap-[18px]">
+        <div class="flex flex-[0.34] flex-col gap-[18px]">
+          <app-gradient-border-card v-if="isLoaded">
+            <div class="flex flex-col gap-8 p-6">
+              <div class="flex justify-between">
+                <span class="text-textSecondaryMain typography-body3">
+                  {{ $t('builders-item.available-for-withdrawal-lbl') }}
+                </span>
 
-        <div class="flex flex-1 flex-col">
-          <template v-if="isLoaded">
-            <template v-if="stakers?.length">
-              <div
-                class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
-              >
-                <div class="">
-                  <span class="text-textTertiaryMain">
-                    {{ $t('builders-item.staker-addr-name-th') }}
+                <app-button
+                  size="small"
+                  @click="isWithdrawModalShown = true"
+                  :disabled="
+                    !buildersData.buildersProjectUserAccount?.staked ||
+                    withdrawalUnlockTime?.isAfter(time()) ||
+                    isClaimSubmitting
+                  "
+                >
+                  {{ $t('builders-item.withdraw-btn') }}
+                </app-button>
+              </div>
+              <div class="flex items-center gap-8">
+                <span class="text-textSecondaryMain typography-h2">
+                  {{
+                    formatEther(
+                      buildersData.buildersProjectUserAccount?.staked ?? 0,
+                    )
+                  }}
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-textSecondary">
+                  {{ $t('builders-item.unlock-time-lbl') }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <span class="text-textSecondaryMain">
+                    {{ withdrawalUnlockTime?.format(DOT_TIME_FORMAT) }}
                   </span>
                 </div>
-
-                <button class="flex items-center justify-end gap-2">
-                  <span class="text-textTertiaryMain">
-                    {{ $t('builders-item.staked-th') }}
-                  </span>
-                  <app-icon :name="$icons.sort" class="size-6" />
-                </button>
-
-                <button class="flex items-center justify-end gap-2">
-                  <span class="text-textTertiaryMain">
-                    {{ $t('builders-item.start-time-th') }}
-                  </span>
-                  <app-icon :name="$icons.sort" class="size-6" />
-                </button>
               </div>
+            </div>
+          </app-gradient-border-card>
+          <skeleton class="h-[160px]" v-else />
+          <app-gradient-border-card v-if="isLoaded" class="">
+            <div class="flex flex-col gap-8 p-6">
+              <span class="text-textSecondaryMain typography-body3">
+                {{ $t('builders-item.total-claimed-lbl') }}
+              </span>
+              <span class="text-textSecondaryMain typography-h2">
+                {{ formatEther(buildersData.buildersProject?.totalClaimed) }}
+              </span>
+            </div>
+          </app-gradient-border-card>
+          <skeleton class="h-[160px]" v-else />
+          <app-gradient-border-card v-if="isLoaded" class="">
+            <div class="flex flex-col gap-8 p-6">
+              <span class="text-textSecondaryMain typography-body3">
+                {{ $t('builders-item.total-staked-lbl') }}
+              </span>
+              <span class="text-textSecondaryMain typography-h2">
+                {{ formatEther(buildersData.buildersProject?.totalStaked) }}
+              </span>
+            </div>
+          </app-gradient-border-card>
+          <skeleton class="h-[160px]" v-else />
+          <app-gradient-border-card v-if="isLoaded">
+            <div class="flex flex-col gap-8 p-6">
+              <div class="flex justify-between">
+                <span class="text-textSecondaryMain typography-body3">
+                  {{ $t('builders-item.claim-lock-ends-lbl') }}
+                </span>
 
-              <div class="flex flex-col gap-2">
-                <app-gradient-border-card v-for="el in stakers" :key="el.id">
-                  <div class="grid grid-cols-3 gap-2 px-10">
-                    <div class="flex items-center gap-2 py-8">
-                      <span class="text-textSecondaryMain">
-                        {{ abbrCenter(el.address) }}
-                      </span>
-                      <copy-button :content="el.address" :message="'copied'" />
-                    </div>
-                    <div class="py-8 text-end">
-                      <span class="text-textSecondaryMain">
-                        {{ formatEther(el.staked) }}
-                      </span>
-                    </div>
-                    <div class="py-8 text-end">
-                      <span class="text-textSecondaryMain">
-                        {{ formatEther(el.staked) }}
-                      </span>
-                    </div>
+                <app-button
+                  v-if="isUserAccountAdmin"
+                  size="small"
+                  :disabled="
+                    !buildersData.buildersProject ||
+                    !buildersData.buildersProject.claimLockEnd ||
+                    time(+buildersData.buildersProject.claimLockEnd).isAfter(
+                      time(),
+                    ) ||
+                    isClaimSubmitting
+                  "
+                  @click="claim"
+                >
+                  {{ $t('builders-item.claim-btn') }}
+                </app-button>
+              </div>
+              <div class="flex items-center gap-8">
+                <span class="text-textSecondaryMain typography-h2">
+                  {{
+                    time(+buildersData.buildersProject?.claimLockEnd).format(
+                      DOT_TIME_FORMAT,
+                    )
+                  }}
+                </span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-textSecondary">
+                  {{ $t('builders-item.admin-addr-lbl') }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <span class="text-textSecondaryMain">
+                    {{ abbrCenter(buildersData.buildersProject?.admin) }}
+                  </span>
+                  <copy-button
+                    :content="buildersData.buildersProject?.admin"
+                    message="Copied"
+                  />
+                </div>
+              </div>
+            </div>
+          </app-gradient-border-card>
+          <skeleton class="h-[160px]" v-else />
+        </div>
+        <div class="col-span-2 flex flex-[0.65] flex-col gap-6 pl-12">
+          <div class="flex items-center justify-between">
+            <div v-if="isLoaded" class="flex items-center gap-4">
+              <span class="span text-textSecondaryMain">
+                {{ $t('builders-item.stakers-lbl') }}
+              </span>
+              <app-gradient-border-card
+                class="bg-transparent p-2 text-textSecondaryMain"
+              >
+                {{ buildersData?.buildersProject?.totalUsers }}
+              </app-gradient-border-card>
+            </div>
+            <div v-else class="flex items-center gap-4">
+              <skeleton class="w-[160px]" />
+              <skeleton class="w-[35px]" />
+            </div>
+
+            <app-button
+              :disabled="
+                !isLoaded ||
+                balances.rewardsToken?.isZero() ||
+                isClaimSubmitting
+              "
+              @click="isStakeModalShown = true"
+            >
+              {{ $t('builders-item.stake-btn') }}
+            </app-button>
+          </div>
+
+          <div class="flex flex-1 flex-col">
+            <template v-if="isLoaded">
+              <template v-if="stakers?.length">
+                <div
+                  class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
+                >
+                  <div class="">
+                    <span class="text-textTertiaryMain">
+                      {{ $t('builders-item.staker-addr-name-th') }}
+                    </span>
                   </div>
-                </app-gradient-border-card>
-              </div>
 
-              <pagination
-                v-if="
-                  isLoaded &&
-                  !isLoadFailed &&
-                  stakers.length >= DEFAULT_PAGE_LIMIT
-                "
-                v-model:current-page="stakersCurrentPage"
-                :page-limit="DEFAULT_PAGE_LIMIT"
-                :total-items="buildersData.buildersProject?.totalUsers"
-                class="mt-6 self-center"
-              />
+                  <button class="flex items-center justify-end gap-2">
+                    <span class="text-textTertiaryMain">
+                      {{ $t('builders-item.staked-th') }}
+                    </span>
+                    <app-icon :name="$icons.sort" class="size-6" />
+                  </button>
+
+                  <button class="flex items-center justify-end gap-2">
+                    <span class="text-textTertiaryMain">
+                      {{ $t('builders-item.start-time-th') }}
+                    </span>
+                    <app-icon :name="$icons.sort" class="size-6" />
+                  </button>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <app-gradient-border-card v-for="el in stakers" :key="el.id">
+                    <div class="grid grid-cols-3 gap-2 px-10">
+                      <div class="flex items-center gap-2 py-8">
+                        <span class="text-textSecondaryMain">
+                          {{ abbrCenter(el.address) }}
+                        </span>
+                        <copy-button
+                          :content="el.address"
+                          :message="'copied'"
+                        />
+                      </div>
+                      <div class="py-8 text-end">
+                        <span class="text-textSecondaryMain">
+                          {{ formatEther(el.staked) }}
+                        </span>
+                      </div>
+                      <div class="py-8 text-end">
+                        <span class="text-textSecondaryMain">
+                          {{ formatEther(el.staked) }}
+                        </span>
+                      </div>
+                    </div>
+                  </app-gradient-border-card>
+                </div>
+
+                <pagination
+                  v-if="
+                    isLoaded &&
+                    !isLoadFailed &&
+                    stakers.length >= DEFAULT_PAGE_LIMIT
+                  "
+                  v-model:current-page="stakersCurrentPage"
+                  :page-limit="DEFAULT_PAGE_LIMIT"
+                  :total-items="buildersData.buildersProject?.totalUsers"
+                  class="mt-6 self-center"
+                />
+              </template>
+              <template v-else>
+                <no-data-message
+                  title="No stakers found"
+                  message="Be the first staker"
+                />
+              </template>
             </template>
             <template v-else>
-              <no-data-message
-                title="No stakers found"
-                message="Be the first staker"
-              />
+              <div class="flex flex-col gap-2">
+                <skeleton v-for="i in 10" :key="i" class="h-16 animate-pulse" />
+              </div>
             </template>
-          </template>
-          <template v-else>
-            <div class="flex flex-col gap-2">
-              <skeleton v-for="i in 10" :key="i" class="h-16 animate-pulse" />
-            </div>
-          </template>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 
   <builder-withdraw-modal
@@ -350,6 +369,7 @@ import {
   AppGradientBorderCard,
   AppIcon,
   CopyButton,
+  ErrorMessage,
   NoDataMessage,
   Pagination,
   Skeleton,
@@ -401,6 +421,8 @@ const { t } = useI18n()
 const isWithdrawModalShown = ref(false)
 const isEditModalShown = ref(false)
 const isStakeModalShown = ref(false)
+
+const isClaimSubmitting = ref(false)
 
 const stakersCurrentPage = ref(1)
 
@@ -527,6 +549,7 @@ const handleWithdrawalSubmitted = async () => {
 }
 
 const claim = async () => {
+  isClaimSubmitting.value = true
   try {
     const tx = await buildersContract.value.signerBased.value.claim(
       buildersData.value.buildersProject?.id,
@@ -549,6 +572,7 @@ const claim = async () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+  isClaimSubmitting.value = false
 }
 
 const handleBuilderPoolUpdated = async () => {

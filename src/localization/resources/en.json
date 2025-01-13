@@ -776,6 +776,7 @@
     "stake-btn": "Stake"
   },
   "builders-item": {
+    "page-err-msg": "Something bad happened, try reload page",
     "back-btn": "Back",
     "your-builder-lbl": "Your Builder",
     "edit-btn": "Edit",
