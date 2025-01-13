@@ -39,7 +39,10 @@
       class="mt-6"
     />
 
-    <builder-form-modal v-model:is-shown="isCreateBuilderModalShown" />
+    <builder-form-modal
+      v-model:is-shown="isCreateBuilderModalShown"
+      @builder-created="handleBuilderCreated"
+    />
 
     <builders-table
       v-if="userAccountBuildersProjects.length"
@@ -52,8 +55,7 @@
 <script setup lang="ts">
 import { AppButton, Pagination } from '@/common'
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
-import BuilderFormModal from '@/pages/Builders/pages/BuildersList/components/BuilderFormModal.vue'
-import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
+import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import { config } from '@config'
 import {
   GetAccountUserBuildersProjectsIds,
@@ -68,14 +70,16 @@ import {
 } from '@/types/graphql'
 import { ref, watch } from 'vue'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
+import { ROUTE_NAMES } from '@/enums'
 
 defineOptions({
   inheritAttrs: false,
 })
 
 const route = useRoute()
+const router = useRouter()
 
 const { provider } = useWeb3ProvidersStore()
 
@@ -149,6 +153,16 @@ watch(
   () => loadProjects(),
   { immediate: true },
 )
+
+const handleBuilderCreated = async (poolId: string) => {
+  isCreateBuilderModalShown.value = false
+  await router.push({
+    name: ROUTE_NAMES.appBuildersItem,
+    params: {
+      id: poolId,
+    },
+  })
+}
 </script>
 
 <style scoped lang="scss">

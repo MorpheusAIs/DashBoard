@@ -97,7 +97,7 @@ import {
 } from '@/helpers'
 import { config } from '@config'
 import { Provider } from '@/types'
-import { formatEther, toEther } from '@/utils'
+import { formatEther, parseUnits, toEther } from '@/utils'
 import {
   GetBuildersProjectQuery,
   GetUserAccountBuildersProject,
@@ -106,6 +106,7 @@ import {
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
+import { providers } from 'ethers'
 
 const props = withDefaults(
   defineProps<{
@@ -123,7 +124,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, provider } = storeToRefs(useWeb3ProvidersStore())
+const { networkId, provider, rewardsContract, buildersContract } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const buildersProjectUserAccount =
   ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
@@ -174,15 +177,6 @@ const builderDetails = computed(() => [
   },
 ])
 
-const buildersContract = computed(() => {
-  if (!provider.value.rawProvider) return
-
-  return createBuildersContract(
-    config.networksMap[networkId.value].contractAddressesMap.builders,
-    provider.value.rawProvider as unknown as Provider,
-  )
-})
-
 const loadUserAccountInProject = async () => {
   const { data: userAccountInProject } =
     await config.testnetBuildersApolloClient.query<
@@ -208,16 +202,32 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
-    const tx = await buildersContract.value?.contractInstance.deposit(
-      props.builderProject?.id,
-      toEther(form.stakeAmount),
+    const allowance = await rewardsContract.value.providerBased.value.allowance(
+      provider.value.selectedAddress,
+      buildersContract.value.signerBased.value.address,
     )
 
-    if (!tx) throw new TypeError('Transaction is not defined')
+    if (allowance.lt(parseUnits(form.stakeAmount))) {
+      const approveTx = await rewardsContract.value.signerBased.value.approve(
+        buildersContract.value.signerBased.value.address,
+        parseUnits(form.stakeAmount),
+      )
+
+      await approveTx.wait()
+    }
+
+    const tx = await buildersContract.value.signerBased.value.deposit(
+      props.builderProject?.id,
+      parseUnits(form.stakeAmount),
+    )
+
+    const txReceipt = await tx.wait()
+
+    if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
       config.networksMap[networkId.value].l1.explorerUrl,
-      tx.hash,
+      txReceipt.transactionHash,
     )
 
     bus.emit(

@@ -217,7 +217,7 @@
             <app-gradient-border-card
               class="bg-transparent p-2 text-textSecondaryMain"
             >
-              {{ buildersProject?.totalUsers }}
+              {{ buildersData?.buildersProject?.totalUsers }}
             </app-gradient-border-card>
           </div>
           <div v-else class="flex items-center gap-4">
@@ -335,8 +335,8 @@ import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { cn } from '@/theme/utils'
 import { useLoad } from '@/composables'
-import BuilderFormModal from '@/pages/Builders/pages/BuildersList/components/BuilderFormModal.vue'
-import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
+import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
+import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 
 defineOptions({
   inheritAttrs: true,

@@ -79,7 +79,7 @@ import { GetBuildersProjectsQuery } from '@/types/graphql'
 import { formatEther } from '@/utils'
 import { DOT_TIME_FORMAT } from '@/const'
 import { time } from '@distributedlab/tools'
-import BuildersStakeModal from '@/pages/Builders/pages/BuildersList/components/BuildersStakeModal.vue'
+import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { ref } from 'vue'
 
 withDefaults(

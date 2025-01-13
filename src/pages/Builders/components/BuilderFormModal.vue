@@ -68,20 +68,13 @@
 import { AppButton, BasicModal } from '@/common'
 import { InputField, DatetimeField } from '@/fields'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
-import {
-  bus,
-  BUS_EVENTS,
-  createBuildersContract,
-  ErrorHandler,
-  getEthExplorerTxUrl,
-} from '@/helpers'
-import { computed, reactive, ref } from 'vue'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import { reactive, ref } from 'vue'
 import { useFormValidation, useI18n } from '@/composables'
 import { required } from '@/validators'
 import { config } from '@config'
-import { Provider } from '@/types'
-import type { BigNumberish } from 'ethers'
 import { GetBuildersProjectQuery } from '@/types/graphql'
+import { parseUnits } from '@/utils'
 
 const props = withDefaults(
   defineProps<{
@@ -96,11 +89,14 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
+  (e: 'builder-created', poolId: string): void
 }>()
 
 const { t } = useI18n()
 
-const { networkId, provider } = storeToRefs(useWeb3ProvidersStore())
+const { networkId, provider, buildersContract } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const isSubmitting = ref(false)
 
@@ -129,14 +125,13 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     claimLockEndTime: { required },
   })
 
-const buildersContract = computed(() => {
-  if (!provider.value.rawProvider) return
-
-  return createBuildersContract(
-    config.networksMap[networkId.value].contractAddressesMap.builders,
-    provider.value.rawProvider as unknown as Provider,
-  )
-})
+const clearForm = () => {
+  form.name = ''
+  form.depositAmount = ''
+  form.lockPeriodAfterStake = ''
+  form.startAt = ''
+  form.claimLockEndTime = ''
+}
 
 const submit = async () => {
   if (!isFormValid()) return
@@ -144,28 +139,43 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
-    const tx = await buildersContract.value?.contractInstance.createBuilderPool(
-      {
-        name: '' as string,
-        admin: '' as string,
-        poolStart: '' as BigNumberish,
-        withdrawLockPeriodAfterDeposit: '' as BigNumberish,
-        claimLockEnd: '' as BigNumberish,
-        minimalDeposit: '' as BigNumberish,
-      },
-    )
+    const tx =
+      await buildersContract.value?.signerBased.value.createBuilderPool({
+        name: form.name,
+        admin: provider.value.selectedAddress,
+        poolStart: +form.startAt * 1000,
+        withdrawLockPeriodAfterDeposit: +form.lockPeriodAfterStake * 1000,
+        claimLockEnd: +form.claimLockEndTime * 1000,
+        minimalDeposit: parseUnits(form.depositAmount),
+      })
 
-    if (!tx) throw new TypeError('Transaction is not defined')
+    const txReceipt = await tx.wait()
+
+    if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].l1.explorerUrl,
-      tx.hash,
+      config.networksMap[networkId.value].contractAddressesMap['builders'],
+      txReceipt.transactionHash,
     )
+
+    const BuilderPoolCreatedFilter =
+      buildersContract.value?.signerBased.value.filters.BuilderPoolCreated()
+
+    const events = await buildersContract.value?.signerBased.value.queryFilter(
+      BuilderPoolCreatedFilter,
+    )
+
+    const lastEvent = events[events.length - 1]
+
+    const poolId = lastEvent.args[0]
 
     bus.emit(
       BUS_EVENTS.success,
       t('builder-form-modal.creation-success-msg', { explorerTxUrl }),
     )
+
+    clearForm()
+    emit('builder-created', poolId)
   } catch (error) {
     ErrorHandler.process(error)
   }
