@@ -1,5 +1,5 @@
 <template>
-  <form class="swap-step" @submit.prevent="submit">
+  <form class="swap-step" @submit="submit">
     <h3 class="swap-step__balance">
       <span class="swap-step__desc-text">
         {{ $t('swap-step.balance-text') }}
@@ -68,13 +68,14 @@ import { useContract, useFormValidation, useI18n, useSwap } from '@/composables'
 import { required, minEther, maxEther } from '@/validators'
 import { SWAP_ASSETS } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
-import { ErrorHandler, roundNumber } from '@/helpers'
+import { ErrorHandler } from '@/helpers'
 import { utils } from 'ethers'
 import { AppButton } from '@/common'
 import { config } from '@config'
 import { parseUnits } from '@/utils'
 
 const MIN_SWAP_AMOUNT = '0.001'
+const PRECISION = 5
 
 const emit = defineEmits<{
   (e: 'cancel'): void
@@ -155,7 +156,7 @@ const parsedUserBalance = computed(
 )
 
 const humanizeEtherValue = (number: string, symbol: string) =>
-  `${roundNumber(number)} ${symbol}`
+  `${parseFloat(Number(number).toFixed(PRECISION))} ${symbol}`
 
 const getUserBalance = async () => {
   await web3ProvidersStore.provider.switchChain(ETHEREUM_CHAIN_IDS.ethereum)

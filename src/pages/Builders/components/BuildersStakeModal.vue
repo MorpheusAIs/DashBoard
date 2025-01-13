@@ -167,7 +167,7 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-stake-modal.lock-period-lbl'),
-    value: humanizeTime(props.builderProject?.withdrawLockPeriodAfterDeposit),
+    value: humanizeTime(+props.builderProject?.withdrawLockPeriodAfterDeposit),
   },
   {
     label: t('builders-stake-modal.new-stake-amount-lbl'),

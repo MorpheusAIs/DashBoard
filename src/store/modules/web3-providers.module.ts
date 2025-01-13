@@ -150,14 +150,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     ),
   )
 
-  const buildersContract = computed(() =>
-    useContract(
-      'Builders__factory',
-      config.networksMap[networkId.value].contractAddressesMap['builders'],
-      l2Provider.value,
-    ),
-  )
-
   const updateBalances = async () => {
     if (!provider.selectedAddress) throw new errors.UserAddressError()
 
@@ -173,6 +165,14 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     balances.depositToken = stEthValue
     balances.rewardsToken = morValue
   }
+
+  const buildersContract = computed(() =>
+    useContract(
+      'Builders__factory',
+      config.networksMap[networkId.value].contractAddressesMap['builders'],
+      l2Provider.value,
+    ),
+  )
 
   // Actions
   const init = async () => {

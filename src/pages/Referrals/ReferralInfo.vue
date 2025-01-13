@@ -27,13 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import ReferralInfoCards from './ReferralInfoCards.vue'
-
-import { useI18n, useReferral } from '@/composables'
-import { useWeb3ProvidersStore } from '@/store'
-import { AppButton } from '@/common'
 import { computed } from 'vue'
-import { ErrorHandler } from '@/helpers'
+import { useI18n, useReferral } from '@/composables'
+import { AppButton } from '@/common'
+import ReferralInfoCards from './ReferralInfoCards.vue'
 
 defineProps<{
   poolId: number
@@ -45,7 +42,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { becomeReferrer } = useReferral()
-const web3ProvidersStore = useWeb3ProvidersStore()
 
 const description = computed(() => [
   t('referral-info.description-1'),
@@ -53,16 +49,9 @@ const description = computed(() => [
   t('referral-info.description-3'),
 ])
 
-const updateRefState = async () => {
-  try {
-    if (!web3ProvidersStore.provider.isConnected)
-      await web3ProvidersStore.provider.connect()
-
-    becomeReferrer()
-    emit('become-referrer')
-  } catch (e) {
-    ErrorHandler.process(e)
-  }
+const updateRefState = () => {
+  becomeReferrer()
+  emit('become-referrer')
 }
 </script>
 

@@ -58,8 +58,8 @@ import { useWeb3ProvidersStore } from '@/store'
 import { ReferralData } from '@/types'
 import { ethers } from 'ethers'
 import { useRoute } from 'vue-router'
-import { roundNumber } from '@/helpers'
 
+const ROUND_DIGITS = 5
 const PERCENTS_DECIMALS = 23
 
 const emit = defineEmits<{
@@ -76,7 +76,11 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const { t } = useI18n()
 
 const availableToClaim = computed(() =>
-  roundNumber(ethers.utils.formatUnits(props.referralData.currentReward)),
+  parseFloat(
+    parseFloat(
+      ethers.utils.formatUnits(props.referralData.currentReward),
+    ).toFixed(5),
+  ),
 )
 
 const isClaimButtonHidden = computed(
@@ -90,9 +94,7 @@ const info = computed(() => [
     title: t('referral-system-rate.deposited-text'),
     value: `${
       props.referralData?.amountStaked?.gt(0)
-        ? roundNumber(
-            ethers.utils.formatUnits(props.referralData?.amountStaked),
-          )
+        ? ethers.utils.formatUnits(props.referralData?.amountStaked)
         : 0
     } ${web3ProvidersStore.depositTokenSymbol}`,
   },
@@ -100,11 +102,9 @@ const info = computed(() => [
     title: t('referral-system-rate.bonus-text'),
     value: `${
       props.referralData?.multiplier
-        ? roundNumber(
-            ethers.utils.formatUnits(
-              props.referralData?.multiplier,
-              PERCENTS_DECIMALS,
-            ),
+        ? ethers.utils.formatUnits(
+            props.referralData?.multiplier,
+            PERCENTS_DECIMALS,
           )
         : 0
     }%`,
@@ -115,8 +115,10 @@ const info = computed(() => [
     }),
     value: `${
       props.referralData?.totalClaimed
-        ? roundNumber(
-            ethers.utils.formatUnits(props.referralData?.totalClaimed),
+        ? parseFloat(
+            parseFloat(
+              ethers.utils.formatUnits(props.referralData?.totalClaimed),
+            ).toFixed(ROUND_DIGITS),
           )
         : 0
     }`,

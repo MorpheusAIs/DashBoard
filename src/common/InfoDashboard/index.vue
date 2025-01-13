@@ -40,18 +40,11 @@
               <p class="info-dashboard__header-subtitle">
                 {{ chartSubtitle }}
               </p>
-              <div class="info-dashboard__header-fields">
-                <select-field
-                  v-model="selectedMonth"
-                  scheme="secondary"
-                  :value-options="monthOptions"
-                />
-                <select-field
-                  v-model="selectedYear"
-                  scheme="secondary"
-                  :value-options="yearOptions"
-                />
-              </div>
+              <select-field
+                v-model="selectedMonth"
+                scheme="secondary"
+                :value-options="monthOptions"
+              />
             </div>
             <app-chart
               class="info-dashboard__app-chart"
@@ -126,12 +119,9 @@ import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
 import { AppButton, InfoIndicator } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
-import { config } from '@config'
-
-const CUT_ADDRESS_LENGTH = 7
 
 enum CHART_TYPE {
   circulingSupply = 'circulating-supply',
@@ -160,6 +150,7 @@ const props = withDefaults(
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 const { userPoolData } = usePool(toRef(props.poolId))
 
@@ -176,20 +167,6 @@ const isNoReferrer = computed(() => {
   return !referrer || referrer === ethers.constants.AddressZero
 })
 
-const yearOptions = computed<FieldOption<number>[]>(() => {
-  const currentTime = new Time()
-  const currentYear = currentTime.get('year')
-
-  return Array.from({ length: currentYear - config.yearOfLaunch + 1 }).map(
-    (_, idx) => ({
-      title: String(config.yearOfLaunch + idx),
-      value: config.yearOfLaunch + idx,
-    }),
-  )
-})
-
-const selectedYear = ref(yearOptions.value[yearOptions.value.length - 1])
-
 const monthOptions = computed<FieldOption<number>[]>(() => {
   const allMonthOptions = Array.from({ length: 12 }).map((_, idx) => ({
     title: t(`months.${idx}`),
@@ -199,12 +176,7 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
   const currentTime = new Time()
   const month = currentTime.get('month')
 
-  const firstSlice =
-    selectedYear.value.value === config.yearOfLaunch ? config.monthOfLaunch : 0
-  const secondSlice =
-    selectedYear.value.value === currentTime.get('year') ? month + 1 : 12
-
-  return allMonthOptions.slice(firstSlice, secondSlice)
+  return allMonthOptions.slice(1, month + 1)
 })
 
 const selectedMonth = ref(monthOptions.value[monthOptions.value.length - 1])
@@ -227,9 +199,8 @@ const refererIndicators = computed(() => {
       title: t('info-dashboard.your-referrer-text'),
       value: abbrCenter(
         (userPoolData.value as Erc1967ProxyType.UserData)?.referrer ?? '-',
-        CUT_ADDRESS_LENGTH,
       ),
-      link,
+      link: `${window.location.origin}${link}`,
     },
   ]
 })
@@ -250,12 +221,11 @@ const isChartShown = computed(
   () => route.name !== ROUTE_NAMES.appDashboardCapital,
 )
 
-const updateSupplyChartData = async (month: number, year: number) => {
+const updateSupplyChartData = async (month: number) => {
   const chartData = await getChartData(
     props.poolId,
     props.poolData!.payoutStart,
     month,
-    year,
     route.query.network,
   )
 
@@ -274,12 +244,11 @@ const updateSupplyChartData = async (month: number, year: number) => {
     CHART_COLORS[CHART_TYPE.circulingSupply]
 }
 
-const updateEarnedMorChartData = async (month: number, year: number) => {
+const updateEarnedMorChartData = async (month: number) => {
   const chartData = await getUserYieldPerDayChartData(
     props.poolId,
     web3ProvidersStore.address,
     month,
-    year,
     route.query.network,
   )
 
@@ -296,15 +265,15 @@ const updateEarnedMorChartData = async (month: number, year: number) => {
     CHART_COLORS[CHART_TYPE.earnedMor]
 }
 
-const updateChartData = async (month: number, year: number) => {
+const updateChartData = async (month: number) => {
   isChartDataUpdating.value = true
 
   try {
     if (!props.poolData) throw new errors.PoolDataNotFoundError()
 
     chartType.value === CHART_TYPE.circulingSupply
-      ? await updateSupplyChartData(month, year)
-      : await updateEarnedMorChartData(month, year)
+      ? await updateSupplyChartData(month)
+      : await updateEarnedMorChartData(month)
   } catch (error) {
     ErrorHandler.process(error)
   }
@@ -317,29 +286,13 @@ const changeChartType = (chartToSet: CHART_TYPE) => {
 }
 
 onMounted(() => {
-  if (props.poolData)
-    updateChartData(
-      selectedMonth.value?.value || 0,
-      selectedYear.value?.value || new Time().get('year'),
-    )
+  if (props.poolData) updateChartData(selectedMonth.value.value)
 })
 
 watch(
-  [selectedMonth, selectedYear, () => props.poolData, chartType],
+  [selectedMonth, () => props.poolData, chartType],
   async ([newSelectedMonth]) => {
-    await updateChartData(
-      newSelectedMonth?.value || 0,
-      selectedYear.value?.value || new Time().get('year'),
-    )
-  },
-)
-
-watch(
-  () => selectedYear.value,
-  () => {
-    if (monthOptions.value.includes(selectedMonth.value)) return
-
-    selectedMonth.value = monthOptions.value[0]
+    await updateChartData(newSelectedMonth.value)
   },
 )
 </script>
@@ -443,11 +396,6 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.info-dashboard__header-fields {
-  display: flex;
-  gap: toRem(8);
 }
 
 .info-dashboard .info-dashboard__app-chart {
