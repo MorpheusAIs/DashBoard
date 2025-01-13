@@ -46,7 +46,7 @@ const tabs = computed<Tab[]>(() => [
     id: 'builders',
     ...{
       [NETWORK_IDS.mainnet]: {
-        href: config.COMMUNITY_CONTRIBUTION_URL,
+        route: { name: ROUTE_NAMES.appBuildersList },
       },
       [NETWORK_IDS.testnet]: {
         route: { name: ROUTE_NAMES.appBuildersList },

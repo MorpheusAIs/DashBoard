@@ -406,6 +406,7 @@ import { useI18n, useLoad } from '@/composables'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
+import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
 
 defineOptions({
   inheritAttrs: true,
@@ -415,6 +416,8 @@ const route = useRoute()
 const { provider, buildersContract, networkId, balances } = storeToRefs(
   useWeb3ProvidersStore(),
 )
+
+const buildersApolloClient = useBuildersApolloClient()
 
 const { t } = useI18n()
 
@@ -446,7 +449,7 @@ const {
   { buildersProject: null, buildersProjectUserAccount: null },
   async () => {
     const [{ data: buildersProjectsResponse }] = await Promise.all([
-      config.testnetBuildersApolloClient.query<
+      buildersApolloClient.query<
         GetBuildersProjectQuery,
         GetBuildersProjectQueryVariables
       >({
@@ -458,18 +461,17 @@ const {
       }),
     ])
 
-    const { data: userAccountInProject } =
-      await config.testnetBuildersApolloClient.query<
-        GetUserAccountBuildersProjectQuery,
-        GetUserAccountBuildersProjectQueryVariables
-      >({
-        query: GetUserAccountBuildersProject,
-        fetchPolicy: 'network-only',
-        variables: {
-          address: provider.value.selectedAddress,
-          buildersProjectId: buildersProjectsResponse.buildersProject?.id,
-        },
-      })
+    const { data: userAccountInProject } = await buildersApolloClient.query<
+      GetUserAccountBuildersProjectQuery,
+      GetUserAccountBuildersProjectQueryVariables
+    >({
+      query: GetUserAccountBuildersProject,
+      fetchPolicy: 'network-only',
+      variables: {
+        address: provider.value.selectedAddress,
+        buildersProjectId: buildersProjectsResponse.buildersProject?.id,
+      },
+    })
 
     return {
       buildersProject: buildersProjectsResponse.buildersProject,
@@ -504,7 +506,7 @@ const withdrawalUnlockTime = computed(() => {
 
 const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
   try {
-    const { data } = await config.testnetBuildersApolloClient.query<
+    const { data } = await buildersApolloClient.query<
       GetBuildersProjectUsersQuery,
       GetBuildersProjectUsersQueryVariables
     >({

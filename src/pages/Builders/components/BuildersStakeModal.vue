@@ -114,6 +114,7 @@ import {
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
+import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
 
 const props = withDefaults(
   defineProps<{
@@ -134,6 +135,8 @@ const { t } = useI18n()
 
 const { networkId, provider, rewardsContract, buildersContract, balances } =
   storeToRefs(useWeb3ProvidersStore())
+
+const buildersApolloClient = useBuildersApolloClient()
 
 const buildersProjectUserAccount =
   ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
@@ -187,18 +190,17 @@ const builderDetails = computed(() => [
 ])
 
 const loadUserAccountInProject = async () => {
-  const { data: userAccountInProject } =
-    await config.testnetBuildersApolloClient.query<
-      GetUserAccountBuildersProjectQuery,
-      GetUserAccountBuildersProjectQueryVariables
-    >({
-      query: GetUserAccountBuildersProject,
-      fetchPolicy: 'network-only',
-      variables: {
-        address: provider.value.selectedAddress,
-        buildersProjectId: props.builderProject?.id,
-      },
-    })
+  const { data: userAccountInProject } = await buildersApolloClient.query<
+    GetUserAccountBuildersProjectQuery,
+    GetUserAccountBuildersProjectQueryVariables
+  >({
+    query: GetUserAccountBuildersProject,
+    fetchPolicy: 'network-only',
+    variables: {
+      address: provider.value.selectedAddress,
+      buildersProjectId: props.builderProject?.id,
+    },
+  })
 
   buildersProjectUserAccount.value = userAccountInProject.buildersUsers?.[0]
 }

@@ -101,7 +101,6 @@ import {
 } from '@/common'
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
-import { config } from '@config'
 import {
   GetAccountUserBuildersProjectsIds,
   GetAccountUserBuildersProjectsIdsQuery,
@@ -122,6 +121,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
 import { useLoad } from '@/composables'
+import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
 
 defineOptions({
   inheritAttrs: false,
@@ -136,12 +136,14 @@ const currentPage = ref(1)
 
 const isCreateBuilderModalShown = ref(false)
 
+const buildersApolloClient = useBuildersApolloClient()
+
 const { data: buildersCounters } = useLoad<
   GetBuildersCountersQuery['counters'][0] | undefined
 >(
   undefined,
   async () => {
-    const { data } = await config.testnetBuildersApolloClient.query<
+    const { data } = await buildersApolloClient.query<
       GetBuildersCountersQuery,
       GetBuildersCountersQueryVariables
     >({
@@ -163,7 +165,7 @@ const {
 } = useLoad<GetBuildersProjectsQuery['buildersProjects']>(
   [],
   async () => {
-    const { data } = await config.testnetBuildersApolloClient.query<
+    const { data } = await buildersApolloClient.query<
       GetBuildersProjectsQuery,
       GetBuildersProjectsQueryVariables
     >({
@@ -195,7 +197,7 @@ const {
   [],
   async () => {
     const { data: accountUserBuildersProjectsIds } =
-      await config.testnetBuildersApolloClient.query<
+      await buildersApolloClient.query<
         GetAccountUserBuildersProjectsIdsQuery,
         GetAccountUserBuildersProjectsIdsQueryVariables
       >({
@@ -207,7 +209,7 @@ const {
       })
 
     const { data: accountUserBuildersProjects } =
-      await config.testnetBuildersApolloClient.query<
+      await buildersApolloClient.query<
         GetBuildersProjectsByIdsQuery,
         GetBuildersProjectsByIdsQueryVariables
       >({
