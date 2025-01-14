@@ -110,7 +110,7 @@ const chosenAssetSymbol = computed(
 
 const { estimatedTokenOutAmount, estimatedGasCost, executeTrade } = useSwap(
   chosenAssetAddress.value,
-  config.STETH_MAINNET_CONTRACT_ADDRESS,
+  config.networksMap[web3ProvidersStore.networkId].contractAddressesMap.stEth,
   toRef(() => form.amount),
 )
 

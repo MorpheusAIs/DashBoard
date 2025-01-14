@@ -67,6 +67,7 @@ const networkTitle = computed<string>(
     ({
       [NETWORK_IDS.mainnet]: t('network-switch.mainnet'),
       [NETWORK_IDS.testnet]: t('network-switch.testnet'),
+      [NETWORK_IDS.base]: t('network-switch.base'),
     })[web3ProvidersStore.networkId],
 )
 

@@ -428,7 +428,7 @@ import { useI18n, useLoad } from '@/composables'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
-import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
+import { useBuildersApolloClient } from '@/pages/Builders/composables/use-builders-apollo-client'
 
 defineOptions({
   inheritAttrs: true,

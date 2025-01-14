@@ -114,7 +114,7 @@ import {
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
-import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
+import { useBuildersApolloClient } from '@/pages/Builders/composables/use-builders-apollo-client'
 
 const props = withDefaults(
   defineProps<{

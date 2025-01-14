@@ -181,12 +181,12 @@ const yearOptions = computed<FieldOption<number>[]>(() => {
   const currentTime = new Time()
   const currentYear = currentTime.get('year')
 
-  return Array.from({ length: currentYear - config.yearOfLaunch + 1 }).map(
-    (_, idx) => ({
-      title: String(config.yearOfLaunch + idx),
-      value: config.yearOfLaunch + idx,
-    }),
-  )
+  return Array.from({
+    length: currentYear - config.metadata.yearOfLaunch + 1,
+  }).map((_, idx) => ({
+    title: String(config.metadata.yearOfLaunch + idx),
+    value: config.metadata.yearOfLaunch + idx,
+  }))
 })
 
 const selectedYear = ref(yearOptions.value[yearOptions.value.length - 1])
@@ -201,7 +201,9 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
   const month = currentTime.get('month')
 
   const firstSlice =
-    selectedYear.value.value === config.yearOfLaunch ? config.monthOfLaunch : 0
+    selectedYear.value.value === config.metadata.yearOfLaunch
+      ? config.metadata.monthOfLaunch
+      : 0
   const secondSlice =
     selectedYear.value.value === currentTime.get('year') ? month + 1 : 12
 

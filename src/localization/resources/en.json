@@ -217,7 +217,8 @@
   },
   "network-switch": {
     "mainnet": "Ethereum Mainnet",
-    "testnet": "Ethereum Sepolia"
+    "testnet": "Ethereum Sepolia",
+    "base": "Base"
   },
   "validations": {
     "field-error_address": "Field must be a valid address with prefix \"0x\"",

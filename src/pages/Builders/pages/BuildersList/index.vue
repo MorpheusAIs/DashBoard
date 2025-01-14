@@ -21,6 +21,7 @@
               isCreateBuilderModalShown = true
             }
           "
+          :disabled="!provider.isConnected"
         >
           {{ $t('builders-list.create-builder-btn') }}
         </app-button>
@@ -65,7 +66,10 @@
       class="mt-6"
     />
 
-    <h2 class="mt-16 self-start text-textSecondaryMain">
+    <h2
+      v-if="userAccountBuildersProjects.length"
+      class="mt-16 self-start text-textSecondaryMain"
+    >
       {{ $t('builders-list.account-projects-table-title') }}
     </h2>
 
@@ -129,7 +133,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
 import { useLoad } from '@/composables'
-import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
+import { useBuildersApolloClient } from '@/pages/Builders/composables/use-builders-apollo-client'
+import { storeToRefs } from 'pinia'
 
 defineOptions({
   inheritAttrs: false,
@@ -138,7 +143,7 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 
-const { provider } = useWeb3ProvidersStore()
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
 
@@ -212,7 +217,7 @@ const {
         query: GetAccountUserBuildersProjectsIds,
         fetchPolicy: 'network-only',
         variables: {
-          address: provider.selectedAddress,
+          address: provider.value.selectedAddress,
         },
       })
 
@@ -233,7 +238,7 @@ const {
     return accountUserBuildersProjects.buildersProjects
   },
   {
-    reloadArgs: [provider.selectedAddress],
+    reloadArgs: [() => provider.value.selectedAddress],
   },
 )
 

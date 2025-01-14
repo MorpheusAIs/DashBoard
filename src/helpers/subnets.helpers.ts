@@ -37,10 +37,7 @@ export async function fetchSubnets(
   address: string,
   sorting?: Sorting,
 ) {
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.secondMainnetApolloClient
-      : config.secondTestnetApolloClient
+  const apolloClient = config.secondApolloClient[type]
 
   const query = gql`
     ${_generateSubnetsQuery(address, sorting)}
@@ -62,10 +59,7 @@ export async function fetchOwnSubnets(
   address: string,
   sorting?: Sorting,
 ) {
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.secondMainnetApolloClient
-      : config.secondTestnetApolloClient
+  const apolloClient = config.secondApolloClient[type]
 
   const query = gql`
     ${_generateOwnSubnetsQuery(address, sorting)}
@@ -87,10 +81,7 @@ export async function fetchProviders(
   subnetId: string,
   sorting?: Sorting,
 ) {
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.secondMainnetApolloClient
-      : config.secondTestnetApolloClient
+  const apolloClient = config.secondApolloClient[type]
 
   const query = gql`
     ${_generateProvidersQuery(subnetId, sorting)}
@@ -108,10 +99,7 @@ export async function fetchProviders(
 }
 
 export async function fetchSubnet(type: NETWORK_IDS, subnetId: string) {
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.secondMainnetApolloClient
-      : config.secondTestnetApolloClient
+  const apolloClient = config.secondApolloClient[type]
 
   const query = gql`
     ${_generateSubnetQuery(subnetId)}

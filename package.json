@@ -9,7 +9,7 @@
     "vite-dev-server": "vite",
     "vite-build": "vite build",
     "start": "dotenv -e .env.local yarn vite-dev-server",
-    "build": "dotenv -e .env.production yarn vite-build",
+    "build": "dotenv -e .env yarn vite-build",
     "analyze": "dotenv -e .env.analyze yarn vite-build",
     "lint": "yarn lint:scripts",
     "lint:styles": "stylelint \"src/**/*.{vue,sass,scss,css}\"",

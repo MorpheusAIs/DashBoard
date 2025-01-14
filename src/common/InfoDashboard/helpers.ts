@@ -32,10 +32,7 @@ export async function fetchSpecificUserReferrers(
     orderDirection,
   )
 
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.mainnetApolloClient
-      : config.testnetApolloClient
+  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     query GetSpecificUserReferrers {
@@ -61,10 +58,7 @@ export async function fetchReferrersTotalClaimed(
     user.toLowerCase(),
   )
 
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.mainnetApolloClient
-      : config.testnetApolloClient
+  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     query GetReferrersTotalClaimed {
@@ -90,10 +84,7 @@ export async function fetchDepositedAmountUserReferrers(
     referrer.toLowerCase(),
   )
 
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.mainnetApolloClient
-      : config.testnetApolloClient
+  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     query GetDepositedAmountUserReferrers {
@@ -125,10 +116,7 @@ export async function getChartData(
     ),
   }
 
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.mainnetApolloClient
-      : config.testnetApolloClient
+  const apolloClient = config.firstApolloClient[type]
 
   const { data } = await apolloClient.query<ChartQueryData>(query)
 
@@ -192,10 +180,7 @@ export async function fetchProviders(
   skip: number,
   first: number,
 ): Promise<{ id: string; stake: string }[]> {
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.mainnetApolloClient
-      : config.testnetApolloClient
+  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     ${_generateProvidersQueryWithVariables(skip, first)}
@@ -220,10 +205,7 @@ export async function getUserYieldPerDayChartData(
     query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month, year),
   }
 
-  const apolloClient =
-    type === NETWORK_IDS.mainnet
-      ? config.mainnetApolloClient
-      : config.testnetApolloClient
+  const apolloClient = config.firstApolloClient[type]
 
   const { data } = await apolloClient.query<YieldQueryData>(query)
 
