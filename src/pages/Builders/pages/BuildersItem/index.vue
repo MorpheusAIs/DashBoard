@@ -335,7 +335,8 @@
                   v-if="
                     isLoaded &&
                     !isLoadFailed &&
-                    stakers.length >= DEFAULT_PAGE_LIMIT
+                    buildersData.buildersProject?.totalUsers >=
+                      DEFAULT_PAGE_LIMIT
                   "
                   v-model:current-page="stakersCurrentPage"
                   :page-limit="DEFAULT_PAGE_LIMIT"
