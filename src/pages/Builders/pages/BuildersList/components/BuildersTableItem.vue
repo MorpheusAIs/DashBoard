@@ -2,8 +2,9 @@
   <div
     :class="
       cn(
-        'grid grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)]',
-        'builders-table-item relative h-[72px] w-full items-center gap-2 px-8 py-4',
+        'builders-table-item relative hidden w-full',
+        'md:grid md:grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)]',
+        'md:h-[72px] md:items-center md:gap-2 md:px-8 md:py-4',
       )
     "
   >
@@ -51,7 +52,7 @@
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
-        <span class="builders-table-item__col-text">
+        <span class="builders-table-item__col-text text-right">
           {{ humanizeTime(+builderProject.withdrawLockPeriodAfterDeposit) }}
         </span>
       </div>
@@ -72,6 +73,82 @@
       >
         {{ $t('builders-table-item.stake-btn') }}
       </app-button>
+    </div>
+  </div>
+
+  <div
+    :class="
+      cn(
+        'bg-gradient-to-r',
+        'from-[#39633a0a] from-0%',
+        'to-[#26393980] to-100%',
+        'relative flex flex-col',
+        'border border-solid border-[#FFFFFF29]',
+        'md:hidden',
+      )
+    "
+  >
+    <RouterLink
+      class="flex items-center gap-4 p-6"
+      :to="{
+        name: $routes.appBuildersItem,
+        params: { id: builderProject.id },
+      }"
+    >
+      <img
+        v-if="avatarUri"
+        :src="avatarUri"
+        class="aspect-square size-[75px] min-w-[75px]"
+      />
+      <div
+        v-else
+        class="flex size-[75px] min-w-[75px] items-center justify-center bg-errorMain"
+      >
+        {{ builderProject.name[0] }}
+      </div>
+      <span class="text-textSecondaryMain typography-h4">
+        {{ builderProject.name }}
+      </span>
+    </RouterLink>
+
+    <div
+      class="flex flex-col border-0 border-t border-solid border-[#FFFFFF29]"
+    >
+      <div class="grid grid-cols-2 place-items-center">
+        <span class="w-full py-3 text-center text-textTertiaryMain">
+          {{
+            $t('builders-table-item.mobile-min-deposit-lbl', {
+              amount: formatBalance(builderProject.minimalDeposit),
+            })
+          }}
+        </span>
+        <span
+          :class="
+            cn(
+              'w-full  py-3 text-center text-textTertiaryMain',
+              'border-0 border-l border-solid border-[#FFFFFF29]',
+            )
+          "
+        >
+          {{
+            $t('builders-table-item.mobile-withdraw-lock-period-lbl', {
+              period: humanizeTime(
+                +builderProject.withdrawLockPeriodAfterDeposit,
+              ),
+            })
+          }}
+        </span>
+        <div
+          class="col-span-2 w-full border-0 border-t border-solid border-[#FFFFFF29]"
+        >
+          <button
+            class="z-20 h-12 w-full text-[16px] font-medium text-textSecondaryMain"
+            @click="isStakeModalShown = true"
+          >
+            {{ $t('builders-table-item.stake-btn') }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

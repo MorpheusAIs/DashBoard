@@ -3,7 +3,8 @@
     <div
       :class="
         cn(
-          'grid grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)] items-center',
+          'hidden',
+          'grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)] items-center md:grid',
           'gap-2 px-8',
         )
       "

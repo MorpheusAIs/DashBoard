@@ -868,6 +868,8 @@
     "lock-period-th": "Lock period"
   },
   "builders-table-item": {
+    "mobile-min-deposit-lbl": "Min Deposit: {amount} MOR",
+    "mobile-withdraw-lock-period-lbl": "Lock Period: {period}",
     "stake-btn": "Stake"
   },
   "builders-item": {
