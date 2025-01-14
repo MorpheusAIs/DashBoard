@@ -153,6 +153,7 @@ export function _generateOwnSubnetsQuery(
         owner
         totalClaimed
         totalStaked
+        deregistrationOpensAt
       }
       subnetUsers(where: {address: "${address}"}${sortingUsersString}${paginationString}) {
         staked
@@ -193,6 +194,7 @@ export function _generateSubnetsQuery(
         owner
         totalStaked
         totalClaimed
+        deregistrationOpensAt
       }
       counters {
         id
@@ -226,6 +228,7 @@ export function _generateProvidersQuery(
       subnets(where: {id: "${subnetId}"}) {
         fee
         totalUsers
+        deregistrationOpensAt
       }
     }
   `
@@ -241,6 +244,7 @@ export function _generateSubnetQuery(subnetId: string): string {
         owner
         totalStaked
         totalClaimed
+        deregistrationOpensAt
       }
     }
   `

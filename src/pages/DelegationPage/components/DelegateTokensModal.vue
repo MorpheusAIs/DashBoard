@@ -7,16 +7,6 @@
     @update:is-shown="emit('update:is-shown', $event)"
   >
     <div class="delegate-tokens-modal__content-wrp">
-      <div class="delegate-tokens-modal__available-wrp">
-        <p class="delegate-tokens-modal__available-text">
-          {{ $t('delegate-tokens-modal.delegate-text') }}
-        </p>
-        <p class="delegate-tokens-modal__available-amount">
-          {{
-            `${rewardsTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
-          }}
-        </p>
-      </div>
       <div class="delegate-tokens-modal__inputs-wrp">
         <input-field
           v-model="form.address"
@@ -24,7 +14,7 @@
           :placeholder="$t('delegate-tokens-modal.wallet-input-placeholder')"
           :error-message="formValidationData.getFieldErrorMessage('address')"
           :disabled="isSubmitting || Boolean(delegateAddress)"
-          @blur="formValidationData.touchField('address')"
+          @blur="addressBlur"
         />
         <input-field
           v-model="form.amount"
@@ -49,6 +39,31 @@
           </template>
         </input-field>
       </div>
+
+      <div class="delegate-tokens-modal__info-wrp">
+        <p class="delegate-tokens-modal__info-text">
+          {{ $t('delegate-tokens-modal.delegate-text') }}
+        </p>
+        <p class="delegate-tokens-modal__info-amount">
+          {{
+            `${rewardsTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
+          }}
+        </p>
+      </div>
+
+      <div
+        v-if="isDeregistrationDateShown"
+        class="delegate-tokens-modal__info-wrp"
+      >
+        <p class="delegate-tokens-modal__info-text">
+          {{
+            $t('delegate-tokens-modal.description', {
+              date: deregistrationDateShown,
+            })
+          }}
+        </p>
+      </div>
+
       <div class="delegate-tokens-modal__buttons-wrp">
         <app-button
           class="delegate-tokens-modal__btn"
@@ -80,11 +95,12 @@ import {
   bus,
   BUS_EVENTS,
   ErrorHandler,
+  fetchSubnet,
   getEthExplorerTxUrl,
   trimStringNumber,
 } from '@/helpers'
 import { parseUnits } from '@/utils'
-import { BN } from '@distributedlab/tools'
+import { BN, Time } from '@distributedlab/tools'
 
 const MIN_DELEGATION_AMOUNT = '0.000001'
 
@@ -97,10 +113,12 @@ const props = withDefaults(
     isShown: boolean
     delegateAddress?: string
     isCloseByClickOutside?: boolean
+    deregistrationDate?: string | null
   }>(),
   {
     delegateAddress: '',
     isCloseByClickOutside: true,
+    deregistrationDate: null,
   },
 )
 
@@ -109,6 +127,7 @@ const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isSubmitting = ref(false)
+const deregistrationDateLocal = ref<number | null>(null)
 const formValidationData = ref<ReturnType<typeof useFormValidation>>({
   isFormValid: () => false,
   // eslint-disable-next-line
@@ -143,6 +162,20 @@ const validationRules = computed(() => ({
     maxEther: maxEther(rewardsTokenBalance.value),
   },
 }))
+
+const date = computed(() =>
+  Number(props.deregistrationDate || deregistrationDateLocal.value),
+)
+
+const isDeregistrationDateShown = computed(
+  () => date.value && new Time(date.value).timestamp > new Time().timestamp,
+)
+
+const deregistrationDateShown = computed(() => {
+  if (!isDeregistrationDateShown.value) return ''
+
+  return new Time(date.value).format('MMM D, YYYY')
+})
 
 formValidationData.value = useFormValidation(form, validationRules)
 
@@ -211,6 +244,18 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = false
 }
 
+const addressBlur = async () => {
+  formValidationData.value.touchField('address')
+
+  if (!formValidationData.value.getFieldErrorMessage('address')) {
+    const data = await fetchSubnet(web3ProvidersStore.networkId, form.address)
+
+    deregistrationDateLocal.value = Number(
+      data.subnets[0].deregistrationOpensAt,
+    )
+  }
+}
+
 const closeModal = (): void => {
   clearFields()
   emit('update:is-shown', false)
@@ -267,14 +312,14 @@ init()
   @include body-3-semi-bold;
 }
 
-.delegate-tokens-modal__available-wrp {
+.delegate-tokens-modal__info-wrp {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: toRem(32) 0;
+  margin: toRem(16) 0;
 }
 
-.delegate-tokens-modal__available-amount {
+.delegate-tokens-modal__info-amount {
   font-weight: 700;
 }
 
@@ -282,5 +327,6 @@ init()
   display: flex;
   flex-direction: column;
   gap: toRem(20);
+  margin-top: toRem(32);
 }
 </style>

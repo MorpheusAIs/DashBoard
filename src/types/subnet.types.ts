@@ -3,6 +3,7 @@ export type SubnetCounter = {
 }
 
 export type UsersCounter = {
+  deregistrationOpensAt: string
   totalUsers: string
   fee: string
 }
@@ -15,6 +16,7 @@ export type SubnetItem = {
   totalClaimed: string
   totalStaked: string
   totalUsers: string
+  deregistrationOpensAt: string
 }
 
 export type SubnetProvider = {

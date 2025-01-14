@@ -75,6 +75,7 @@
     <delegate-tokens-modal
       v-model:is-shown="isDelegateModalShown"
       :delegate-address="user.id"
+      :deregistration-date="user.deregistrationOpensAt"
     />
   </app-button>
 </template>
