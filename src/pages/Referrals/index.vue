@@ -15,6 +15,7 @@ import ReferralInfo from './ReferralInfo.vue'
 import ReferralSystem from './ReferralSystem.vue'
 import { computed, ref } from 'vue'
 import { useReferral } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
 
 defineProps<{
   poolId: number
@@ -23,9 +24,12 @@ defineProps<{
 const isRefSystemPage = ref(false)
 
 const { isReferrer } = useReferral()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const refComponent = computed(() =>
-  isRefSystemPage.value || isReferrer.value ? ReferralSystem : ReferralInfo,
+  (isRefSystemPage.value || isReferrer.value) && web3ProvidersStore.address
+    ? ReferralSystem
+    : ReferralInfo,
 )
 
 const becomeReferrer = () => {

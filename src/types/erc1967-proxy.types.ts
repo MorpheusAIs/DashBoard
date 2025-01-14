@@ -26,6 +26,5 @@ export type UserData = {
   pendingRewards: BigNumber
   rate: BigNumber
   virtualDeposited: BigNumber
-  lastClaim: BigNumber
-  referrer: string
+  referrer?: string
 }

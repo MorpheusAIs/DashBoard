@@ -187,6 +187,28 @@ function _generateTotalStakedPerDayGraphqlQuery(
   `
 }
 
+export async function fetchProviders(
+  type: NETWORK_IDS,
+  skip: number,
+  first: number,
+): Promise<{ id: string; stake: string }[]> {
+  const apolloClient =
+    type === NETWORK_IDS.mainnet
+      ? config.mainnetApolloClient
+      : config.testnetApolloClient
+
+  const query = gql`
+    ${_generateProvidersQueryWithVariables(skip, first)}
+  `
+
+  const { data } = await apolloClient.query({
+    query,
+    variables: {},
+  })
+
+  return data.providers
+}
+
 export async function getUserYieldPerDayChartData(
   poolId: number,
   user: string,
@@ -409,6 +431,20 @@ function _generateReferrersTotalClaimedPattern(
       }
     ) {
       totalClaimed
+    }
+  `
+}
+
+export function _generateProvidersQueryWithVariables(
+  skip: number,
+  first: number,
+): string {
+  return `
+    query GetProviders {
+      providers(first: ${first}, skip: ${skip}) {
+        id
+        stake
+      }
     }
   `
 }

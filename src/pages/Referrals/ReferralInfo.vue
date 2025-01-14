@@ -20,17 +20,20 @@
     </div>
     <app-button
       class="referral-info__button"
-      :text="$t('referral-info.button-txt')"
+      :text="buttonText"
       @click="updateRefState"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n, useReferral } from '@/composables'
-import { AppButton } from '@/common'
 import ReferralInfoCards from './ReferralInfoCards.vue'
+
+import { useI18n, useReferral } from '@/composables'
+import { useWeb3ProvidersStore } from '@/store'
+import { AppButton } from '@/common'
+import { computed } from 'vue'
+import { ErrorHandler } from '@/helpers'
 
 defineProps<{
   poolId: number
@@ -42,6 +45,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { becomeReferrer } = useReferral()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const description = computed(() => [
   t('referral-info.description-1'),
@@ -49,7 +53,23 @@ const description = computed(() => [
   t('referral-info.description-3'),
 ])
 
-const updateRefState = () => {
+const buttonText = computed(() => {
+  return web3ProvidersStore.provider.isConnected
+    ? t('referral-info.button-txt')
+    : t('referral-info.connect-wallet')
+})
+
+const updateRefState = async () => {
+  if (!web3ProvidersStore.provider.isConnected) {
+    try {
+      await web3ProvidersStore.provider.connect()
+    } catch (e) {
+      ErrorHandler.process(e)
+    }
+
+    return
+  }
+
   becomeReferrer()
   emit('become-referrer')
 }

@@ -6,6 +6,6 @@ export const useBuildersApolloClient = () => {
   const { networkId } = storeToRefs(useWeb3ProvidersStore())
 
   return networkId.value === NETWORK_IDS.mainnet
-    ? config.mainnetBuildersApolloClient
-    : config.testnetBuildersApolloClient
+    ? config.secondMainnetApolloClient
+    : config.secondMainnetApolloClient
 }

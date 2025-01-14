@@ -23,6 +23,7 @@ export enum CONTRACT_IDS {
   endpoint = 'endpoint',
   l1Factory = 'l1-factory',
   l2Factory = 'l2-factory',
+  subnetFactory = 'subnet-factory',
   builders = 'builders',
 }
 
@@ -86,7 +87,11 @@ export const config = {
     .VITE_APP_L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
   L2_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
+  SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS,
   TESTNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_TESTNET_GRAPHQL_API_URL,
+  TESTNET_GRAPHQL_SECOND_API_URL: import.meta.env
+    .VITE_APP_TESTNET_GRAPHQL_SECOND_API_URL,
   TESTNET_BUILDERS_CONTRACT_ADDRESS: import.meta.env
     .VITE_TESTNET_BUILDERS_CONTRACT_ADDRESS,
 
@@ -103,7 +108,11 @@ export const config = {
     .VITE_APP_L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
   L2_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
     .VITE_APP_L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
+  SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
+    .VITE_APP_SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS,
   MAINNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_MAINNET_GRAPHQL_API_URL,
+  MAINNET_GRAPHQL_SECOND_API_URL: import.meta.env
+    .VITE_APP_MAINNET_GRAPHQL_SECOND_API_URL,
   MAINNET_BUILDERS_CONTRACT_ADDRESS: import.meta.env
     .VITE_MAINNET_BUILDERS_CONTRACT_ADDRESS,
 
@@ -116,11 +125,11 @@ export const config = {
   mainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
   testnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 
+  secondMainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+  secondTestnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
+
   yearOfLaunch: 2024,
   monthOfLaunch: 1,
-
-  mainnetBuildersApolloClient: {} as ApolloClient<NormalizedCacheObject>,
-  testnetBuildersApolloClient: {} as ApolloClient<NormalizedCacheObject>,
 }
 
 Object.assign(config, _mapEnvCfg(import.meta.env))
@@ -173,6 +182,8 @@ config.networksMap = {
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l1Factory]: config.L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.subnetFactory]:
+        config.SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.builders]: config.MAINNET_BUILDERS_CONTRACT_ADDRESS,
     },
   },
@@ -204,6 +215,8 @@ config.networksMap = {
       [CONTRACT_IDS.endpoint]: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l1Factory]: config.L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.subnetFactory]:
+        config.SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.builders]: config.TESTNET_BUILDERS_CONTRACT_ADDRESS,
     },
   },
@@ -266,18 +279,26 @@ config.testnetApolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-config.mainnetBuildersApolloClient = new ApolloClient({
-  link: createHttpLink({
-    uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node/version/latest',
-  }),
+config.secondMainnetApolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.MAINNET_GRAPHQL_SECOND_API_URL }),
   cache: new InMemoryCache(),
+  queryDeduplication: false,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 })
 
-config.testnetBuildersApolloClient = new ApolloClient({
-  link: createHttpLink({
-    uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node-testnet/version/latest',
-  }),
+config.secondTestnetApolloClient = new ApolloClient({
+  link: createHttpLink({ uri: config.TESTNET_GRAPHQL_SECOND_API_URL }),
   cache: new InMemoryCache(),
+  queryDeduplication: false,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 })
 
 function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {

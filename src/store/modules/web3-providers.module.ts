@@ -150,6 +150,16 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     ),
   )
 
+  const subnetFactoryContract = computed(() =>
+    useContract(
+      'SubnetFactory__factory',
+      config.networksMap[networkId.value].contractAddressesMap[
+        CONTRACT_IDS.subnetFactory
+      ],
+      l2Provider.value,
+    ),
+  )
+
   const updateBalances = async () => {
     if (!provider.selectedAddress) throw new errors.UserAddressError()
 
@@ -261,6 +271,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     buildersContract,
     l1FactoryContract,
     l2FactoryContract,
+    subnetFactoryContract,
     rewardsTokenSymbol,
     depositTokenSymbol,
 

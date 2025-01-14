@@ -661,7 +661,8 @@
     "description-1": "Create your own referral link, share it with others, and earn bonuses!",
     "description-2": "Your referral rate depends on the amount of stETH deposited by people using your link. When a user deposits stETH with your referral link, you, as the referrer, can earn up to a 5% bonus in MOR tokens.",
     "description-3": "Additionally, other users who deposit stETH using your link will receive a 1% bonus on their deposits.",
-    "button-txt": "Become a Referrer"
+    "button-txt": "Become a Referrer",
+    "connect-wallet": "Connect Wallet to see your Referral System"
   },
   "referral-info-card": {
     "title": "Tier {tier}",
@@ -708,6 +709,97 @@
     "claim-button": "Claim",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-description": {
+    "title": "Maximize Your\nToken Potential",
+    "subtitle-1": "Stake your tokens to Subnets and let them handle the work while your staked balance grows. Take full advantage of staking today!",
+    "bullet-text-1": "Discover detailed stats about subnets to make the best choice.",
+    "bullet-text-2": "Stake in seconds: just select the subnet and set tokens amount.",
+    "subtitle-2": "Click \"Stake\" and put your tokens to work today!",
+    "stake-button": "Stake",
+    "become-subnet-button": "Become a Subnet"
+  },
+  "delegate-tokens-modal": {
+    "title": "Delegate",
+    "delegate-text": "Available to Delegate",
+    "wallet-input-placeholder":  "Enter subnet address",
+    "mor-input-placeholder":  "Enter {asset} amount",
+    "description": "You will not be able to withdraw your tokens from the subnet until the lockout period ends - {date}",
+    "confirm-button":  "Confirm",
+    "cancel-button": "Cancel",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegate-subnet-modal": {
+    "title": "Become a Subnet",
+    "name-placeholder": "Enter the Subnet name",
+    "link-placeholder": "Specify the link to your Subnet",
+    "fee-placeholder": "Set a profit fee for the Subnet",
+    "fee-note": "The fee that is specified in a certain percentage is charged to the user's yield every time the user claimed the tokens.",
+    "address-placeholder": "Specify the address to which the fee will be sent",
+    "deregistration-date-placeholder": "Specify the date of deregistration",
+    "confirm-button":  "Confirm",
+    "cancel-button": "Cancel",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-providers": {
+    "title": "Computed Subnets",
+    "table-header-1": "Providers",
+    "table-header-2": "{asset} Tokens Staked",
+    "you-delegated-text": "You Delegated",
+    "other-subnets-text": "Other Subnets"
+  },
+  "delegation-providers-navigation": {
+    "address-text": "Name / Address",
+    "subnet-fee-text": "Subnet fee",
+    "staked-text": "{asset} Staked",
+    "claimed-text": "{asset} Claimed"
+  },
+  "delegation-providers-item": {
+    "stake-button": "Stake",
+    "you-text": "you"
+  },
+  "delegator-info-page":  {
+    "back-button": "Providers"
+  },
+  "delegation-info-title": {
+    "your-subnet-text": "Your Subnet",
+    "coppied-text": "Coppied!"
+  },
+  "delegator-info-cards": {
+    "reward": "Your {asset} Reward",
+    "total-claimed": "Total {asset} Claimed",
+    "total-staked": "Total {asset} Staked",
+    "total-fee": "Total Fee Charged by Subnet in {asset}",
+    "subnet-fee": "Subnet fee",
+    "claim-button": "Claim",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-providers-list": {
+    "error-message": "Something went wrong",
+    "no-data-msg": "No subnets yet"
+  },
+  "delegates-list": {
+    "title": "Stakers",
+    "error-message": "Something went wrong",
+    "no-data-message": "No stakers yet",
+    "stake-button": "Stake"
+  },
+  "delegates-list-header": {
+    "address-text": "Name / Address",
+    "delegated-text": "{asset} Delegated",
+    "claimed-text": "{asset} Claimed",
+    "fee-text": "Fee Charged"
+  },
+  "delegates-list-item": {
+    "you-text": "you",
+    "full-rights-lbl": "Full Rights",
+    "provider-rights-lbl": "Provider Rights",
+    "model-rights-lbl": "Model Rights",
+    "session-rights-lbl": "Session Rights",
+    "marketplace-rights-lbl": "Marketplace Rights"
   },
   "builder-form-modal": {
     "create-title": "Become a builder",
