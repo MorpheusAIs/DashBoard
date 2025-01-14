@@ -7,5 +7,5 @@ export const useBuildersApolloClient = () => {
 
   return networkId.value === NETWORK_IDS.mainnet
     ? config.secondMainnetApolloClient
-    : config.secondMainnetApolloClient
+    : config.secondTestnetApolloClient
 }
