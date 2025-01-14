@@ -1,0 +1,61 @@
+fragment BuilderProject on BuildersProject {
+  admin
+  claimLockEnd
+  id
+  minimalDeposit
+  name
+  startsAt
+  totalClaimed
+  totalStaked
+  totalUsers
+  withdrawLockPeriodAfterDeposit
+}
+
+query getBuildersProjects($first: Int = 10, $skip: Int = 10) {
+  buildersProjects(first: $first, skip: $skip) {
+    ...BuilderProject
+  }
+}
+
+query getBuildersProjectsByIds($id_in: [Bytes!] = "") {
+  buildersProjects(where: {id_in: $id_in}) {
+    ...BuilderProject
+  }
+}
+
+query getBuildersProject($id: ID = "") {
+  buildersProject(id: $id) {
+    ...BuilderProject
+  }
+}
+
+query GetAccountUserBuildersProjectsIds($address: Bytes = "") {
+  buildersUsers(where: {address: $address}) {
+    buildersProjectId
+  }
+}
+
+query getBuildersProjectUsers($first: Int = 10, $skip: Int = 10, $buildersProjectId: Bytes = "") {
+  buildersUsers(first: $first, skip: $skip, where: {buildersProjectId: $buildersProjectId}) {
+    address
+    buildersProjectId
+    id
+    staked
+  }
+}
+
+query getUserAccountBuildersProject($buildersProjectId: Bytes = "", $address: Bytes = "") {
+  buildersUsers(where: {buildersProjectId: $buildersProjectId, address: $address}) {
+    id
+    staked
+    lastStake
+  }
+}
+
+query GetBuildersCounters {
+  counters {
+    id
+    totalBuildersProjects
+    totalSubnets
+  }
+}

@@ -24,6 +24,7 @@ export enum CONTRACT_IDS {
   l1Factory = 'l1-factory',
   l2Factory = 'l2-factory',
   subnetFactory = 'subnet-factory',
+  builders = 'builders',
 }
 
 export enum NETWORK_IDS {
@@ -91,6 +92,8 @@ export const config = {
   TESTNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_TESTNET_GRAPHQL_API_URL,
   TESTNET_GRAPHQL_SECOND_API_URL: import.meta.env
     .VITE_APP_TESTNET_GRAPHQL_SECOND_API_URL,
+  TESTNET_BUILDERS_CONTRACT_ADDRESS: import.meta.env
+    .VITE_TESTNET_BUILDERS_CONTRACT_ADDRESS,
 
   // Mainnet
   ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS: import.meta.env
@@ -110,6 +113,8 @@ export const config = {
   MAINNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_MAINNET_GRAPHQL_API_URL,
   MAINNET_GRAPHQL_SECOND_API_URL: import.meta.env
     .VITE_APP_MAINNET_GRAPHQL_SECOND_API_URL,
+  MAINNET_BUILDERS_CONTRACT_ADDRESS: import.meta.env
+    .VITE_MAINNET_BUILDERS_CONTRACT_ADDRESS,
 
   metadata: {} as Metadata,
 
@@ -179,6 +184,7 @@ config.networksMap = {
       [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.subnetFactory]:
         config.SUBNET_FACTORY_MAINNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.builders]: config.MAINNET_BUILDERS_CONTRACT_ADDRESS,
     },
   },
   [NETWORK_IDS.testnet]: {
@@ -211,6 +217,7 @@ config.networksMap = {
       [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
       [CONTRACT_IDS.subnetFactory]:
         config.SUBNET_FACTORY_TESTNET_CONTRACT_ADDRESS,
+      [CONTRACT_IDS.builders]: config.TESTNET_BUILDERS_CONTRACT_ADDRESS,
     },
   },
 }

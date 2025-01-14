@@ -229,7 +229,7 @@
     "field-error_maxEther": "Insufficient amount of tokens",
     "field-error_minEther": "Field must be greater than or equal to {min}",
     "field-error_minValue": "The entered value is less than the minimum value",
-    "field-error_maxValue": "The entered value is greater than the {max}"
+    "field-error_maxValue": "Amount should be less than or equal to {max}"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",
@@ -799,5 +799,95 @@
     "model-rights-lbl": "Model Rights",
     "session-rights-lbl": "Session Rights",
     "marketplace-rights-lbl": "Marketplace Rights"
+  },
+  "builder-form-modal": {
+    "create-title": "Become a builder",
+    "update-title": "Update {name}",
+    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "name-plh": "Builder name",
+    "name-note": "What is the name of your project? This is how users will find your project.",
+    "min-deposit-plh": "Minimum deposit",
+    "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
+    "lock-period-after-stake-plh": "Lock period after stake",
+    "lock-period-after-stake-not": "After each stake, the user will not be able to withdraw their tokens for that period",
+    "start-at-plh": "Start time",
+    "start-at-note": "It will be possible to change the Builder settings up to this point. The stake will not be available until this time",
+    "claim-lock-end-plh": "Claim lock ends",
+    "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
+    "lock-period-after-stake-note": "After a user stakes to your project, this is how long they will need to wait before they can unstake. NOTE: each time a user stakes to your project, this lock period will reset.",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm"
+  },
+  "builders-stake-modal": {
+    "modal-title": "Stake MOR",
+    "available-to-stake-balance-value": "{amount} MOR",
+    "builder-lbl": "Builder",
+    "min-deposit-lbl": "Min Deposit",
+    "lock-period-lbl": "Lock Period",
+    "new-stake-amount-lbl": "New Stake Amount",
+    "new-unlock-date-lbl": "New Unlock Date",
+    "stake-amount-plh": "MOR amount",
+    "stake-amount-max-btn": "max",
+    "available-to-stake-balance": "Available to Stake",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm",
+    "stake-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "builder-withdraw-modal": {
+    "modal-title": "Withdraw MOR",
+    "builder-lbl": "Builder",
+    "current-withdraw-lbl": "Current Stake",
+    "balance-after-withdrawal-lbl": "Stake After Withdrawal",
+    "balance-after-withdrawal-value": "{amount} MOR",
+    "withdraw-amount-plh": "MOR amount",
+    "withdraw-amount-max-btn": "max",
+    "available-to-withdraw-balance": "Available to Withdraw",
+    "available-to-withdraw-amount": "{amount} MOR",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm",
+    "withdraw-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "builders-list": {
+    "title": "Create or Stake in a Builder",
+    "description": "You can become a Builder or participate in an existing one to start earning rewards. When you create a Builder, you can set custom parameters including token lock time and reward details. Or you can join an existing Builder using your stake Start staking now and claim your rewards!",
+    "description-underline": "Start staking now and claim your rewards!",
+    "create-builder-btn": "Become a builder",
+    "loading-projects-error-msg": "Something bad happened",
+    "builders-projects-empty-msg": "There are no projects yet",
+    "loading-account-projects-error-msg": "Something bad happened"
+  },
+  "builders-table": {
+    "name-th": "Name",
+    "start-time-th": "Start time",
+    "min-deposit-th": "Min MOR Deposit",
+    "total-staked-th": "Total MOR Staked",
+    "withdraw-lock-period-th": "Withdraw lock period",
+    "lock-period-th": "Lock period"
+  },
+  "builders-table-item": {
+    "stake-btn": "Stake"
+  },
+  "builders-item": {
+    "page-err-msg": "Something bad happened, try reload page",
+    "back-btn": "Back",
+    "your-builder-lbl": "Your Builder",
+    "edit-btn": "Edit",
+    "start-time-lbl": "Start time",
+    "min-deposit-lbl": "Min MOR Deposit",
+    "lock-period-lbl": "Lock Period After Stake",
+    "available-for-withdrawal-lbl": "Available MOR for Withdrawal",
+    "withdraw-btn": "Withdraw",
+    "unlock-time-lbl": "Unlock Time:",
+    "total-claimed-lbl": "Total MOR Claimed",
+    "total-staked-lbl": "Total MOR Staked",
+    "claim-lock-ends-lbl": "Claim lock ends",
+    "claim-btn": "Claim",
+    "admin-addr-lbl": "Admin address:",
+    "stakers-lbl": "Stakers",
+    "stake-btn": "Stake",
+    "staker-addr-name-th": "Name / Address",
+    "staked-th": "MOR Staked",
+    "start-time-th": "Start time",
+    "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   }
 }

@@ -39,6 +39,18 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/DelegationPage/Index.vue'),
         props: { poolId: 0 },
       },
+      {
+        path: 'builders',
+        name: ROUTE_NAMES.appBuildersList,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersList/index.vue'),
+      },
+      {
+        path: 'builders/:id',
+        name: ROUTE_NAMES.appBuildersItem,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersItem/index.vue'),
+      },
     ],
   },
   {

@@ -320,7 +320,7 @@ const changeChartType = (chartToSet: CHART_TYPE) => {
 onMounted(() => {
   if (props.poolData)
     updateChartData(
-      selectedMonth.value?.value || 0,
+      selectedMonth.value.value,
       selectedYear.value?.value || new Time().get('year'),
     )
 })
@@ -329,7 +329,7 @@ watch(
   [selectedMonth, selectedYear, () => props.poolData, chartType],
   async ([newSelectedMonth]) => {
     await updateChartData(
-      newSelectedMonth?.value || 0,
+      newSelectedMonth.value,
       selectedYear.value?.value || new Time().get('year'),
     )
   },
@@ -339,7 +339,6 @@ watch(
   () => selectedYear.value,
   () => {
     if (monthOptions.value.includes(selectedMonth.value)) return
-
     selectedMonth.value = monthOptions.value[0]
   },
 )
@@ -433,6 +432,11 @@ watch(
   @include body-6-regular;
 }
 
+.info-dashboard__header-fields {
+  display: flex;
+  gap: toRem(8);
+}
+
 .info-dashboard__app-chart-wrp {
   margin-top: toRem(16);
   border-top: toRem(2) solid var(--border-tertiary-main);
@@ -444,11 +448,6 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.info-dashboard__header-fields {
-  display: flex;
-  gap: toRem(8);
 }
 
 .info-dashboard .info-dashboard__app-chart {

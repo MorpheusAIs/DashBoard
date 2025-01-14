@@ -10,6 +10,8 @@ export enum ROUTE_NAMES {
   appReferrals = 'app-referrals',
   appDelegation = 'app-delegation',
   appDelegatorInfo = 'app-delegator-info',
+  appBuildersList = 'app-builders-list',
+  appBuildersItem = 'app-builders-item',
 }
 
 export enum CONTRACT_INFO_ACTIONS {

@@ -25,7 +25,7 @@ module.exports = {
     '@vue/prettier',
     '@vue/eslint-config-prettier',
   ],
-  plugins: ['promise'],
+  plugins: ['promise', 'prettier'],
   globals: {
     defineProps: 'readonly',
     defineEmits: 'readonly',
@@ -33,21 +33,7 @@ module.exports = {
     withDefaults: 'readonly',
   },
   rules: {
-    'prettier/prettier': [
-      'warn',
-      {
-        vueIndentScriptAndStyle: false,
-        printWidth: 80,
-        trailingComma: 'all',
-        endOfLine: 'auto',
-        tabWidth: 2,
-        semi: false,
-        singleQuote: true,
-        bracketSpacing: true,
-        bracketSameLine: false,
-        arrowParens: 'avoid',
-      },
-    ],
+    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'vue-i18n/no-v-html': 'off',
     'vue-i18n/no-dynamic-keys': 'warn',
     'vue-i18n/no-missing-keys': 'warn',
@@ -82,8 +68,8 @@ module.exports = {
     'max-len': [
       1,
       {
-        code: 80,
-        comments: 80,
+        code: 100,
+        comments: 100,
         ignoreUrls: true,
         ignoreStrings: true,
         ignoreTemplateLiterals: true,

@@ -22,6 +22,7 @@ export { default as RadioButton } from './RadioButton.vue'
 export { default as InfoIndicator } from './InfoIndicator.vue'
 export { default as Pagination } from './Pagination.vue'
 export { default as TableSortingHeaderColumn } from './TableSortingHeaderColumn.vue'
+export { default as AppGradientBorderCard } from './AppGradientBorderCard.vue'
 
 export * from './modals'
 export * from './toasts'

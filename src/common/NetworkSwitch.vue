@@ -67,7 +67,7 @@ const networkTitle = computed<string>(
     ({
       [NETWORK_IDS.mainnet]: t('network-switch.mainnet'),
       [NETWORK_IDS.testnet]: t('network-switch.testnet'),
-    }[web3ProvidersStore.networkId]),
+    })[web3ProvidersStore.networkId],
 )
 
 onMounted(() => {
@@ -158,7 +158,9 @@ onMounted(() => {
   &:not([disabled]):focus,
   &:not([disabled]):active {
     background: #515c57;
-    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
+    box-shadow:
+      $shadow-hover,
+      inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 
   @include text-ellipsis;

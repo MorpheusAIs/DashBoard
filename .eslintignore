@@ -7,3 +7,4 @@ index.html
 *.md
 static/env.js
 vite.config.ts
+src/types/graphql
