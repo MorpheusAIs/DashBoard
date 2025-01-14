@@ -710,6 +710,7 @@
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
+<<<<<<< HEAD
   "delegation-description": {
     "title": "Maximize Your\nToken Potential",
     "subtitle-1": "Stake your tokens to Subnets and let them handle the work while your staked balance grows. Take full advantage of staking today!",
@@ -801,6 +802,8 @@
     "session-rights-lbl": "Session Rights",
     "marketplace-rights-lbl": "Marketplace Rights"
   },
+=======
+>>>>>>> dev
   "builder-form-modal": {
     "create-title": "Become a builder",
     "update-title": "Update {name}",
@@ -850,16 +853,18 @@
   },
   "builders-list": {
     "title": "Create or Stake in a Builder",
-    "description": "You can become a Builder or participate in an existing one to start earning rewards. When you create a Builder, you can set custom parameters including token lock time and reward details. Or you can join an existing Builder using your stake Start staking now and claim your rewards!",
+    "description": "You can become a Builder or participate in an existing one to start earning rewards. When you create a Builder, you can set custom parameters including token lock time and reward details. Or you can join an existing Builder by staking MOR.",
     "description-underline": "Start staking now and claim your rewards!",
     "create-builder-btn": "Become a builder",
+    "main-table-title": "Explore Morpheus Builders",
+    "account-projects-table-title": "Builders I Have Staked To",
     "loading-projects-error-msg": "Something bad happened",
     "builders-projects-empty-msg": "There are no projects yet",
     "loading-account-projects-error-msg": "Something bad happened"
   },
   "builders-table": {
     "name-th": "Name",
-    "start-time-th": "Start time",
+    "starts-time-th": "Start time",
     "min-deposit-th": "Min MOR Deposit",
     "total-staked-th": "Total MOR Staked",
     "withdraw-lock-period-th": "Withdraw lock period",
@@ -889,6 +894,7 @@
     "staker-addr-name-th": "Name / Address",
     "staked-th": "MOR Staked",
     "start-time-th": "Start time",
-    "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "empty-dash": "-"
   }
 }

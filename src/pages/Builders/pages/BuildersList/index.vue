@@ -27,6 +27,10 @@
       </div>
     </div>
 
+    <h2 class="mt-16 self-start text-textSecondaryMain">
+      {{ $t('builders-list.main-table-title') }}
+    </h2>
+
     <template v-if="buildersProjectsState.isLoaded.value">
       <template v-if="buildersProjectsState.isLoadFailed.value">
         <error-message
@@ -34,7 +38,7 @@
         />
       </template>
       <template v-else-if="buildersProjects.length">
-        <builders-table class="mt-16" :builders-projects="buildersProjects" />
+        <builders-table class="mt-8" :builders-projects="buildersProjects" />
       </template>
       <template v-else>
         <no-data-message
@@ -61,7 +65,11 @@
       class="mt-6"
     />
 
-    <div class="mt-16 w-full">
+    <h2 class="mt-16 self-start text-textSecondaryMain">
+      {{ $t('builders-list.account-projects-table-title') }}
+    </h2>
+
+    <div class="mt-8 w-full">
       <template v-if="userAccountBuildersProjectsState.isLoaded.value">
         <template v-if="userAccountBuildersProjectsState.isLoadFailed.value">
           <error-message
