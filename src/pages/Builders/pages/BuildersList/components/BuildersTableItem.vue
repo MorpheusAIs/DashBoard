@@ -9,7 +9,13 @@
   >
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
+        <img
+          v-if="avatarUri"
+          :src="avatarUri"
+          class="aspect-square size-10 min-w-10"
+        />
         <div
+          v-else
           class="flex size-10 min-w-10 items-center justify-center bg-errorMain"
         >
           {{ builderProject.name[0] }}
@@ -85,8 +91,9 @@ import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { inject, ref } from 'vue'
 import { cn } from '@/theme/utils'
+import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     builderProject: GetBuildersProjectsQuery['buildersProjects'][0]
   }>(),
@@ -98,6 +105,10 @@ const reloadBuildersProjects = inject<() => Promise<void>>(
 )
 
 const isStakeModalShown = ref(false)
+
+const avatarUri = predefinedBuildersMeta.find(
+  el => el.name.toLowerCase() === props.builderProject.name.toLowerCase(),
+)?.image
 
 const handleStaked = async () => {
   isStakeModalShown.value = false
