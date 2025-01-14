@@ -710,7 +710,6 @@
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
-<<<<<<< HEAD
   "delegation-description": {
     "title": "Maximize Your\nToken Potential",
     "subtitle-1": "Stake your tokens to Subnets and let them handle the work while your staked balance grows. Take full advantage of staking today!",
@@ -802,8 +801,6 @@
     "session-rights-lbl": "Session Rights",
     "marketplace-rights-lbl": "Marketplace Rights"
   },
-=======
->>>>>>> dev
   "builder-form-modal": {
     "create-title": "Become a builder",
     "update-title": "Update {name}",
