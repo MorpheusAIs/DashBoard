@@ -1,5 +1,5 @@
 <template>
-  <div :class="cn('flex flex-row overflow-y-auto', 'md:flex-col')">
+  <div :class="cn('flex flex-col overflow-y-auto')">
     <template v-if="isLoadFailed">
       <error-message
         :message="$t('builders-item.page-err-msg')"
@@ -19,6 +19,7 @@
 
       <div class="mt-14 flex flex-col">
         <span
+          v-if="!!buildersData.buildersProjectUserAccount?.staked"
           :class="
             cn(
               'self-start px-3 py-1 text-[#15151D]',
@@ -28,7 +29,12 @@
         >
           {{ $t('builders-item.your-builder-lbl') }}
         </span>
-        <div v-if="isLoaded" class="flex items-center gap-8">
+        <div
+          v-if="isLoaded"
+          :class="
+            cn('flex flex-col items-start gap-8', 'md:flex-row md:items-center')
+          "
+        >
           <span class="typography-h1">
             {{ buildersData.buildersProject?.name }}
           </span>
@@ -55,12 +61,17 @@
           <span class="text-textSecondaryMain">
             {{ abbrCenter(buildersData.buildersProject?.admin) }}
           </span>
-          <copy-button content="asdfasdf" message="aasdfasdf" />
+          <copy-button
+            :content="buildersData.buildersProject?.admin"
+            message="copied"
+          />
         </div>
         <skeleton class="w-[350px]" v-else />
       </div>
 
-      <div class="mt-6 grid grid-cols-3 gap-[18px]">
+      <div
+        :class="cn('mt-6 flex flex-wrap gap-[18px]', 'lg:grid lg:grid-cols-3')"
+      >
         <app-gradient-border-card
           v-if="isLoaded"
           :class="cn('min-h-[150px] flex-1')"
@@ -72,7 +83,7 @@
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-textSecondaryMain typography-h2">
+              <span class="whitespace-pre text-textSecondaryMain typography-h2">
                 {{
                   time(+buildersData.buildersProject?.startsAt).format(
                     DOT_TIME_FORMAT,
@@ -101,7 +112,7 @@
             <span class="text-textSecondaryMain typography-body3">
               {{ $t('builders-item.lock-period-lbl') }}
             </span>
-            <span class="text-textSecondaryMain typography-h2">
+            <span class="whitespace-pre text-textSecondaryMain typography-h2">
               {{
                 humanizeTime(
                   +buildersData.buildersProject?.withdrawLockPeriodAfterDeposit,
@@ -113,7 +124,7 @@
         <skeleton class="h-[160px]" v-else />
       </div>
 
-      <div class="mt-14 flex gap-[18px]">
+      <div :class="cn('mt-14 flex flex-col gap-[18px]', 'md:flex-row')">
         <div class="flex flex-[0.34] flex-col gap-[18px]">
           <app-gradient-border-card v-if="isLoaded">
             <div class="flex flex-col gap-8 p-6">
@@ -123,12 +134,11 @@
                 </span>
 
                 <app-button
+                  v-if="!!buildersData.buildersProjectUserAccount?.staked"
                   size="small"
                   @click="isWithdrawModalShown = true"
                   :disabled="
-                    !buildersData.buildersProjectUserAccount?.staked ||
-                    withdrawalUnlockTime?.isAfter(time()) ||
-                    isClaimSubmitting
+                    withdrawalUnlockTime?.isAfter(time()) || isClaimSubmitting
                   "
                 >
                   {{ $t('builders-item.withdraw-btn') }}
@@ -202,11 +212,15 @@
                 </app-button>
               </div>
               <div class="flex items-center gap-8">
-                <span class="text-textSecondaryMain typography-h2">
+                <span
+                  class="whitespace-pre text-textSecondaryMain typography-h2"
+                >
                   {{
-                    time(+buildersData.buildersProject?.claimLockEnd).format(
-                      DOT_TIME_FORMAT,
-                    )
+                    +buildersData.buildersProject?.claimLockEnd
+                      ? time(
+                          +buildersData.buildersProject?.claimLockEnd,
+                        ).format(DOT_TIME_FORMAT)
+                      : $t('builders-item.empty-dash')
                   }}
                 </span>
               </div>
@@ -228,14 +242,21 @@
           </app-gradient-border-card>
           <skeleton class="h-[160px]" v-else />
         </div>
-        <div class="col-span-2 flex flex-[0.65] flex-col gap-6 pl-12">
+        <div
+          :class="cn('col-span-2 flex flex-[0.65] flex-col gap-6', 'md:pl-12')"
+        >
           <div class="flex items-center justify-between">
             <div v-if="isLoaded" class="flex items-center gap-4">
               <span class="span text-textSecondaryMain">
                 {{ $t('builders-item.stakers-lbl') }}
               </span>
               <app-gradient-border-card
-                class="bg-transparent p-2 text-textSecondaryMain"
+                :class="
+                  cn(
+                    'flex items-center justify-center bg-transparent p-2 text-textSecondaryMain',
+                    'size-10 min-w-10',
+                  )
+                "
               >
                 {{ buildersData?.buildersProject?.totalUsers }}
               </app-gradient-border-card>

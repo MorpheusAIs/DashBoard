@@ -1,5 +1,6 @@
 <template>
   <basic-modal
+    class="builder-form-modal"
     :is-shown="isShown"
     @update:is-shown="emit('update:is-shown', $event)"
     :title="
@@ -12,7 +13,7 @@
     :is-close-by-click-outside="!isSubmitting"
     :has-close-button="!isSubmitting"
   >
-    <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto">
+    <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto px-10">
       <div class="mt-8 flex flex-col gap-5">
         <input-field
           v-model="form.name"
@@ -215,4 +216,11 @@ const submit = async () => {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+.builder-form-modal {
+  .basic-modal__pane {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+</style>

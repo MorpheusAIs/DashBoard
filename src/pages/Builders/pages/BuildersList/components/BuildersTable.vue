@@ -1,6 +1,13 @@
 <template>
   <div class="flex w-full flex-col gap-2">
-    <div class="grid grid-cols-6 items-center px-8">
+    <div
+      :class="
+        cn(
+          'grid grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)] items-center',
+          'gap-2 px-8',
+        )
+      "
+    >
       <div class="builders-table__header-item">
         <span class="builders-table__header-item-text">
           {{ $t('builders-table.name-th') }}
@@ -56,6 +63,7 @@
 import BuildersTableItem from './BuildersTableItem.vue'
 import { AppIcon } from '@/common'
 import { GetBuildersProjectsQuery } from '@/types/graphql'
+import { cn } from '@/theme/utils'
 
 withDefaults(
   defineProps<{
@@ -71,7 +79,6 @@ withDefaults(
   align-items: center;
   justify-self: end;
   gap: toRem(8);
-  max-width: toRem(150);
 
   &:first-child {
     justify-self: start;

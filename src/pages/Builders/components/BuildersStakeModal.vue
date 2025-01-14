@@ -274,16 +274,14 @@ watch(
 
 <style scoped lang="scss">
 .stake-modal__details-label {
-  font-size: toRem(20);
-  font-weight: 400;
-  line-height: toRem(30);
+  font-size: toRem(16);
+  line-height: toRem(24);
 }
 
 .stake-modal__details-value {
-  text-align: right;
-  font-size: toRem(20);
+  font-size: toRem(16);
   font-weight: 700;
-  line-height: toRem(30);
+  line-height: toRem(24);
 }
 
 .stake-modal__callout-text {

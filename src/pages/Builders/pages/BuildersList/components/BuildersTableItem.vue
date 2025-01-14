@@ -1,6 +1,11 @@
 <template>
   <div
-    class="builders-table-item relative grid h-[72px] w-full grid-cols-6 items-center px-8 py-4"
+    :class="
+      cn(
+        'grid grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)]',
+        'builders-table-item relative h-[72px] w-full items-center gap-2 px-8 py-4',
+      )
+    "
   >
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
@@ -27,14 +32,14 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ formatEther(builderProject.minimalDeposit) }}
+          {{ formatBalance(builderProject.minimalDeposit) }}
         </span>
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ formatEther(builderProject.totalStaked) }}
+          {{ formatBalance(builderProject.totalStaked) }}
         </span>
       </div>
     </div>
@@ -45,7 +50,7 @@
         </span>
       </div>
     </div>
-    <div class="builders-table-item__col">
+    <div class="builders-table-item__col justify-end">
       <RouterLink
         class="absolute left-0 top-0 z-10 size-full"
         :to="{
@@ -54,7 +59,7 @@
         }"
       ></RouterLink>
       <app-button
-        class="z-20"
+        class="z-20 mx-auto"
         color="secondary"
         size="small"
         @click="isStakeModalShown = true"
@@ -73,13 +78,13 @@
 
 <script setup lang="ts">
 import { AppButton } from '@/common'
-import { humanizeTime } from '@/helpers'
+import { formatBalance, humanizeTime } from '@/helpers'
 import { GetBuildersProjectsQuery } from '@/types/graphql'
-import { formatEther } from '@/utils'
 import { DOT_TIME_FORMAT } from '@/const'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { inject, ref } from 'vue'
+import { cn } from '@/theme/utils'
 
 withDefaults(
   defineProps<{
@@ -125,7 +130,7 @@ const handleStaked = async () => {
 }
 
 .builders-table-item__col {
-  @apply flex items-center gap-2 justify-self-end;
+  @apply flex w-full items-center gap-2 justify-self-end overflow-hidden;
 
   &:first-child {
     justify-self: start;
@@ -133,7 +138,7 @@ const handleStaked = async () => {
 }
 
 .builders-table-item__col-content {
-  @apply flex max-w-[150px] items-center gap-2 pr-2;
+  @apply flex w-full items-center gap-2 pr-2;
 }
 
 .builders-table-item__col-text {
@@ -142,6 +147,10 @@ const handleStaked = async () => {
   line-height: toRem(24);
   color: var(--text-primary-invert-main);
 
-  @apply line-clamp-1;
+  @apply overflow-hidden text-ellipsis;
+
+  .builders-table-item__col:not(:first-child) & {
+    margin-left: auto;
+  }
 }
 </style>
