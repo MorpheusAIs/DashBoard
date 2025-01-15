@@ -9,6 +9,7 @@ declare module '@vue/runtime-core' {
     $icons: typeof ICON_NAMES
     $config: typeof config
     $locale: WritableComputedRef
+    $t: (key: string, values?: Record<string, string>) => string
   }
 }
 

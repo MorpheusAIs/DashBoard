@@ -43,7 +43,7 @@
             :disabled="isSubmitting || !balanceOfForm"
             @click="
               form.amount = formatEther(
-                web3ProvidersStore.balances.depositToken,
+                web3ProvidersStore.balances.depositToken?._hex ?? 0,
               )
             "
           />

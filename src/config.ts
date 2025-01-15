@@ -21,7 +21,7 @@ export enum NetworkTypes {
 /**
  * Define which networks this Dapp supports
  */
-enum EthereumChains {
+export enum EthereumChains {
   Ethereum = '1',
   Sepolia = '11155111',
   Arbitrum = '42161',
@@ -138,7 +138,7 @@ const perPageAllowedNetworks: Record<ROUTE_NAMES, EthereumChains[]> = {
 /**
  * Contracts that dapp utilize at the moment
  */
-enum ContractIds {
+export enum ContractIds {
   erc1967Proxy = 'erc1967Proxy',
   stEth = 'stEth',
   mor = 'mor',
@@ -164,7 +164,7 @@ type NetworkLayer = {
   explorerUrl: string
 }
 
-const networksMap: Record<
+export const networksMap: Record<
   NetworkTypes,
   {
     l1: NetworkLayer

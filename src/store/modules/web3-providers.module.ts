@@ -2,7 +2,7 @@ import { useContract, useProvider } from '@/composables'
 import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
 import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
-import { config, NetworkTypes } from '@config'
+import { ContractIds, networksMap, NetworkTypes } from '@config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
@@ -50,7 +50,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   })
 
   const selectedNetworkByType = computed(() => {
-    return config.networksMap[networkType.value]
+    return networksMap[networkType.value]
   })
 
   const l1Provider = computed<Provider>(() => {
@@ -89,7 +89,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
         : 'ERC1967Proxy__factory',
       dashboardInfo.distributionAddress ||
         selectedNetworkByType.value.contractAddressesMap[
-          config.ContractIds.erc1967Proxy
+          ContractIds.erc1967Proxy
         ],
       l1Provider.value,
     )
@@ -99,9 +99,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       dashboardDepositTokenAddress.value ||
-        selectedNetworkByType.value.contractAddressesMap[
-          config.ContractIds.stEth
-        ],
+        selectedNetworkByType.value.contractAddressesMap[ContractIds.stEth],
       l1Provider.value,
     ),
   )
@@ -110,9 +108,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       dashboardRewardTokenAddress.value ||
-        selectedNetworkByType.value.contractAddressesMap[
-          config.ContractIds.mor
-        ],
+        selectedNetworkByType.value.contractAddressesMap[ContractIds.mor],
       l2Provider.value,
     ),
   )
@@ -120,9 +116,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const endpointContract = computed(() =>
     useContract(
       'Endpoint__factory',
-      selectedNetworkByType.value.contractAddressesMap[
-        config.ContractIds.endpoint
-      ],
+      selectedNetworkByType.value.contractAddressesMap[ContractIds.endpoint],
       l1Provider.value,
     ),
   )
@@ -130,9 +124,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const l1FactoryContract = computed(() =>
     useContract(
       'L1Factory__factory',
-      selectedNetworkByType.value.contractAddressesMap[
-        config.ContractIds.l1Factory
-      ],
+      selectedNetworkByType.value.contractAddressesMap[ContractIds.l1Factory],
       l1Provider.value,
     ),
   )
@@ -140,9 +132,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const l2FactoryContract = computed(() =>
     useContract(
       'L2Factory__factory',
-      selectedNetworkByType.value.contractAddressesMap[
-        config.ContractIds.l2Factory
-      ],
+      selectedNetworkByType.value.contractAddressesMap[ContractIds.l2Factory],
       l2Provider.value,
     ),
   )
@@ -151,7 +141,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'SubnetFactory__factory',
       selectedNetworkByType.value.contractAddressesMap[
-        config.ContractIds.subnetFactory
+        ContractIds.subnetFactory
       ],
       l2Provider.value,
     ),
