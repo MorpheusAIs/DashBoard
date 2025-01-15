@@ -87,7 +87,6 @@ import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
 
 import { computed, reactive, ref, watch } from 'vue'
-import { config } from '@config'
 import { useContract, useFormValidation, useI18n } from '@/composables'
 import { address, required, minEther, maxEther } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'

@@ -59,7 +59,6 @@ import { useRoute } from 'vue-router'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { UserReferral } from '@/types'
 import { ethers } from 'ethers'
-import { NetworkTypes } from '@config'
 
 const props = defineProps<{
   poolId: number

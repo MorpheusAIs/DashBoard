@@ -48,12 +48,6 @@ export const useSecondApolloClient = (
             .chainId as keyof typeof config.perChainSecondApolloClients
         ]
 
-      console.log(
-        'clientForCurrentChain',
-        clientForCurrentChain,
-        provider.value.chainId,
-      )
-
       if (clientForCurrentChain) {
         client.value = clientForCurrentChain
 

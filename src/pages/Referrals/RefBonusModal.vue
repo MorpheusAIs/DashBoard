@@ -52,7 +52,6 @@
 <script lang="ts" setup>
 import { AppButton, BasicModal } from '@/common'
 import { computed, reactive, ref } from 'vue'
-import { config } from '@config'
 import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required } from '@/validators'

@@ -90,11 +90,9 @@ import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { bus, BUS_EVENTS, ErrorHandler, fetchProviders, sleep } from '@/helpers'
 import { useRoute } from 'vue-router'
-import { useWeb3ProvidersStore } from '@/store'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const route = useRoute()
-const web3ProvidersStore = useWeb3ProvidersStore()
 
 const currentPage = ref(1)
 const isLoaded = ref(false)

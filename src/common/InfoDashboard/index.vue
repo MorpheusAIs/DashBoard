@@ -130,7 +130,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
 import { config } from '@config'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { useFirstApolloClient } from '@/composables/use-first-apollo-client'
 
 const CUT_ADDRESS_LENGTH = 7

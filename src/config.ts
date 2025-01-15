@@ -29,20 +29,6 @@ enum EthereumChains {
   Base = '8453',
 }
 
-export const getEthereumChainById = (chainId: string): EthereumChains => {
-  const isHex = utils.isHexString(chainId)
-
-  const chainIdDecimal = parseInt(chainId, 16)
-
-  const res = Object.values(EthereumChains).find(
-    chain => +chain === chainIdDecimal,
-  )
-
-  if (!res) throw new TypeError('Unknown chain id')
-
-  return res
-}
-
 /**
  * Define which network belows to which network type
  */

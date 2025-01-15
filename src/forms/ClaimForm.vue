@@ -32,7 +32,6 @@ import { InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
-import { config } from '@config'
 import { reactive, ref } from 'vue'
 
 const emit = defineEmits<{

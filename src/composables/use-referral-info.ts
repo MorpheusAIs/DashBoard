@@ -10,7 +10,6 @@ import {
   fetchReferrersTotalClaimed,
   fetchSpecificUserReferrers,
 } from '@/common/InfoDashboard/helpers'
-import { useRoute } from 'vue-router'
 import { BigNumber, ethers } from 'ethers'
 import { SORTING_ORDER } from '@/enums'
 import { useFirstApolloClient } from '@/composables/use-first-apollo-client'
@@ -18,7 +17,6 @@ import { useFirstApolloClient } from '@/composables/use-first-apollo-client'
 const TIERS = [0, 1, 2, 3]
 
 export const useReferralInfo = (poolId: number) => {
-  const route = useRoute()
   const web3ProviderStore = useWeb3ProvidersStore()
   const tiers = ref<Record<string, string | number>[]>([])
   const refsCount = ref(0)
