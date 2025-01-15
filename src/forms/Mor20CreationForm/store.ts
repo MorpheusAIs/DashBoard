@@ -8,10 +8,10 @@ import { type Form } from './types'
 const STORE_NAME = 'mor20-creation-store'
 
 export const useStore = defineStore(STORE_NAME, () => {
-  const { address, networkId } = storeToRefs(useWeb3ProvidersStore())
+  const { address, networkType } = storeToRefs(useWeb3ProvidersStore())
 
   const formStorageKey = computed<string>(
-    () => `${address.value}.${networkId.value}.mor20-creation-form`,
+    () => `${address.value}.${networkType.value}.mor20-creation-form`,
   )
 
   const form = useLocalStorage<Form>(formStorageKey.value, {

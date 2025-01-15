@@ -133,8 +133,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
 import { useLoad } from '@/composables'
-import { useBuildersApolloClient } from '@/pages/Builders/composables/use-builders-apollo-client'
 import { storeToRefs } from 'pinia'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 defineOptions({
   inheritAttrs: false,
@@ -149,14 +149,14 @@ const currentPage = ref(1)
 
 const isCreateBuilderModalShown = ref(false)
 
-const buildersApolloClient = useBuildersApolloClient()
+const buildersApolloClient = useSecondApolloClient()
 
 const { data: buildersCounters } = useLoad<
   GetBuildersCountersQuery['counters'][0] | undefined
 >(
   undefined,
   async () => {
-    const { data } = await buildersApolloClient.query<
+    const { data } = await buildersApolloClient.value.query<
       GetBuildersCountersQuery,
       GetBuildersCountersQueryVariables
     >({
@@ -178,7 +178,7 @@ const {
 } = useLoad<GetBuildersProjectsQuery['buildersProjects']>(
   [],
   async () => {
-    const { data } = await buildersApolloClient.query<
+    const { data } = await buildersApolloClient.value.query<
       GetBuildersProjectsQuery,
       GetBuildersProjectsQueryVariables
     >({
@@ -210,7 +210,7 @@ const {
   [],
   async () => {
     const { data: accountUserBuildersProjectsIds } =
-      await buildersApolloClient.query<
+      await buildersApolloClient.value.query<
         GetAccountUserBuildersProjectsIdsQuery,
         GetAccountUserBuildersProjectsIdsQueryVariables
       >({
@@ -222,7 +222,7 @@ const {
       })
 
     const { data: accountUserBuildersProjects } =
-      await buildersApolloClient.query<
+      await buildersApolloClient.value.query<
         GetBuildersProjectsByIdsQuery,
         GetBuildersProjectsByIdsQueryVariables
       >({

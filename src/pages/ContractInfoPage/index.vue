@@ -48,12 +48,12 @@ import {
 } from '@/pages/ContractInfoPage/components'
 import Loader from '@/common/Loader.vue'
 import {
+  // TODO: replace by ids
+  ETHEREUM_CHAIN_NAMES,
   CONTRACT_INFO_ACTIONS,
   CONTRACT_TYPE,
-  ETHEREUM_CHAIN_NAMES,
-  NETWORK_IDS,
 } from '@/enums'
-import { config } from '@config'
+import { config, NetworkTypes } from '@config'
 
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -90,11 +90,11 @@ const network = computed(() => {
     contractType.value === CONTRACT_TYPE.l2MessageReceiver ||
     contractType.value === CONTRACT_TYPE.l2TokenReceiver
   ) {
-    return route.query.network === NETWORK_IDS.testnet
+    return route.query.network === NetworkTypes.Testnet
       ? ETHEREUM_CHAIN_NAMES.arbitrumSepolia
       : ETHEREUM_CHAIN_NAMES.arbitrum
   }
-  return route.query.network === NETWORK_IDS.testnet
+  return route.query.network === NetworkTypes.Testnet
     ? ETHEREUM_CHAIN_NAMES.sepolia
     : ETHEREUM_CHAIN_NAMES.ethereum
 })

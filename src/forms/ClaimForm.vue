@@ -57,20 +57,22 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 
 const { t } = useI18n()
 
-const { endpointContract, erc1967ProxyContract, networkId, provider } =
-  storeToRefs(useWeb3ProvidersStore())
+const {
+  endpointContract,
+  erc1967ProxyContract,
+  selectedNetworkByType,
+  provider,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const submit = async (): Promise<void> => {
   if (!isFormValid()) return
   isSubmitting.value = true
 
   try {
-    await provider.value.selectChain(
-      config.networksMap[networkId.value].l1.chainId,
-    )
+    await provider.value.selectChain(selectedNetworkByType.value.l1.chainId)
 
     const fees = await endpointContract.value.providerBased.value.estimateFees(
-      config.networksMap[networkId.value].l2.layerZeroEndpointId,
+      selectedNetworkByType.value.l2.layerZeroEndpointId,
       await erc1967ProxyContract.value.providerBased.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
@@ -84,7 +86,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].l1.explorerUrl,
+      selectedNetworkByType.value.l1.explorerUrl,
       tx.hash,
     )
 

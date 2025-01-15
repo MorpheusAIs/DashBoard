@@ -372,7 +372,7 @@ export const usePool = (poolId: Ref<number>) => {
     () => [
       web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.isConnected,
-      web3ProvidersStore.networkId,
+      web3ProvidersStore.selectedNetworkByType,
       web3ProvidersStore.dashboardInfo,
     ],
     async () => {

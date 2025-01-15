@@ -32,13 +32,13 @@
 
 <script lang="ts" setup>
 import { useI18n } from '@/composables'
-import { NETWORK_IDS } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { Route } from '@/types'
 import { onClickOutside } from '@vueuse/core'
 import { computed, onMounted, ref } from 'vue'
 import AppIcon from './AppIcon.vue'
 import DropMenu from './DropMenu.vue'
+import { NetworkTypes } from '@config'
 
 type Link = {
   title: string
@@ -54,21 +54,20 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const links = computed<Link[]>(() => [
   {
     title: t('network-switch.mainnet'),
-    route: { query: { network: NETWORK_IDS.mainnet } } as Route,
+    route: { query: { network: NetworkTypes.Mainnet } } as Route,
   },
   {
     title: t('network-switch.testnet'),
-    route: { query: { network: NETWORK_IDS.testnet } } as Route,
+    route: { query: { network: NetworkTypes.Testnet } } as Route,
   },
 ])
 
 const networkTitle = computed<string>(
   () =>
     ({
-      [NETWORK_IDS.mainnet]: t('network-switch.mainnet'),
-      [NETWORK_IDS.testnet]: t('network-switch.testnet'),
-      [NETWORK_IDS.base]: t('network-switch.base'),
-    })[web3ProvidersStore.networkId],
+      [NetworkTypes.Mainnet]: t('network-switch.mainnet'),
+      [NetworkTypes.Testnet]: t('network-switch.testnet'),
+    })[web3ProvidersStore.networkType],
 )
 
 onMounted(() => {

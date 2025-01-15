@@ -33,9 +33,10 @@ import { useI18n } from '@/composables'
 import { computed, defineProps } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { duration, Time } from '@distributedlab/tools'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
 import { ErrorHandler, humanizeAsDays, humanizeTime } from '@/helpers'
+import { NetworkTypes } from '@config'
 
 const props = defineProps<{
   withdrawAfter: '' | Time
@@ -45,7 +46,7 @@ const props = defineProps<{
 const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
-const isMainnet = computed(() => route.query.network === NETWORK_IDS.mainnet)
+const isMainnet = computed(() => route.query.network === NetworkTypes.Mainnet)
 
 const poolsLimits = ref({
   claimLockPeriodAfterStake: 0,

@@ -104,7 +104,6 @@ import {
   getEthExplorerTxUrl,
   humanizeTime,
 } from '@/helpers'
-import { config } from '@config'
 import { formatEther, parseUnits } from '@/utils'
 import {
   GetBuildersProjectQuery,
@@ -114,7 +113,7 @@ import {
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
-import { useBuildersApolloClient } from '@/pages/Builders/composables/use-builders-apollo-client'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const props = withDefaults(
   defineProps<{
@@ -133,10 +132,15 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, provider, rewardsContract, buildersContract, balances } =
-  storeToRefs(useWeb3ProvidersStore())
+const {
+  selectedNetworkByType,
+  provider,
+  rewardsContract,
+  buildersContract,
+  balances,
+} = storeToRefs(useWeb3ProvidersStore())
 
-const buildersApolloClient = useBuildersApolloClient()
+const buildersApolloClient = useSecondApolloClient()
 
 const buildersProjectUserAccount =
   ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
@@ -190,7 +194,7 @@ const builderDetails = computed(() => [
 ])
 
 const loadUserAccountInProject = async () => {
-  const { data: userAccountInProject } = await buildersApolloClient.query<
+  const { data: userAccountInProject } = await buildersApolloClient.value.query<
     GetUserAccountBuildersProjectQuery,
     GetUserAccountBuildersProjectQueryVariables
   >({
@@ -243,7 +247,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].l1.explorerUrl,
+      selectedNetworkByType.value.l1.explorerUrl,
       txReceipt.transactionHash,
     )
 

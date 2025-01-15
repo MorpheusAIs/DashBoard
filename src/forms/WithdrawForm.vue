@@ -43,7 +43,6 @@ import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { BigNumber, parseUnits, toEther } from '@/utils'
 import { ether, maxEther, required } from '@/validators'
-import { config } from '@config'
 import { computed, reactive, ref } from 'vue'
 
 const emit = defineEmits<{
@@ -78,7 +77,7 @@ const submit = async (): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l1.chainId,
+      web3ProvidersStore.selectedNetworkByType.l1.chainId,
     )
 
     const tx =
@@ -88,7 +87,7 @@ const submit = async (): Promise<void> => {
       )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       tx.hash,
     )
 

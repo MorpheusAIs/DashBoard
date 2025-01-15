@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { reactive, computed, ref, watch, toRef } from 'vue'
-import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
+import { SWAP_ASSETS_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { useContract, useFormValidation, useI18n, useSwap } from '@/composables'
 import { required, minEther, maxEther } from '@/validators'
@@ -110,7 +110,7 @@ const chosenAssetSymbol = computed(
 
 const { estimatedTokenOutAmount, estimatedGasCost, executeTrade } = useSwap(
   chosenAssetAddress.value,
-  config.networksMap[web3ProvidersStore.networkId].contractAddressesMap.stEth,
+  web3ProvidersStore.selectedNetworkByType.contractAddressesMap.stEth,
   toRef(() => form.amount),
 )
 
@@ -138,7 +138,7 @@ const humanizedEstimations = computed(() => ({
   ),
   estimatedGasCost: humanizeEtherValue(
     estimatedGasCost.value,
-    config.chainsMap[ETHEREUM_CHAIN_IDS.ethereum].nativeCurrency.name,
+    config.chainsMap.Ethereum.nativeCurrency.name,
   ),
 }))
 
@@ -158,7 +158,9 @@ const humanizeEtherValue = (number: string, symbol: string) =>
   `${roundNumber(number)} ${symbol}`
 
 const getUserBalance = async () => {
-  await web3ProvidersStore.provider.switchChain(ETHEREUM_CHAIN_IDS.ethereum)
+  await web3ProvidersStore.provider.switchChain(
+    config.chainsMap.Ethereum.chainId,
+  )
   const balance = await erc20Contract.value.providerBased.value.balanceOf(
     web3ProvidersStore.address,
   )

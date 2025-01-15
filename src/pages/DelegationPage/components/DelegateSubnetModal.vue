@@ -76,7 +76,6 @@ import { AppButton, BasicModal } from '@/common'
 import { InputField, DatetimeField } from '@/fields'
 
 import { computed, reactive, ref } from 'vue'
-import { config } from '@config'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required, maxValue, minValue } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
@@ -133,7 +132,7 @@ const submit = async (): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+      web3ProvidersStore.selectedNetworkByType.l2.chainId,
     )
 
     /* eslint-disable */
@@ -149,7 +148,7 @@ const submit = async (): Promise<void> => {
     /* eslint-enable */
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
       tx.hash,
     )
 

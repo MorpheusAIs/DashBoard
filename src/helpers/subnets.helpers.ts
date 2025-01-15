@@ -1,4 +1,3 @@
-import { config, NETWORK_IDS } from '@config'
 import {
   SubnetItem,
   SubnetProvider,
@@ -8,6 +7,7 @@ import {
 } from '@/types'
 import { gql } from '@apollo/client'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 
 interface Sorting {
   order?: SORTING_ORDER
@@ -33,12 +33,10 @@ export function trimStringNumber(str: string, maxDecimals = 2) {
 }
 
 export async function fetchSubnets(
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
   address: string,
   sorting?: Sorting,
 ) {
-  const apolloClient = config.secondApolloClient[type]
-
   const query = gql`
     ${_generateSubnetsQuery(address, sorting)}
   `
@@ -55,12 +53,10 @@ export async function fetchSubnets(
 }
 
 export async function fetchOwnSubnets(
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
   address: string,
   sorting?: Sorting,
 ) {
-  const apolloClient = config.secondApolloClient[type]
-
   const query = gql`
     ${_generateOwnSubnetsQuery(address, sorting)}
   `
@@ -77,12 +73,10 @@ export async function fetchOwnSubnets(
 }
 
 export async function fetchProviders(
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
   subnetId: string,
   sorting?: Sorting,
 ) {
-  const apolloClient = config.secondApolloClient[type]
-
   const query = gql`
     ${_generateProvidersQuery(subnetId, sorting)}
   `
@@ -98,9 +92,10 @@ export async function fetchProviders(
   return data
 }
 
-export async function fetchSubnet(type: NETWORK_IDS, subnetId: string) {
-  const apolloClient = config.secondApolloClient[type]
-
+export async function fetchSubnet(
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+  subnetId: string,
+) {
   const query = gql`
     ${_generateSubnetQuery(subnetId)}
   `

@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { AppButton, ConnectWalletButton, InfoCard } from '@/common'
 import { useI18n } from '@/composables'
-import { ICON_NAMES, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import {
   ErrorHandler,
   getEthExplorerAddressUrl,
@@ -80,14 +80,14 @@ import {
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
-import { config } from '@config'
+import { NetworkTypes } from '@config'
 import { computed, ref, watch } from 'vue'
 import { useClipboard } from '@vueuse/core'
 import { useRoute } from 'vue-router'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
-  if (to.query.network === NETWORK_IDS.mainnet)
+  if (to.query.network === NetworkTypes.Mainnet)
     return { ...to, name: ROUTE_NAMES.app }
 })
 
@@ -127,7 +127,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t('mor20-ecosystem.main-page.info-card.token.description'),
     address: protocol.value?.tokenAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
       protocol.value?.tokenAddress || '',
     ),
   },
@@ -139,7 +139,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.distributionAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       protocol.value?.distributionAddress || '',
     ),
   },
@@ -149,7 +149,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t('mor20-ecosystem.main-page.info-card.l1-sender.description'),
     address: protocol.value?.l1SenderAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       protocol.value?.l1SenderAddress || '',
     ),
   },
@@ -161,7 +161,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.l2MessageReceiverAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
       protocol.value?.l2MessageReceiverAddress || '',
     ),
   },
@@ -173,7 +173,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.l2TokenReceiverAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
       protocol.value?.l2TokenReceiverAddress || '',
     ),
   },

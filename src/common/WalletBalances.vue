@@ -172,7 +172,7 @@ onBeforeUnmount(() => {
   clearInterval(_morUpdateIntervalId)
 })
 
-watch(() => web3ProvidersStore.networkId, init)
+watch(() => web3ProvidersStore.networkType, init)
 </script>
 
 <style lang="scss" scoped>

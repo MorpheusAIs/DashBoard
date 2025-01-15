@@ -91,6 +91,7 @@ import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { bus, BUS_EVENTS, ErrorHandler, fetchProviders, sleep } from '@/helpers'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -108,12 +109,14 @@ const deregistrationDate = ref('0')
 
 const isPaginationShown = computed(() => totalUsers.value > DEFAULT_PAGE_LIMIT)
 
+const apolloClient = useSecondApolloClient()
+
 const loadPage = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
   try {
     const data = await fetchProviders(
-      web3ProvidersStore.networkId,
+      apolloClient.value,
       String(route.query.subnetAddress),
       {
         ...(sortingOrder.value !== SORTING_ORDER.none && {

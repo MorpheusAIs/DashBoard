@@ -113,7 +113,7 @@ const submit = async (): Promise<void> => {
     const fees =
       // eslint-disable-next-line max-len
       await web3ProvidersStore.endpointContract.providerBased.value.estimateFees(
-        config.networksMap[web3ProvidersStore.networkId].l2.layerZeroEndpointId,
+        web3ProvidersStore.selectedNetworkByType.l2.layerZeroEndpointId,
         // eslint-disable-next-line max-len
         await web3ProvidersStore.erc1967ProxyContract.providerBased.value.l1Sender(),
         '0x'.concat('00'.repeat(64)),
@@ -126,7 +126,7 @@ const submit = async (): Promise<void> => {
     ).claimReferrerTier(props.poolId, form.address, { value: fees.nativeFee })
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       tx.hash,
     )
 

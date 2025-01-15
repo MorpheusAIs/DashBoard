@@ -54,18 +54,16 @@ import {
   CONTRACT_INPUTS,
   CONTRACT_TYPE,
   DISTRIBUTION_CONTRACT_METHODS,
-  ETHEREUM_CHAIN_IDS,
   ETHEREUM_CHAIN_NAMES,
   L1_SENDER_CONTRACT_METHODS,
   L2_MESSAGE_RECEIVER_CONTRACT_METHODS,
   L2_TOKEN_RECEIVER_CONTRACT_METHODS,
-  NETWORK_IDS,
   TOKEN_CONTRACT_METHODS,
 } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { useRoute } from 'vue-router'
 import { ContractTransaction, utils } from 'ethers'
-import { config } from '@config'
+import { config, NetworkTypes } from '@config'
 import { CONTRACT_METHODS } from '@/const'
 
 type ContractInfo = {
@@ -381,27 +379,31 @@ const submit = async () => {
   isLoaded.value = false
   let tx: ContractTransaction | null = null
   let isL1 = false
-  const isMainnet = route.query.network === NETWORK_IDS.mainnet
+  const isMainnet = route.query.network === NetworkTypes.Mainnet
   try {
     switch (props.contractType) {
       case CONTRACT_TYPE.token:
         await web3ProvidersStore.provider.selectChain(
           isMainnet
-            ? ETHEREUM_CHAIN_IDS.arbitrum
-            : ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+            ? config.chainsMap.Arbitrum.chainId
+            : config.chainsMap.ArbitrumSepolia.chainId,
         )
         tx = await submitTokenContract()
         break
       case CONTRACT_TYPE.distribution:
         await web3ProvidersStore.provider.selectChain(
-          isMainnet ? ETHEREUM_CHAIN_IDS.ethereum : ETHEREUM_CHAIN_IDS.sepolia,
+          isMainnet
+            ? config.chainsMap.Ethereum.chainId
+            : config.chainsMap.Sepolia.chainId,
         )
         tx = await submitDistributionContract()
         isL1 = true
         break
       case CONTRACT_TYPE.l1Sender:
         await web3ProvidersStore.provider.selectChain(
-          isMainnet ? ETHEREUM_CHAIN_IDS.ethereum : ETHEREUM_CHAIN_IDS.sepolia,
+          isMainnet
+            ? config.chainsMap.Ethereum.chainId
+            : config.chainsMap.Sepolia.chainId,
         )
         tx = await submitL1SenderContract()
         isL1 = true
@@ -409,22 +411,21 @@ const submit = async () => {
       case CONTRACT_TYPE.l2MessageReceiver:
         await web3ProvidersStore.provider.selectChain(
           isMainnet
-            ? ETHEREUM_CHAIN_IDS.arbitrum
-            : ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+            ? config.chainsMap.Arbitrum.chainId
+            : config.chainsMap.ArbitrumSepolia.chainId,
         )
         tx = await submitL2MessageReceiver()
         break
       default:
         await web3ProvidersStore.provider.selectChain(
           isMainnet
-            ? ETHEREUM_CHAIN_IDS.arbitrum
-            : ETHEREUM_CHAIN_IDS.arbitrumSepolia,
+            ? config.chainsMap.Arbitrum.chainId
+            : config.chainsMap.ArbitrumSepolia.chainId,
         )
         tx = await submitL2TokenReceiver()
     }
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId][isL1 ? 'l1' : 'l2']
-        .explorerUrl,
+      web3ProvidersStore.selectedNetworkByType[isL1 ? 'l1' : 'l2'].explorerUrl,
       tx.hash,
     )
     if (tx && explorerTxUrl) {

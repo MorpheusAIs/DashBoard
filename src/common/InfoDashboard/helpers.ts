@@ -1,6 +1,5 @@
 import { BigNumber, hexlify, Time } from '@/utils'
 import { gql } from '@apollo/client'
-import { config, NETWORK_IDS } from '@config'
 import { mapKeys, mapValues } from 'lodash'
 import {
   PoolInteraction,
@@ -12,6 +11,7 @@ import {
   ReferrerTotalClaimed,
 } from '@/types'
 import { SORTING_ORDER } from '@/enums'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 
 const ONE_DAY_TIMESTAMP = 24 * 60 * 60
 const DECIMAL = BigNumber.from(10).pow(25)
@@ -22,7 +22,7 @@ export async function fetchSpecificUserReferrers(
   skip: number,
   first: number,
   orderDirection: SORTING_ORDER,
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
 ): Promise<UserReferral[]> {
   const queryPattern = _generateUserReferrersPattern(
     poolId,
@@ -31,8 +31,6 @@ export async function fetchSpecificUserReferrers(
     skip,
     orderDirection,
   )
-
-  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     query GetSpecificUserReferrers {
@@ -51,14 +49,12 @@ export async function fetchSpecificUserReferrers(
 export async function fetchReferrersTotalClaimed(
   poolId: string | number,
   user: string,
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
 ): Promise<ReferrerTotalClaimed[]> {
   const queryPattern = _generateReferrersTotalClaimedPattern(
     String(poolId),
     user.toLowerCase(),
   )
-
-  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     query GetReferrersTotalClaimed {
@@ -77,14 +73,12 @@ export async function fetchReferrersTotalClaimed(
 export async function fetchDepositedAmountUserReferrers(
   poolId: string | number,
   referrer: string,
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
 ): Promise<UserReferralDepositedAmount[]> {
   const queryPattern = _generateDepositAmountUserReferrersPattern(
     String(poolId),
     referrer.toLowerCase(),
   )
-
-  const apolloClient = config.firstApolloClient[type]
 
   const query = gql`
     query GetDepositedAmountUserReferrers {
@@ -105,7 +99,7 @@ export async function getChartData(
   poolStartedAt: BigNumber,
   month: number,
   year: number,
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
 ): Promise<ChartData> {
   const query = {
     query: _generateTotalStakedPerDayGraphqlQuery(
@@ -115,8 +109,6 @@ export async function getChartData(
       year,
     ),
   }
-
-  const apolloClient = config.firstApolloClient[type]
 
   const { data } = await apolloClient.query<ChartQueryData>(query)
 
@@ -176,12 +168,10 @@ function _generateTotalStakedPerDayGraphqlQuery(
 }
 
 export async function fetchProviders(
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
   skip: number,
   first: number,
 ): Promise<{ id: string; stake: string }[]> {
-  const apolloClient = config.firstApolloClient[type]
-
   const query = gql`
     ${_generateProvidersQueryWithVariables(skip, first)}
   `
@@ -199,13 +189,11 @@ export async function getUserYieldPerDayChartData(
   user: string,
   month: number,
   year: number,
-  type: NETWORK_IDS,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
 ): Promise<ChartData> {
   const query = {
     query: _generateUserYieldPerDayGraphqlQuery(poolId, user, month, year),
   }
-
-  const apolloClient = config.firstApolloClient[type]
 
   const { data } = await apolloClient.query<YieldQueryData>(query)
 

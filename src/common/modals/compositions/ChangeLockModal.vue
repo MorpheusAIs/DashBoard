@@ -59,8 +59,7 @@ import { useFormValidation, useI18n, usePool } from '@/composables'
 import { AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
-import { config, NETWORK_IDS } from '@config'
-import { ETHEREUM_CHAIN_IDS } from '@/enums'
+import { config, NetworkTypes } from '@config'
 import { sleep } from '@/helpers'
 
 const emit = defineEmits<{
@@ -125,9 +124,9 @@ const submit = async () => {
   }
   try {
     await web3ProvidersStore.provider.switchChain(
-      web3ProvidersStore.networkId === NETWORK_IDS.mainnet
-        ? ETHEREUM_CHAIN_IDS.ethereum
-        : ETHEREUM_CHAIN_IDS.sepolia,
+      web3ProvidersStore.networkType === NetworkTypes.Mainnet
+        ? config.chainsMap.Ethereum.chainId
+        : config.chainsMap.Sepolia.chainId,
     )
     await sleep(500)
     const tx =
@@ -137,7 +136,7 @@ const submit = async () => {
       )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       tx.hash,
     )
 

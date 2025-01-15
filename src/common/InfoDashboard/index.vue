@@ -130,6 +130,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
 import { config } from '@config'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import { useFirstApolloClient } from '@/composables/use-first-apollo-client'
 
 const CUT_ADDRESS_LENGTH = 7
 
@@ -253,13 +255,15 @@ const isChartShown = computed(
   () => route.name !== ROUTE_NAMES.appDashboardCapital,
 )
 
+const apolloClient = useFirstApolloClient()
+
 const updateSupplyChartData = async (month: number, year: number) => {
   const chartData = await getChartData(
     props.poolId,
     props.poolData!.payoutStart,
     month,
     year,
-    route.query.network,
+    apolloClient.value,
   )
 
   const monthTime = new Time(String(month + 1), 'M')
@@ -283,7 +287,7 @@ const updateEarnedMorChartData = async (month: number, year: number) => {
     web3ProvidersStore.address,
     month,
     year,
-    route.query.network,
+    apolloClient.value,
   )
 
   chartConfig.data.labels = Object.keys(chartData).map(timestamp => {

@@ -67,6 +67,7 @@ import {
 } from '@/helpers'
 import { SubnetItem } from '@/types'
 import { useWeb3ProvidersStore } from '@/store'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
@@ -98,13 +99,15 @@ const chooseSortingOrder = (
   sortingType.value = type
 }
 
+const apolloClient = useSecondApolloClient()
+
 const init = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
 
   try {
     const data = await fetchOwnSubnets(
-      web3ProvidersStore.networkId,
+      apolloClient.value,
       web3ProvidersStore.address,
       {
         ...(sortingOrder.value !== SORTING_ORDER.none && {

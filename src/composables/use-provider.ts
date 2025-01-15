@@ -1,4 +1,3 @@
-import { type ETHEREUM_CHAIN_IDS } from '@/enums'
 import { errors } from '@/errors'
 import { sleep } from '@/helpers'
 import { type EthereumType } from '@/types'
@@ -16,6 +15,7 @@ import {
   type Ref,
   type UnwrapRef,
 } from 'vue'
+import { utils } from 'ethers'
 
 export interface IUseProvider {
   selectedAddress: Ref<string>
@@ -79,7 +79,13 @@ export const useProvider = (): IUseProvider => {
   const switchChain: I['switchChain'] = async chainId => {
     await request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: `0x${Number(chainId).toString(16)}` }],
+      params: [
+        {
+          chainId: utils.isHexString(chainId)
+            ? chainId
+            : `0x${Number(chainId).toString(16)}`,
+        },
+      ],
     })
   }
 
@@ -97,7 +103,15 @@ export const useProvider = (): IUseProvider => {
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
-      await addChain(config.chainsMap[chainId as ETHEREUM_CHAIN_IDS])
+      const chainToAdd = Object.values(config.chainsMap).find(el =>
+        utils.isHexString(chainId)
+          ? el.chainId === chainId
+          : utils.hexValue(chainId),
+      )
+
+      if (!chainToAdd) throw new TypeError('Chain not found')
+
+      await addChain(chainToAdd)
 
       // onChainChanged provider event needs time for execute
       await sleep(1000)

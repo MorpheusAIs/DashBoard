@@ -12,7 +12,8 @@ import {
 } from '@/common/InfoDashboard/helpers'
 import { useRoute } from 'vue-router'
 import { BigNumber, ethers } from 'ethers'
-import { NETWORK_IDS, SORTING_ORDER } from '@/enums'
+import { SORTING_ORDER } from '@/enums'
+import { useFirstApolloClient } from '@/composables/use-first-apollo-client'
 
 const TIERS = [0, 1, 2, 3]
 
@@ -21,6 +22,8 @@ export const useReferralInfo = (poolId: number) => {
   const web3ProviderStore = useWeb3ProvidersStore()
   const tiers = ref<Record<string, string | number>[]>([])
   const refsCount = ref(0)
+
+  const apolloClient = useFirstApolloClient()
 
   const erc1967Contract = computed(
     () =>
@@ -65,7 +68,8 @@ export const useReferralInfo = (poolId: number) => {
     const depositedInfo = await fetchDepositedAmountUserReferrers(
       poolId,
       userAddress,
-      route.query.network as NETWORK_IDS,
+      // route.query.network as NetworkTypes,
+      apolloClient.value,
     )
     refsCount.value = depositedInfo.length
     return depositedInfo.reduce(
@@ -93,7 +97,8 @@ export const useReferralInfo = (poolId: number) => {
     const data = await fetchReferrersTotalClaimed(
       poolId,
       userAddress,
-      route.query.network as NETWORK_IDS,
+      // route.query.network as NetworkTypes,
+      apolloClient.value,
     )
 
     return data.reduce((acc, item) => {
@@ -129,7 +134,6 @@ export const useReferralInfo = (poolId: number) => {
     page: number,
     limit: number,
     order: SORTING_ORDER,
-    type: NETWORK_IDS,
   ) => {
     const skip = (page - 1) * limit
     return fetchSpecificUserReferrers(
@@ -138,7 +142,8 @@ export const useReferralInfo = (poolId: number) => {
       skip,
       limit,
       order,
-      type,
+      // type,
+      apolloClient.value,
     )
   }
 
@@ -154,7 +159,7 @@ export const useReferralInfo = (poolId: number) => {
     refsCount,
 
     getDepositedAmountByUser,
-    loadReferralDepositData,
+    loadReferralDepositData: loadReferralDepositData,
     getRefData,
   }
 }

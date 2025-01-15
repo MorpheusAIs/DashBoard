@@ -28,7 +28,7 @@ import { useWeb3ProvidersStore } from '@/store'
 import { BN } from '@distributedlab/tools'
 import { DelegationUserCard, SubnetItem } from '@/types'
 import { useRoute } from 'vue-router'
-import { config } from '@/config'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -38,6 +38,8 @@ const subnet = ref<SubnetItem | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const rewards = ref('0')
+
+const apolloClient = useSecondApolloClient()
 
 const isRewardClaimable = computed(() =>
   BN.fromRaw(rewards.value).gt(BN.fromRaw(0)),
@@ -135,7 +137,7 @@ const subnetContract = computed(() =>
 const claim = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+      web3ProvidersStore.selectedNetworkByType.l2.chainId,
     )
 
     const tx = await subnetContract.value.signerBased.value.claim(
@@ -144,7 +146,7 @@ const claim = async () => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       tx.hash,
     )
 
@@ -172,14 +174,11 @@ const loadPage = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+      web3ProvidersStore.selectedNetworkByType.l2.chainId,
     )
 
     const [data, reward] = await Promise.all([
-      fetchSubnet(
-        web3ProvidersStore.networkId,
-        route.query.subnetAddress as string,
-      ),
+      fetchSubnet(apolloClient.value, route.query.subnetAddress as string),
       subnetContract.value.providerBased.value.getCurrentStakerRewards(
         web3ProvidersStore.address,
       ),

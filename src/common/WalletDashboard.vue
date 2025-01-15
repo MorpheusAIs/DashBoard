@@ -47,7 +47,6 @@
 import { useI18n } from '@/composables'
 import { abbrCenter, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { config } from '@config'
 import { onClickOutside } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 import generateJazzicon from 'jazzicon'
@@ -75,7 +74,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+      web3ProvidersStore.selectedNetworkByType.l2.chainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -84,8 +83,7 @@ const addToken = async () => {
         type: 'ERC20',
         options: {
           address:
-            config.networksMap[web3ProvidersStore.networkId]
-              .contractAddressesMap.mor,
+            web3ProvidersStore.selectedNetworkByType.contractAddressesMap.mor,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),

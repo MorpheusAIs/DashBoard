@@ -1,4 +1,4 @@
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { sleep } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import {
@@ -9,6 +9,7 @@ import {
   useRoute,
   useRouter,
 } from 'vue-router'
+import { NetworkTypes } from '@config'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -126,7 +127,7 @@ router.beforeEach((to, from) => {
   }
 
   to.query.network =
-    to.query.network || from.query.network || NETWORK_IDS.mainnet
+    to.query.network || from.query.network || NetworkTypes.Mainnet
 
   return { ...to, query: { ...to.query } }
 })

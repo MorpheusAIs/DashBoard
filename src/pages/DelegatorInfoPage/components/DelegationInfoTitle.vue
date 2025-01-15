@@ -33,12 +33,14 @@ import { useI18n } from '@/composables'
 import { abbrCenter, fetchSubnet } from '@/helpers'
 import { CopyButton } from '@/common'
 import { SubnetItem } from '@/types'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const CUT_LENGTH = 5
 
 const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
+const apolloClient = useSecondApolloClient()
 const subnet = ref<SubnetItem>()
 const isYou = computed(
   () =>
@@ -55,10 +57,7 @@ const infoText = computed(() => {
 
 const init = async () => {
   subnet.value = (
-    await fetchSubnet(
-      web3ProvidersStore.networkId,
-      route.query.subnetAddress as string,
-    )
+    await fetchSubnet(apolloClient.value, route.query.subnetAddress as string)
   ).subnets[0]
 }
 

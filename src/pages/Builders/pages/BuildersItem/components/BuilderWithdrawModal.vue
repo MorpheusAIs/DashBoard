@@ -88,7 +88,6 @@ import {
 import { maxValue, numeric, required } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
-import { config } from '@config'
 import { BigNumber } from 'ethers'
 
 const props = withDefaults(
@@ -109,7 +108,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, buildersContract } = storeToRefs(useWeb3ProvidersStore())
+const { selectedNetworkByType, buildersContract } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const isSubmitting = ref(false)
 
@@ -177,7 +178,7 @@ const submit = async () => {
     if (!tx) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].l1.explorerUrl,
+      selectedNetworkByType.value.l1.explorerUrl,
       tx.hash,
     )
 

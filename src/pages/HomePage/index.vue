@@ -14,10 +14,10 @@
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
 import { useI18n } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
-import { config } from '@config'
+import { config, NetworkTypes } from '@config'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -46,13 +46,13 @@ const tabs = computed<Tab[]>(() => [
     title: t('home-page.builders-tab'),
     id: 'builders',
     ...{
-      [NETWORK_IDS.mainnet]: {
+      [NetworkTypes.Mainnet]: {
         route: { name: ROUTE_NAMES.appBuildersList },
       },
-      [NETWORK_IDS.testnet]: {
+      [NetworkTypes.Testnet]: {
         route: { name: ROUTE_NAMES.appBuildersList },
       },
-    }[web3ProvidersStore.networkId],
+    }[web3ProvidersStore.networkType],
   },
 ])
 

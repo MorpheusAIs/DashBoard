@@ -84,7 +84,6 @@ import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { reactive, ref } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { required } from '@/validators'
-import { config } from '@config'
 import { GetBuildersProjectQuery } from '@/types/graphql'
 import { formatEther, parseUnits } from '@/utils'
 
@@ -106,7 +105,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, provider, buildersContract } = storeToRefs(
+const { selectedNetworkByType, provider, buildersContract } = storeToRefs(
   useWeb3ProvidersStore(),
 )
 
@@ -186,7 +185,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].contractAddressesMap['builders'],
+      selectedNetworkByType.value.contractAddressesMap['builders'],
       txReceipt.transactionHash,
     )
 

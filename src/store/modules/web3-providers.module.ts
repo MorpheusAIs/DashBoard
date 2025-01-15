@@ -1,9 +1,8 @@
 import { useContract, useProvider } from '@/composables'
-import { CONTRACT_IDS, NETWORK_IDS } from '@/enums'
 import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
 import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
-import { config } from '@config'
+import { config, NetworkTypes } from '@config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
@@ -44,40 +43,38 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const isAddingToken = ref(false)
 
   // Getters
-  const networkId = computed<NETWORK_IDS>(() => {
+  const networkType = computed<NetworkTypes>(() => {
     const { network } = _router.currentRoute.query
-    return (network as NETWORK_IDS) || NETWORK_IDS.mainnet
+
+    return (network as NetworkTypes) || NetworkTypes.Mainnet
+  })
+
+  const selectedNetworkByType = computed(() => {
+    return config.networksMap[networkType.value]
   })
 
   const l1Provider = computed<Provider>(() => {
-    if (
-      String(provider.chainId) ===
-      config.networksMap[networkId.value].l1.chainId
-    )
+    if (String(provider.chainId) === selectedNetworkByType.value.l1.chainId)
       return new providers.Web3Provider(
         provider.rawProvider as providers.ExternalProvider,
       )
 
-    return config.networksMap[networkId.value].l1.provider
+    return selectedNetworkByType.value.l1.provider
   })
 
   const l2Provider = computed<Provider>(() => {
-    if (
-      String(provider.chainId) ===
-      config.networksMap[networkId.value].l2.chainId
-    )
+    if (String(provider.chainId) === selectedNetworkByType.value.l2.chainId)
       return new providers.Web3Provider(
         provider.rawProvider as providers.ExternalProvider,
       )
 
-    return config.networksMap[networkId.value].l2.provider
+    return selectedNetworkByType.value.l2.provider
   })
 
   const isValidChain = computed<boolean>(() => {
     return (
       isAddingToken.value ||
-      String(provider.chainId) ===
-        config.networksMap[networkId.value].l1.chainId
+      String(provider.chainId) === selectedNetworkByType.value.l1.chainId
     )
   })
 
@@ -91,8 +88,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
         ? 'MOR1967__factory'
         : 'ERC1967Proxy__factory',
       dashboardInfo.distributionAddress ||
-        config.networksMap[networkId.value].contractAddressesMap[
-          CONTRACT_IDS.erc1967Proxy
+        selectedNetworkByType.value.contractAddressesMap[
+          config.ContractIds.erc1967Proxy
         ],
       l1Provider.value,
     )
@@ -102,8 +99,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       dashboardDepositTokenAddress.value ||
-        config.networksMap[networkId.value].contractAddressesMap[
-          CONTRACT_IDS.stEth
+        selectedNetworkByType.value.contractAddressesMap[
+          config.ContractIds.stEth
         ],
       l1Provider.value,
     ),
@@ -113,8 +110,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       dashboardRewardTokenAddress.value ||
-        config.networksMap[networkId.value].contractAddressesMap[
-          CONTRACT_IDS.mor
+        selectedNetworkByType.value.contractAddressesMap[
+          config.ContractIds.mor
         ],
       l2Provider.value,
     ),
@@ -123,8 +120,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const endpointContract = computed(() =>
     useContract(
       'Endpoint__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.endpoint
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.endpoint
       ],
       l1Provider.value,
     ),
@@ -133,8 +130,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const l1FactoryContract = computed(() =>
     useContract(
       'L1Factory__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.l1Factory
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.l1Factory
       ],
       l1Provider.value,
     ),
@@ -143,8 +140,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const l2FactoryContract = computed(() =>
     useContract(
       'L2Factory__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.l2Factory
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.l2Factory
       ],
       l2Provider.value,
     ),
@@ -153,8 +150,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const subnetFactoryContract = computed(() =>
     useContract(
       'SubnetFactory__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.subnetFactory
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.subnetFactory
       ],
       l2Provider.value,
     ),
@@ -179,7 +176,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const buildersContract = computed(() =>
     useContract(
       'Builders__factory',
-      config.networksMap[networkId.value].contractAddressesMap['builders'],
+      selectedNetworkByType.value.contractAddressesMap['builders'],
       l2Provider.value,
     ),
   )
@@ -258,7 +255,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     isAddingToken,
 
     // Getters
-    networkId,
+    networkType,
+    selectedNetworkByType,
     l1Provider,
     l2Provider,
     isValidChain,

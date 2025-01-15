@@ -224,7 +224,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l1.chainId,
+      web3ProvidersStore.selectedNetworkByType.l1.chainId,
     )
 
     let tx
@@ -245,7 +245,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
       tx.hash,
     )
 
