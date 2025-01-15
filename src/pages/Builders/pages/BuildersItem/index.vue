@@ -584,7 +584,7 @@ const claim = async () => {
     if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l1.explorerUrl,
+      selectedNetworkByType.value.l2.explorerUrl,
       txReceipt.transactionHash,
     )
 

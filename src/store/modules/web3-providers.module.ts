@@ -2,7 +2,7 @@ import { useContract, useProvider } from '@/composables'
 import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
 import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
-import { ContractIds, networksMap, NetworkTypes } from '@config'
+import { ContractIds, networksMap, NetworkTypes } from '@/config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
@@ -265,7 +265,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
     dashboardInfo,
     // Actions
-    updateBalances,
+    updateBalances: updateBalances,
     init,
   }
 })

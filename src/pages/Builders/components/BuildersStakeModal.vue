@@ -152,13 +152,16 @@ const form = reactive({
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
-  useFormValidation(form, {
-    stakeAmount: {
-      required,
-      numeric,
-      maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
-    },
-  })
+  useFormValidation(
+    form,
+    computed(() => ({
+      stakeAmount: {
+        required,
+        numeric,
+        maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
+      },
+    })),
+  )
 
 const builderDetails = computed(() => [
   {
@@ -247,7 +250,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l1.explorerUrl,
+      selectedNetworkByType.value.l2.explorerUrl,
       txReceipt.transactionHash,
     )
 

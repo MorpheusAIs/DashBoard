@@ -178,7 +178,7 @@ const submit = async () => {
     if (!tx) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l1.explorerUrl,
+      selectedNetworkByType.value.l2.explorerUrl,
       tx.hash,
     )
 

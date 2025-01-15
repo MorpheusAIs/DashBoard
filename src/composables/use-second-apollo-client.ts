@@ -48,7 +48,13 @@ export const useSecondApolloClient = (
             .chainId as keyof typeof config.perChainSecondApolloClients
         ]
 
-      if (clientForCurrentChain) {
+      const isCurrentChainUnderAllowedList =
+        allowedChainsForRouteUnderNetworkType.includes(
+          provider.value
+            .chainId as keyof typeof config.perChainSecondApolloClients,
+        )
+
+      if (clientForCurrentChain && isCurrentChainUnderAllowedList) {
         client.value = clientForCurrentChain
 
         return

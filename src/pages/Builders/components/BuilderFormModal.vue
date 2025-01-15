@@ -185,7 +185,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.contractAddressesMap['builders'],
+      selectedNetworkByType.value.l2.explorerUrl,
       txReceipt.transactionHash,
     )
 
