@@ -185,7 +185,7 @@ const isStakeModalShown = ref(false)
 
 const avatarUri = predefinedBuildersMeta.find(
   el => el.name.toLowerCase() === props.builderProject.name.toLowerCase(),
-)?.image
+)?.localImage
 
 const handleStaked = async () => {
   isStakeModalShown.value = false
