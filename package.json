@@ -14,6 +14,7 @@
     "lint": "yarn lint:scripts",
     "lint:styles": "stylelint \"src/**/*.{vue,sass,scss,css}\"",
     "lint:scripts": "eslint \"{src,config}/**/*.{vue,js,ts}\" --cache --fix --max-warnings=0",
+    "type-check": "vue-tsc --noEmit",
     "preview": "vite preview",
     "rsc": "node scripts/release-sanity-check.mjs",
     "generate-ether-types": "typechain --target=ethers-v5 'src/abi/**/*.json' --out-dir src/types/contracts",
