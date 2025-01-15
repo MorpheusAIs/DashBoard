@@ -29,12 +29,12 @@ import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { L2TokenReceiverContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
 import { ErrorMessage, Loader } from '@/common'
+import { EthereumChains } from '@config'
 
 const props = defineProps<{
-  network: ETHEREUM_CHAIN_NAMES
+  network: EthereumChains
   explorerUrl: string
 }>()
 

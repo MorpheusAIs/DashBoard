@@ -54,7 +54,6 @@ import {
   CONTRACT_INPUTS,
   CONTRACT_TYPE,
   DISTRIBUTION_CONTRACT_METHODS,
-  ETHEREUM_CHAIN_NAMES,
   L1_SENDER_CONTRACT_METHODS,
   L2_MESSAGE_RECEIVER_CONTRACT_METHODS,
   L2_TOKEN_RECEIVER_CONTRACT_METHODS,
@@ -63,12 +62,12 @@ import {
 import { useWeb3ProvidersStore } from '@/store'
 import { useRoute } from 'vue-router'
 import { ContractTransaction, utils } from 'ethers'
-import { config, NetworkTypes } from '@config'
+import { config, EthereumChains, NetworkTypes } from '@config'
 import { CONTRACT_METHODS } from '@/const'
 
 type ContractInfo = {
   contractName: string
-  network: keyof typeof ETHEREUM_CHAIN_NAMES
+  network: EthereumChains
 }
 
 const props = defineProps<{
@@ -79,6 +78,9 @@ const props = defineProps<{
 const { t } = useI18n()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const isSubmitting = ref(false)
+const isSubmitted = ref(false)
 
 const isLoaded = ref(true)
 
@@ -106,16 +108,16 @@ const contract = computed(() => {
   if (!route.query.contractAddress) return null
   const contractInfo: ContractInfo = {
     contractName: '',
-    network: ETHEREUM_CHAIN_NAMES.arbitrum,
+    network: EthereumChains.Arbitrum,
   }
   switch (props.contractType) {
     case CONTRACT_TYPE.distribution:
       contractInfo.contractName = 'Distribution__factory'
-      contractInfo.network = ETHEREUM_CHAIN_NAMES.ethereum
+      contractInfo.network = EthereumChains.Ethereum
       break
     case CONTRACT_TYPE.l1Sender:
       contractInfo.contractName = 'L1Sender__factory'
-      contractInfo.network = ETHEREUM_CHAIN_NAMES.ethereum
+      contractInfo.network = EthereumChains.Ethereum
       break
     case CONTRACT_TYPE.l2MessageReceiver:
       contractInfo.contractName = 'L2MessageReceiver__factory'
@@ -129,7 +131,7 @@ const contract = computed(() => {
   return useContract(
     contractInfo.contractName,
     route.query.contractAddress,
-    contractInfo.network === ETHEREUM_CHAIN_NAMES.ethereum
+    contractInfo.network === EthereumChains.Ethereum
       ? web3ProvidersStore.l1Provider
       : web3ProvidersStore.l2Provider,
   )

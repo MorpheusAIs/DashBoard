@@ -47,13 +47,8 @@ import {
   TokenContractInfo,
 } from '@/pages/ContractInfoPage/components'
 import Loader from '@/common/Loader.vue'
-import {
-  // TODO: replace by ids
-  ETHEREUM_CHAIN_NAMES,
-  CONTRACT_INFO_ACTIONS,
-  CONTRACT_TYPE,
-} from '@/enums'
-import { config, NetworkTypes } from '@config'
+import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE } from '@/enums'
+import { config, EthereumChains, NetworkTypes } from '@config'
 
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -91,24 +86,24 @@ const network = computed(() => {
     contractType.value === CONTRACT_TYPE.l2TokenReceiver
   ) {
     return route.query.network === NetworkTypes.Testnet
-      ? ETHEREUM_CHAIN_NAMES.arbitrumSepolia
-      : ETHEREUM_CHAIN_NAMES.arbitrum
+      ? EthereumChains.ArbitrumSepolia
+      : EthereumChains.Arbitrum
   }
   return route.query.network === NetworkTypes.Testnet
-    ? ETHEREUM_CHAIN_NAMES.sepolia
-    : ETHEREUM_CHAIN_NAMES.ethereum
+    ? EthereumChains.Sepolia
+    : EthereumChains.Ethereum
 })
 
 const explorerUrl = computed(() => {
   let url = ''
   switch (network.value) {
-    case ETHEREUM_CHAIN_NAMES.arbitrum:
+    case EthereumChains.Arbitrum:
       url = config.networksMap.mainnet.l2.explorerUrl
       break
-    case ETHEREUM_CHAIN_NAMES.sepolia:
+    case EthereumChains.Sepolia:
       url = config.networksMap.testnet.l1.explorerUrl
       break
-    case ETHEREUM_CHAIN_NAMES.ethereum:
+    case EthereumChains.Ethereum:
       url = config.networksMap.mainnet.l1.explorerUrl
       break
     default:
