@@ -93,9 +93,9 @@
 <script setup lang="ts">
 import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
-import { useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { maxValue, numeric, required } from '@/validators'
 import {
   bus,
@@ -142,8 +142,33 @@ const {
 
 const buildersApolloClient = useSecondApolloClient()
 
-const buildersProjectUserAccount =
-  ref<GetUserAccountBuildersProjectQuery['buildersUsers'][0]>()
+const { data: buildersProjectUserAccount } = useLoad<
+  GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+>(
+  {} as GetUserAccountBuildersProjectQuery['buildersUsers'][0],
+  async () => {
+    if (!props.isShown)
+      return {} as GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+
+    const { data: userAccountInProject } =
+      await buildersApolloClient.value.query<
+        GetUserAccountBuildersProjectQuery,
+        GetUserAccountBuildersProjectQueryVariables
+      >({
+        query: GetUserAccountBuildersProject,
+        fetchPolicy: 'network-only',
+        variables: {
+          address: provider.value.selectedAddress,
+          project_id: props.builderProject?.id,
+        },
+      })
+
+    return userAccountInProject.buildersUsers?.[0]
+  },
+  {
+    reloadArgs: [() => props.isShown, () => provider.value.selectedAddress],
+  },
+)
 
 const isSubmitting = ref(false)
 
@@ -195,22 +220,6 @@ const builderDetails = computed(() => [
       : '',
   },
 ])
-
-const loadUserAccountInProject = async () => {
-  const { data: userAccountInProject } = await buildersApolloClient.value.query<
-    GetUserAccountBuildersProjectQuery,
-    GetUserAccountBuildersProjectQueryVariables
-  >({
-    query: GetUserAccountBuildersProject,
-    fetchPolicy: 'network-only',
-    variables: {
-      address: provider.value.selectedAddress,
-      buildersProjectId: props.builderProject?.id,
-    },
-  })
-
-  buildersProjectUserAccount.value = userAccountInProject.buildersUsers?.[0]
-}
 
 const setMaxAmount = () => {
   form.stakeAmount = formatEther(balances.value.rewardsToken ?? 0)
@@ -273,16 +282,6 @@ const submit = async () => {
 
   isSubmitting.value = false
 }
-
-watch(
-  [() => provider.value.selectedAddress],
-  () => {
-    loadUserAccountInProject()
-  },
-  {
-    immediate: true,
-  },
-)
 </script>
 
 <style scoped lang="scss">

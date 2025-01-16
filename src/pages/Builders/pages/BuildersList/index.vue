@@ -38,10 +38,10 @@
           :message="$t('builders-list.loading-projects-error-msg')"
         />
       </template>
-      <template v-else-if="buildersProjects.length">
+      <template v-else-if="listData.buildersProjects.length">
         <builders-table
           class="mt-8"
-          :builders-projects="buildersProjects"
+          :builders-projects="listData.buildersProjects"
           :order-by="orderBy"
           :order-direction="orderDirection"
           @update-sorting="handleChangeSorting"
@@ -63,33 +63,36 @@
 
     <pagination
       v-if="
-        buildersCounters?.totalBuildersProjects &&
+        listData.buildersCounters?.totalBuildersProjects &&
         buildersProjectsState.isLoaded.value
       "
       v-model:current-page="currentPage"
       :page-limit="DEFAULT_PAGE_LIMIT"
-      :total-items="+buildersCounters?.totalBuildersProjects"
+      :total-items="+listData.buildersCounters?.totalBuildersProjects"
       class="mt-6"
     />
 
     <h2
-      v-if="userAccountBuildersProjects.length"
+      v-if="listData.userAccountBuildersProjects.length"
       class="mt-16 self-start text-textSecondaryMain"
     >
       {{ $t('builders-list.account-projects-table-title') }}
     </h2>
 
     <div class="mt-8 w-full">
-      <template v-if="userAccountBuildersProjectsState.isLoaded.value">
-        <template v-if="userAccountBuildersProjectsState.isLoadFailed.value">
+      <template v-if="buildersProjectsState.isLoaded.value">
+        <template v-if="buildersProjectsState.isLoadFailed.value">
           <error-message
             :message="$t('builders-list.loading-account-projects-error-msg')"
           />
         </template>
-        <template v-else-if="userAccountBuildersProjects.length">
+        <template v-else-if="listData.userAccountBuildersProjects.length">
           <builders-table
             class="w-full"
-            :builders-projects="userAccountBuildersProjects"
+            :builders-projects="listData.userAccountBuildersProjects"
+            :order-by="orderBy"
+            :order-direction="orderDirection"
+            @update-sorting="handleChangeSorting"
           />
         </template>
       </template>
@@ -121,18 +124,9 @@ import BuildersTable from '@/pages/Builders/pages/BuildersList/components/Builde
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import {
   BuildersProject_OrderBy,
-  GetAccountUserBuildersProjectsIds,
-  GetAccountUserBuildersProjectsIdsQuery,
-  GetAccountUserBuildersProjectsIdsQueryVariables,
-  GetBuildersCounters,
-  GetBuildersCountersQuery,
-  GetBuildersCountersQueryVariables,
-  GetBuildersProjects,
-  GetBuildersProjectsByIds,
-  GetBuildersProjectsByIdsQuery,
-  GetBuildersProjectsByIdsQueryVariables,
-  GetBuildersProjectsQuery,
-  GetBuildersProjectsQueryVariables,
+  CombinedBuildersList,
+  CombinedBuildersListQuery,
+  CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
 import { ref, provide } from 'vue'
@@ -162,48 +156,49 @@ const isCreateBuilderModalShown = ref(false)
 
 const buildersApolloClient = useSecondApolloClient()
 
-const { data: buildersCounters } = useLoad<
-  GetBuildersCountersQuery['counters'][0] | undefined
->(
-  undefined,
-  async () => {
-    const { data } = await buildersApolloClient.value.query<
-      GetBuildersCountersQuery,
-      GetBuildersCountersQueryVariables
-    >({
-      query: GetBuildersCounters,
-      fetchPolicy: 'network-only',
-      variables: {},
-    })
-
-    return data.counters[0]
-  },
-  {},
-)
-
 const {
-  data: buildersProjects,
-  reload: reloadBuildersProjects,
-  update: updateBuildersProjects,
+  data: listData,
+  reload: reloadList,
+  update: updateList,
   ...buildersProjectsState
-} = useLoad<GetBuildersProjectsQuery['buildersProjects']>(
-  [],
+} = useLoad<{
+  buildersProjects: CombinedBuildersListQuery['buildersProjects']
+  userAccountBuildersProjects: CombinedBuildersListQuery['buildersProjects']
+  buildersCounters: CombinedBuildersListQuery['counters'][0]
+}>(
+  {
+    buildersProjects: [],
+    userAccountBuildersProjects: [],
+    buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
+  },
   async () => {
     const { data } = await buildersApolloClient.value.query<
-      GetBuildersProjectsQuery,
-      GetBuildersProjectsQueryVariables
+      CombinedBuildersListQuery,
+      CombinedBuildersListQueryVariables
     >({
-      query: GetBuildersProjects,
+      query: CombinedBuildersList,
       fetchPolicy: 'network-only',
       variables: {
         first: DEFAULT_PAGE_LIMIT,
         skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
         orderBy: orderBy.value,
         orderDirection: orderDirection.value,
+
+        address: provider.value.selectedAddress,
       },
     })
 
-    return data.buildersProjects
+    const buildersProjects = data.buildersProjects
+    const userAccountBuildersProjects = data.buildersUsers.map(
+      el => el.buildersProject,
+    )
+    const buildersCounters = data.counters[0]
+
+    return {
+      buildersProjects,
+      userAccountBuildersProjects,
+      buildersCounters,
+    }
   },
   {
     reloadArgs: [
@@ -211,47 +206,6 @@ const {
       () => route.query.user,
       () => route.query.network,
     ],
-  },
-)
-
-const {
-  data: userAccountBuildersProjects,
-  reload: reloadUserAccountBuildersProjects,
-  update: updateUserAccountBuildersProjects,
-  ...userAccountBuildersProjectsState
-} = useLoad(
-  [],
-  async () => {
-    const { data: accountUserBuildersProjectsIds } =
-      await buildersApolloClient.value.query<
-        GetAccountUserBuildersProjectsIdsQuery,
-        GetAccountUserBuildersProjectsIdsQueryVariables
-      >({
-        query: GetAccountUserBuildersProjectsIds,
-        fetchPolicy: 'network-only',
-        variables: {
-          address: provider.value.selectedAddress,
-        },
-      })
-
-    const { data: accountUserBuildersProjects } =
-      await buildersApolloClient.value.query<
-        GetBuildersProjectsByIdsQuery,
-        GetBuildersProjectsByIdsQueryVariables
-      >({
-        query: GetBuildersProjectsByIds,
-        fetchPolicy: 'network-only',
-        variables: {
-          id_in: accountUserBuildersProjectsIds.buildersUsers.map(
-            el => el.buildersProjectId,
-          ),
-        },
-      })
-
-    return accountUserBuildersProjects.buildersProjects
-  },
-  {
-    reloadArgs: [() => provider.value.selectedAddress],
   },
 )
 
@@ -276,13 +230,13 @@ const handleChangeSorting = (order: BuildersProject_OrderBy) => {
     orderDirection.value = OrderDirection.Asc
   }
 
-  reloadBuildersProjects()
+  updateList()
 }
 
-provide('reloadBuildersProjects', reloadBuildersProjects)
-provide('updateBuildersProjects', updateBuildersProjects)
-provide('reloadUserAccountBuildersProjects', reloadUserAccountBuildersProjects)
-provide('updateUserAccountBuildersProjects', updateUserAccountBuildersProjects)
+provide('reloadBuildersProjects', reloadList)
+provide('updateBuildersProjects', updateList)
+provide('reloadUserAccountBuildersProjects', reloadList)
+provide('updateUserAccountBuildersProjects', updateList)
 </script>
 
 <style scoped lang="scss">

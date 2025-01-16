@@ -39,9 +39,15 @@ query getBuildersProject($id: ID = "") {
   }
 }
 
-query GetAccountUserBuildersProjectsIds($address: Bytes = "") {
+query getAccountUserBuildersProjects($address: Bytes = "") {
   buildersUsers(where: { address: $address }) {
-    buildersProjectId
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      ...BuilderProject
+    }
   }
 }
 
@@ -53,29 +59,82 @@ query getBuildersProjectUsers(
   buildersUsers(
     first: $first
     skip: $skip
-    where: { buildersProjectId: $buildersProjectId }
+    where: { buildersProject_: {id: $buildersProjectId} }
   ) {
     address
-    buildersProjectId
-    id
-    staked
-  }
-}
-
-query getUserAccountBuildersProject(
-  $buildersProjectId: Bytes = ""
-  $address: Bytes = ""
-) {
-  buildersUsers(
-    where: { buildersProjectId: $buildersProjectId, address: $address }
-  ) {
     id
     staked
     lastStake
   }
 }
 
+query getUserAccountBuildersProject($address: Bytes = "", $project_id: Bytes = "") {
+  buildersUsers(where: {address: $address, buildersProject_: {id: $project_id}}) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      admin
+      claimLockEnd
+      id
+      minimalDeposit
+      name
+      startsAt
+      totalClaimed
+      totalStaked
+      totalUsers
+      withdrawLockPeriodAfterDeposit
+    }
+  }
+}
+
 query GetBuildersCounters {
+  counters {
+    id
+    totalBuildersProjects
+    totalSubnets
+  }
+}
+
+query combinedBuildersList(
+  $first: Int = 10
+  $skip: Int = 10
+  $orderBy: BuildersProject_orderBy
+  $orderDirection: OrderDirection
+
+  $address: Bytes = ""
+  $project_id: Bytes = ""
+) {
+  buildersProjects(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+  ) {
+    ...BuilderProject
+  }
+
+
+  buildersUsers(where: {address: $address}) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      admin
+      claimLockEnd
+      id
+      minimalDeposit
+      name
+      startsAt
+      totalClaimed
+      totalStaked
+      totalUsers
+      withdrawLockPeriodAfterDeposit
+    }
+  }
+
   counters {
     id
     totalBuildersProjects

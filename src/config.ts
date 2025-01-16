@@ -320,8 +320,8 @@ const perChainSecondApolloClients: Record<
   [EthereumChains.Sepolia]: null,
   [EthereumChains.ArbitrumSepolia]: new ApolloClient({
     link: createHttpLink({
-      // uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node-testnet/version/latest',
-      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
+      uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node-testnet/version/latest',
+      // uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,

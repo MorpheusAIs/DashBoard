@@ -497,7 +497,7 @@ const {
         fetchPolicy: 'network-only',
         variables: {
           address: provider.value.selectedAddress,
-          buildersProjectId: buildersProjectsResponse.buildersProject?.id,
+          project_id: buildersProjectsResponse.buildersProject?.id,
         },
       })
 

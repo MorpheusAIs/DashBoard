@@ -167,7 +167,7 @@
 <script setup lang="ts">
 import { AppButton } from '@/common'
 import { formatBalance, humanizeTime } from '@/helpers'
-import { GetBuildersProjectsQuery } from '@/types/graphql'
+import { BuilderProjectFragment } from '@/types/graphql'
 import { DOT_TIME_FORMAT } from '@/const'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
@@ -179,7 +179,7 @@ import { useWeb3ProvidersStore } from '@/store'
 
 const props = withDefaults(
   defineProps<{
-    builderProject: GetBuildersProjectsQuery['buildersProjects'][0]
+    builderProject: BuilderProjectFragment
   }>(),
   {},
 )

@@ -147,15 +147,15 @@
 import BuildersTableItem from './BuildersTableItem.vue'
 import { AppIcon } from '@/common'
 import {
+  BuilderProjectFragment,
   BuildersProject_OrderBy,
-  GetBuildersProjectsQuery,
   OrderDirection,
 } from '@/types/graphql'
 import { cn } from '@/theme/utils'
 
 withDefaults(
   defineProps<{
-    buildersProjects: GetBuildersProjectsQuery['buildersProjects']
+    buildersProjects: BuilderProjectFragment[]
     orderBy: BuildersProject_OrderBy
     orderDirection: OrderDirection
   }>(),

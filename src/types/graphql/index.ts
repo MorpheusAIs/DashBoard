@@ -166,7 +166,7 @@ export enum BuildersProject_OrderBy {
 export type BuildersUser = {
   __typename?: 'BuildersUser';
   address: Scalars['Bytes'];
-  buildersProjectId: Scalars['Bytes'];
+  buildersProject: BuildersProject;
   id: Scalars['Bytes'];
   lastStake: Scalars['BigInt'];
   staked: Scalars['BigInt'];
@@ -186,16 +186,27 @@ export type BuildersUser_Filter = {
   address_not_contains?: InputMaybe<Scalars['Bytes']>;
   address_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   and?: InputMaybe<Array<InputMaybe<BuildersUser_Filter>>>;
-  buildersProjectId?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_contains?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_gt?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_gte?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  buildersProjectId_lt?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_lte?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_not?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_not_contains?: InputMaybe<Scalars['Bytes']>;
-  buildersProjectId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  buildersProject?: InputMaybe<Scalars['String']>;
+  buildersProject_?: InputMaybe<BuildersProject_Filter>;
+  buildersProject_contains?: InputMaybe<Scalars['String']>;
+  buildersProject_contains_nocase?: InputMaybe<Scalars['String']>;
+  buildersProject_ends_with?: InputMaybe<Scalars['String']>;
+  buildersProject_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  buildersProject_gt?: InputMaybe<Scalars['String']>;
+  buildersProject_gte?: InputMaybe<Scalars['String']>;
+  buildersProject_in?: InputMaybe<Array<Scalars['String']>>;
+  buildersProject_lt?: InputMaybe<Scalars['String']>;
+  buildersProject_lte?: InputMaybe<Scalars['String']>;
+  buildersProject_not?: InputMaybe<Scalars['String']>;
+  buildersProject_not_contains?: InputMaybe<Scalars['String']>;
+  buildersProject_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  buildersProject_not_ends_with?: InputMaybe<Scalars['String']>;
+  buildersProject_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  buildersProject_not_in?: InputMaybe<Array<Scalars['String']>>;
+  buildersProject_not_starts_with?: InputMaybe<Scalars['String']>;
+  buildersProject_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  buildersProject_starts_with?: InputMaybe<Scalars['String']>;
+  buildersProject_starts_with_nocase?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['Bytes']>;
   id_contains?: InputMaybe<Scalars['Bytes']>;
   id_gt?: InputMaybe<Scalars['Bytes']>;
@@ -227,7 +238,17 @@ export type BuildersUser_Filter = {
 
 export enum BuildersUser_OrderBy {
   Address = 'address',
-  BuildersProjectId = 'buildersProjectId',
+  BuildersProject = 'buildersProject',
+  BuildersProjectAdmin = 'buildersProject__admin',
+  BuildersProjectClaimLockEnd = 'buildersProject__claimLockEnd',
+  BuildersProjectId = 'buildersProject__id',
+  BuildersProjectMinimalDeposit = 'buildersProject__minimalDeposit',
+  BuildersProjectName = 'buildersProject__name',
+  BuildersProjectStartsAt = 'buildersProject__startsAt',
+  BuildersProjectTotalClaimed = 'buildersProject__totalClaimed',
+  BuildersProjectTotalStaked = 'buildersProject__totalStaked',
+  BuildersProjectTotalUsers = 'buildersProject__totalUsers',
+  BuildersProjectWithdrawLockPeriodAfterDeposit = 'buildersProject__withdrawLockPeriodAfterDeposit',
   Id = 'id',
   LastStake = 'lastStake',
   Staked = 'staked'
@@ -907,12 +928,12 @@ export type GetBuildersProjectQueryVariables = Exact<{
 
 export type GetBuildersProjectQuery = { __typename?: 'Query', buildersProject?: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } | null };
 
-export type GetAccountUserBuildersProjectsIdsQueryVariables = Exact<{
+export type GetAccountUserBuildersProjectsQueryVariables = Exact<{
   address?: InputMaybe<Scalars['Bytes']>;
 }>;
 
 
-export type GetAccountUserBuildersProjectsIdsQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', buildersProjectId: any }> };
+export type GetAccountUserBuildersProjectsQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }> };
 
 export type GetBuildersProjectUsersQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -921,20 +942,32 @@ export type GetBuildersProjectUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetBuildersProjectUsersQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, buildersProjectId: any, id: any, staked: any, lastStake: any }> };
+export type GetBuildersProjectUsersQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, staked: any, lastStake: any }> };
 
 export type GetUserAccountBuildersProjectQueryVariables = Exact<{
-  buildersProjectId?: InputMaybe<Scalars['Bytes']>;
   address?: InputMaybe<Scalars['Bytes']>;
+  project_id?: InputMaybe<Scalars['Bytes']>;
 }>;
 
 
-export type GetUserAccountBuildersProjectQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', id: any, staked: any, lastStake: any }> };
+export type GetUserAccountBuildersProjectQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }> };
 
 export type GetBuildersCountersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetBuildersCountersQuery = { __typename?: 'Query', counters: Array<{ __typename?: 'Counter', id: any, totalBuildersProjects: any, totalSubnets: any }> };
+
+export type CombinedBuildersListQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']>;
+  skip?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  address?: InputMaybe<Scalars['Bytes']>;
+  project_id?: InputMaybe<Scalars['Bytes']>;
+}>;
+
+
+export type CombinedBuildersListQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }>, buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }>, counters: Array<{ __typename?: 'Counter', id: any, totalBuildersProjects: any, totalSubnets: any }> };
 
 export const BuilderProject = gql`
     fragment BuilderProject on BuildersProject {
@@ -976,22 +1009,27 @@ export const GetBuildersProject = gql`
   }
 }
     ${BuilderProject}`;
-export const GetAccountUserBuildersProjectsIds = gql`
-    query GetAccountUserBuildersProjectsIds($address: Bytes = "") {
+export const GetAccountUserBuildersProjects = gql`
+    query getAccountUserBuildersProjects($address: Bytes = "") {
   buildersUsers(where: {address: $address}) {
-    buildersProjectId
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      ...BuilderProject
+    }
   }
 }
-    `;
+    ${BuilderProject}`;
 export const GetBuildersProjectUsers = gql`
     query getBuildersProjectUsers($first: Int = 10, $skip: Int = 10, $buildersProjectId: Bytes = "") {
   buildersUsers(
     first: $first
     skip: $skip
-    where: {buildersProjectId: $buildersProjectId}
+    where: {buildersProject_: {id: $buildersProjectId}}
   ) {
     address
-    buildersProjectId
     id
     staked
     lastStake
@@ -999,11 +1037,24 @@ export const GetBuildersProjectUsers = gql`
 }
     `;
 export const GetUserAccountBuildersProject = gql`
-    query getUserAccountBuildersProject($buildersProjectId: Bytes = "", $address: Bytes = "") {
-  buildersUsers(where: {buildersProjectId: $buildersProjectId, address: $address}) {
+    query getUserAccountBuildersProject($address: Bytes = "", $project_id: Bytes = "") {
+  buildersUsers(where: {address: $address, buildersProject_: {id: $project_id}}) {
+    address
     id
-    staked
     lastStake
+    staked
+    buildersProject {
+      admin
+      claimLockEnd
+      id
+      minimalDeposit
+      name
+      startsAt
+      totalClaimed
+      totalStaked
+      totalUsers
+      withdrawLockPeriodAfterDeposit
+    }
   }
 }
     `;
@@ -1016,3 +1067,38 @@ export const GetBuildersCounters = gql`
   }
 }
     `;
+export const CombinedBuildersList = gql`
+    query combinedBuildersList($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $address: Bytes = "", $project_id: Bytes = "") {
+  buildersProjects(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+  ) {
+    ...BuilderProject
+  }
+  buildersUsers(where: {address: $address}) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      admin
+      claimLockEnd
+      id
+      minimalDeposit
+      name
+      startsAt
+      totalClaimed
+      totalStaked
+      totalUsers
+      withdrawLockPeriodAfterDeposit
+    }
+  }
+  counters {
+    id
+    totalBuildersProjects
+    totalSubnets
+  }
+}
+    ${BuilderProject}`;
