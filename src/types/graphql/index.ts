@@ -886,6 +886,8 @@ export type BuilderProjectFragment = { __typename?: 'BuildersProject', admin: an
 export type GetBuildersProjectsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
 }>;
 
 
@@ -949,8 +951,13 @@ export const BuilderProject = gql`
 }
     `;
 export const GetBuildersProjects = gql`
-    query getBuildersProjects($first: Int = 10, $skip: Int = 10) {
-  buildersProjects(first: $first, skip: $skip) {
+    query getBuildersProjects($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection) {
+  buildersProjects(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+  ) {
     ...BuilderProject
   }
 }

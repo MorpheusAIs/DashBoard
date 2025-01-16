@@ -196,9 +196,8 @@
                 </span>
 
                 <app-button
-                  v-if="isUserAccountAdmin"
-                  size="small"
-                  :disabled="
+                  v-if="
+                    isUserAccountAdmin ||
                     !buildersData.buildersProject ||
                     !buildersData.buildersProject.claimLockEnd ||
                     time(+buildersData.buildersProject.claimLockEnd).isAfter(
@@ -206,6 +205,7 @@
                     ) ||
                     isClaimSubmitting
                   "
+                  size="small"
                   @click="claim"
                 >
                   {{ $t('builders-item.claim-btn') }}
