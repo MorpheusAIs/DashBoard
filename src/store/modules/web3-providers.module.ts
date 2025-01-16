@@ -425,10 +425,10 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     endpointContract,
 
     l1FactoryContractDetails,
-    l1FactoryContract,
+    l1FactoryContract: l1FactoryContract,
 
     l2FactoryContractDetails,
-    l2FactoryContract,
+    l2FactoryContract: l2FactoryContract,
 
     subnetFactoryContractDetails,
     subnetFactoryContract,

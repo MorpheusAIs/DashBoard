@@ -132,12 +132,12 @@ const perPageAllowedNetworks: Record<ROUTE_NAMES, EthereumChains[]> = {
   [ROUTE_NAMES.appDelegation]: [...Object.values(EthereumChains)],
   [ROUTE_NAMES.appDelegatorInfo]: [...Object.values(EthereumChains)],
   [ROUTE_NAMES.appBuildersList]: [
-    EthereumChains.Arbitrum,
+    // EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
     EthereumChains.Base,
   ],
   [ROUTE_NAMES.appBuildersItem]: [
-    EthereumChains.Arbitrum,
+    // EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
     EthereumChains.Base,
   ],
@@ -341,6 +341,7 @@ export const networksMap: Record<
   },
 }
 
+// TODO: merge
 const perChainFirstApolloClients: Record<
   EthereumChains,
   ApolloClient<NormalizedCacheObject> | null
