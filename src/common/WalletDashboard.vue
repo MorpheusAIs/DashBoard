@@ -74,7 +74,7 @@ const addToken = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.selectedNetworkByType.l2.chainId,
+      web3ProvidersStore.rewardsContractDetails.targetChainId,
     )
 
     await web3ProvidersStore.provider.request({
@@ -82,8 +82,7 @@ const addToken = async () => {
       params: {
         type: 'ERC20',
         options: {
-          address:
-            web3ProvidersStore.selectedNetworkByType.contractAddressesMap.mor,
+          address: web3ProvidersStore.rewardsContractDetails.address,
           symbol: 'MOR',
           decimals: 18,
           image: window.location.origin.concat('/branding/mor-token-image.png'),

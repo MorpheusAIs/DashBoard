@@ -126,6 +126,7 @@ const rewardsShown = computed(() => {
   return trimStringNumber(reward.sub(fee).toString())
 })
 
+// SubnetFactory with it's Subnets always within the same network
 const subnetContract = computed(() =>
   useContract(
     'Subnet__factory',
@@ -137,7 +138,7 @@ const subnetContract = computed(() =>
 const claim = async () => {
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.selectedNetworkByType.l2.chainId,
+      web3ProvidersStore.subnetFactoryContractDetails.targetChainId,
     )
 
     const tx = await subnetContract.value.signerBased.value.claim(
@@ -146,7 +147,7 @@ const claim = async () => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
+      web3ProvidersStore.subnetFactoryContractDetails.explorerUrl,
       tx.hash,
     )
 
@@ -174,7 +175,7 @@ const loadPage = async () => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.selectedNetworkByType.l2.chainId,
+      web3ProvidersStore.subnetFactoryContractDetails.targetChainId,
     )
 
     const [data, reward] = await Promise.all([
