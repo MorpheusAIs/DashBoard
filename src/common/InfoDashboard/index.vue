@@ -329,18 +329,10 @@ onMounted(() => {
 watch(
   [selectedMonth, selectedYear, () => props.poolData, chartType],
   async ([newSelectedMonth]) => {
-    await updateChartData(
+    if (!props.isLoading) await updateChartData(
       newSelectedMonth.value,
       selectedYear.value?.value || new Time().get('year'),
     )
-  },
-)
-
-watch(
-  () => selectedYear.value,
-  () => {
-    if (monthOptions.value.includes(selectedMonth.value)) return
-    selectedMonth.value = monthOptions.value[0]
   },
 )
 </script>
