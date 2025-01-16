@@ -329,10 +329,11 @@ onMounted(() => {
 watch(
   [selectedMonth, selectedYear, () => props.poolData, chartType],
   async ([newSelectedMonth]) => {
-    if (!props.isLoading) await updateChartData(
-      newSelectedMonth.value,
-      selectedYear.value?.value || new Time().get('year'),
-    )
+    if (!props.isLoading)
+      await updateChartData(
+        newSelectedMonth.value,
+        selectedYear.value?.value || new Time().get('year'),
+      )
   },
 )
 </script>
