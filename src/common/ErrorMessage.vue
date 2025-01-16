@@ -1,6 +1,9 @@
 <template>
   <div class="error-message">
-    <app-icon class="error-message__icon" :name="iconName" />
+    <app-icon v-if="iconName" class="error-message__icon" :name="iconName" />
+    <svg v-else class="error-message__illustration">
+      <use href="/branding/no-data-message-illustration.svg#ndm" />
+    </svg>
     <h3 v-if="title" class="error-message__title">
       {{ title }}
     </h3>
@@ -25,7 +28,7 @@ const props = withDefaults(
   {
     message: '',
     title: '',
-    iconName: ICON_NAMES.exclamationCircle,
+    iconName: undefined,
   },
 )
 
@@ -35,10 +38,15 @@ const shownMessage = props.message || t('errors.default')
 </script>
 
 <style lang="scss" scoped>
+.error-message__illustration {
+  width: toRem(188);
+  height: toRem(140);
+}
+
 .error-message {
   display: grid;
   place-items: center;
-  grid-gap: toRem(12);
+  grid-gap: toRem(14);
 }
 
 .error-message__icon {
@@ -47,12 +55,14 @@ const shownMessage = props.message || t('errors.default')
 }
 
 .error-message__title {
-  color: var(--error-main);
+  @apply text-textSecondaryMain;
+
   font-size: toRem(24);
 }
 
 .error-message__message {
-  color: var(--error-main);
-  font-size: toRem(18);
+  @apply text-textTertiaryMain;
+
+  font-size: toRem(20);
 }
 </style>

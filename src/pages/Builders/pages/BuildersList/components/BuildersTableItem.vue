@@ -70,6 +70,7 @@
         color="secondary"
         size="small"
         @click="isStakeModalShown = true"
+        :disabled="!provider.isConnected"
       >
         {{ $t('builders-table-item.stake-btn') }}
       </app-button>
@@ -144,6 +145,7 @@
           <button
             class="z-20 h-12 w-full text-[16px] font-medium text-textSecondaryMain"
             @click="isStakeModalShown = true"
+            :disabled="!provider.isConnected"
           >
             {{ $t('builders-table-item.stake-btn') }}
           </button>
@@ -169,6 +171,8 @@ import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.v
 import { inject, ref } from 'vue'
 import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
+import { storeToRefs } from 'pinia'
+import { useWeb3ProvidersStore } from '@/store'
 
 const props = withDefaults(
   defineProps<{
@@ -176,6 +180,8 @@ const props = withDefaults(
   }>(),
   {},
 )
+
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const reloadBuildersProjects = inject<() => Promise<void>>(
   'reloadBuildersProjects',
@@ -230,7 +236,6 @@ const handleStaked = async () => {
 }
 
 .builders-table-item__col-text {
-  font-size: toRem(18);
   font-weight: 400;
   line-height: toRem(24);
   color: var(--text-primary-invert-main);

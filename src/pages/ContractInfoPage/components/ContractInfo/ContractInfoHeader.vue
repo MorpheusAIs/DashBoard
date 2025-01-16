@@ -30,25 +30,22 @@
 
 <script setup lang="ts">
 import { AppIcon } from '@/common'
-import {
-  CONTRACT_INFO_ACTIONS,
-  ETHEREUM_CHAIN_NAMES,
-  ICON_NAMES,
-} from '@/enums'
+import { CONTRACT_INFO_ACTIONS, ICON_NAMES } from '@/enums'
 import { computed } from 'vue'
+import { EthereumChains } from '@config'
 
 const props = defineProps<{
   name: string
   type?: CONTRACT_INFO_ACTIONS
-  network?: ETHEREUM_CHAIN_NAMES
+  network?: EthereumChains
   symbol?: string
   projectName?: string
   description?: string
 }>()
 
 const iconName = computed(() =>
-  props.network === ETHEREUM_CHAIN_NAMES.ethereum ||
-  props.network === ETHEREUM_CHAIN_NAMES.sepolia
+  props.network === EthereumChains.Ethereum ||
+  props.network === EthereumChains.Sepolia
     ? ICON_NAMES.ethereumAlt
     : ICON_NAMES.arbitrumAlt,
 )

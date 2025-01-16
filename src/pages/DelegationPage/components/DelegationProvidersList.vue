@@ -54,6 +54,7 @@ import { SubnetItem } from '@/types'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { bus, BUS_EVENTS, ErrorHandler, fetchSubnets, sleep } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const props = defineProps<{
   filteredIds: string[]
@@ -81,6 +82,8 @@ const isPaginationShown = computed(
   () => paginationItemsLength.value > DEFAULT_PAGE_LIMIT,
 )
 
+const apolloClient = useSecondApolloClient()
+
 const loadPage = async () => {
   isLoaded.value = false
   isLoadFailed.value = false
@@ -89,7 +92,7 @@ const loadPage = async () => {
     subnetsList.value = []
 
     const data = await fetchSubnets(
-      web3ProvidersStore.networkId,
+      apolloClient.value,
       web3ProvidersStore.address,
       {
         ...(props.sortingOrder !== SORTING_ORDER.none && {

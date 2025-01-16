@@ -196,9 +196,8 @@
                 </span>
 
                 <app-button
-                  v-if="isUserAccountAdmin"
-                  size="small"
-                  :disabled="
+                  v-if="
+                    isUserAccountAdmin ||
                     !buildersData.buildersProject ||
                     !buildersData.buildersProject.claimLockEnd ||
                     time(+buildersData.buildersProject.claimLockEnd).isAfter(
@@ -206,6 +205,7 @@
                     ) ||
                     isClaimSubmitting
                   "
+                  size="small"
                   @click="claim"
                 >
                   {{ $t('builders-item.claim-btn') }}
@@ -417,7 +417,6 @@ import {
   GetUserAccountBuildersProjectQuery,
   GetUserAccountBuildersProjectQueryVariables,
 } from '@/types/graphql'
-import { config } from '@config'
 import { useRoute } from 'vue-router'
 import { formatEther } from '@/utils'
 import { time } from '@distributedlab/tools'
@@ -428,18 +427,17 @@ import { useI18n, useLoad } from '@/composables'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
-import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 defineOptions({
   inheritAttrs: true,
 })
 
 const route = useRoute()
-const { provider, buildersContract, networkId, balances } = storeToRefs(
-  useWeb3ProvidersStore(),
-)
+const { provider, buildersContract, buildersContractDetails, balances } =
+  storeToRefs(useWeb3ProvidersStore())
 
-const buildersApolloClient = useBuildersApolloClient()
+const buildersApolloClient = useSecondApolloClient()
 
 const { t } = useI18n()
 
@@ -471,7 +469,7 @@ const {
   { buildersProject: null, buildersProjectUserAccount: null },
   async () => {
     const [{ data: buildersProjectsResponse }] = await Promise.all([
-      buildersApolloClient.query<
+      buildersApolloClient.value.query<
         GetBuildersProjectQuery,
         GetBuildersProjectQueryVariables
       >({
@@ -483,17 +481,18 @@ const {
       }),
     ])
 
-    const { data: userAccountInProject } = await buildersApolloClient.query<
-      GetUserAccountBuildersProjectQuery,
-      GetUserAccountBuildersProjectQueryVariables
-    >({
-      query: GetUserAccountBuildersProject,
-      fetchPolicy: 'network-only',
-      variables: {
-        address: provider.value.selectedAddress,
-        buildersProjectId: buildersProjectsResponse.buildersProject?.id,
-      },
-    })
+    const { data: userAccountInProject } =
+      await buildersApolloClient.value.query<
+        GetUserAccountBuildersProjectQuery,
+        GetUserAccountBuildersProjectQueryVariables
+      >({
+        query: GetUserAccountBuildersProject,
+        fetchPolicy: 'network-only',
+        variables: {
+          address: provider.value.selectedAddress,
+          buildersProjectId: buildersProjectsResponse.buildersProject?.id,
+        },
+      })
 
     return {
       buildersProject: buildersProjectsResponse.buildersProject,
@@ -528,7 +527,7 @@ const withdrawalUnlockTime = computed(() => {
 
 const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
   try {
-    const { data } = await buildersApolloClient.query<
+    const { data } = await buildersApolloClient.value.query<
       GetBuildersProjectUsersQuery,
       GetBuildersProjectUsersQueryVariables
     >({
@@ -575,6 +574,12 @@ const handleWithdrawalSubmitted = async () => {
 const claim = async () => {
   isClaimSubmitting.value = true
   try {
+    if (
+      provider.value.chainId !== buildersContractDetails.value.targetChainId
+    ) {
+      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+    }
+
     const tx = await buildersContract.value.signerBased.value.claim(
       buildersData.value.buildersProject?.id,
       provider.value.selectedAddress,
@@ -585,7 +590,7 @@ const claim = async () => {
     if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].l1.explorerUrl,
+      buildersContractDetails.value.explorerUrl,
       txReceipt.transactionHash,
     )
 

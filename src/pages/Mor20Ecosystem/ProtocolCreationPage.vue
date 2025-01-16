@@ -48,19 +48,19 @@
 <script lang="ts" setup>
 import { AppIcon, BasicModal } from '@/common'
 import { useI18n } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { Mor20CreationForm } from '@/forms'
 import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { Mor20EcosystemType } from '@/types'
-import { config } from '@config'
 import { computed, ref, watch } from 'vue'
+import { NetworkTypes } from '@config'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
-  if (to.query.network === NETWORK_IDS.mainnet)
+  if (to.query.network === NetworkTypes.Mainnet)
     return { ...to, name: ROUTE_NAMES.app }
 })
 
@@ -80,7 +80,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.distribution-address-label`),
       address: createdProtocol.value.distributionAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+        web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
         createdProtocol.value.distributionAddress,
       ),
     },
@@ -88,7 +88,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l1-sender-address-label`),
       address: createdProtocol.value.l1SenderAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+        web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
         createdProtocol.value.l1SenderAddress,
       ),
     },
@@ -96,7 +96,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l2-message-receiver-address-label`),
       address: createdProtocol.value.l2MessageReceiverAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+        web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
         createdProtocol.value.l2MessageReceiverAddress,
       ),
     },
@@ -104,7 +104,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l2-token-receiver-address-label`),
       address: createdProtocol.value.l2TokenReceiverAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+        web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
         createdProtocol.value.l2TokenReceiverAddress,
       ),
     },
@@ -112,7 +112,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.token-address-label`),
       address: createdProtocol.value.tokenAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+        web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
         createdProtocol.value.tokenAddress,
       ),
     },

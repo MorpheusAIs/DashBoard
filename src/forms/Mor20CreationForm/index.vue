@@ -57,7 +57,6 @@ import { useFormValidation, useI18n } from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { parseUnits } from '@/utils'
-import { config } from '@config'
 import { computed, ref } from 'vue'
 import { ArbitrumStep, EthereumStep, GeneralStep, StepTabs } from './components'
 import { STEP_IDS } from './enums'
@@ -121,41 +120,40 @@ const onSubmitBtnClick = async () => {
   isSubmitting.value = true
 
   try {
-    const { l1FactoryContract, l2FactoryContract } =
-      storeToRefs(web3ProvidersStore)
-
     let tx
     let explorerTxUrl
 
     switch (form.value.stepId) {
       case STEP_IDS.arbitrum: {
         const predictedAddresses =
-          await l1FactoryContract.value.providerBased.value.predictAddresses(
+          await web3ProvidersStore.l1FactoryContract.providerBased.value.predictAddresses(
             web3ProvidersStore.provider.selectedAddress,
             form.value.generalConfig.projectName,
           )
 
         await web3ProvidersStore.provider.selectChain(
-          config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+          web3ProvidersStore.l2FactoryContractDetails.targetChainId,
         )
 
-        tx = await l2FactoryContract.value.signerBased.value.deploy({
-          isUpgradeable: form.value.arbitrumConfig.isUpgradeable,
-          owner: form.value.arbitrumConfig.adminContractAddress,
-          protocolName: form.value.generalConfig.projectName,
-          mor20Name: form.value.arbitrumConfig.tokenName,
-          mor20Symbol: form.value.arbitrumConfig.tokenSymbol,
-          l1Sender: predictedAddresses.l1Sender_,
-          firstSwapParams_: {
-            tokenIn: form.value.arbitrumConfig.settings.tokenInAddress,
-            tokenOut: form.value.arbitrumConfig.settings.tokenOutAddress,
-            fee: form.value.arbitrumConfig.settings.firstSwapFee.value,
-          },
-          secondSwapFee: form.value.arbitrumConfig.settings.secondSwapFee.value,
-        })
+        tx =
+          await web3ProvidersStore.l2FactoryContract.signerBased.value.deploy({
+            isUpgradeable: form.value.arbitrumConfig.isUpgradeable,
+            owner: form.value.arbitrumConfig.adminContractAddress,
+            protocolName: form.value.generalConfig.projectName,
+            mor20Name: form.value.arbitrumConfig.tokenName,
+            mor20Symbol: form.value.arbitrumConfig.tokenSymbol,
+            l1Sender: predictedAddresses.l1Sender_,
+            firstSwapParams_: {
+              tokenIn: form.value.arbitrumConfig.settings.tokenInAddress,
+              tokenOut: form.value.arbitrumConfig.settings.tokenOutAddress,
+              fee: form.value.arbitrumConfig.settings.firstSwapFee.value,
+            },
+            secondSwapFee:
+              form.value.arbitrumConfig.settings.secondSwapFee.value,
+          })
 
         explorerTxUrl = getEthExplorerTxUrl(
-          config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+          web3ProvidersStore.l2FactoryContractDetails.explorerUrl,
           tx.hash,
         )
 
@@ -164,42 +162,43 @@ const onSubmitBtnClick = async () => {
 
       case STEP_IDS.ethereum: {
         const predictedAddresses =
-          await l2FactoryContract.value.providerBased.value.predictAddresses(
+          await web3ProvidersStore.l2FactoryContract.providerBased.value.predictAddresses(
             web3ProvidersStore.provider.selectedAddress,
             form.value.generalConfig.projectName,
           )
 
         await web3ProvidersStore.provider.selectChain(
-          config.networksMap[web3ProvidersStore.networkId].l1.chainId,
+          web3ProvidersStore.l1FactoryContractDetails.targetChainId,
         )
 
-        tx = await l1FactoryContract.value.signerBased.value.deploy({
-          isUpgradeable: form.value.ethereumConfig.isUpgradeable,
-          owner: form.value.ethereumConfig.adminContractAddress,
-          protocolName: form.value.generalConfig.projectName,
-          l2MessageReceiver: predictedAddresses.l2MessageReceiver_,
-          l2TokenReceiver: predictedAddresses.l2TokenReceiver_,
-          poolsInfo: form.value.ethereumConfig.groups.map(group => ({
-            payoutStart: group.payoutStartAt,
-            decreaseInterval: group.decreaseInterval,
-            claimLockPeriod: Math.round(Number(group.claimLockPeriod) * 3600),
-            initialReward: parseUnits(group.initialReward, 'ether'),
-            rewardDecrease: parseUnits(group.rewardDecrease, 'ether'),
-            isPublic: group.isPublic,
-            withdrawLockPeriod: group.isPublic
-              ? Math.round(Number(group.withdrawLockPeriod) * 3600)
-              : 0,
-            withdrawLockPeriodAfterStake: group.isPublic
-              ? Math.round(Number(group.withdrawLockPeriodAfterStake) * 3600)
-              : 0,
-            minimalStake: group.isPublic
-              ? parseUnits(group.minimalStake, 'ether')
-              : 0,
-          })),
-        })
+        tx =
+          await web3ProvidersStore.l1FactoryContract.signerBased.value.deploy({
+            isUpgradeable: form.value.ethereumConfig.isUpgradeable,
+            owner: form.value.ethereumConfig.adminContractAddress,
+            protocolName: form.value.generalConfig.projectName,
+            l2MessageReceiver: predictedAddresses.l2MessageReceiver_,
+            l2TokenReceiver: predictedAddresses.l2TokenReceiver_,
+            poolsInfo: form.value.ethereumConfig.groups.map(group => ({
+              payoutStart: group.payoutStartAt,
+              decreaseInterval: group.decreaseInterval,
+              claimLockPeriod: Math.round(Number(group.claimLockPeriod) * 3600),
+              initialReward: parseUnits(group.initialReward, 'ether'),
+              rewardDecrease: parseUnits(group.rewardDecrease, 'ether'),
+              isPublic: group.isPublic,
+              withdrawLockPeriod: group.isPublic
+                ? Math.round(Number(group.withdrawLockPeriod) * 3600)
+                : 0,
+              withdrawLockPeriodAfterStake: group.isPublic
+                ? Math.round(Number(group.withdrawLockPeriodAfterStake) * 3600)
+                : 0,
+              minimalStake: group.isPublic
+                ? parseUnits(group.minimalStake, 'ether')
+                : 0,
+            })),
+          })
 
         explorerTxUrl = getEthExplorerTxUrl(
-          config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+          web3ProvidersStore.l1FactoryContractDetails.explorerUrl,
           tx.hash,
         )
       }

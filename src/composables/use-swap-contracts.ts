@@ -1,9 +1,10 @@
 import { computed, Ref } from 'vue'
 import { useContract } from '@/composables/use-contract'
 import { SWAP_ASSETS } from '@/const'
-import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
+import { SWAP_ASSETS_NAMES } from '@/enums'
 import { V2_FACTORY_ADDRESSES, V2_ROUTER_ADDRESSES } from '@uniswap/sdk-core'
 import { useWeb3ProvidersStore } from '@/store'
+import { config } from '@config'
 
 export function useSwapContracts(
   tokenInAddress: string,
@@ -40,7 +41,7 @@ export function useSwapContracts(
   const uniswapV2FactoryContract = computed(() =>
     useContract(
       'UniswapV2Factory__factory',
-      V2_FACTORY_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+      V2_FACTORY_ADDRESSES[Number(config.chainsMap.Ethereum.chainId)],
       web3ProvidersStore.l1Provider,
     ),
   )
@@ -48,7 +49,7 @@ export function useSwapContracts(
   const uniswapV2RouterContract = computed(() =>
     useContract(
       'UniswapV2Router__factory',
-      V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+      V2_ROUTER_ADDRESSES[Number(config.chainsMap.Ethereum.chainId)],
       web3ProvidersStore.l1Provider,
     ),
   )

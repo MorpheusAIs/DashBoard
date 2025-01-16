@@ -23,9 +23,11 @@
               <referee-list-item
                 v-for="(user, idx) in usersList"
                 :key="user.id"
-                :number="getUserNumberInTable(idx)"
+                :number="getUserNumberInTable(idx).toString()"
                 :address="user.user"
-                :deposited-amount="humanizeDepositedAmount(user.amount)"
+                :deposited-amount="
+                  humanizeDepositedAmount(user.amount).toString()
+                "
               />
             </div>
             <div
@@ -39,7 +41,7 @@
             </div>
           </template>
         </template>
-        <loader v-else class="referees-list__system-message" />
+        <loader v-else scheme="spinner" class="referees-list__system-message" />
       </div>
     </div>
   </div>
@@ -71,7 +73,7 @@ const isLoadFailed = ref(false)
 const sortingOrder = ref(SORTING_ORDER.none)
 const usersList = ref<UserReferral[]>([])
 
-const isPaginationShown = computed(() => refsCount > DEFAULT_PAGE_LIMIT)
+const isPaginationShown = computed(() => refsCount.value > DEFAULT_PAGE_LIMIT)
 
 const chooseSortingOrder = (order: SORTING_ORDER) => {
   if (sortingOrder.value === order) {
@@ -86,11 +88,10 @@ const loadPage = async () => {
   isLoadFailed.value = false
   try {
     usersList.value = await loadReferralDepositData(
-      route.query.user,
+      route.query.user as string,
       currentPage.value,
       DEFAULT_PAGE_LIMIT,
       sortingOrder.value,
-      route.query.network,
     )
   } catch (e) {
     isLoadFailed.value = true

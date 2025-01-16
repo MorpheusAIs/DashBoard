@@ -14,41 +14,124 @@
           {{ $t('builders-table.name-th') }}
         </span>
       </div>
-      <button class="builders-table__header-item">
+      <button
+        class="builders-table__header-item"
+        @click="$emit('update-sorting', BuildersProject_OrderBy.StartsAt)"
+      >
         <span class="builders-table__header-item-text">
           {{ $t('builders-table.starts-time-th') }}
         </span>
-        <app-icon
-          :name="$icons.sort"
-          class="builders-table__header-item-icon"
-        />
+        <div class="builders-table__header-icons-wrp">
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy === BuildersProject_OrderBy.StartsAt &&
+                orderDirection === OrderDirection.Asc,
+            }"
+            :name="$icons.triangleTop"
+          />
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy === BuildersProject_OrderBy.StartsAt &&
+                orderDirection === OrderDirection.Desc,
+            }"
+            :name="$icons.triangleTop"
+          />
+        </div>
       </button>
-      <button class="builders-table__header-item">
+      <button
+        class="builders-table__header-item"
+        @click="$emit('update-sorting', BuildersProject_OrderBy.MinimalDeposit)"
+      >
         <span class="builders-table__header-item-text">
           {{ $t('builders-table.min-deposit-th') }}
         </span>
-        <app-icon
-          :name="$icons.sort"
-          class="builders-table__header-item-icon"
-        />
+        <div class="builders-table__header-icons-wrp">
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy === BuildersProject_OrderBy.MinimalDeposit &&
+                orderDirection === OrderDirection.Asc,
+            }"
+            :name="$icons.triangleTop"
+          />
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy === BuildersProject_OrderBy.MinimalDeposit &&
+                orderDirection === OrderDirection.Desc,
+            }"
+            :name="$icons.triangleTop"
+          />
+        </div>
       </button>
-      <button class="builders-table__header-item">
+      <button
+        class="builders-table__header-item"
+        @click="$emit('update-sorting', BuildersProject_OrderBy.TotalStaked)"
+      >
         <span class="builders-table__header-item-text">
           {{ $t('builders-table.total-staked-th') }}
         </span>
-        <app-icon
-          :name="$icons.sort"
-          class="builders-table__header-item-icon"
-        />
+        <div class="builders-table__header-icons-wrp">
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy === BuildersProject_OrderBy.TotalStaked &&
+                orderDirection === OrderDirection.Asc,
+            }"
+            :name="$icons.triangleTop"
+          />
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy === BuildersProject_OrderBy.TotalStaked &&
+                orderDirection === OrderDirection.Desc,
+            }"
+            :name="$icons.triangleTop"
+          />
+        </div>
       </button>
-      <button class="builders-table__header-item">
+      <button
+        class="builders-table__header-item"
+        @click="
+          $emit(
+            'update-sorting',
+            BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit,
+          )
+        "
+      >
         <span class="builders-table__header-item-text">
           {{ $t('builders-table.withdraw-lock-period-th') }}
         </span>
-        <app-icon
-          :name="$icons.sort"
-          class="builders-table__header-item-icon"
-        />
+        <div class="builders-table__header-icons-wrp">
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy ===
+                  BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit &&
+                orderDirection === OrderDirection.Asc,
+            }"
+            :name="$icons.triangleTop"
+          />
+          <app-icon
+            class="builders-table__header-item-icon"
+            :class="{
+              'builders-table__header-item-icon--active':
+                orderBy ===
+                  BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit &&
+                orderDirection === OrderDirection.Desc,
+            }"
+            :name="$icons.triangleTop"
+          />
+        </div>
       </button>
       <div class=""></div>
     </div>
@@ -63,15 +146,25 @@
 <script setup lang="ts">
 import BuildersTableItem from './BuildersTableItem.vue'
 import { AppIcon } from '@/common'
-import { GetBuildersProjectsQuery } from '@/types/graphql'
+import {
+  BuildersProject_OrderBy,
+  GetBuildersProjectsQuery,
+  OrderDirection,
+} from '@/types/graphql'
 import { cn } from '@/theme/utils'
 
 withDefaults(
   defineProps<{
     buildersProjects: GetBuildersProjectsQuery['buildersProjects']
+    orderBy: BuildersProject_OrderBy
+    orderDirection: OrderDirection
   }>(),
   {},
 )
+
+defineEmits<{
+  (e: 'update-sorting', orderBy: BuildersProject_OrderBy): void
+}>()
 </script>
 
 <style scoped lang="scss">
@@ -95,7 +188,20 @@ withDefaults(
   white-space: nowrap;
 }
 
+.builders-table__header-icons-wrp {
+  display: flex;
+  flex-direction: column;
+}
+
 .builders-table__header-item-icon {
-  @include square(24);
+  @include square(10);
+
+  &--active {
+    color: var(--primary-main);
+  }
+
+  &:nth-child(2) {
+    transform: rotate(180deg);
+  }
 }
 </style>

@@ -85,7 +85,6 @@ import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
 
 import { computed, reactive, ref, watch } from 'vue'
-import { config } from '@config'
 import { useContract, useFormValidation, useI18n } from '@/composables'
 import { address, required, minEther, maxEther } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
@@ -99,6 +98,7 @@ import {
 } from '@/helpers'
 import { parseUnits } from '@/utils'
 import { BN, Time } from '@distributedlab/tools'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 const MIN_DELEGATION_AMOUNT = '0.000001'
 
@@ -139,6 +139,8 @@ const formValidationData = ref<ReturnType<typeof useFormValidation>>({
     return
   },
 })
+
+const apolloClient = useSecondApolloClient()
 
 const form = reactive({
   address: '',
@@ -183,7 +185,7 @@ const submit = async (): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+      web3ProvidersStore.rewardsContractDetails.targetChainId,
     )
 
     const subnetContract = computed(() =>
@@ -216,7 +218,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      web3ProvidersStore.rewardsContractDetails.explorerUrl,
       tx.hash,
     )
 
@@ -246,7 +248,7 @@ const addressBlur = async () => {
   formValidationData.value.touchField('address')
 
   if (!formValidationData.value.getFieldErrorMessage('address')) {
-    const data = await fetchSubnet(web3ProvidersStore.networkId, form.address)
+    const data = await fetchSubnet(apolloClient.value, form.address)
 
     deregistrationDateLocal.value = Number(
       data.subnets[0].deregistrationOpensAt,

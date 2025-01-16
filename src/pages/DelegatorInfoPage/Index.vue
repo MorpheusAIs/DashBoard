@@ -24,12 +24,11 @@ import DelegationInfoTitle from './components/DelegationInfoTitle.vue'
 import DelegatorInfoCards from './components/DelegatorInfoCards.vue'
 import DelegatesList from './components/DelegatesList.vue'
 import { useWeb3ProvidersStore } from '@/store'
-import { config } from '@config'
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 web3ProvidersStore.provider.selectChain(
-  config.networksMap[web3ProvidersStore.networkId].l2.chainId,
+  web3ProvidersStore.selectedNetworkByType.l2.chainId,
 )
 </script>
 

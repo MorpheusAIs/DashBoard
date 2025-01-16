@@ -84,7 +84,6 @@ import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { reactive, ref } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { required } from '@/validators'
-import { config } from '@config'
 import { GetBuildersProjectQuery } from '@/types/graphql'
 import { formatEther, parseUnits } from '@/utils'
 
@@ -106,7 +105,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { networkId, provider, buildersContract } = storeToRefs(
+const { provider, buildersContract, buildersContractDetails } = storeToRefs(
   useWeb3ProvidersStore(),
 )
 
@@ -163,6 +162,12 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
+    if (
+      provider.value.chainId !== buildersContractDetails.value.targetChainId
+    ) {
+      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+    }
+
     const tx = props.buildersProject
       ? await buildersContract.value?.signerBased.value.editBuilderPool({
           name: form.name,
@@ -186,7 +191,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[networkId.value].contractAddressesMap['builders'],
+      buildersContractDetails.value.explorerUrl,
       txReceipt.transactionHash,
     )
 

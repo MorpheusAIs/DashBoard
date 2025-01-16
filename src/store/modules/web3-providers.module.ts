@@ -1,13 +1,20 @@
 import { useContract, useProvider } from '@/composables'
-import { CONTRACT_IDS, NETWORK_IDS } from '@/enums'
 import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
 import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
-import { config } from '@config'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+  perChainDeployedContracts,
+} from '@/config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
 import { errors } from '@/errors'
+import get from 'lodash/get'
+import { ROUTE_NAMES } from '@/enums'
 
 enum BALANCE_CURRENCIES {
   depositToken = 'depositToken',
@@ -44,121 +51,269 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const isAddingToken = ref(false)
 
   // Getters
-  const networkId = computed<NETWORK_IDS>(() => {
+  const networkType = computed<NetworkTypes>(() => {
     const { network } = _router.currentRoute.query
-    return (network as NETWORK_IDS) || NETWORK_IDS.mainnet
+
+    return (network as NetworkTypes) || NetworkTypes.Mainnet
   })
 
-  const l1Provider = computed<Provider>(() => {
-    if (
-      String(provider.chainId) ===
-      config.networksMap[networkId.value].l1.chainId
+  const currentNetworkTypeChains = computed(
+    () => config.ethereumChainsTypes[networkType.value],
+  )
+
+  const allowedForCurrentRouteChains = computed(() => {
+    return config.perPageAllowedNetworks[_route.name as ROUTE_NAMES]
+  })
+
+  const allowedForCurrentRouteChainsLimitedByNetworkType = computed(() => {
+    if (!allowedForCurrentRouteChains.value) return []
+
+    return currentNetworkTypeChains.value.filter(el =>
+      allowedForCurrentRouteChains.value.includes(el),
     )
+  })
+
+  const isCurrentChainAllowed = computed(() =>
+    allowedForCurrentRouteChainsLimitedByNetworkType.value.includes(
+      provider.chainId as EthereumChains,
+    ),
+  )
+
+  const selectedNetworkByType = computed(() => {
+    return config.networksMap[networkType.value]
+  })
+
+  const providerEthProvider = computed(() => {
+    return new providers.Web3Provider(
+      provider.rawProvider as providers.ExternalProvider,
+      'any',
+    )
+  })
+
+  // ======================
+
+  const l1Provider = computed<Provider>(() => {
+    if (String(provider.chainId) === selectedNetworkByType.value.l1.chainId)
       return new providers.Web3Provider(
         provider.rawProvider as providers.ExternalProvider,
       )
 
-    return config.networksMap[networkId.value].l1.provider
+    return selectedNetworkByType.value.l1.provider
   })
 
   const l2Provider = computed<Provider>(() => {
-    if (
-      String(provider.chainId) ===
-      config.networksMap[networkId.value].l2.chainId
-    )
+    if (String(provider.chainId) === selectedNetworkByType.value.l2.chainId)
       return new providers.Web3Provider(
         provider.rawProvider as providers.ExternalProvider,
       )
 
-    return config.networksMap[networkId.value].l2.provider
+    return selectedNetworkByType.value.l2.provider
   })
 
-  const isValidChain = computed<boolean>(() => {
-    return (
-      isAddingToken.value ||
-      String(provider.chainId) ===
-        config.networksMap[networkId.value].l1.chainId
-    )
-  })
+  // ======================
 
   const isConnected = computed<boolean>(() => provider.isConnected)
 
   const address = computed<string>(() => provider.selectedAddress)
 
+  const erc1967ProxyContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.erc1967Proxy)
+  })
+
   const erc1967ProxyContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      erc1967ProxyContractDetails.value
+
     return useContract(
       dashboardInfo.distributionAddress
         ? 'MOR1967__factory'
         : 'ERC1967Proxy__factory',
-      dashboardInfo.distributionAddress ||
-        config.networksMap[networkId.value].contractAddressesMap[
-          CONTRACT_IDS.erc1967Proxy
-        ],
-      l1Provider.value,
+      dashboardInfo.distributionAddress || address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
     )
   })
 
-  const depositContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      dashboardDepositTokenAddress.value ||
-        config.networksMap[networkId.value].contractAddressesMap[
-          CONTRACT_IDS.stEth
-        ],
-      l1Provider.value,
-    ),
-  )
+  const depositContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.stEth)
+  })
 
-  const rewardsContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      dashboardRewardTokenAddress.value ||
-        config.networksMap[networkId.value].contractAddressesMap[
-          CONTRACT_IDS.mor
-        ],
-      l2Provider.value,
-    ),
-  )
+  const depositContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      depositContractDetails.value
 
-  const endpointContract = computed(() =>
-    useContract(
+    return useContract(
+      'ERC20__factory',
+      dashboardDepositTokenAddress.value || address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
+
+  const rewardsContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.mor)
+  })
+
+  const rewardsContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      rewardsContractDetails.value
+
+    return useContract(
+      'ERC20__factory',
+      dashboardRewardTokenAddress.value || address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
+
+  const endpointContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.endpoint)
+  })
+
+  const endpointContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      endpointContractDetails.value
+
+    return useContract(
       'Endpoint__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.endpoint
-      ],
-      l1Provider.value,
-    ),
-  )
+      address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
 
-  const l1FactoryContract = computed(() =>
-    useContract(
+  const l1FactoryContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.l1Factory)
+  })
+
+  const l1FactoryContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      l1FactoryContractDetails.value
+
+    return useContract(
       'L1Factory__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.l1Factory
-      ],
-      l1Provider.value,
-    ),
-  )
+      address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
 
-  const l2FactoryContract = computed(() =>
-    useContract(
+  const l2FactoryContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.l2Factory)
+  })
+
+  const l2FactoryContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      l2FactoryContractDetails.value
+
+    return useContract(
       'L2Factory__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.l2Factory
-      ],
-      l2Provider.value,
-    ),
-  )
+      address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
 
-  const subnetFactoryContract = computed(() =>
-    useContract(
+  const subnetFactoryContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.subnetFactory)
+  })
+
+  const subnetFactoryContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      subnetFactoryContractDetails.value
+
+    return useContract(
       'SubnetFactory__factory',
-      config.networksMap[networkId.value].contractAddressesMap[
-        CONTRACT_IDS.subnetFactory
-      ],
-      l2Provider.value,
-    ),
-  )
+      address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
+
+  const buildersContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.builders)
+  })
+
+  const buildersContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      buildersContractDetails.value
+
+    return useContract(
+      'Builders__factory',
+      address,
+      targetChainId === provider.chainId
+        ? providerEthProvider
+        : fallbackProvider!,
+    )
+  })
+
+  const _pickContractDetails = (
+    contractId: keyof typeof perChainDeployedContracts,
+  ) => {
+    const deployedSelectedContracts =
+      config.perChainDeployedContracts[contractId]
+
+    const currentChainContract = get(
+      deployedSelectedContracts,
+      provider.chainId,
+      '',
+    )
+
+    const defaultForCurrentNetworkContract = Object.entries(
+      deployedSelectedContracts,
+    )
+      .filter(([key]) =>
+        currentNetworkTypeChains.value.includes(key as EthereumChains),
+      )
+      .find(([, value]) => Boolean(value))?.[1]
+
+    const pickedForCurrentNetworkContract = Object.entries(
+      deployedSelectedContracts,
+    )
+      .filter(([key]) =>
+        allowedForCurrentRouteChainsLimitedByNetworkType.value.includes(
+          key as EthereumChains,
+        ),
+      )
+      .find(([, value]) => Boolean(value))?.[1]
+
+    const resultedContract =
+      ((isCurrentChainAllowed.value && currentChainContract) ||
+        pickedForCurrentNetworkContract ||
+        defaultForCurrentNetworkContract) ??
+      ''
+
+    const fallbackProviderForResultedContract = Object.entries(
+      config.perChainFallbackProviders,
+    ).find(([key]) => {
+      return (
+        Object.entries(deployedSelectedContracts).find(
+          ([, contractAddress]) => {
+            return resultedContract === contractAddress
+          },
+        )?.[0] === key
+      )
+    })
+
+    const targetChainId = fallbackProviderForResultedContract?.[0] ?? ''
+    const targetChainName = getEthereumChainsName(targetChainId)
+    const explorerUrl: string =
+      config.chainsMap[targetChainName].blockExplorerUrls?.[0] ?? ''
+
+    return {
+      address: resultedContract,
+      targetChainId: targetChainId,
+      fallbackProvider: fallbackProviderForResultedContract?.[1],
+      explorerUrl,
+    }
+  }
 
   const updateBalances = async () => {
     if (!provider.selectedAddress) throw new errors.UserAddressError()
@@ -175,14 +330,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     balances.depositToken = stEthValue
     balances.rewardsToken = morValue
   }
-
-  const buildersContract = computed(() =>
-    useContract(
-      'Builders__factory',
-      config.networksMap[networkId.value].contractAddressesMap['builders'],
-      l2Provider.value,
-    ),
-  )
 
   // Actions
   const init = async () => {
@@ -258,26 +405,43 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     isAddingToken,
 
     // Getters
-    networkId,
-    l1Provider,
-    l2Provider,
-    isValidChain,
+    networkType,
+    selectedNetworkByType: selectedNetworkByType,
+    l1Provider: l1Provider,
+    l2Provider: l2Provider,
     isConnected,
     address,
+
+    erc1967ProxyContractDetails,
     erc1967ProxyContract,
+
+    depositContractDetails,
     depositContract,
+
+    rewardsContractDetails,
     rewardsContract,
+
+    endpointContractDetails,
     endpointContract,
-    buildersContract,
-    l1FactoryContract,
-    l2FactoryContract,
+
+    l1FactoryContractDetails,
+    l1FactoryContract: l1FactoryContract,
+
+    l2FactoryContractDetails,
+    l2FactoryContract: l2FactoryContract,
+
+    subnetFactoryContractDetails,
     subnetFactoryContract,
+
+    buildersContractDetails,
+    buildersContract,
+
     rewardsTokenSymbol,
     depositTokenSymbol,
 
     dashboardInfo,
     // Actions
-    updateBalances,
+    updateBalances: updateBalances,
     init,
   }
 })

@@ -21,6 +21,7 @@
               isCreateBuilderModalShown = true
             }
           "
+          :disabled="!provider.isConnected"
         >
           {{ $t('builders-list.create-builder-btn') }}
         </app-button>
@@ -38,7 +39,13 @@
         />
       </template>
       <template v-else-if="buildersProjects.length">
-        <builders-table class="mt-8" :builders-projects="buildersProjects" />
+        <builders-table
+          class="mt-8"
+          :builders-projects="buildersProjects"
+          :order-by="orderBy"
+          :order-direction="orderDirection"
+          @update-sorting="handleChangeSorting"
+        />
       </template>
       <template v-else>
         <no-data-message
@@ -65,7 +72,10 @@
       class="mt-6"
     />
 
-    <h2 class="mt-16 self-start text-textSecondaryMain">
+    <h2
+      v-if="userAccountBuildersProjects.length"
+      class="mt-16 self-start text-textSecondaryMain"
+    >
       {{ $t('builders-list.account-projects-table-title') }}
     </h2>
 
@@ -110,6 +120,7 @@ import {
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import {
+  BuildersProject_OrderBy,
   GetAccountUserBuildersProjectsIds,
   GetAccountUserBuildersProjectsIdsQuery,
   GetAccountUserBuildersProjectsIdsQueryVariables,
@@ -122,6 +133,7 @@ import {
   GetBuildersProjectsByIdsQueryVariables,
   GetBuildersProjectsQuery,
   GetBuildersProjectsQueryVariables,
+  OrderDirection,
 } from '@/types/graphql'
 import { ref, provide } from 'vue'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
@@ -129,7 +141,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
 import { useLoad } from '@/composables'
-import { useBuildersApolloClient } from '@/pages/Builders/hooks/use-builders-apollo-client'
+import { storeToRefs } from 'pinia'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 
 defineOptions({
   inheritAttrs: false,
@@ -138,20 +151,23 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 
-const { provider } = useWeb3ProvidersStore()
+const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
 
+const orderBy = ref(BuildersProject_OrderBy.Id)
+const orderDirection = ref(OrderDirection.Desc)
+
 const isCreateBuilderModalShown = ref(false)
 
-const buildersApolloClient = useBuildersApolloClient()
+const buildersApolloClient = useSecondApolloClient()
 
 const { data: buildersCounters } = useLoad<
   GetBuildersCountersQuery['counters'][0] | undefined
 >(
   undefined,
   async () => {
-    const { data } = await buildersApolloClient.query<
+    const { data } = await buildersApolloClient.value.query<
       GetBuildersCountersQuery,
       GetBuildersCountersQueryVariables
     >({
@@ -173,7 +189,7 @@ const {
 } = useLoad<GetBuildersProjectsQuery['buildersProjects']>(
   [],
   async () => {
-    const { data } = await buildersApolloClient.query<
+    const { data } = await buildersApolloClient.value.query<
       GetBuildersProjectsQuery,
       GetBuildersProjectsQueryVariables
     >({
@@ -182,6 +198,8 @@ const {
       variables: {
         first: DEFAULT_PAGE_LIMIT,
         skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
+        orderBy: orderBy.value,
+        orderDirection: orderDirection.value,
       },
     })
 
@@ -205,19 +223,19 @@ const {
   [],
   async () => {
     const { data: accountUserBuildersProjectsIds } =
-      await buildersApolloClient.query<
+      await buildersApolloClient.value.query<
         GetAccountUserBuildersProjectsIdsQuery,
         GetAccountUserBuildersProjectsIdsQueryVariables
       >({
         query: GetAccountUserBuildersProjectsIds,
         fetchPolicy: 'network-only',
         variables: {
-          address: provider.selectedAddress,
+          address: provider.value.selectedAddress,
         },
       })
 
     const { data: accountUserBuildersProjects } =
-      await buildersApolloClient.query<
+      await buildersApolloClient.value.query<
         GetBuildersProjectsByIdsQuery,
         GetBuildersProjectsByIdsQueryVariables
       >({
@@ -233,7 +251,7 @@ const {
     return accountUserBuildersProjects.buildersProjects
   },
   {
-    reloadArgs: [provider.selectedAddress],
+    reloadArgs: [() => provider.value.selectedAddress],
   },
 )
 
@@ -245,6 +263,20 @@ const handleBuilderCreated = async (poolId: string) => {
       id: poolId,
     },
   })
+}
+
+const handleChangeSorting = (order: BuildersProject_OrderBy) => {
+  if (orderBy.value === order) {
+    orderDirection.value =
+      orderDirection.value === OrderDirection.Asc
+        ? OrderDirection.Desc
+        : OrderDirection.Asc
+  } else {
+    orderBy.value = order
+    orderDirection.value = OrderDirection.Asc
+  }
+
+  reloadBuildersProjects()
 }
 
 provide('reloadBuildersProjects', reloadBuildersProjects)

@@ -50,6 +50,7 @@ const pageUpdate = (newPage: number) => {
           size="none"
           scheme="none"
           :icon-right="$icons.chevronDown"
+          @click="pageUpdate(currentPage - 1)"
         />
       </nav-button>
     </template>
@@ -66,6 +67,7 @@ const pageUpdate = (newPage: number) => {
           size="none"
           scheme="none"
           :icon-right="$icons.chevronDown"
+          @click="pageUpdate(currentPage + 1)"
         />
       </nav-button>
     </template>

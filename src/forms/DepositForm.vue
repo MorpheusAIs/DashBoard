@@ -43,7 +43,7 @@
             :disabled="isSubmitting || !balanceOfForm"
             @click="
               form.amount = formatEther(
-                web3ProvidersStore.balances.depositToken,
+                web3ProvidersStore.balances.depositToken?._hex ?? 0,
               )
             "
           />
@@ -224,7 +224,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l1.chainId,
+      web3ProvidersStore.erc1967ProxyContractDetails.targetChainId,
     )
 
     let tx
@@ -245,7 +245,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,
       tx.hash,
     )
 

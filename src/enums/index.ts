@@ -1,7 +1,5 @@
-export * from './chains.enum'
 export * from './route-names.enum'
 export * from './icon-names.enum'
-export * from './layer-zero.enum'
 export * from './window-breakpoints.enum'
 export * from './time.enum'
 export * from './errors.enum'
@@ -10,5 +8,3 @@ export * from './contract-inputs.enum'
 export * from './swap.enum'
 export * from './request.enum'
 export * from './delegation.enum'
-
-export { CONTRACT_IDS, NETWORK_IDS } from '@config'

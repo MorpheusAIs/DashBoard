@@ -29,7 +29,7 @@ import { type BigNumber } from '@/types'
 import BasicModal from '../../BasicModal.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-import { NETWORK_IDS } from '@config'
+import { NetworkTypes } from '@config'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -49,7 +49,7 @@ withDefaults(
 )
 
 const route = useRoute()
-const isMainnet = computed(() => route.query.network === NETWORK_IDS.mainnet)
+const isMainnet = computed(() => route.query.network === NetworkTypes.Mainnet)
 
 const modalContent = computed(() =>
   isMainnet.value ? MainnetDepositModalContent : DepositForm,
