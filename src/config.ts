@@ -29,6 +29,14 @@ export enum EthereumChains {
   Base = '8453',
 }
 
+export const getEthereumChainsName = (
+  chain: string,
+): keyof typeof EthereumChains => {
+  return Object.keys(EthereumChains).find(
+    key => EthereumChains[key as keyof typeof EthereumChains] === chain,
+  ) as keyof typeof EthereumChains
+}
+
 /**
  * Define which network belows to which network type
  */

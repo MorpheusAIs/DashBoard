@@ -86,6 +86,7 @@ import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { required } from '@/validators'
 import { GetBuildersProjectQuery } from '@/types/graphql'
 import { formatEther, parseUnits } from '@/utils'
+import { getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
@@ -105,9 +106,12 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { selectedNetworkByType, provider, buildersContract } = storeToRefs(
-  useWeb3ProvidersStore(),
-)
+const {
+  selectedNetworkByType,
+  provider,
+  buildersContract,
+  buildersContractDetails,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const { data: minimalWithdrawLockPeriod } = useLoad(
   0,
@@ -162,6 +166,12 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
+    if (
+      provider.value.chainId !== buildersContractDetails.value.targetChainId
+    ) {
+      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+    }
+
     const tx = props.buildersProject
       ? await buildersContract.value?.signerBased.value.editBuilderPool({
           name: form.name,
@@ -185,7 +195,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l2.explorerUrl,
+      getEthereumChainsName(buildersContractDetails.value.targetChainId),
       txReceipt.transactionHash,
     )
 

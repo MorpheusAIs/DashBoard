@@ -114,6 +114,7 @@ import {
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import { getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
@@ -137,6 +138,7 @@ const {
   provider,
   rewardsContract,
   buildersContract,
+  buildersContractDetails,
   balances,
 } = storeToRefs(useWeb3ProvidersStore())
 
@@ -226,7 +228,11 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
-    // check wether user on a valid chains
+    if (
+      provider.value.chainId !== buildersContractDetails.value.targetChainId
+    ) {
+      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+    }
 
     const allowance = await rewardsContract.value.providerBased.value.allowance(
       provider.value.selectedAddress,
@@ -252,7 +258,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l2.explorerUrl,
+      getEthereumChainsName(buildersContractDetails.value.targetChainId),
       txReceipt.transactionHash,
     )
 

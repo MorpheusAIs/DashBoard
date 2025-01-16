@@ -428,14 +428,20 @@ import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import { config, getEthereumChainsName } from '@config'
 
 defineOptions({
   inheritAttrs: true,
 })
 
 const route = useRoute()
-const { provider, buildersContract, selectedNetworkByType, balances } =
-  storeToRefs(useWeb3ProvidersStore())
+const {
+  provider,
+  buildersContract,
+  buildersContractDetails,
+  selectedNetworkByType,
+  balances,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const buildersApolloClient = useSecondApolloClient()
 
@@ -574,6 +580,12 @@ const handleWithdrawalSubmitted = async () => {
 const claim = async () => {
   isClaimSubmitting.value = true
   try {
+    if (
+      provider.value.chainId !== buildersContractDetails.value.targetChainId
+    ) {
+      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+    }
+
     const tx = await buildersContract.value.signerBased.value.claim(
       buildersData.value.buildersProject?.id,
       provider.value.selectedAddress,
@@ -584,7 +596,7 @@ const claim = async () => {
     if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l2.explorerUrl,
+      getEthereumChainsName(buildersContractDetails.value.targetChainId),
       txReceipt.transactionHash,
     )
 

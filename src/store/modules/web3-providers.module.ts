@@ -85,6 +85,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const providerEthProvider = computed(() => {
     return new providers.Web3Provider(
       provider.rawProvider as providers.ExternalProvider,
+      'any',
     )
   })
 
@@ -221,10 +222,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const buildersContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.builders)
+  })
+
   const buildersContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.builders,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      buildersContractDetails.value
 
     return useContract(
       'Builders__factory',
@@ -425,7 +429,10 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     depositContract,
     rewardsContract,
     endpointContract,
+
+    buildersContractDetails,
     buildersContract,
+
     l1FactoryContract,
     l2FactoryContract,
     subnetFactoryContract,

@@ -89,6 +89,7 @@ import { maxValue, numeric, required } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { BigNumber } from 'ethers'
+import { getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
@@ -108,9 +109,12 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { selectedNetworkByType, buildersContract } = storeToRefs(
-  useWeb3ProvidersStore(),
-)
+const {
+  selectedNetworkByType,
+  provider,
+  buildersContractDetails,
+  buildersContract,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const isSubmitting = ref(false)
 
@@ -170,6 +174,12 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
+    if (
+      provider.value.chainId !== buildersContractDetails.value.targetChainId
+    ) {
+      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+    }
+
     const tx = await buildersContract.value?.signerBased.value.withdraw(
       props.builderProject?.id,
       parseUnits(form.withdrawAmount),
@@ -178,7 +188,7 @@ const submit = async () => {
     if (!tx) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l2.explorerUrl,
+      getEthereumChainsName(buildersContractDetails.value.targetChainId),
       tx.hash,
     )
 
