@@ -1,20 +1,12 @@
-import {
-  config,
-  EthereumChains,
-  exceptionContractsAllowedChains,
-} from '@config'
+import { config, EthereumChains } from '@config'
 import { computed } from 'vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { providers } from 'ethers'
 
-export const useExceptionContractsProvider = (
-  feature: keyof typeof exceptionContractsAllowedChains,
-) => {
+export const useLimitedProvider = (allowedChains: EthereumChains[]) => {
   const web3ProviderStore = useWeb3ProvidersStore()
 
   return computed(() => {
-    const allowedChains = exceptionContractsAllowedChains[feature]
-
     if (
       allowedChains.includes(
         String(web3ProviderStore.provider.chainId) as EthereumChains,

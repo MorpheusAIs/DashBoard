@@ -48,7 +48,12 @@ import { ContractEditingType } from '@/types'
 import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { AppButton, AppIcon } from '@/common'
-import { useContract, useFormValidation, useI18n } from '@/composables'
+import {
+  useContract,
+  useExceptionContractsProvider,
+  useFormValidation,
+  useI18n,
+} from '@/composables'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import {
   CONTRACT_INPUTS,
@@ -61,8 +66,8 @@ import {
 } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { useRoute } from 'vue-router'
-import { ContractTransaction, providers, utils } from 'ethers'
-import { config, EthereumChains, NetworkTypes } from '@config'
+import { ContractTransaction, utils } from 'ethers'
+import { config, getEthereumChainsName } from '@config'
 import { CONTRACT_METHODS } from '@/const'
 
 const props = defineProps<{
@@ -99,65 +104,58 @@ const submitButtonName = computed(() =>
     : t('contract-editing.submit-btn'),
 )
 
-const ethProvider = computed(() => {
-  if (
-    web3ProvidersStore.provider.rawProvider &&
-    web3ProvidersStore.provider.chainId === config.chainsMap.Ethereum.chainId
-  ) {
-    return new providers.Web3Provider(
-      web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
-    )
-  }
-
-  return config.perChainFallbackProviders[EthereumChains.Ethereum]
-})
-
-const arbProvider = computed(() => {
-  if (
-    web3ProvidersStore.provider.rawProvider &&
-    web3ProvidersStore.provider.chainId === config.chainsMap.Arbitrum.chainId
-  ) {
-    return new providers.Web3Provider(
-      web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
-    )
-  }
-
-  return config.perChainFallbackProviders[EthereumChains.Arbitrum]
-})
-
 const contract = computed(() => {
   if (!route.query.contractAddress) return null
 
+  /* eslint-disable no-case-declarations */
   switch (props.contractType) {
     case CONTRACT_TYPE.distribution:
+      const Distribution__factoryProvider = useExceptionContractsProvider(
+        'Distribution__factory',
+      )
+
       return useContract(
         'Distribution__factory',
         String(route.query.contractAddress),
-        ethProvider.value,
+        Distribution__factoryProvider.value,
       )
     case CONTRACT_TYPE.l1Sender:
+      const L1Sender__factoryProvider =
+        useExceptionContractsProvider('L1Sender__factory')
+
       return useContract(
         'L1Sender__factory',
         String(route.query.contractAddress),
-        ethProvider.value,
+        L1Sender__factoryProvider.value,
       )
     case CONTRACT_TYPE.l2MessageReceiver:
+      const l2MessageReceiverProvider = useExceptionContractsProvider(
+        'L2MessageReceiver__factory',
+      )
+
       return useContract(
         'L2MessageReceiver__factory',
         String(route.query.contractAddress),
-        arbProvider.value,
+        l2MessageReceiverProvider.value,
       )
     case CONTRACT_TYPE.l2TokenReceiver:
+      const L2TokenReceiver__factoryProvider = useExceptionContractsProvider(
+        'L2TokenReceiver__factory',
+      )
+
       return useContract(
         'L2TokenReceiver__factory',
         String(route.query.contractAddress),
-        arbProvider.value,
+        L2TokenReceiver__factoryProvider.value,
       )
     default:
+      const MOR20__factoryProvider =
+        useExceptionContractsProvider('MOR20__factory')
+
       return useContract(
         'MOR20__factory',
         String(route.query.contractAddress),
-        arbProvider.value,
+        MOR20__factoryProvider.value,
       )
   }
 })
@@ -405,55 +403,65 @@ const submit = async () => {
   }
   isLoaded.value = false
   let tx: ContractTransaction | null = null
-  let isL1 = false
-  const isMainnet = route.query.network === NetworkTypes.Mainnet
+
+  let targetChain = ''
+
   try {
     switch (props.contractType) {
       case CONTRACT_TYPE.token:
-        await web3ProvidersStore.provider.selectChain(
-          isMainnet
-            ? config.chainsMap.Arbitrum.chainId
-            : config.chainsMap.ArbitrumSepolia.chainId,
-        )
+        const MOR20__factoryProvider =
+          useExceptionContractsProvider('MOR20__factory')
+
+        targetChain = String(MOR20__factoryProvider.value.network.chainId)
+
+        await web3ProvidersStore.provider.selectChain(targetChain)
         tx = await submitTokenContract()
         break
       case CONTRACT_TYPE.distribution:
-        await web3ProvidersStore.provider.selectChain(
-          isMainnet
-            ? config.chainsMap.Ethereum.chainId
-            : config.chainsMap.Sepolia.chainId,
+        const Distribution__factoryProvider = useExceptionContractsProvider(
+          'Distribution__factory',
         )
+
+        targetChain = String(
+          Distribution__factoryProvider.value.network.chainId,
+        )
+
+        await web3ProvidersStore.provider.selectChain(targetChain)
         tx = await submitDistributionContract()
-        isL1 = true
         break
       case CONTRACT_TYPE.l1Sender:
-        await web3ProvidersStore.provider.selectChain(
-          isMainnet
-            ? config.chainsMap.Ethereum.chainId
-            : config.chainsMap.Sepolia.chainId,
-        )
+        const L1Sender__factoryProvider =
+          useExceptionContractsProvider('L1Sender__factory')
+
+        targetChain = String(L1Sender__factoryProvider.value.network.chainId)
+
+        await web3ProvidersStore.provider.selectChain(targetChain)
         tx = await submitL1SenderContract()
-        isL1 = true
         break
       case CONTRACT_TYPE.l2MessageReceiver:
-        await web3ProvidersStore.provider.selectChain(
-          isMainnet
-            ? config.chainsMap.Arbitrum.chainId
-            : config.chainsMap.ArbitrumSepolia.chainId,
+        const L2MessageReceiver__factoryProvider =
+          useExceptionContractsProvider('L2MessageReceiver__factory')
+
+        targetChain = String(
+          L2MessageReceiver__factoryProvider.value.network.chainId,
         )
+
+        await web3ProvidersStore.provider.selectChain(targetChain)
         tx = await submitL2MessageReceiver()
         break
       default:
-        await web3ProvidersStore.provider.selectChain(
-          isMainnet
-            ? config.chainsMap.Arbitrum.chainId
-            : config.chainsMap.ArbitrumSepolia.chainId,
-        )
+        const L2TokenProvider = useExceptionContractsProvider('MOR20__factory')
+
+        targetChain = String(L2TokenProvider.value.network.chainId)
+
+        await web3ProvidersStore.provider.selectChain(targetChain)
         tx = await submitL2TokenReceiver()
     }
+
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType[isL1 ? 'l1' : 'l2'].explorerUrl,
-      tx.hash,
+      config.chainsMap[getEthereumChainsName(targetChain)]
+        .blockExplorerUrls?.[0] ?? '',
+      tx?.hash ?? '',
     )
     if (tx && explorerTxUrl) {
       bus.emit(

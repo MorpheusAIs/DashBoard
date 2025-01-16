@@ -79,10 +79,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     ),
   )
 
-  const selectedNetworkByType = computed(() => {
-    return config.networksMap[networkType.value]
-  })
-
   const wrappedEthProvider = computed(() => {
     return new providers.Web3Provider(
       provider.rawProvider as providers.ExternalProvider,
@@ -248,7 +244,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       deployedSelectedContracts,
     )
       .filter(([key]) =>
-        currentNetworkTypeChains.value.includes(key as EthereumChains),
+        config.ethereumChainsTypes[networkType.value].includes(
+          key as EthereumChains,
+        ),
       )
       .find(([, value]) => Boolean(value))?.[1]
 
@@ -386,7 +384,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
     // Getters
     networkType,
-    selectedNetworkByType: selectedNetworkByType,
     isConnected,
     address,
 

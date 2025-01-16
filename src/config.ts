@@ -40,7 +40,7 @@ export const getEthereumChainsName = (
 /**
  * Define which network belows to which network type
  */
-const ethereumChainsTypes = {
+export const ethereumChainsTypes = {
   [NetworkTypes.Mainnet]: [
     EthereumChains.Arbitrum,
     EthereumChains.Ethereum,
@@ -165,12 +165,6 @@ export const layerZeroEndpointIds: Record<EthereumChains, string> = {
   [EthereumChains.Base]: '',
 }
 
-type NetworkLayer = {
-  chainId: EthereumChains
-  provider: Provider
-  explorerUrl: string
-}
-
 export const perChainFallbackProviders: Record<EthereumChains, Provider> = {
   [EthereumChains.Ethereum]: new providers.FallbackProvider(
     [
@@ -281,83 +275,7 @@ export const exceptionContractsAllowedChains = {
   ],
   MOR20__factory: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
   Subnet__factory: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
-}
-
-export const networksMap: Record<
-  NetworkTypes,
-  {
-    l1: NetworkLayer
-    l2: NetworkLayer
-    contractAddressesMap: Record<ContractIds, string>
-  }
-> = {
-  [NetworkTypes.Mainnet]: {
-    l1: {
-      chainId: EthereumChains.Ethereum,
-      provider: new providers.FallbackProvider(
-        [
-          'https://rpc.mevblocker.io',
-          'https://rpc.mevblocker.io',
-          'https://eth-pokt.nodies.app',
-          'https://eth.drpc.org',
-          'https://rpc.payload.de',
-          'https://eth.merkle.io',
-        ].map((rpcUrl, idx) => ({
-          provider: new providers.StaticJsonRpcProvider(
-            rpcUrl,
-            ethers.providers.getNetwork(Number(EthereumChains.Ethereum)),
-          ),
-          priority: idx,
-        })),
-        1,
-      ),
-      explorerUrl: chainsMap.Ethereum.blockExplorerUrls?.[0] ?? '',
-    },
-    l2: {
-      chainId: EthereumChains.Arbitrum,
-      provider: new providers.StaticJsonRpcProvider(
-        chainsMap.Arbitrum.rpcUrls[0],
-      ),
-      explorerUrl: chainsMap.Arbitrum.blockExplorerUrls?.[0] ?? '',
-    },
-    contractAddressesMap: {
-      [ContractIds.erc1967Proxy]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790', // ethereum
-      [ContractIds.stEth]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84', // not exist
-      [ContractIds.mor]: '0x7431aDa8a591C955a994a21710752EF9b882b8e3',
-      [ContractIds.endpoint]: '0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675',
-      [ContractIds.l1Factory]: '0x969C0F87623dc33010b4069Fea48316Ba2e45382',
-      [ContractIds.l2Factory]: '0x890BfA255E6EE8DB5c67aB32dc600B14EBc4546c',
-      [ContractIds.subnetFactory]: '0x37B94Bd80b6012FB214bB6790B31A5C40d6Eb7A5',
-      [ContractIds.builders]: '0xC0eD68f163d44B6e9985F0041fDf6f67c6BCFF3f',
-    },
-  },
-  [NetworkTypes.Testnet]: {
-    l1: {
-      chainId: EthereumChains.Sepolia,
-      provider: new providers.StaticJsonRpcProvider(
-        chainsMap.Sepolia.rpcUrls[0],
-        ethers.providers.getNetwork(Number(EthereumChains.Sepolia)),
-      ),
-      explorerUrl: chainsMap.Sepolia.blockExplorerUrls?.[0] ?? '',
-    },
-    l2: {
-      chainId: EthereumChains.ArbitrumSepolia,
-      provider: new providers.StaticJsonRpcProvider(
-        chainsMap.ArbitrumSepolia.rpcUrls[0],
-      ),
-      explorerUrl: chainsMap.ArbitrumSepolia.blockExplorerUrls?.[0] ?? '',
-    },
-    contractAddressesMap: {
-      [ContractIds.erc1967Proxy]: '0x0ad2fa5d8f420ff6d87192b32d89faf70466b30b',
-      [ContractIds.stEth]: '0x84BE06be19F956dEe06d4870CdDa76AF2e0385f5',
-      [ContractIds.mor]: '0x34a285A1B1C166420Df5b6630132542923B5b27E',
-      [ContractIds.endpoint]: '0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1',
-      [ContractIds.l1Factory]: '0xB791b1B02A8f7A32f370200c05EeeE12B9Bba10A',
-      [ContractIds.l2Factory]: '0x3199555a4552848D522cf3D04bb1fE4C512a5d3B',
-      [ContractIds.subnetFactory]: '0xa41178368f393a224b990779baa9b5855759d45d',
-      [ContractIds.builders]: '0x649B24D0b6F5A4c3852fD4C0dD91308902E5fe8a',
-    },
-  },
+  DelegationPage: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
 }
 
 // TODO: merge
@@ -458,8 +376,6 @@ export const config = {
   ContractIds: ContractIds,
   perChainFirstApolloClients: perChainFirstApolloClients,
   perChainSecondApolloClients: perChainSecondApolloClients,
-  // FIXME: confusing explorer url usage
-  networksMap: networksMap,
   perPageAllowedNetworks: perPageAllowedNetworks,
   perChainDeployedContracts: perChainDeployedContracts,
   perChainFallbackProviders: perChainFallbackProviders,
