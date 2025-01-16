@@ -327,17 +327,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const updateBalances = async () => {
     if (!provider.selectedAddress) throw new errors.UserAddressError()
 
-    console.log('\n\n\n')
-    console.log(
-      'depositContract.value.providerBased.value.address',
-      depositContract.value.providerBased.value.address,
-    )
-    console.log(
-      'rewardsContract.value.providerBased.value.address',
-      rewardsContract.value.providerBased.value.address,
-    )
-    console.log('\n\n\n')
-
     const [stEthValue, morValue] = await Promise.all([
       depositContract.value.providerBased.value.balanceOf(
         provider.selectedAddress,

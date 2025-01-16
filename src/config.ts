@@ -212,7 +212,7 @@ export const perChainDeployedContracts: Record<
   [ContractIds.erc1967Proxy]: {
     ..._emptyContracts,
     [EthereumChains.Ethereum]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790',
-    [EthereumChains.Sepolia]: '0x0ad2fa5d8f420ff6d87192b32d89faf70466b30b',
+    [EthereumChains.Sepolia]: '0x7c46d6bebf3dcd902eb431054e59908a02aba524',
   },
   [ContractIds.stEth]: {
     ..._emptyContracts,

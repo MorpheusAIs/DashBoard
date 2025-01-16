@@ -82,18 +82,15 @@ onMounted(() => {
   position: relative;
   background: var(--background-secondary-main);
   height: toRem(48);
-  width: toRem(220);
+  max-width: toRem(140);
+  width: 100%;
 
   :deep(.select-field__select-head-indicator) {
     right: toRem(10);
   }
 
-  @include respond-to(xmedium) {
-    width: toRem(116);
-  }
-
   @include respond-to(medium) {
-    width: toRem(220);
+    max-width: toRem(220);
   }
 }
 
