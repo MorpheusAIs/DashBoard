@@ -39,7 +39,13 @@
         />
       </template>
       <template v-else-if="buildersProjects.length">
-        <builders-table class="mt-8" :builders-projects="buildersProjects" />
+        <builders-table
+          class="mt-8"
+          :builders-projects="buildersProjects"
+          :order-by="orderBy"
+          :order-direction="orderDirection"
+          @update-sorting="handleChangeSorting"
+        />
       </template>
       <template v-else>
         <no-data-message
@@ -114,6 +120,7 @@ import {
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import {
+  BuildersProject_OrderBy,
   GetAccountUserBuildersProjectsIds,
   GetAccountUserBuildersProjectsIdsQuery,
   GetAccountUserBuildersProjectsIdsQueryVariables,
@@ -126,6 +133,7 @@ import {
   GetBuildersProjectsByIdsQueryVariables,
   GetBuildersProjectsQuery,
   GetBuildersProjectsQueryVariables,
+  OrderDirection,
 } from '@/types/graphql'
 import { ref, provide } from 'vue'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
@@ -146,6 +154,9 @@ const router = useRouter()
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
+
+const orderBy = ref(BuildersProject_OrderBy.Id)
+const orderDirection = ref(OrderDirection.Desc)
 
 const isCreateBuilderModalShown = ref(false)
 
@@ -187,6 +198,8 @@ const {
       variables: {
         first: DEFAULT_PAGE_LIMIT,
         skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
+        orderBy: orderBy.value,
+        orderDirection: orderDirection.value,
       },
     })
 
@@ -250,6 +263,20 @@ const handleBuilderCreated = async (poolId: string) => {
       id: poolId,
     },
   })
+}
+
+const handleChangeSorting = (order: BuildersProject_OrderBy) => {
+  if (orderBy.value === order) {
+    orderDirection.value =
+      orderDirection.value === OrderDirection.Asc
+        ? OrderDirection.Desc
+        : OrderDirection.Asc
+  } else {
+    orderBy.value = order
+    orderDirection.value = OrderDirection.Asc
+  }
+
+  reloadBuildersProjects()
 }
 
 provide('reloadBuildersProjects', reloadBuildersProjects)

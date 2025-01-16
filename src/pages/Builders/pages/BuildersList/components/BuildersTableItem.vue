@@ -236,7 +236,6 @@ const handleStaked = async () => {
 }
 
 .builders-table-item__col-text {
-  font-size: toRem(18);
   font-weight: 400;
   line-height: toRem(24);
   color: var(--text-primary-invert-main);
