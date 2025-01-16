@@ -35,6 +35,8 @@ export function useSwap(
   const estimatedGasCost = ref('0')
 
   const {
+    swapProvider,
+
     tokenToSendContract,
     tokenToReceiveContract,
     uniswapV2FactoryContract,
@@ -222,7 +224,7 @@ export function useSwap(
   }
 
   const estimateGasPriceForSwaps = async () => {
-    const gasPrice = await web3ProvidersStore.l1Provider.getGasPrice()
+    const gasPrice = await swapProvider.value.getGasPrice()
 
     const txPrice = gasPrice.mul(AVERAGE_GAS_USED_FOR_SWAP_TX)
 
@@ -267,7 +269,7 @@ export function useSwap(
 
   const waitForTx = async (tx: ethers.ContractTransaction) => {
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
+      config.chainsMap.Ethereum.blockExplorerUrls?.[0] ?? '', // FIXME
       tx.hash,
     )
     bus.emit(BUS_EVENTS.info, t('use-swap.tx-sent-message', { explorerTxUrl }))

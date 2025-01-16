@@ -1,7 +1,7 @@
 import { useContract, useProvider } from '@/composables'
 import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
-import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
+import { type BigNumber, type InfoDashboardType } from '@/types'
 import {
   config,
   EthereumChains,
@@ -83,34 +83,12 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     return config.networksMap[networkType.value]
   })
 
-  const providerEthProvider = computed(() => {
+  const wrappedEthProvider = computed(() => {
     return new providers.Web3Provider(
       provider.rawProvider as providers.ExternalProvider,
       'any',
     )
   })
-
-  // ======================
-
-  const l1Provider = computed<Provider>(() => {
-    if (String(provider.chainId) === selectedNetworkByType.value.l1.chainId)
-      return new providers.Web3Provider(
-        provider.rawProvider as providers.ExternalProvider,
-      )
-
-    return selectedNetworkByType.value.l1.provider
-  })
-
-  const l2Provider = computed<Provider>(() => {
-    if (String(provider.chainId) === selectedNetworkByType.value.l2.chainId)
-      return new providers.Web3Provider(
-        provider.rawProvider as providers.ExternalProvider,
-      )
-
-    return selectedNetworkByType.value.l2.provider
-  })
-
-  // ======================
 
   const isConnected = computed<boolean>(() => provider.isConnected)
 
@@ -130,7 +108,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
         : 'ERC1967Proxy__factory',
       dashboardInfo.distributionAddress || address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -147,7 +125,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'ERC20__factory',
       dashboardDepositTokenAddress.value || address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -164,7 +142,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'ERC20__factory',
       dashboardRewardTokenAddress.value || address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -181,7 +159,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'Endpoint__factory',
       address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -198,7 +176,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'L1Factory__factory',
       address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -215,7 +193,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'L2Factory__factory',
       address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -232,7 +210,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'SubnetFactory__factory',
       address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -249,7 +227,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       'Builders__factory',
       address,
       targetChainId === provider.chainId
-        ? providerEthProvider
+        ? wrappedEthProvider
         : fallbackProvider!,
     )
   })
@@ -404,11 +382,11 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     balances,
     isAddingToken,
 
+    wrappedEthProvider,
+
     // Getters
     networkType,
     selectedNetworkByType: selectedNetworkByType,
-    l1Provider: l1Provider,
-    l2Provider: l2Provider,
     isConnected,
     address,
 

@@ -264,6 +264,25 @@ export const perChainDeployedContracts: Record<
   },
 }
 
+/**
+ * Some specific features in Dapp required only specific chains to be connected on
+ */
+export const exceptionContractsAllowedChains = {
+  Distribution__factory: [EthereumChains.Ethereum, EthereumChains.Sepolia],
+  Swap: [EthereumChains.Ethereum],
+  L1Sender__factory: [EthereumChains.Ethereum, EthereumChains.Sepolia],
+  L2MessageReceiver__factory: [
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  L2TokenReceiver__factory: [
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  MOR20__factory: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
+  Subnet__factory: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
+}
+
 export const networksMap: Record<
   NetworkTypes,
   {
@@ -445,4 +464,5 @@ export const config = {
   perChainDeployedContracts: perChainDeployedContracts,
   perChainFallbackProviders: perChainFallbackProviders,
   layerZeroEndpointIds: layerZeroEndpointIds,
+  exceptionContractsAllowedChains: exceptionContractsAllowedChains,
 }

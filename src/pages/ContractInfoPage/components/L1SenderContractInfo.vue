@@ -23,10 +23,13 @@
 
 <script setup lang="ts">
 import { ContractInfoHeader, ContractInfoData } from './ContractInfo'
-import { IUseContract, useContract } from '@/composables'
+import {
+  IUseContract,
+  useContract,
+  useExceptionContractsProvider,
+} from '@/composables'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useWeb3ProvidersStore } from '@/store'
 import { L1SenderContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
@@ -40,10 +43,11 @@ const props = defineProps<{
 
 const route = useRoute()
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<L1SenderContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
+
+const L1SenderProvider = useExceptionContractsProvider('L1Sender__factory')
 
 const contract = computed<IUseContract<'L1Sender__factory'> | null>(() => {
   if (!route.query.contractAddress) {
@@ -51,8 +55,8 @@ const contract = computed<IUseContract<'L1Sender__factory'> | null>(() => {
   }
   return useContract(
     'L1Sender__factory',
-    route.query.contractAddress,
-    web3ProvidersStore.l1Provider,
+    String(route.query.contractAddress),
+    L1SenderProvider.value,
   )
 })
 
@@ -118,6 +122,8 @@ const contractData = computed(() => [
 ])
 
 const init = async () => {
+  if (!contract.value) return
+
   isLoaded.value = false
   isLoadFailed.value = false
   try {
@@ -138,7 +144,12 @@ const init = async () => {
       depositTokenConfig,
       distribution,
       owner,
-      rewardTokenConfig,
+      rewardTokenConfig: {
+        gateway: rewardTokenConfig.gateway,
+        receiver: rewardTokenConfig.receiver,
+        receiverChainId: String(rewardTokenConfig.receiverChainId),
+        zroPaymentAddress: rewardTokenConfig.zroPaymentAddress,
+      },
       unwrappedDepositToken,
     }
   } catch (e) {

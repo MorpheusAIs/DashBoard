@@ -3,22 +3,18 @@ import { useContract } from '@/composables/use-contract'
 import { SWAP_ASSETS } from '@/const'
 import { SWAP_ASSETS_NAMES } from '@/enums'
 import { V2_FACTORY_ADDRESSES, V2_ROUTER_ADDRESSES } from '@uniswap/sdk-core'
-import { useWeb3ProvidersStore } from '@/store'
 import { config } from '@config'
+import { useExceptionContractsProvider } from '@/composables'
 
 export function useSwapContracts(
   tokenInAddress: string,
   tokenOutAddress: string,
   pairAddress: Ref<string>,
 ) {
-  const web3ProvidersStore = useWeb3ProvidersStore()
+  const swapProvider = useExceptionContractsProvider('Swap')
 
   const tokenToSendContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      tokenInAddress,
-      web3ProvidersStore.l1Provider,
-    ),
+    useContract('ERC20__factory', tokenInAddress, swapProvider.value),
   )
 
   const wethContract = computed(() =>
@@ -26,23 +22,19 @@ export function useSwapContracts(
       'ERC20__factory',
       SWAP_ASSETS.find(({ symbol }) => symbol === SWAP_ASSETS_NAMES.WETH)
         ?.address ?? '',
-      web3ProvidersStore.l1Provider,
+      swapProvider.value,
     ),
   )
 
   const tokenToReceiveContract = computed(() =>
-    useContract(
-      'ERC20__factory',
-      tokenOutAddress,
-      web3ProvidersStore.l1Provider,
-    ),
+    useContract('ERC20__factory', tokenOutAddress, swapProvider.value),
   )
 
   const uniswapV2FactoryContract = computed(() =>
     useContract(
       'UniswapV2Factory__factory',
       V2_FACTORY_ADDRESSES[Number(config.chainsMap.Ethereum.chainId)],
-      web3ProvidersStore.l1Provider,
+      swapProvider.value,
     ),
   )
 
@@ -50,7 +42,7 @@ export function useSwapContracts(
     useContract(
       'UniswapV2Router__factory',
       V2_ROUTER_ADDRESSES[Number(config.chainsMap.Ethereum.chainId)],
-      web3ProvidersStore.l1Provider,
+      swapProvider.value,
     ),
   )
 
@@ -58,11 +50,13 @@ export function useSwapContracts(
     useContract(
       'UniswapV2Pair__factory',
       pairAddress.value,
-      web3ProvidersStore.l1Provider,
+      swapProvider.value,
     ),
   )
 
   return {
+    swapProvider,
+
     tokenToSendContract,
     tokenToReceiveContract,
     uniswapV2FactoryContract,

@@ -61,14 +61,9 @@ import {
 } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { useRoute } from 'vue-router'
-import { ContractTransaction, utils } from 'ethers'
+import { ContractTransaction, providers, utils } from 'ethers'
 import { config, EthereumChains, NetworkTypes } from '@config'
 import { CONTRACT_METHODS } from '@/const'
-
-type ContractInfo = {
-  contractName: string
-  network: EthereumChains
-}
 
 const props = defineProps<{
   contractType: CONTRACT_TYPE
@@ -104,43 +99,73 @@ const submitButtonName = computed(() =>
     : t('contract-editing.submit-btn'),
 )
 
+const ethProvider = computed(() => {
+  if (
+    web3ProvidersStore.provider.rawProvider &&
+    web3ProvidersStore.provider.chainId === config.chainsMap.Ethereum.chainId
+  ) {
+    return new providers.Web3Provider(
+      web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
+    )
+  }
+
+  return config.perChainFallbackProviders[EthereumChains.Ethereum]
+})
+
+const arbProvider = computed(() => {
+  if (
+    web3ProvidersStore.provider.rawProvider &&
+    web3ProvidersStore.provider.chainId === config.chainsMap.Arbitrum.chainId
+  ) {
+    return new providers.Web3Provider(
+      web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
+    )
+  }
+
+  return config.perChainFallbackProviders[EthereumChains.Arbitrum]
+})
+
 const contract = computed(() => {
   if (!route.query.contractAddress) return null
-  const contractInfo: ContractInfo = {
-    contractName: '',
-    network: EthereumChains.Arbitrum,
-  }
+
   switch (props.contractType) {
     case CONTRACT_TYPE.distribution:
-      contractInfo.contractName = 'Distribution__factory'
-      contractInfo.network = EthereumChains.Ethereum
-      break
+      return useContract(
+        'Distribution__factory',
+        String(route.query.contractAddress),
+        ethProvider.value,
+      )
     case CONTRACT_TYPE.l1Sender:
-      contractInfo.contractName = 'L1Sender__factory'
-      contractInfo.network = EthereumChains.Ethereum
-      break
+      return useContract(
+        'L1Sender__factory',
+        String(route.query.contractAddress),
+        ethProvider.value,
+      )
     case CONTRACT_TYPE.l2MessageReceiver:
-      contractInfo.contractName = 'L2MessageReceiver__factory'
-      break
+      return useContract(
+        'L2MessageReceiver__factory',
+        String(route.query.contractAddress),
+        arbProvider.value,
+      )
     case CONTRACT_TYPE.l2TokenReceiver:
-      contractInfo.contractName = 'L2TokenReceiver__factory'
-      break
+      return useContract(
+        'L2TokenReceiver__factory',
+        String(route.query.contractAddress),
+        arbProvider.value,
+      )
     default:
-      contractInfo.contractName = 'MOR20__factory'
+      return useContract(
+        'MOR20__factory',
+        String(route.query.contractAddress),
+        arbProvider.value,
+      )
   }
-  return useContract(
-    contractInfo.contractName,
-    route.query.contractAddress,
-    contractInfo.network === EthereumChains.Ethereum
-      ? web3ProvidersStore.l1Provider
-      : web3ProvidersStore.l2Provider,
-  )
 })
 
 const submitTokenContract = async (): Promise<ContractTransaction | null> => {
   let tx: ContractTransaction | null = null
   if (!contract.value) {
-    return
+    return null
   }
   switch (props.methodToEdit.methodName) {
     case TOKEN_CONTRACT_METHODS.renounceOwnership:

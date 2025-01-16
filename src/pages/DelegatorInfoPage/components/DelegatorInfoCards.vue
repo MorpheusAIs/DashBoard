@@ -16,7 +16,11 @@
 import DelegatorInfoCard from './DelegatorInfoCard.vue'
 import { ErrorMessage, Loader } from '@/common'
 
-import { useContract, useI18n } from '@/composables'
+import {
+  useContract,
+  useExceptionContractsProvider,
+  useI18n,
+} from '@/composables'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import {
   bus,
@@ -129,12 +133,13 @@ const rewardsShown = computed(() => {
   return trimStringNumber(reward.sub(fee).toString())
 })
 
-// SubnetFactory with it's Subnets always within the same network
+const Subnet__factoryProvider = useExceptionContractsProvider('Subnet__factory')
+
 const subnetContract = computed(() =>
   useContract(
     'Subnet__factory',
     route.query.subnetAddress as string,
-    web3ProvidersStore.l2Provider,
+    Subnet__factoryProvider.value,
   ),
 )
 
