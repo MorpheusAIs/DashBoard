@@ -54,11 +54,16 @@
       <div class="delegate-tokens-modal__info-wrp">
         <p class="delegate-tokens-modal__info-text">
           {{ $t('delegate-tokens-modal.description-1') }}
-          {{
-            $t('delegate-tokens-modal.description-2', {
-              date: deregistrationDateShown,
-            })
-          }}
+          <span
+            v-if="!!deregistrationDateShown"
+            class="delegate-tokens-modal__info-text"
+          >
+            {{
+              $t('delegate-tokens-modal.description-2', {
+                date: deregistrationDateShown,
+              })
+            }}
+          </span>
         </p>
       </div>
 

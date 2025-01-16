@@ -292,7 +292,7 @@ const perChainFirstApolloClients: Record<
   [EthereumChains.Arbitrum]: null,
   [EthereumChains.Sepolia]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/kkk/version/latest',
+      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-ethereum-sepolia/version/latest',
     }),
     cache: new InMemoryCache(),
   }),

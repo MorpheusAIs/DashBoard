@@ -66,11 +66,14 @@
         }"
       ></RouterLink>
       <app-button
+        v-if="
+          provider.isConnected &&
+          time(+builderProject?.startsAt).isBefore(time())
+        "
         class="z-20 mx-auto"
         color="secondary"
         size="small"
         @click="isStakeModalShown = true"
-        :disabled="!provider.isConnected"
       >
         {{ $t('builders-table-item.stake-btn') }}
       </app-button>
@@ -239,6 +242,7 @@ const handleStaked = async () => {
   font-weight: 400;
   line-height: toRem(24);
   color: var(--text-primary-invert-main);
+  font-size: toRem(17);
 
   @apply overflow-hidden text-ellipsis;
 

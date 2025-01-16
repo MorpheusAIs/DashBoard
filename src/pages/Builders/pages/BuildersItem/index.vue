@@ -45,7 +45,7 @@
             @click="isEditModalShown = true"
             :disabled="
               time(+buildersData.buildersProject?.startsAt)
-                .add(editPoolDeadline?.toNumber() ?? 0, 'seconds')
+                .subtract(editPoolDeadline?.toNumber() ?? 0, 'seconds')
                 .isBefore(time()) || isClaimSubmitting
             "
           >
@@ -134,12 +134,14 @@
                 </span>
 
                 <app-button
-                  v-if="!!buildersData.buildersProjectUserAccount?.staked"
+                  v-if="
+                    !!buildersData.buildersProjectUserAccount?.staked &&
+                    !(
+                      withdrawalUnlockTime?.isAfter(time()) || isClaimSubmitting
+                    )
+                  "
                   size="small"
                   @click="isWithdrawModalShown = true"
-                  :disabled="
-                    withdrawalUnlockTime?.isAfter(time()) || isClaimSubmitting
-                  "
                 >
                   {{ $t('builders-item.withdraw-btn') }}
                 </app-button>
@@ -153,7 +155,10 @@
                   }}
                 </span>
               </div>
-              <div class="flex items-center gap-2">
+              <div
+                class="flex items-center gap-2"
+                v-if="time(withdrawalUnlockTime).isAfter(time())"
+              >
                 <span class="text-textSecondary">
                   {{ $t('builders-item.unlock-time-lbl') }}
                 </span>
@@ -270,7 +275,8 @@
               :disabled="
                 !isLoaded ||
                 balances.rewardsToken?.isZero() ||
-                isClaimSubmitting
+                isClaimSubmitting ||
+                time(+buildersData?.buildersProject?.startsAt).isAfter(time())
               "
               @click="isStakeModalShown = true"
             >
@@ -299,7 +305,7 @@
 
                   <button class="flex items-center justify-end gap-2">
                     <span class="text-textTertiaryMain">
-                      {{ $t('builders-item.start-time-th') }}
+                      {{ $t('builders-item.date-th') }}
                     </span>
                     <app-icon :name="$icons.sort" class="size-6" />
                   </button>
@@ -324,7 +330,7 @@
                       </div>
                       <div class="py-8 text-end">
                         <span class="text-textSecondaryMain">
-                          {{ formatEther(el.staked) }}
+                          {{ time(+el.lastStake).format(DOT_TIME_FORMAT) }}
                         </span>
                       </div>
                     </div>
@@ -403,6 +409,7 @@ import {
   ErrorHandler,
   getEthExplorerTxUrl,
   humanizeTime,
+  sleep,
 } from '@/helpers'
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
 import { computed, ref, watch } from 'vue'
@@ -562,13 +569,15 @@ watch(
 )
 
 const handleStaked = async () => {
-  await update()
   isStakeModalShown.value = false
+  await sleep(1000)
+  await update()
 }
 
 const handleWithdrawalSubmitted = async () => {
-  await update()
   isWithdrawModalShown.value = false
+  await sleep(1000)
+  await update()
 }
 
 const claim = async () => {
@@ -605,8 +614,9 @@ const claim = async () => {
 }
 
 const handleBuilderPoolUpdated = async () => {
-  await update()
   isEditModalShown.value = false
+  await sleep(1000)
+  await update()
 }
 </script>
 

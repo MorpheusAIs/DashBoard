@@ -921,7 +921,7 @@ export type GetBuildersProjectUsersQueryVariables = Exact<{
 }>;
 
 
-export type GetBuildersProjectUsersQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, buildersProjectId: any, id: any, staked: any }> };
+export type GetBuildersProjectUsersQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, buildersProjectId: any, id: any, staked: any, lastStake: any }> };
 
 export type GetUserAccountBuildersProjectQueryVariables = Exact<{
   buildersProjectId?: InputMaybe<Scalars['Bytes']>;
@@ -994,6 +994,7 @@ export const GetBuildersProjectUsers = gql`
     buildersProjectId
     id
     staked
+    lastStake
   }
 }
     `;
