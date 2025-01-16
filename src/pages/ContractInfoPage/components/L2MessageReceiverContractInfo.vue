@@ -23,10 +23,13 @@
 
 <script setup lang="ts">
 import { ContractInfoHeader, ContractInfoData } from './ContractInfo'
-import { IUseContract, useContract } from '@/composables'
+import {
+  IUseContract,
+  useContract,
+  useExceptionContractsProvider,
+} from '@/composables'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useWeb3ProvidersStore } from '@/store'
 import { L2MessageReceiverContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
@@ -40,10 +43,13 @@ const props = defineProps<{
 
 const route = useRoute()
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<L2MessageReceiverContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
+
+const L2MessageReceiver__factoryProvider = useExceptionContractsProvider(
+  'L2MessageReceiver__factory',
+)
 
 const contract = computed<IUseContract<'L2MessageReceiver__factory'> | null>(
   () => {
@@ -52,8 +58,8 @@ const contract = computed<IUseContract<'L2MessageReceiver__factory'> | null>(
     }
     return useContract(
       'L2MessageReceiver__factory',
-      route.query.contractAddress,
-      web3ProvidersStore.l2Provider,
+      String(route.query.contractAddress),
+      L2MessageReceiver__factoryProvider.value,
     )
   },
 )
@@ -91,6 +97,8 @@ const contractData = computed(() => [
 ])
 
 const init = async () => {
+  if (!contract.value) return
+
   isLoaded.value = false
   isLoadFailed.value = false
   try {

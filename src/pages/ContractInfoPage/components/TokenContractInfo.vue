@@ -8,8 +8,8 @@
       />
       <template v-else>
         <contract-info-header
-          :symbol="contractInfo.symbol"
-          :name="contractInfo.name"
+          :symbol="contractInfo?.symbol ?? ''"
+          :name="contractInfo?.name ?? ''"
           :description="$t('token-contract-info.description')"
           :project-name="props.projectName"
           :network="network"
@@ -26,10 +26,13 @@
 
 <script setup lang="ts">
 import { ContractInfoHeader, ContractInfoData } from './ContractInfo'
-import { IUseContract, useContract } from '@/composables'
+import {
+  IUseContract,
+  useContract,
+  useExceptionContractsProvider,
+} from '@/composables'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useWeb3ProvidersStore } from '@/store'
 import { TokenContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
@@ -45,10 +48,11 @@ const props = defineProps<{
 
 const route = useRoute()
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<TokenContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
+
+const MOR20__factoryProvider = useExceptionContractsProvider('MOR20__factory')
 
 const contract = computed<IUseContract<'MOR20__factory'> | null>(() => {
   if (!route.query.contractAddress) {
@@ -56,8 +60,8 @@ const contract = computed<IUseContract<'MOR20__factory'> | null>(() => {
   }
   return useContract(
     'MOR20__factory',
-    route.query.contractAddress,
-    web3ProvidersStore.l2Provider,
+    String(route.query.contractAddress),
+    MOR20__factoryProvider.value,
   )
 })
 
@@ -69,7 +73,7 @@ const contractData = computed(() => [
   {
     title: t('token-contract-info.total-supply'),
     value: `${ethers.utils.formatUnits(
-      contractInfo.value?.totalSupply,
+      contractInfo.value?.totalSupply ?? 0,
       'ether',
     )} ETH`,
   },
@@ -126,6 +130,8 @@ const contractData = computed(() => [
 ])
 
 const init = async () => {
+  if (!contract.value) return
+
   isLoaded.value = false
   isLoadFailed.value = false
   try {
