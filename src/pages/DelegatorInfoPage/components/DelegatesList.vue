@@ -87,10 +87,12 @@ import {
 import { SubnetProvider } from '@/types'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
-import { DEFAULT_PAGE_LIMIT } from '@/const'
+// import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { bus, BUS_EVENTS, ErrorHandler, fetchProviders, sleep } from '@/helpers'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
+
+const DEFAULT_PAGE_LIMIT = 2
 
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -186,7 +188,7 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 
-.delegation-providers-list__content {
+.delegates-list__content {
   flex: 1;
 
   @include respond-to(medium) {
@@ -194,7 +196,7 @@ onBeforeUnmount(() => {
   }
 }
 
-.delegation-providers-list__system-message {
+.delegates-list__system-message {
   position: absolute;
   top: 50%;
   right: 50%;
@@ -205,7 +207,7 @@ onBeforeUnmount(() => {
   margin-top: toRem(24);
 }
 
-.delegation-providers-list__users-wrapper {
+.delegates-list__users-wrapper {
   display: flex;
   flex-direction: column;
   gap: toRem(10);
@@ -217,13 +219,13 @@ onBeforeUnmount(() => {
   }
 }
 
-.delegation-providers-list__users {
+.delegates-list__users {
   display: flex;
   flex-direction: column;
   gap: toRem(10);
 }
 
-.delegation-providers-list__pagination-wrapper {
+.delegates-list__pagination-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;

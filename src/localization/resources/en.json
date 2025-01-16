@@ -724,7 +724,8 @@
     "delegate-text": "Available to Delegate",
     "wallet-input-placeholder":  "Enter subnet address",
     "mor-input-placeholder":  "Enter {asset} amount",
-    "description": "You will not be able to withdraw your tokens from the subnet until the lockout period ends - {date}",
+    "description-1": "You will be able to claim staked tokens after the Subnet deregistering.",
+    "description-2": "Deregistration will be available on {date}",
     "confirm-button":  "Confirm",
     "cancel-button": "Cancel",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
@@ -745,8 +746,6 @@
   },
   "delegation-providers": {
     "title": "Computed Subnets",
-    "table-header-1": "Providers",
-    "table-header-2": "{asset} Tokens Staked",
     "you-delegated-text": "You Delegated",
     "other-subnets-text": "Other Subnets"
   },
@@ -761,7 +760,7 @@
     "you-text": "you"
   },
   "delegator-info-page":  {
-    "back-button": "Providers"
+    "back-button": "Compute Subnets"
   },
   "delegation-info-title": {
     "your-subnet-text": "Your Subnet",

@@ -140,7 +140,7 @@ export function _generateOwnSubnetsQuery(
     : ''
 
   const paginationString =
-    sorting?.skip && sorting?.first
+    sorting?.skip !== undefined && sorting?.first !== undefined
       ? `, skip: ${sorting?.skip}, first: ${sorting?.first}`
       : ''
 
@@ -213,7 +213,7 @@ export function _generateProvidersQuery(
     : ''
 
   const paginationString =
-    sorting?.skip && sorting?.first
+    sorting?.skip !== undefined && sorting?.first !== undefined
       ? `, skip: ${sorting?.skip}, first: ${sorting?.first}`
       : ''
 

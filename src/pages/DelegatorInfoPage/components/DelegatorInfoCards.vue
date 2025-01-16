@@ -1,5 +1,6 @@
 <template>
-  <div class="delegator-info-cards">
+  <div v-if="isLoaded" class="delegator-info-cards">
+    <error-message v-if="isLoadFailed" />
     <delegator-info-card
       v-for="card in cards"
       class="delegator-info-cards__card"
@@ -8,10 +9,12 @@
       @modal-button-click="claim"
     />
   </div>
+  <loader v-else />
 </template>
 
 <script setup lang="ts">
 import DelegatorInfoCard from './DelegatorInfoCard.vue'
+import { ErrorMessage, Loader } from '@/common'
 
 import { useContract, useI18n } from '@/composables'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'

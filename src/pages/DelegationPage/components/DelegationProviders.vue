@@ -1,5 +1,5 @@
 <template>
-  <div class="delegation-providers">
+  <div v-if="isLoaded && !isLoadFailed" class="delegation-providers">
     <h3 class="delegation-providers__title">
       {{ $t('delegation-providers.title') }}
     </h3>
@@ -48,12 +48,18 @@
       </div>
     </div>
   </div>
+  <error-message
+    v-else-if="isLoadFailed"
+    class="delegation-providers__system-message"
+  />
+  <loader v-else />
 </template>
 
 <script setup lang="ts">
 import DelegationProvidersNavigation from './DelegationProvidersNavigation.vue'
 import DelegationProvidersList from './DelegationProvidersList.vue'
 import DelegationProvidersItem from './DelegationProvidersItem.vue'
+import { ErrorMessage, Loader } from '@/common'
 
 import { SORTING_ORDER, DELEGATES_SORTING_TYPES } from '@/enums'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -182,5 +188,9 @@ onBeforeUnmount(() => {
   font-size: toRem(14);
   color: var(--text-tertiary-main);
   margin-bottom: toRem(10);
+}
+
+.delegation-providers__system-message {
+  margin: auto 0;
 }
 </style>

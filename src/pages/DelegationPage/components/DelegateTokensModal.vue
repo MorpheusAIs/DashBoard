@@ -40,24 +40,22 @@
         </input-field>
       </div>
 
-      <div class="delegate-tokens-modal__info-wrp">
-        <p class="delegate-tokens-modal__info-text">
+      <div class="delegate-tokens-modal__available-wrp">
+        <p class="delegate-tokens-modal__available-text">
           {{ $t('delegate-tokens-modal.delegate-text') }}
-        </p>
-        <p class="delegate-tokens-modal__info-amount">
-          {{
-            `${rewardsTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
-          }}
+          <span class="delegate-tokens-modal__available-amount">
+            {{
+              `${rewardsTokenBalance} ${web3ProvidersStore.rewardsTokenSymbol}`
+            }}
+          </span>
         </p>
       </div>
 
-      <div
-        v-if="isDeregistrationDateShown"
-        class="delegate-tokens-modal__info-wrp"
-      >
+      <div class="delegate-tokens-modal__info-wrp">
         <p class="delegate-tokens-modal__info-text">
+          {{ $t('delegate-tokens-modal.description-1') }}
           {{
-            $t('delegate-tokens-modal.description', {
+            $t('delegate-tokens-modal.description-2', {
               date: deregistrationDateShown,
             })
           }}
@@ -312,15 +310,22 @@ init()
   @include body-3-semi-bold;
 }
 
-.delegate-tokens-modal__info-wrp {
+.delegate-tokens-modal__available-wrp {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin: toRem(16) 0;
+  font-size: toRem(16);
 }
 
-.delegate-tokens-modal__info-amount {
+.delegate-tokens-modal__available-amount {
   font-weight: 700;
+}
+
+.delegate-tokens-modal__info-text {
+  @include field-error;
+
+  color: var(--text-tertiary-main);
 }
 
 .delegate-tokens-modal__inputs-wrp {

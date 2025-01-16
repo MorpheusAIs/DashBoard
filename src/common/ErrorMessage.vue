@@ -5,7 +5,7 @@
       {{ title }}
     </h3>
     <p class="error-message__message">
-      {{ message }}
+      {{ shownMessage }}
     </p>
   </div>
 </template>
@@ -14,18 +14,24 @@
 import { AppIcon } from '@/common'
 
 import { ICON_NAMES } from '@/enums'
+import { useI18n } from 'vue-i18n'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
-    message: string
+    message?: string
     title?: string
     iconName?: ICON_NAMES
   }>(),
   {
+    message: '',
     title: '',
     iconName: ICON_NAMES.exclamationCircle,
   },
 )
+
+const { t } = useI18n()
+
+const shownMessage = props.message || t('errors.default')
 </script>
 
 <style lang="scss" scoped>

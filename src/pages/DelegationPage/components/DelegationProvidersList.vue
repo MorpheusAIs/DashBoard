@@ -1,6 +1,6 @@
 <template>
   <div class="delegation-providers-list">
-    <div v-if="isSubnetsShown" class="delegation-providers-list__content">
+    <div class="delegation-providers-list__content">
       <div
         class="delegation-providers-list__users-wrapper"
         :class="{
@@ -12,6 +12,11 @@
             v-if="isLoadFailed"
             class="delegation-providers-list__system-message"
             :message="$t('delegation-providers-list.error-message')"
+          />
+          <no-data-message
+            v-else-if="filteredSubnets.length === 0"
+            class="delegation-providers-list__no-data-msg"
+            :message="$t('delegation-providers-list.no-data-msg')"
           />
           <template v-else>
             <div class="delegation-providers-list__users">
@@ -36,11 +41,6 @@
         <loader v-else class="delegation-providers-list__loader" />
       </div>
     </div>
-    <no-data-message
-      v-else
-      class="delegation-providers-list__no-data-msg"
-      :message="$t('delegation-providers-list.no-data-msg')"
-    />
   </div>
 </template>
 
@@ -71,10 +71,6 @@ const totalSubnets = ref(0)
 
 const filteredSubnets = computed(() =>
   subnetsList.value.filter(subnet => !props.filteredIds.includes(subnet.id)),
-)
-
-const isSubnetsShown = computed(
-  () => subnetsList.value.length > 0 && totalSubnets.value > 0,
 )
 
 const paginationItemsLength = computed(
