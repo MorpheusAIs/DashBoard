@@ -201,6 +201,12 @@ onBeforeUnmount(() => {
   top: 50%;
   right: 50%;
   transform: translateX(50%) translateY(-50%);
+
+  @include respond-to(large) {
+    position: static;
+    transform: none;
+    margin-top: toRem(24);
+  }
 }
 
 .delegates-list__no-data-message {
@@ -215,6 +221,10 @@ onBeforeUnmount(() => {
   position: relative;
 
   &--small {
+    min-height: fit-content;
+  }
+
+  @include respond-to(large) {
     min-height: fit-content;
   }
 }

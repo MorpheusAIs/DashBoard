@@ -51,6 +51,11 @@ web3ProvidersStore.provider.selectChain(
   gap: toRem(66);
   justify-content: space-evenly;
   margin-top: toRem(24);
+
+  @include respond-to(large) {
+    flex-direction: column;
+    gap: toRem(32);
+  }
 }
 
 .delegator-info-page__info-cards {
