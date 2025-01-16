@@ -10,6 +10,7 @@ import {
   useRouter,
 } from 'vue-router'
 import { NetworkTypes } from '@config'
+import { storeToRefs } from 'pinia'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -88,13 +89,13 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('@/pages/Mor20Ecosystem/ProtocolCreationPage.vue'),
         beforeEnter: async to => {
-          const { provider } = useWeb3ProvidersStore()
+          const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-          if (!provider.selectedAddress) {
+          if (!provider.value.selectedAddress) {
             await sleep(1000)
           }
 
-          if (!provider.selectedAddress)
+          if (!provider.value.selectedAddress)
             return { ...to, name: ROUTE_NAMES.appMor20EcosystemMain }
         },
       },

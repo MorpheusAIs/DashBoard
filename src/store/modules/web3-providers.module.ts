@@ -2,11 +2,13 @@ import { useContract, useProvider } from '@/composables'
 import { sleep, getUsersLastFullyDeployedProtocol } from '@/helpers'
 import { useRouter, useRoute } from '@/router'
 import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
-import { ContractIds, networksMap, NetworkTypes } from '@/config'
+import { config, EthereumChains, NetworkTypes } from '@/config'
 import { providers } from 'ethers'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
 import { errors } from '@/errors'
+import get from 'lodash/get'
+import { ROUTE_NAMES } from '@/enums'
 
 enum BALANCE_CURRENCIES {
   depositToken = 'depositToken',
@@ -49,8 +51,26 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     return (network as NetworkTypes) || NetworkTypes.Mainnet
   })
 
+  const currentNetworkTypeChains = computed(
+    () => config.ethereumChainsTypes[networkType.value],
+  )
+
+  const allowedForCurrentRouteChains = computed(() => {
+    if (!config.perPageAllowedNetworks[_route.name as ROUTE_NAMES]) return []
+
+    return currentNetworkTypeChains.value.filter(el =>
+      config.perPageAllowedNetworks[_route.name as ROUTE_NAMES].includes(el),
+    )
+  })
+
+  const isCurrentChainAllowed = computed(() =>
+    allowedForCurrentRouteChains.value.includes(
+      provider.chainId as EthereumChains,
+    ),
+  )
+
   const selectedNetworkByType = computed(() => {
-    return networksMap[networkType.value]
+    return config.networksMap[networkType.value]
   })
 
   const l1Provider = computed<Provider>(() => {
@@ -89,7 +109,7 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
         : 'ERC1967Proxy__factory',
       dashboardInfo.distributionAddress ||
         selectedNetworkByType.value.contractAddressesMap[
-          ContractIds.erc1967Proxy
+          config.ContractIds.erc1967Proxy
         ],
       l1Provider.value,
     )
@@ -99,7 +119,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       dashboardDepositTokenAddress.value ||
-        selectedNetworkByType.value.contractAddressesMap[ContractIds.stEth],
+        selectedNetworkByType.value.contractAddressesMap[
+          config.ContractIds.stEth
+        ],
       l1Provider.value,
     ),
   )
@@ -108,7 +130,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'ERC20__factory',
       dashboardRewardTokenAddress.value ||
-        selectedNetworkByType.value.contractAddressesMap[ContractIds.mor],
+        selectedNetworkByType.value.contractAddressesMap[
+          config.ContractIds.mor
+        ],
       l2Provider.value,
     ),
   )
@@ -116,7 +140,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const endpointContract = computed(() =>
     useContract(
       'Endpoint__factory',
-      selectedNetworkByType.value.contractAddressesMap[ContractIds.endpoint],
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.endpoint
+      ],
       l1Provider.value,
     ),
   )
@@ -124,7 +150,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const l1FactoryContract = computed(() =>
     useContract(
       'L1Factory__factory',
-      selectedNetworkByType.value.contractAddressesMap[ContractIds.l1Factory],
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.l1Factory
+      ],
       l1Provider.value,
     ),
   )
@@ -132,7 +160,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const l2FactoryContract = computed(() =>
     useContract(
       'L2Factory__factory',
-      selectedNetworkByType.value.contractAddressesMap[ContractIds.l2Factory],
+      selectedNetworkByType.value.contractAddressesMap[
+        config.ContractIds.l2Factory
+      ],
       l2Provider.value,
     ),
   )
@@ -141,11 +171,45 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     useContract(
       'SubnetFactory__factory',
       selectedNetworkByType.value.contractAddressesMap[
-        ContractIds.subnetFactory
+        config.ContractIds.subnetFactory
       ],
       l2Provider.value,
     ),
   )
+
+  const buildersContract = computed(() => {
+    const deployedBuildersContracts =
+      config.perChainDeployedContracts['builders']
+
+    const currentChainContract = get(
+      deployedBuildersContracts,
+      provider.chainId,
+      '',
+    )
+
+    const defaultForCurrentNetworkContract = Object.entries(
+      deployedBuildersContracts,
+    )
+      .filter(([key]) =>
+        allowedForCurrentRouteChains.value.includes(key as EthereumChains),
+      )
+      .find(el => Boolean(el))
+
+    const resultedContract =
+      ((isCurrentChainAllowed.value && currentChainContract) ||
+        defaultForCurrentNetworkContract?.[1]) ??
+      ''
+
+    const fallbackProviderForResultedContract = {}
+
+    return useContract(
+      'Builders__factory',
+      ((isCurrentChainAllowed.value && currentChainContract) ||
+        defaultForCurrentNetworkContract?.[1]) ??
+        '',
+      l2Provider.value,
+    )
+  })
 
   const updateBalances = async () => {
     if (!provider.selectedAddress) throw new errors.UserAddressError()
@@ -162,14 +226,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     balances.depositToken = stEthValue
     balances.rewardsToken = morValue
   }
-
-  const buildersContract = computed(() =>
-    useContract(
-      'Builders__factory',
-      selectedNetworkByType.value.contractAddressesMap['builders'],
-      l2Provider.value,
-    ),
-  )
 
   // Actions
   const init = async () => {
@@ -247,8 +303,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     // Getters
     networkType,
     selectedNetworkByType,
-    l1Provider,
-    l2Provider,
+    l1Provider: l1Provider,
+    l2Provider: l2Provider,
     isValidChain,
     isConnected,
     address,

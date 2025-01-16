@@ -226,6 +226,8 @@ const submit = async () => {
   isSubmitting.value = true
 
   try {
+    // check wether user on a valid chains
+
     const allowance = await rewardsContract.value.providerBased.value.allowance(
       provider.value.selectedAddress,
       buildersContract.value.signerBased.value.address,

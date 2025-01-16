@@ -164,6 +164,165 @@ type NetworkLayer = {
   explorerUrl: string
 }
 
+const perChainFallbackProviders: Record<EthereumChains, Provider> = {
+  [EthereumChains.Ethereum]: new providers.FallbackProvider(
+    [
+      'https://rpc.mevblocker.io',
+      'https://rpc.mevblocker.io',
+      'https://eth-pokt.nodies.app',
+      'https://eth.drpc.org',
+      'https://rpc.payload.de',
+      'https://eth.merkle.io',
+    ].map((rpcUrl, idx) => ({
+      provider: new providers.StaticJsonRpcProvider(
+        rpcUrl,
+        ethers.providers.getNetwork(Number(EthereumChains.Ethereum)),
+      ),
+      priority: idx,
+    })),
+    1,
+  ),
+  [EthereumChains.Arbitrum]: new providers.StaticJsonRpcProvider(
+    chainsMap.Arbitrum.rpcUrls[0],
+  ),
+  [EthereumChains.Base]: new providers.StaticJsonRpcProvider(
+    chainsMap.Base.rpcUrls[0],
+  ),
+  [EthereumChains.Sepolia]: new providers.StaticJsonRpcProvider(
+    chainsMap.Sepolia.rpcUrls[0],
+    ethers.providers.getNetwork(Number(EthereumChains.Sepolia)),
+  ),
+  [EthereumChains.ArbitrumSepolia]: new providers.StaticJsonRpcProvider(
+    chainsMap.ArbitrumSepolia.rpcUrls[0],
+  ),
+}
+
+const _emptyContracts = {
+  [EthereumChains.Ethereum]: '',
+  [EthereumChains.Sepolia]: '',
+  [EthereumChains.Arbitrum]: '',
+  [EthereumChains.ArbitrumSepolia]: '',
+  [EthereumChains.Base]: '',
+}
+
+export const perChainDeployedContracts: Record<
+  ContractIds,
+  Record<EthereumChains, string>
+> = {
+  [ContractIds.erc1967Proxy]: {
+    ..._emptyContracts,
+    [EthereumChains.Ethereum]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790',
+    [EthereumChains.Sepolia]: '0x0ad2fa5d8f420ff6d87192b32d89faf70466b30b',
+    [EthereumChains.Arbitrum]: '',
+    [EthereumChains.ArbitrumSepolia]: '',
+    [EthereumChains.Base]: '',
+  },
+  [ContractIds.stEth]: {
+    [EthereumChains.Ethereum]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+    [EthereumChains.Sepolia]: '0x84BE06be19F956dEe06d4870CdDa76AF2e0385f5',
+    [EthereumChains.Arbitrum]: '',
+    [EthereumChains.ArbitrumSepolia]: '',
+    [EthereumChains.Base]: '',
+  },
+  [ContractIds.mor]: {
+    [EthereumChains.Ethereum]: '',
+    [EthereumChains.Sepolia]: '',
+    [EthereumChains.Arbitrum]: '0x092bAaDB7DEf4C3981454dD9c0A0D7FF07bCFc86',
+    [EthereumChains.ArbitrumSepolia]:
+      '0x34a285A1B1C166420Df5b6630132542923B5b27E',
+    [EthereumChains.Base]: '0x7431aDa8a591C955a994a21710752EF9b882b8e3',
+  },
+  [ContractIds.endpoint]: {
+    [EthereumChains.Ethereum]: '0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675',
+    [EthereumChains.Sepolia]: '0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1',
+    [EthereumChains.Arbitrum]: '',
+    [EthereumChains.ArbitrumSepolia]: '',
+    [EthereumChains.Base]: '',
+  },
+  [ContractIds.l1Factory]: {
+    [EthereumChains.Ethereum]: '0x969C0F87623dc33010b4069Fea48316Ba2e45382',
+    [EthereumChains.Sepolia]: '0xB791b1B02A8f7A32f370200c05EeeE12B9Bba10A',
+    [EthereumChains.Arbitrum]: '',
+    [EthereumChains.ArbitrumSepolia]: '',
+    [EthereumChains.Base]: '',
+  },
+  [ContractIds.l2Factory]: {
+    [EthereumChains.Ethereum]: '',
+    [EthereumChains.Sepolia]: '',
+    [EthereumChains.Arbitrum]: '0x890BfA255E6EE8DB5c67aB32dc600B14EBc4546c',
+    [EthereumChains.ArbitrumSepolia]:
+      '0x3199555a4552848D522cf3D04bb1fE4C512a5d3B',
+    [EthereumChains.Base]: '',
+  },
+  [ContractIds.subnetFactory]: {
+    [EthereumChains.Ethereum]: '',
+    [EthereumChains.Sepolia]: '',
+    [EthereumChains.Arbitrum]: '0x37B94Bd80b6012FB214bB6790B31A5C40d6Eb7A5',
+    [EthereumChains.ArbitrumSepolia]:
+      '0xa41178368f393a224b990779baa9b5855759d45d',
+    [EthereumChains.Base]: '',
+  },
+  [ContractIds.builders]: {
+    [EthereumChains.Ethereum]: '',
+    [EthereumChains.Sepolia]: '',
+    [EthereumChains.Arbitrum]: '0xC0eD68f163d44B6e9985F0041fDf6f67c6BCFF3f',
+    [EthereumChains.ArbitrumSepolia]:
+      '0x649B24D0b6F5A4c3852fD4C0dD91308902E5fe8a',
+    [EthereumChains.Base]: '',
+  },
+
+  // [EthereumChains.Ethereum]: {
+  // [ContractIds.erc1967Proxy]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790',
+  // [ContractIds.stEth]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+  // [ContractIds.mor]: '',
+  // [ContractIds.endpoint]: '0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675',
+  // [ContractIds.l1Factory]: '0x969C0F87623dc33010b4069Fea48316Ba2e45382',
+  //   [ContractIds.l2Factory]: '',
+  //   [ContractIds.subnetFactory]: '',
+  //   [ContractIds.builders]: '',
+  // },
+  // [EthereumChains.Sepolia]: {
+  // [ContractIds.erc1967Proxy]: '0x0ad2fa5d8f420ff6d87192b32d89faf70466b30b',
+  // [ContractIds.stEth]: '0x84BE06be19F956dEe06d4870CdDa76AF2e0385f5',
+  // [ContractIds.mor]: '',
+  // [ContractIds.endpoint]: '0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1',
+  // [ContractIds.l1Factory]: '0xB791b1B02A8f7A32f370200c05EeeE12B9Bba10A',
+  // [ContractIds.l2Factory]: '',
+  //   [ContractIds.subnetFactory]: '',
+  //   [ContractIds.builders]: '',
+  // },
+  // [EthereumChains.Arbitrum]: {
+  // [ContractIds.erc1967Proxy]: '',
+  // [ContractIds.stEth]: '',
+  // [ContractIds.mor]: '0x092bAaDB7DEf4C3981454dD9c0A0D7FF07bCFc86',
+  // [ContractIds.endpoint]: '',
+  // [ContractIds.l1Factory]: '',
+  // [ContractIds.l2Factory]: '0x890BfA255E6EE8DB5c67aB32dc600B14EBc4546c',
+  //   [ContractIds.subnetFactory]: '0x37B94Bd80b6012FB214bB6790B31A5C40d6Eb7A5',
+  //   [ContractIds.builders]: '0xC0eD68f163d44B6e9985F0041fDf6f67c6BCFF3f',
+  // },
+  // [EthereumChains.ArbitrumSepolia]: {
+  // [ContractIds.erc1967Proxy]: '',
+  // [ContractIds.stEth]: '',
+  // [ContractIds.mor]: '0x34a285A1B1C166420Df5b6630132542923B5b27E',
+  // [ContractIds.endpoint]: '',
+  // [ContractIds.l1Factory]: '',
+  // [ContractIds.l2Factory]: '0x3199555a4552848D522cf3D04bb1fE4C512a5d3B',
+  //   [ContractIds.subnetFactory]: '0xa41178368f393a224b990779baa9b5855759d45d',
+  //   [ContractIds.builders]: '0x649B24D0b6F5A4c3852fD4C0dD91308902E5fe8a',
+  // },
+  // [EthereumChains.Base]: {
+  //   [ContractIds.erc1967Proxy]: '',
+  //   [ContractIds.stEth]: '',
+  //   [ContractIds.mor]: '0x7431aDa8a591C955a994a21710752EF9b882b8e3',
+  //   [ContractIds.endpoint]: '',
+  //   [ContractIds.l1Factory]: '',
+  //   [ContractIds.l2Factory]: '',
+  //   [ContractIds.subnetFactory]: '',
+  //   [ContractIds.builders]: '',
+  // },
+}
+
 export const networksMap: Record<
   NetworkTypes,
   {
@@ -206,8 +365,8 @@ export const networksMap: Record<
       explorerUrl: chainsMap.Arbitrum.blockExplorerUrls?.[0] ?? '',
     },
     contractAddressesMap: {
-      [ContractIds.erc1967Proxy]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790',
-      [ContractIds.stEth]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      [ContractIds.erc1967Proxy]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790', // ethereum
+      [ContractIds.stEth]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84', // not exist
       [ContractIds.mor]: '0x7431aDa8a591C955a994a21710752EF9b882b8e3',
       [ContractIds.endpoint]: '0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675',
       [ContractIds.l1Factory]: '0x969C0F87623dc33010b4069Fea48316Ba2e45382',
@@ -349,4 +508,5 @@ export const config = {
   // FIXME: confusing explorer url usage
   networksMap: networksMap,
   perPageAllowedNetworks,
+  perChainDeployedContracts: perChainDeployedContracts,
 }
