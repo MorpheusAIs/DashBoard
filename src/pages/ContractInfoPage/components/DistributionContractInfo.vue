@@ -23,11 +23,14 @@
 
 <script setup lang="ts">
 import { ContractInfoHeader, ContractInfoData } from './ContractInfo'
-import { IUseContract, useContract } from '@/composables'
+import {
+  IUseContract,
+  useContract,
+  useExceptionContractsProvider,
+} from '@/composables'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useWeb3ProvidersStore } from '@/store'
-import { TokenContractInfo } from '@/types'
+import { DistributionContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
 import { useI18n } from 'vue-i18n'
 import { ethers } from 'ethers'
@@ -41,10 +44,11 @@ const props = defineProps<{
 
 const route = useRoute()
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
-const contractInfo = ref<TokenContractInfo | null>(null)
+const contractInfo = ref<DistributionContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
+
+const DistrProvider = useExceptionContractsProvider('Distribution__factory')
 
 const contract = computed<IUseContract<'Distribution__factory'> | null>(() => {
   if (!route.query.contractAddress) {
@@ -52,8 +56,8 @@ const contract = computed<IUseContract<'Distribution__factory'> | null>(() => {
   }
   return useContract(
     'Distribution__factory',
-    route.query.contractAddress,
-    web3ProvidersStore.l1Provider,
+    String(route.query.contractAddress),
+    DistrProvider.value,
   )
 })
 
@@ -89,6 +93,8 @@ const contractData = computed(() => [
 ])
 
 const init = async () => {
+  if (!contract.value) return
+
   isLoaded.value = false
   isLoadFailed.value = false
   try {
@@ -111,10 +117,10 @@ const init = async () => {
       depositToken,
       feeConfig,
       l1Sender,
-      overplus,
+      overplus: overplus?.toString(),
       owner,
       totalDepositedInPublicPools: Number(
-        ethers.utils.formatUnits(totalDepositedInPublicPools.toString()),
+        ethers.utils.formatUnits(totalDepositedInPublicPools?.toString() ?? 0),
       )
         .toFixed(3)
         .replace(/\.0+$/, ''),

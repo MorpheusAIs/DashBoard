@@ -9,11 +9,14 @@
 import DelegationDescription from './components/DelegationDescription.vue'
 import DelegationProviders from './components/DelegationProviders.vue'
 import { useWeb3ProvidersStore } from '@/store'
+import { useExceptionContractsProvider } from '@/composables'
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
+const DelegationPageProvider = useExceptionContractsProvider('DelegationPage')
+
 web3ProvidersStore.provider.selectChain(
-  web3ProvidersStore.selectedNetworkByType.l2.chainId,
+  String(DelegationPageProvider.value.network.chainId),
 )
 </script>
 

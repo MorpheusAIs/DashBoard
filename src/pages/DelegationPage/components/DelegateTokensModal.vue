@@ -188,12 +188,10 @@ const submit = async (): Promise<void> => {
       web3ProvidersStore.rewardsContractDetails.targetChainId,
     )
 
-    const subnetContract = computed(() =>
-      useContract(
-        'Subnet__factory',
-        form.address as string,
-        web3ProvidersStore.l2Provider,
-      ),
+    const subnetContract = useContract(
+      'Subnet__factory',
+      form.address as string,
+      web3ProvidersStore.wrappedEthProvider,
     )
 
     const allowance =
@@ -213,7 +211,7 @@ const submit = async (): Promise<void> => {
       await allowanceTx.wait()
     }
 
-    const tx = await subnetContract.value.signerBased.value.stake(
+    const tx = await subnetContract.signerBased.value.stake(
       parseUnits(form.amount, 'ether'),
     )
 
