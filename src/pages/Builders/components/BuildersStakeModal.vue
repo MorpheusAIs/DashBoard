@@ -114,7 +114,6 @@ import {
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
-import { getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
@@ -134,7 +133,6 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 const {
-  selectedNetworkByType,
   provider,
   rewardsContract,
   buildersContract,
@@ -258,7 +256,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      getEthereumChainsName(buildersContractDetails.value.targetChainId),
+      buildersContractDetails.value.explorerUrl,
       txReceipt.transactionHash,
     )
 

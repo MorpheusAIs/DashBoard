@@ -372,7 +372,7 @@ export const usePool = (poolId: Ref<number>) => {
     () => [
       web3ProvidersStore.provider.selectedAddress,
       web3ProvidersStore.isConnected,
-      web3ProvidersStore.selectedNetworkByType,
+      web3ProvidersStore.networkType,
       web3ProvidersStore.dashboardInfo,
     ],
     async () => {
@@ -393,24 +393,27 @@ export const usePool = (poolId: Ref<number>) => {
   )
 
   onMounted(() => {
-    init()
-    bus.on(BUS_EVENTS.changedPoolData, onChangePoolData)
-    bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
-    _currentUserRewardUpdateIntervalId = setInterval(async () => {
-      if (
-        !web3ProvidersStore.isConnected ||
-        !web3ProvidersStore.provider.selectedAddress ||
-        !web3ProvidersStore.isValidChain ||
-        web3ProvidersStore.isAddingToken
-      )
-        return
+    const mountInit = async () => {
+      await init()
+      bus.on(BUS_EVENTS.changedPoolData, onChangePoolData)
+      bus.on(BUS_EVENTS.changedCurrentUserReward, onChangeCurrentUserReward)
+      _currentUserRewardUpdateIntervalId = setInterval(async () => {
+        if (
+          !web3ProvidersStore.isConnected ||
+          !web3ProvidersStore.provider.selectedAddress ||
+          web3ProvidersStore.isAddingToken
+        )
+          return
 
-      try {
-        currentUserReward.value = await fetchCurrentUserReward()
-      } catch (error) {
-        ErrorHandler.process(error)
-      }
-    }, 30000)
+        try {
+          currentUserReward.value = await fetchCurrentUserReward()
+        } catch (error) {
+          ErrorHandler.process(error)
+        }
+      }, 30000)
+    }
+
+    mountInit()
   })
 
   onBeforeUnmount(() => {

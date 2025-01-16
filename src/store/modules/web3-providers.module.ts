@@ -5,6 +5,7 @@ import { type BigNumber, type Provider, type InfoDashboardType } from '@/types'
 import {
   config,
   EthereumChains,
+  getEthereumChainsName,
   NetworkTypes,
   perChainDeployedContracts,
 } from '@/config'
@@ -111,21 +112,17 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
   // ======================
 
-  const isValidChain = computed<boolean>(() => {
-    return (
-      isAddingToken.value ||
-      String(provider.chainId) === selectedNetworkByType.value.l1.chainId
-    )
-  })
-
   const isConnected = computed<boolean>(() => provider.isConnected)
 
   const address = computed<string>(() => provider.selectedAddress)
 
+  const erc1967ProxyContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.erc1967Proxy)
+  })
+
   const erc1967ProxyContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.erc1967Proxy,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      erc1967ProxyContractDetails.value
 
     return useContract(
       dashboardInfo.distributionAddress
@@ -138,10 +135,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const depositContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.stEth)
+  })
+
   const depositContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.stEth,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      depositContractDetails.value
 
     return useContract(
       'ERC20__factory',
@@ -152,10 +152,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const rewardsContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.mor)
+  })
+
   const rewardsContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.mor,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      rewardsContractDetails.value
 
     return useContract(
       'ERC20__factory',
@@ -166,10 +169,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const endpointContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.endpoint)
+  })
+
   const endpointContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.endpoint,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      endpointContractDetails.value
 
     return useContract(
       'Endpoint__factory',
@@ -180,10 +186,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const l1FactoryContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.l1Factory)
+  })
+
   const l1FactoryContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.l1Factory,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      l1FactoryContractDetails.value
 
     return useContract(
       'L1Factory__factory',
@@ -194,10 +203,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const l2FactoryContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.l2Factory)
+  })
+
   const l2FactoryContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.l2Factory,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      l2FactoryContractDetails.value
 
     return useContract(
       'L2Factory__factory',
@@ -208,10 +220,13 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const subnetFactoryContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.subnetFactory)
+  })
+
   const subnetFactoryContract = computed(() => {
-    const { address, targetChainId, fallbackProvider } = _pickContractDetails(
-      config.ContractIds.subnetFactory,
-    )
+    const { address, targetChainId, fallbackProvider } =
+      subnetFactoryContractDetails.value
 
     return useContract(
       'SubnetFactory__factory',
@@ -242,29 +257,14 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   const _pickContractDetails = (
     contractId: keyof typeof perChainDeployedContracts,
   ) => {
-    console.log('\n\n\n')
-    console.log(`Picking ${contractId}`)
     const deployedSelectedContracts =
       config.perChainDeployedContracts[contractId]
-
-    console.log('deployedSelectedContracts', deployedSelectedContracts)
 
     const currentChainContract = get(
       deployedSelectedContracts,
       provider.chainId,
       '',
     )
-
-    console.log('currentNetworkTypeChains', currentNetworkTypeChains.value)
-    console.log(
-      'allowedForCurrentRouteChains',
-      allowedForCurrentRouteChains.value,
-    )
-    console.log(
-      'allowedForCurrentRouteChainsLimitedByNetworkType',
-      allowedForCurrentRouteChainsLimitedByNetworkType.value,
-    )
-    console.log('currentChainContract', currentChainContract)
 
     const defaultForCurrentNetworkContract = Object.entries(
       deployedSelectedContracts,
@@ -273,11 +273,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
         currentNetworkTypeChains.value.includes(key as EthereumChains),
       )
       .find(([, value]) => Boolean(value))?.[1]
-
-    console.log(
-      'defaultForCurrentNetworkContract',
-      defaultForCurrentNetworkContract,
-    )
 
     const pickedForCurrentNetworkContract = Object.entries(
       deployedSelectedContracts,
@@ -289,18 +284,11 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       )
       .find(([, value]) => Boolean(value))?.[1]
 
-    console.log(
-      'pickedForCurrentNetworkContract',
-      pickedForCurrentNetworkContract,
-    )
-
     const resultedContract =
       ((isCurrentChainAllowed.value && currentChainContract) ||
         pickedForCurrentNetworkContract ||
         defaultForCurrentNetworkContract) ??
       ''
-
-    console.log('resultedContract', resultedContract)
 
     const fallbackProviderForResultedContract = Object.entries(
       config.perChainFallbackProviders,
@@ -314,17 +302,16 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
       )
     })
 
-    console.log(
-      'fallbackProviderForResultedContract',
-      fallbackProviderForResultedContract,
-    )
-
-    console.log('\n\n\n')
+    const targetChainId = fallbackProviderForResultedContract?.[0] ?? ''
+    const targetChainName = getEthereumChainsName(targetChainId)
+    const explorerUrl: string =
+      config.chainsMap[targetChainName].blockExplorerUrls?.[0] ?? ''
 
     return {
       address: resultedContract,
-      targetChainId: fallbackProviderForResultedContract?.[0] ?? '',
+      targetChainId: targetChainId,
       fallbackProvider: fallbackProviderForResultedContract?.[1],
+      explorerUrl,
     }
   }
 
@@ -419,23 +406,36 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
     // Getters
     networkType,
-    selectedNetworkByType,
+    selectedNetworkByType: selectedNetworkByType,
     l1Provider: l1Provider,
     l2Provider: l2Provider,
-    isValidChain: isValidChain,
     isConnected,
     address,
+
+    erc1967ProxyContractDetails,
     erc1967ProxyContract,
+
+    depositContractDetails,
     depositContract,
+
+    rewardsContractDetails,
     rewardsContract,
+
+    endpointContractDetails,
     endpointContract,
+
+    l1FactoryContractDetails,
+    l1FactoryContract,
+
+    l2FactoryContractDetails,
+    l2FactoryContract,
+
+    subnetFactoryContractDetails,
+    subnetFactoryContract,
 
     buildersContractDetails,
     buildersContract,
 
-    l1FactoryContract,
-    l2FactoryContract,
-    subnetFactoryContract,
     rewardsTokenSymbol,
     depositTokenSymbol,
 

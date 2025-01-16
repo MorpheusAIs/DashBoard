@@ -48,7 +48,12 @@ import {
 } from '@/pages/ContractInfoPage/components'
 import Loader from '@/common/Loader.vue'
 import { CONTRACT_INFO_ACTIONS, CONTRACT_TYPE } from '@/enums'
-import { config, EthereumChains, NetworkTypes } from '@config'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+} from '@config'
 
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
@@ -95,21 +100,10 @@ const network = computed(() => {
 })
 
 const explorerUrl = computed(() => {
-  let url = ''
-  switch (network.value) {
-    case EthereumChains.Arbitrum:
-      url = config.networksMap.mainnet.l2.explorerUrl
-      break
-    case EthereumChains.Sepolia:
-      url = config.networksMap.testnet.l1.explorerUrl
-      break
-    case EthereumChains.Ethereum:
-      url = config.networksMap.mainnet.l1.explorerUrl
-      break
-    default:
-      url = config.networksMap.testnet.l2.explorerUrl
-      break
-  }
+  const url =
+    config.chainsMap[getEthereumChainsName(network.value)]
+      .blockExplorerUrls?.[0]
+
   return `${url}/address/`
 })
 
