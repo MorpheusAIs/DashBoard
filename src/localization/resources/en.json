@@ -891,7 +891,7 @@
     "stake-btn": "Stake",
     "staker-addr-name-th": "Name / Address",
     "staked-th": "MOR Staked",
-    "start-time-th": "Start time",
+    "date-th": "Date",
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "empty-dash": "-"
   }

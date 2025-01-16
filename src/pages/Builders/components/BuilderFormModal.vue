@@ -80,7 +80,13 @@
 import { AppButton, BasicModal } from '@/common'
 import { InputField, DatetimeField } from '@/fields'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
-import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import {
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  getEthExplorerTxUrl,
+  sleep,
+} from '@/helpers'
 import { reactive, ref } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { required } from '@/validators'
@@ -195,16 +201,11 @@ const submit = async () => {
       txReceipt.transactionHash,
     )
 
-    const BuilderPoolCreatedFilter =
-      buildersContract.value?.signerBased.value.filters.BuilderPoolCreated()
-
-    const events = await buildersContract.value?.signerBased.value.queryFilter(
-      BuilderPoolCreatedFilter,
+    const poolId = await buildersContract.value?.signerBased.value.getPoolId(
+      form.name,
     )
 
-    const lastEvent = events[events.length - 1]
-
-    const poolId = lastEvent.args[0]
+    await sleep(2000)
 
     bus.emit(
       BUS_EVENTS.success,
