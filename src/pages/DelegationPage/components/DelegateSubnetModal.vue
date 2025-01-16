@@ -132,7 +132,7 @@ const submit = async (): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.selectedNetworkByType.l2.chainId,
+      web3ProvidersStore.subnetFactoryContractDetails.targetChainId,
     )
 
     /* eslint-disable */
@@ -148,7 +148,7 @@ const submit = async (): Promise<void> => {
     /* eslint-enable */
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
+      web3ProvidersStore.subnetFactoryContractDetails.explorerUrl,
       tx.hash,
     )
 

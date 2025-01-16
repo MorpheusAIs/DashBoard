@@ -157,17 +157,16 @@ export enum ContractIds {
   builders = 'builders',
 }
 
-export enum LAYER_ZERO_ENDPOINT_IDS {
-  ethereum = '101',
-  sepolia = '10161',
-  arbitrum = '110',
-  arbitrumSepolia = '10231',
+export const layerZeroEndpointIds: Record<EthereumChains, string> = {
+  [EthereumChains.Ethereum]: '101',
+  [EthereumChains.Sepolia]: '10161',
+  [EthereumChains.Arbitrum]: '110',
+  [EthereumChains.ArbitrumSepolia]: '10231',
+  [EthereumChains.Base]: '',
 }
 
 type NetworkLayer = {
   chainId: EthereumChains
-  chainTitle: string
-  layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS
   provider: Provider
   explorerUrl: string
 }
@@ -276,8 +275,6 @@ export const networksMap: Record<
   [NetworkTypes.Mainnet]: {
     l1: {
       chainId: EthereumChains.Ethereum,
-      chainTitle: 'Ethereum',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.ethereum,
       provider: new providers.FallbackProvider(
         [
           'https://rpc.mevblocker.io',
@@ -299,8 +296,6 @@ export const networksMap: Record<
     },
     l2: {
       chainId: EthereumChains.Arbitrum,
-      chainTitle: 'Arbitrum',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.arbitrum,
       provider: new providers.StaticJsonRpcProvider(
         chainsMap.Arbitrum.rpcUrls[0],
       ),
@@ -320,8 +315,6 @@ export const networksMap: Record<
   [NetworkTypes.Testnet]: {
     l1: {
       chainId: EthereumChains.Sepolia,
-      chainTitle: 'Ethereum Sepolia',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.sepolia,
       provider: new providers.StaticJsonRpcProvider(
         chainsMap.Sepolia.rpcUrls[0],
         ethers.providers.getNetwork(Number(EthereumChains.Sepolia)),
@@ -330,8 +323,6 @@ export const networksMap: Record<
     },
     l2: {
       chainId: EthereumChains.ArbitrumSepolia,
-      chainTitle: 'Arbitrum Sepolia',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.arbitrumSepolia,
       provider: new providers.StaticJsonRpcProvider(
         chainsMap.ArbitrumSepolia.rpcUrls[0],
       ),
@@ -452,4 +443,5 @@ export const config = {
   perPageAllowedNetworks: perPageAllowedNetworks,
   perChainDeployedContracts: perChainDeployedContracts,
   perChainFallbackProviders: perChainFallbackProviders,
+  layerZeroEndpointIds: layerZeroEndpointIds,
 }

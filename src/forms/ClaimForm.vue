@@ -33,6 +33,7 @@ import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { address, required } from '@/validators'
 import { reactive, ref } from 'vue'
+import { config, EthereumChains } from '@config'
 
 const emit = defineEmits<{
   (e: 'cancel', v: void): void
@@ -57,9 +58,9 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 const { t } = useI18n()
 
 const {
+  endpointContractDetails,
   endpointContract,
   erc1967ProxyContract,
-  selectedNetworkByType,
   provider,
 } = storeToRefs(useWeb3ProvidersStore())
 
@@ -68,10 +69,17 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
-    await provider.value.selectChain(selectedNetworkByType.value.l1.chainId)
+    await provider.value.selectChain(
+      endpointContractDetails.value.targetChainId,
+    )
+
+    const layerZeroEndpointId =
+      config.layerZeroEndpointIds[
+        endpointContractDetails.value.targetChainId as EthereumChains
+      ]
 
     const fees = await endpointContract.value.providerBased.value.estimateFees(
-      selectedNetworkByType.value.l2.layerZeroEndpointId,
+      layerZeroEndpointId,
       await erc1967ProxyContract.value.providerBased.value.l1Sender(),
       '0x'.concat('00'.repeat(64)),
       false,
@@ -85,7 +93,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      selectedNetworkByType.value.l1.explorerUrl,
+      endpointContractDetails.value.explorerUrl,
       tx.hash,
     )
 

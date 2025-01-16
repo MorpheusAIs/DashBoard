@@ -187,7 +187,7 @@ const submit = async (): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.selectedNetworkByType.l2.chainId,
+      web3ProvidersStore.rewardsContractDetails.targetChainId,
     )
 
     const subnetContract = computed(() =>
@@ -220,7 +220,7 @@ const submit = async (): Promise<void> => {
     )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType.l2.explorerUrl,
+      web3ProvidersStore.rewardsContractDetails.explorerUrl,
       tx.hash,
     )
 

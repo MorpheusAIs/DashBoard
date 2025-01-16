@@ -65,6 +65,7 @@ import {
 } from '@/helpers'
 import { ethers } from 'ethers'
 import { ERC1967Proxy } from '@/types'
+import { config, EthereumChains } from '@config'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -109,10 +110,16 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    const layerZeroEndpointId =
+      config.layerZeroEndpointIds[
+        web3ProvidersStore.endpointContractDetails
+          .targetChainId as EthereumChains
+      ]
+
     const fees =
       // eslint-disable-next-line max-len
       await web3ProvidersStore.endpointContract.providerBased.value.estimateFees(
-        web3ProvidersStore.selectedNetworkByType.l2.layerZeroEndpointId,
+        layerZeroEndpointId,
         // eslint-disable-next-line max-len
         await web3ProvidersStore.erc1967ProxyContract.providerBased.value.l1Sender(),
         '0x'.concat('00'.repeat(64)),
@@ -125,7 +132,7 @@ const submit = async (): Promise<void> => {
     ).claimReferrerTier(props.poolId, form.address, { value: fees.nativeFee })
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
+      web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,
       tx.hash,
     )
 

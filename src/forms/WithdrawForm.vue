@@ -77,7 +77,7 @@ const submit = async (): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      web3ProvidersStore.selectedNetworkByType.l1.chainId,
+      web3ProvidersStore.erc1967ProxyContractDetails.targetChainId,
     )
 
     const tx =
@@ -87,7 +87,7 @@ const submit = async (): Promise<void> => {
       )
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      web3ProvidersStore.selectedNetworkByType.l1.explorerUrl,
+      web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,
       tx.hash,
     )
 
