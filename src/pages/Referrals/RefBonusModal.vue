@@ -55,7 +55,7 @@ import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required } from '@/validators'
-import { storeToRefs, useWeb3ProvidersStore } from '@/store'
+import { useWeb3ProvidersStore } from '@/store'
 import {
   bus,
   BUS_EVENTS,
@@ -132,8 +132,6 @@ const submit = async (): Promise<void> => {
         false,
         '0x',
       )
-
-    console.log(web3ProvidersStore.provider)
 
     const tx = await (
       web3ProvidersStore.erc1967ProxyContract.signerBased.value as ERC1967Proxy
