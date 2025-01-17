@@ -87,11 +87,14 @@ import {
   getEthExplorerTxUrl,
   sleep,
 } from '@/helpers'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
-import { required } from '@/validators'
+import { minValue, required } from '@/validators'
 import { GetBuildersProjectQuery } from '@/types/graphql'
 import { formatEther, parseUnits } from '@/utils'
+import { helpers } from '@vuelidate/validators'
+import { time } from '@distributedlab/tools'
+import { DOT_TIME_FORMAT } from '@/const'
 
 const props = withDefaults(
   defineProps<{
@@ -144,15 +147,26 @@ const form = reactive<{
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
-  useFormValidation(form, {
-    name: { required },
-    depositAmount: { required },
-    lockPeriodAfterStake: {
-      required,
-    },
-    startAt: { required },
-    claimLockEndTime: { required },
-  })
+  useFormValidation(
+    form,
+    computed(() => ({
+      name: { required },
+      depositAmount: { required },
+      lockPeriodAfterStake: {
+        required,
+      },
+      startAt: { required },
+      claimLockEndTime: {
+        required,
+        minValue: helpers.withMessage(
+          t('builder-form-modal.min-end-time-validation-err-msg', {
+            time: time(+form.startAt).format(DOT_TIME_FORMAT),
+          }),
+          minValue(Number(form.startAt)),
+        ),
+      },
+    })),
+  )
 
 const clearForm = () => {
   form.name = ''

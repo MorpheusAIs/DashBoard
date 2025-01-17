@@ -816,7 +816,8 @@
     "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
     "lock-period-after-stake-note": "After a user stakes to your project, this is how long they will need to wait before they can unstake. NOTE: each time a user stakes to your project, this lock period will reset.",
     "cancel-btn": "Cancel",
-    "submit-btn": "Confirm"
+    "submit-btn": "Confirm",
+    "min-end-time-validation-err-msg": "Should be more than {time}"
   },
   "builders-stake-modal": {
     "modal-title": "Stake MOR",
