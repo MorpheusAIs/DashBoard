@@ -55,7 +55,7 @@ import { computed, reactive, ref } from 'vue'
 import { InputField } from '@/fields'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required } from '@/validators'
-import { useWeb3ProvidersStore } from '@/store'
+import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import {
   bus,
   BUS_EVENTS,
@@ -110,11 +110,17 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      web3ProvidersStore.erc1967ProxyContractDetails.targetChainId,
+    )
+
     const layerZeroEndpointId =
       config.layerZeroEndpointIds[
         web3ProvidersStore.endpointContractDetails
           .targetChainId as EthereumChains
       ]
+
+    // console.log(layerZeroEndpointId)
 
     const fees =
       // eslint-disable-next-line max-len
@@ -127,9 +133,13 @@ const submit = async (): Promise<void> => {
         '0x',
       )
 
+    console.log(web3ProvidersStore.provider)
+
     const tx = await (
       web3ProvidersStore.erc1967ProxyContract.signerBased.value as ERC1967Proxy
     ).claimReferrerTier(props.poolId, form.address, { value: fees.nativeFee })
+
+    // console.log(2)
 
     const explorerTxUrl = getEthExplorerTxUrl(
       web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,
