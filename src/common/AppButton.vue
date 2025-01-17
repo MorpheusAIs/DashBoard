@@ -370,7 +370,8 @@ $button-transition: var(--transition-duration-fast)
 
       &:not([disabled]):focus,
       &:not([disabled]):active {
-        box-shadow: $box-shadow-hover,
+        box-shadow:
+          $box-shadow-hover,
           inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
       }
     }
@@ -596,12 +597,12 @@ $button-transition: var(--transition-duration-fast)
   &--small {
     --button-icon-size: #{toRem(14)};
 
-    padding: toRem(8) toRem(16);
+    padding: toRem(8) toRem(24);
     font-size: toRem(12);
     line-height: 1.45;
     font-weight: 500;
     gap: toRem(8);
-    height: toRem(32);
+    height: toRem(40);
 
     &.app-button--icon-only {
       --button-icon-size: #{toRem(20)};

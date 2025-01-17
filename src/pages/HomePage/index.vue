@@ -1,7 +1,7 @@
 <template>
   <main class="home-page">
     <div class="home-page__content-wrp">
-      <app-tabs v-if="isTabsShown" :tabs="tabs" />
+      <app-tabs v-if="isTabsShown" :tabs="tabs" class="home-page__tabs" />
       <router-view v-slot="{ Component }" class="home-page__view">
         <keep-alive>
           <component :is="Component" :key="$route.fullPath" />
@@ -14,10 +14,10 @@
 <script lang="ts" setup>
 import { AppTabs } from '@/common'
 import { useI18n } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
-import { config } from '@config'
+import { config, NetworkTypes } from '@config'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -39,24 +39,28 @@ const tabs = computed<Tab[]>(() => [
   {
     title: t('home-page.compute-tab'),
     id: 'compute',
-    href: config.COMPUTE_CONTRIBUTION_URL,
+    // href: config.COMPUTE_CONTRIBUTION_URL,
+    route: { name: ROUTE_NAMES.appDelegation },
   },
   {
     title: t('home-page.builders-tab'),
     id: 'builders',
     ...{
-      [NETWORK_IDS.mainnet]: {
-        href: config.COMMUNITY_CONTRIBUTION_URL,
+      [NetworkTypes.Mainnet]: {
+        route: { name: ROUTE_NAMES.appBuildersList },
       },
-      [NETWORK_IDS.testnet]: {
-        route: { name: ROUTE_NAMES.appCommunity },
+      [NetworkTypes.Testnet]: {
+        route: { name: ROUTE_NAMES.appBuildersList },
       },
-    }[web3ProvidersStore.networkId],
+    }[web3ProvidersStore.networkType],
   },
 ])
 
 const isTabsShown = computed(
-  () => route.name !== ROUTE_NAMES.appDashboardCapital,
+  () =>
+    ![ROUTE_NAMES.appDashboardCapital, ROUTE_NAMES.appBuildersItem].find(
+      el => el === route.name,
+    ),
 )
 </script>
 
@@ -116,8 +120,11 @@ const isTabsShown = computed(
   @include page-wrp;
 }
 
+.home-page__tabs {
+  margin-bottom: toRem(64);
+}
+
 .home-page .home-page__view {
-  margin-top: toRem(64);
   display: grid;
   grid-template-columns: 1fr minmax(0, toRem(704));
   grid-gap: toRem(30);

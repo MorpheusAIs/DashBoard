@@ -1,0 +1,143 @@
+fragment BuilderProject on BuildersProject {
+  admin
+  claimLockEnd
+  id
+  minimalDeposit
+  name
+  startsAt
+  totalClaimed
+  totalStaked
+  totalUsers
+  withdrawLockPeriodAfterDeposit
+}
+
+query getBuildersProjects(
+  $first: Int = 10
+  $skip: Int = 10
+  $orderBy: BuildersProject_orderBy
+  $orderDirection: OrderDirection
+) {
+  buildersProjects(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+  ) {
+    ...BuilderProject
+  }
+}
+
+query getBuildersProjectsByIds($id_in: [Bytes!] = "") {
+  buildersProjects(where: { id_in: $id_in }) {
+    ...BuilderProject
+  }
+}
+
+query getBuildersProject($id: ID = "") {
+  buildersProject(id: $id) {
+    ...BuilderProject
+  }
+}
+
+query getAccountUserBuildersProjects($address: Bytes = "") {
+  buildersUsers(where: { address: $address }) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      ...BuilderProject
+    }
+  }
+}
+
+query getBuildersProjectUsers(
+  $first: Int = 10
+  $skip: Int = 10
+  $buildersProjectId: Bytes = ""
+) {
+  buildersUsers(
+    first: $first
+    skip: $skip
+    where: { buildersProject_: {id: $buildersProjectId} }
+  ) {
+    address
+    id
+    staked
+    lastStake
+  }
+}
+
+query getUserAccountBuildersProject($address: Bytes = "", $project_id: Bytes = "") {
+  buildersUsers(where: {address: $address, buildersProject_: {id: $project_id}}) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      admin
+      claimLockEnd
+      id
+      minimalDeposit
+      name
+      startsAt
+      totalClaimed
+      totalStaked
+      totalUsers
+      withdrawLockPeriodAfterDeposit
+    }
+  }
+}
+
+query GetBuildersCounters {
+  counters {
+    id
+    totalBuildersProjects
+    totalSubnets
+  }
+}
+
+query combinedBuildersList(
+  $first: Int = 10
+  $skip: Int = 10
+  $orderBy: BuildersProject_orderBy
+  $orderDirection: OrderDirection
+
+  $address: Bytes = ""
+  $project_id: Bytes = ""
+) {
+  buildersProjects(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+  ) {
+    ...BuilderProject
+  }
+
+
+  buildersUsers(where: {address: $address}) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      admin
+      claimLockEnd
+      id
+      minimalDeposit
+      name
+      startsAt
+      totalClaimed
+      totalStaked
+      totalUsers
+      withdrawLockPeriodAfterDeposit
+    }
+  }
+
+  counters {
+    id
+    totalBuildersProjects
+    totalSubnets
+  }
+}

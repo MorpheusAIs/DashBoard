@@ -155,6 +155,15 @@ $media-breakpoints: (
   }
 }
 
+@mixin square ($width) {
+  max-width: toRem($width);
+  max-height: toRem($width);
+  width: toRem($width);
+  height: toRem($width);
+  min-width: toRem($width);
+  min-height: toRem($width);
+}
+
 @mixin h1 {
   font-family: var(--app-font-family);
   font-size: toRem(54);

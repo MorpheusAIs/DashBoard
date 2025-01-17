@@ -23,27 +23,33 @@
 
 <script setup lang="ts">
 import { ContractInfoHeader, ContractInfoData } from './ContractInfo'
-import { IUseContract, useContract } from '@/composables'
+import {
+  IUseContract,
+  useContract,
+  useExceptionContractsProvider,
+} from '@/composables'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useWeb3ProvidersStore } from '@/store'
 import { L2TokenReceiverContractInfo } from '@/types'
 import { ErrorHandler } from '@/helpers'
-import { ETHEREUM_CHAIN_NAMES } from '@/enums'
 import { useI18n } from 'vue-i18n'
 import { ErrorMessage, Loader } from '@/common'
+import { EthereumChains } from '@config'
 
 const props = defineProps<{
-  network: ETHEREUM_CHAIN_NAMES
+  network: EthereumChains
   explorerUrl: string
 }>()
 
 const route = useRoute()
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
 const contractInfo = ref<L2TokenReceiverContractInfo | null>(null)
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
+
+const L2TokenReceiver__factoryProvider = useExceptionContractsProvider(
+  'L2TokenReceiver__factory',
+)
 
 const contract = computed<IUseContract<'L2TokenReceiver__factory'> | null>(
   () => {
@@ -52,8 +58,8 @@ const contract = computed<IUseContract<'L2TokenReceiver__factory'> | null>(
     }
     return useContract(
       'L2TokenReceiver__factory',
-      route.query.contractAddress,
-      web3ProvidersStore.l2Provider,
+      String(route.query.contractAddress),
+      L2TokenReceiver__factoryProvider.value,
     )
   },
 )
@@ -115,6 +121,8 @@ const contractData = computed(() => [
 ])
 
 const init = async () => {
+  if (!contract.value) return
+
   isLoaded.value = false
   isLoadFailed.value = false
   try {

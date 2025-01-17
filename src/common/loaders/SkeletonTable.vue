@@ -1,14 +1,19 @@
 <template>
-  <div class="skeleton-table">
+  <div class="flex w-full flex-col gap-6">
     <div
       v-for="row in rows"
       :key="row"
-      class="skeleton-table__row"
+      class="grid items-center gap-4"
       :style="{
         gridTemplateColumns: sizing,
       }"
     >
-      <skeleton v-for="scheme in schemes" :key="scheme" :scheme="scheme" />
+      <skeleton
+        v-for="scheme in schemes"
+        :key="scheme"
+        :scheme="scheme"
+        :class="commonSkeletonClassNames"
+      />
     </div>
   </div>
 </template>
@@ -21,24 +26,13 @@ withDefaults(
     rows: number
     schemes?: ('thin' | 'medium' | 'circle')[]
     sizing: string
+    commonSkeletonClassNames?: string
   }>(),
   {
     schemes: () => ['medium', 'medium', 'medium', 'medium', 'medium'],
+    commonSkeletonClassNames: '',
   },
 )
 </script>
 
-<style lang="scss" scoped>
-.skeleton-table {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(24);
-  width: 100%;
-}
-
-.skeleton-table__row {
-  display: grid;
-  align-items: center;
-  grid-gap: toRem(16);
-}
-</style>
+<style lang="scss" scoped></style>

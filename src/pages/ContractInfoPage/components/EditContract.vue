@@ -5,6 +5,7 @@
         :name="$t('edit-contract.title')"
         :project-name="contractName"
         :type="CONTRACT_INFO_ACTIONS.edit"
+        :network="network"
       />
     </header>
     <div class="edit-contract__content">
@@ -35,6 +36,7 @@ import { address, minValue, maxValue, required, hex } from '@/validators'
 import { ContractEditingType, ContractMethods } from '@/types'
 import { useI18n } from '@/composables'
 import { CONTRACT_METHODS } from '@/const'
+import { EthereumChains } from '@config'
 
 type ContractMethodsConfig = {
   [key in keyof typeof CONTRACT_METHODS]: ContractEditingType
@@ -42,7 +44,7 @@ type ContractMethodsConfig = {
 
 const props = defineProps<{
   contractType: CONTRACT_TYPE
-  network: string
+  network: EthereumChains
   projectName?: string
 }>()
 

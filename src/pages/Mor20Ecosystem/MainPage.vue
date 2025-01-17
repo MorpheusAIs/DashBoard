@@ -1,7 +1,7 @@
 <template>
   <main class="main-page" :class="{ 'main-page--loading': isInitializing }">
     <transition name="fade" mode="out-in">
-      <div class="main-page__wrp" :key="($route.query.network as string)">
+      <div class="main-page__wrp" :key="$route.query.network as string">
         <transition name="fade" mode="out-in">
           <div v-if="(protocol && cards.length) || isInitializing">
             <h2 class="main-page__title">
@@ -70,8 +70,8 @@
 
 <script lang="ts" setup>
 import { AppButton, ConnectWalletButton, InfoCard } from '@/common'
-import { useI18n } from '@/composables'
-import { ICON_NAMES, NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { useI18n, useLimitedProvider } from '@/composables'
+import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import {
   ErrorHandler,
   getEthExplorerAddressUrl,
@@ -80,14 +80,19 @@ import {
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { InfoCardType, Mor20EcosystemType } from '@/types'
-import { config } from '@config'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+} from '@config'
 import { computed, ref, watch } from 'vue'
 import { useClipboard } from '@vueuse/core'
 import { useRoute } from 'vue-router'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
-  if (to.query.network === NETWORK_IDS.mainnet)
+  if (to.query.network === NetworkTypes.Mainnet)
     return { ...to, name: ROUTE_NAMES.app }
 })
 
@@ -97,6 +102,37 @@ const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const l1Provider = useLimitedProvider([
+  EthereumChains.Ethereum,
+  EthereumChains.Sepolia,
+])
+
+const l1ProviderDetails = computed(() => {
+  return config.chainsMap[
+    getEthereumChainsName(String(l1Provider.value.network.chainId))
+  ]
+})
+
+const l2Provider = useLimitedProvider([
+  EthereumChains.Arbitrum,
+  EthereumChains.ArbitrumSepolia,
+])
+
+const l2ProviderDetails = computed(() => {
+  if (l2Provider.value.network) {
+    return config.chainsMap[
+      getEthereumChainsName(String(l2Provider.value.network.chainId))
+    ]
+  }
+
+  const network =
+    route.query.network === NetworkTypes.Testnet
+      ? EthereumChains.ArbitrumSepolia
+      : EthereumChains.Arbitrum
+
+  return getEthereumChainsName(network)
+})
 
 const protocol = ref<Mor20EcosystemType.Protocol | null>(null)
 const isInitializing = ref(false)
@@ -127,7 +163,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t('mor20-ecosystem.main-page.info-card.token.description'),
     address: protocol.value?.tokenAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
       protocol.value?.tokenAddress || '',
     ),
   },
@@ -139,7 +175,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.distributionAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      l1ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
       protocol.value?.distributionAddress || '',
     ),
   },
@@ -149,7 +185,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t('mor20-ecosystem.main-page.info-card.l1-sender.description'),
     address: protocol.value?.l1SenderAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      l1ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
       protocol.value?.l1SenderAddress || '',
     ),
   },
@@ -161,7 +197,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.l2MessageReceiverAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
       protocol.value?.l2MessageReceiverAddress || '',
     ),
   },
@@ -173,7 +209,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.l2TokenReceiverAddress || '',
     link: getEthExplorerAddressUrl(
-      config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+      l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
       protocol.value?.l2TokenReceiverAddress || '',
     ),
   },

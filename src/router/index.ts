@@ -1,4 +1,4 @@
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import { sleep } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import {
@@ -9,6 +9,8 @@ import {
   useRoute,
   useRouter,
 } from 'vue-router'
+import { NetworkTypes } from '@config'
+import { storeToRefs } from 'pinia'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -33,6 +35,24 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/HomePage/views/PrivatePoolView.vue'),
         props: { poolId: 1 },
       },
+      {
+        path: '/delegation',
+        name: ROUTE_NAMES.appDelegation,
+        component: () => import('@/pages/DelegationPage/Index.vue'),
+        props: { poolId: 0 },
+      },
+      {
+        path: 'builders',
+        name: ROUTE_NAMES.appBuildersList,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersList/index.vue'),
+      },
+      {
+        path: 'builders/:id',
+        name: ROUTE_NAMES.appBuildersItem,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersItem/index.vue'),
+      },
     ],
   },
   {
@@ -51,6 +71,11 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/delegator-info',
+    name: ROUTE_NAMES.appDelegatorInfo,
+    component: () => import('@/pages/DelegatorInfoPage/Index.vue'),
+  },
+  {
     path: '/mor20-ecosystem',
     children: [
       {
@@ -64,13 +89,13 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('@/pages/Mor20Ecosystem/ProtocolCreationPage.vue'),
         beforeEnter: async to => {
-          const { provider } = useWeb3ProvidersStore()
+          const { provider } = storeToRefs(useWeb3ProvidersStore())
 
-          if (!provider.selectedAddress) {
+          if (!provider.value.selectedAddress) {
             await sleep(1000)
           }
 
-          if (!provider.selectedAddress)
+          if (!provider.value.selectedAddress)
             return { ...to, name: ROUTE_NAMES.appMor20EcosystemMain }
         },
       },
@@ -103,7 +128,7 @@ router.beforeEach((to, from) => {
   }
 
   to.query.network =
-    to.query.network || from.query.network || NETWORK_IDS.mainnet
+    to.query.network || from.query.network || NetworkTypes.Mainnet
 
   return { ...to, query: { ...to.query } }
 })

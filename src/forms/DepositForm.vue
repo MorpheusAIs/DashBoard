@@ -43,7 +43,7 @@
             :disabled="isSubmitting || !balanceOfForm"
             @click="
               form.amount = formatEther(
-                web3ProvidersStore.balances.depositToken,
+                web3ProvidersStore.balances.depositToken?._hex ?? 0,
               )
             "
           />
@@ -61,10 +61,11 @@
       />
       <input-field
         v-model="form.referrer"
-        :disabled="Boolean($route.query?.referrer) || isSubmitting"
-        :placeholder="$t(`deposit-form.referrer-placeholder`)"
+        :disabled="isReferrerDisabled"
+        :placeholder="$t('deposit-form.referrer-placeholder')"
         :error-message="getFieldErrorMessage('referrer')"
         :is-loading="isInitializing"
+        :note="$t('deposit-form.referrer-note')"
         @blur="touchField('referrer')"
       />
     </div>
@@ -108,6 +109,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, reactive, ref, toRef, watch } from 'vue'
 import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
+import { type Erc1967ProxyType } from '@/types'
 import { ethers } from 'ethers'
 
 enum ACTIONS {
@@ -141,6 +143,10 @@ const depositTokenAllowance = ref('')
 const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
   usePool(toRef(props.poolId))
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const isReferrerDisabled = computed(
+  () => ethers.utils.isAddress(route.query?.referrer) || isSubmitting.value,
+)
 
 const action = computed<ACTIONS>(() => {
   if (isFieldsValid.value) {
@@ -218,7 +224,7 @@ const submit = async (action: ACTIONS): Promise<void> => {
 
   try {
     await web3ProvidersStore.provider.selectChain(
-      config.networksMap[web3ProvidersStore.networkId].l1.chainId,
+      web3ProvidersStore.erc1967ProxyContractDetails.targetChainId,
     )
 
     let tx
@@ -232,17 +238,14 @@ const submit = async (action: ACTIONS): Promise<void> => {
           props.poolId,
           amountInDecimals,
           ...(isMultiplierShown.value
-            ? [
-                form.lockPeriod || 0,
-                form.referrer || ethers.constants.AddressZero,
-              ]
+            ? [form.lockPeriod || 0, form.referrer || config.DEFAULT_REFEREE]
             : []),
         )
       emit('stake-tx-sent')
     }
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,
       tx.hash,
     )
 
@@ -330,6 +333,7 @@ watch(
   },
   { immediate: true },
 )
+
 init()
 </script>
 

@@ -328,7 +328,7 @@ $z-local-index: 2;
 .select-field__select-drop-menu-item {
   $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
 
-  text-align: right;
+  text-align: left;
   width: 100%;
   padding: toRem(8) toRem(16);
   color: var(--field-text);
@@ -351,7 +351,9 @@ $z-local-index: 2;
   &:not([disabled]):focus,
   &:not([disabled]):active {
     background: #515c57;
-    box-shadow: $shadow-hover, inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
+    box-shadow:
+      $shadow-hover,
+      inset 0 toRem(4) toRem(4) rgba(#000000, 0.25);
   }
 }
 

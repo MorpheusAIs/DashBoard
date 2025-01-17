@@ -126,10 +126,11 @@ import AppChart from '../AppChart.vue'
 import ConnectWalletButton from '../ConnectWalletButton.vue'
 import { AppButton, InfoIndicator } from '@/common'
 import { ROUTE_NAMES } from '@/enums'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { errors } from '@/errors'
 import { ethers } from 'ethers'
 import { config } from '@config'
+import { useFirstApolloClient } from '@/composables/use-first-apollo-client'
 
 const CUT_ADDRESS_LENGTH = 7
 
@@ -160,6 +161,7 @@ const props = withDefaults(
 
 const { t } = useI18n()
 const route = useRoute()
+const router = useRouter()
 
 const { userPoolData } = usePool(toRef(props.poolId))
 
@@ -180,12 +182,12 @@ const yearOptions = computed<FieldOption<number>[]>(() => {
   const currentTime = new Time()
   const currentYear = currentTime.get('year')
 
-  return Array.from({ length: currentYear - config.yearOfLaunch + 1 }).map(
-    (_, idx) => ({
-      title: String(config.yearOfLaunch + idx),
-      value: config.yearOfLaunch + idx,
-    }),
-  )
+  return Array.from({
+    length: currentYear - config.metadata.yearOfLaunch + 1,
+  }).map((_, idx) => ({
+    title: String(config.metadata.yearOfLaunch + idx),
+    value: config.metadata.yearOfLaunch + idx,
+  }))
 })
 
 const selectedYear = ref(yearOptions.value[yearOptions.value.length - 1])
@@ -200,7 +202,9 @@ const monthOptions = computed<FieldOption<number>[]>(() => {
   const month = currentTime.get('month')
 
   const firstSlice =
-    selectedYear.value.value === config.yearOfLaunch ? config.monthOfLaunch : 0
+    selectedYear.value.value === config.metadata.yearOfLaunch
+      ? config.metadata.monthOfLaunch
+      : 0
   const secondSlice =
     selectedYear.value.value === currentTime.get('year') ? month + 1 : 12
 
@@ -250,13 +254,15 @@ const isChartShown = computed(
   () => route.name !== ROUTE_NAMES.appDashboardCapital,
 )
 
+const apolloClient = useFirstApolloClient()
+
 const updateSupplyChartData = async (month: number, year: number) => {
   const chartData = await getChartData(
     props.poolId,
     props.poolData!.payoutStart,
     month,
     year,
-    route.query.network,
+    apolloClient.value,
   )
 
   const monthTime = new Time(String(month + 1), 'M')
@@ -277,10 +283,11 @@ const updateSupplyChartData = async (month: number, year: number) => {
 const updateEarnedMorChartData = async (month: number, year: number) => {
   const chartData = await getUserYieldPerDayChartData(
     props.poolId,
-    web3ProvidersStore.address,
+    // web3ProvidersStore.address,
+    '0x19ec1E4b714990620edf41fE28e9a1552953a7F4',
     month,
     year,
-    route.query.network,
+    apolloClient.value,
   )
 
   chartConfig.data.labels = Object.keys(chartData).map(timestamp => {
@@ -319,7 +326,7 @@ const changeChartType = (chartToSet: CHART_TYPE) => {
 onMounted(() => {
   if (props.poolData)
     updateChartData(
-      selectedMonth.value?.value || 0,
+      selectedMonth.value.value,
       selectedYear.value?.value || new Time().get('year'),
     )
 })
@@ -327,19 +334,11 @@ onMounted(() => {
 watch(
   [selectedMonth, selectedYear, () => props.poolData, chartType],
   async ([newSelectedMonth]) => {
-    await updateChartData(
-      newSelectedMonth?.value || 0,
-      selectedYear.value?.value || new Time().get('year'),
-    )
-  },
-)
-
-watch(
-  () => selectedYear.value,
-  () => {
-    if (monthOptions.value.includes(selectedMonth.value)) return
-
-    selectedMonth.value = monthOptions.value[0]
+    if (!props.isLoading)
+      await updateChartData(
+        newSelectedMonth.value,
+        selectedYear.value?.value || new Time().get('year'),
+      )
   },
 )
 </script>
@@ -432,6 +431,11 @@ watch(
   @include body-6-regular;
 }
 
+.info-dashboard__header-fields {
+  display: flex;
+  gap: toRem(8);
+}
+
 .info-dashboard__app-chart-wrp {
   margin-top: toRem(16);
   border-top: toRem(2) solid var(--border-tertiary-main);
@@ -443,11 +447,6 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.info-dashboard__header-fields {
-  display: flex;
-  gap: toRem(8);
 }
 
 .info-dashboard .info-dashboard__app-chart {

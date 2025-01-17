@@ -62,16 +62,16 @@
 
 <script setup lang="ts">
 import { reactive, computed, ref, watch, toRef } from 'vue'
-import { ETHEREUM_CHAIN_IDS, SWAP_ASSETS_NAMES } from '@/enums'
+import { SWAP_ASSETS_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { useContract, useFormValidation, useI18n, useSwap } from '@/composables'
 import { required, minEther, maxEther } from '@/validators'
 import { SWAP_ASSETS } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { ErrorHandler, roundNumber } from '@/helpers'
-import { utils } from 'ethers'
+import { providers, utils } from 'ethers'
 import { AppButton } from '@/common'
-import { config } from '@config'
+import { config, EthereumChains } from '@config'
 import { parseUnits } from '@/utils'
 
 const MIN_SWAP_AMOUNT = '0.001'
@@ -110,7 +110,7 @@ const chosenAssetSymbol = computed(
 
 const { estimatedTokenOutAmount, estimatedGasCost, executeTrade } = useSwap(
   chosenAssetAddress.value,
-  config.STETH_MAINNET_CONTRACT_ADDRESS,
+  web3ProvidersStore.depositContractDetails.address,
   toRef(() => form.amount),
 )
 
@@ -138,16 +138,29 @@ const humanizedEstimations = computed(() => ({
   ),
   estimatedGasCost: humanizeEtherValue(
     estimatedGasCost.value,
-    config.chainsMap[ETHEREUM_CHAIN_IDS.ethereum].nativeCurrency.name,
+    config.chainsMap.Ethereum.nativeCurrency.name,
   ),
 }))
 
+const swapProvider = computed(() => {
+  if (
+    web3ProvidersStore.provider.rawProvider &&
+    web3ProvidersStore.provider.chainId === config.chainsMap.Ethereum.chainId
+  ) {
+    return new providers.Web3Provider(
+      web3ProvidersStore.provider.rawProvider as providers.ExternalProvider,
+    )
+  }
+
+  return config.perChainFallbackProviders[EthereumChains.Ethereum]
+})
+
+// eslint-disable-next-line no-warning-comments
+/**
+ * FEATURE: hardcoded on Ethereum only
+ */
 const erc20Contract = computed(() =>
-  useContract(
-    'ERC20__factory',
-    chosenAssetAddress.value,
-    web3ProvidersStore.l1Provider,
-  ),
+  useContract('ERC20__factory', chosenAssetAddress.value, swapProvider.value),
 )
 
 const parsedUserBalance = computed(
@@ -158,7 +171,9 @@ const humanizeEtherValue = (number: string, symbol: string) =>
   `${roundNumber(number)} ${symbol}`
 
 const getUserBalance = async () => {
-  await web3ProvidersStore.provider.switchChain(ETHEREUM_CHAIN_IDS.ethereum)
+  await web3ProvidersStore.provider.switchChain(
+    config.chainsMap.Ethereum.chainId,
+  )
   const balance = await erc20Contract.value.providerBased.value.balanceOf(
     web3ProvidersStore.address,
   )

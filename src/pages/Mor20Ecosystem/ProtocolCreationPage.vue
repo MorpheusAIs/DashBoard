@@ -47,20 +47,26 @@
 
 <script lang="ts" setup>
 import { AppIcon, BasicModal } from '@/common'
-import { useI18n } from '@/composables'
-import { NETWORK_IDS, ROUTE_NAMES } from '@/enums'
+import { useI18n, useLimitedProvider } from '@/composables'
+import { ROUTE_NAMES } from '@/enums'
 import { InputField } from '@/fields'
 import { Mor20CreationForm } from '@/forms'
 import { ErrorHandler, getEthExplorerAddressUrl } from '@/helpers'
 import { onBeforeRouteUpdate, useRouter } from '@/router'
 import { useWeb3ProvidersStore } from '@/store'
 import type { Mor20EcosystemType } from '@/types'
-import { config } from '@config'
 import { computed, ref, watch } from 'vue'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+} from '@config'
+import { storeToRefs } from 'pinia'
 
 // TODO: remove the condition when the page will have a mainnet contract
 onBeforeRouteUpdate(to => {
-  if (to.query.network === NETWORK_IDS.mainnet)
+  if (to.query.network === NetworkTypes.Mainnet)
     return { ...to, name: ROUTE_NAMES.app }
 })
 
@@ -72,6 +78,28 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 
 const createdProtocol = ref<Mor20EcosystemType.Protocol | null>(null)
 
+const l1Provider = useLimitedProvider([
+  EthereumChains.Ethereum,
+  EthereumChains.Sepolia,
+])
+
+const l1ProviderDetails = computed(() => {
+  return config.chainsMap[
+    getEthereumChainsName(String(l1Provider.value.network.chainId))
+  ]
+})
+
+const l2Provider = useLimitedProvider([
+  EthereumChains.Arbitrum,
+  EthereumChains.ArbitrumSepolia,
+])
+
+const l2ProviderDetails = computed(() => {
+  return config.chainsMap[
+    getEthereumChainsName(String(l2Provider.value.network.chainId))
+  ]
+})
+
 const inputFieldsData = computed(() => {
   if (!createdProtocol.value) return null
 
@@ -80,7 +108,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.distribution-address-label`),
       address: createdProtocol.value.distributionAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+        l1ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
         createdProtocol.value.distributionAddress,
       ),
     },
@@ -88,7 +116,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l1-sender-address-label`),
       address: createdProtocol.value.l1SenderAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+        l1ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
         createdProtocol.value.l1SenderAddress,
       ),
     },
@@ -96,7 +124,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l2-message-receiver-address-label`),
       address: createdProtocol.value.l2MessageReceiverAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+        l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
         createdProtocol.value.l2MessageReceiverAddress,
       ),
     },
@@ -104,7 +132,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.l2-token-receiver-address-label`),
       address: createdProtocol.value.l2TokenReceiverAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+        l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
         createdProtocol.value.l2TokenReceiverAddress,
       ),
     },
@@ -112,7 +140,7 @@ const inputFieldsData = computed(() => {
       label: t(`${I18N_KEY_PREFIX}.token-address-label`),
       address: createdProtocol.value.tokenAddress,
       explorerUrl: getEthExplorerAddressUrl(
-        config.networksMap[web3ProvidersStore.networkId].l2.explorerUrl,
+        l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
         createdProtocol.value.tokenAddress,
       ),
     },
@@ -121,21 +149,22 @@ const inputFieldsData = computed(() => {
 
 const onFormSuccess = async () => {
   try {
-    const { address, l1FactoryContract, l2FactoryContract } = web3ProvidersStore
+    const { address, l1FactoryContract, l2FactoryContract } =
+      storeToRefs(web3ProvidersStore)
 
     const [l1ProtocolsCount, l2ProtocolsCount] = await Promise.all([
-      l1FactoryContract.providerBased.value.countProtocols(address),
-      l2FactoryContract.providerBased.value.countProtocols(address),
+      l1FactoryContract.value.providerBased.value.countProtocols(address.value),
+      l2FactoryContract.value.providerBased.value.countProtocols(address.value),
     ])
 
     const [l1DeployedPools, l2DeployedPools] = await Promise.all([
-      l1FactoryContract.providerBased.value.getDeployedPools(
-        address,
+      l1FactoryContract.value.providerBased.value.getDeployedPools(
+        address.value,
         l1ProtocolsCount.sub(1),
         1,
       ),
-      l2FactoryContract.providerBased.value.getDeployedPools(
-        address,
+      l2FactoryContract.value.providerBased.value.getDeployedPools(
+        address.value,
         l2ProtocolsCount.sub(1),
         1,
       ),

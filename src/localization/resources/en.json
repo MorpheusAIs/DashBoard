@@ -216,8 +216,8 @@
     "show-more": "Show more"
   },
   "network-switch": {
-    "mainnet": "Ethereum Mainnet",
-    "testnet": "Ethereum Sepolia"
+    "mainnet": "Mainnet",
+    "testnet": "Testnet"
   },
   "validations": {
     "field-error_address": "Field must be a valid address with prefix \"0x\"",
@@ -228,7 +228,8 @@
     "field-error_numeric": "Field must be numeric",
     "field-error_maxEther": "Insufficient amount of tokens",
     "field-error_minEther": "Field must be greater than or equal to {min}",
-    "field-error_minValue": "The entered value is less than the minimum value"
+    "field-error_minValue": "The entered value is less than the minimum value",
+    "field-error_maxValue": "Amount should be less than or equal to {max}"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",
@@ -708,5 +709,191 @@
     "claim-button": "Claim",
     "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-description": {
+    "title": "Maximize Your\nToken Potential",
+    "subtitle-1": "Stake your tokens to Subnets and let them handle the work while your staked balance grows. Take full advantage of staking today!",
+    "bullet-text-1": "Discover detailed stats about subnets to make the best choice.",
+    "bullet-text-2": "Stake in seconds: just select the subnet and set tokens amount.",
+    "subtitle-2": "Click \"Stake\" and put your tokens to work today!",
+    "stake-button": "Stake",
+    "become-subnet-button": "Become a Subnet"
+  },
+  "delegate-tokens-modal": {
+    "title": "Delegate",
+    "delegate-text": "Available to Delegate",
+    "wallet-input-placeholder":  "Enter subnet address",
+    "mor-input-placeholder":  "Enter {asset} amount",
+    "description-1": "You will be able to claim staked tokens after the Subnet deregistering.",
+    "description-2": "Deregistration will be available on {date}",
+    "confirm-button":  "Confirm",
+    "cancel-button": "Cancel",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegate-subnet-modal": {
+    "title": "Become a Subnet",
+    "name-placeholder": "Enter the Subnet name",
+    "link-placeholder": "Specify the link to your Subnet",
+    "fee-placeholder": "Set a profit fee for the Subnet",
+    "fee-note": "The fee that is specified in a certain percentage is charged to the user's yield every time the user claimed the tokens.",
+    "address-placeholder": "Specify the address to which the fee will be sent",
+    "deregistration-date-placeholder": "Specify the date of deregistration",
+    "confirm-button":  "Confirm",
+    "cancel-button": "Cancel",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-providers": {
+    "title": "Computed Subnets",
+    "you-delegated-text": "You Delegated",
+    "other-subnets-text": "Other Subnets"
+  },
+  "delegation-providers-navigation": {
+    "address-text": "Name / Address",
+    "subnet-fee-text": "Subnet fee",
+    "staked-text": "{asset} Staked",
+    "claimed-text": "{asset} Claimed"
+  },
+  "delegation-providers-item": {
+    "stake-button": "Stake",
+    "you-text": "you"
+  },
+  "delegator-info-page":  {
+    "back-button": "Compute Subnets"
+  },
+  "delegation-info-title": {
+    "your-subnet-text": "Your Subnet",
+    "coppied-text": "Coppied!"
+  },
+  "delegator-info-cards": {
+    "reward": "Your {asset} Reward",
+    "total-claimed": "Total {asset} Claimed",
+    "total-staked": "Total {asset} Staked",
+    "total-fee": "Total Fee Charged by Subnet in {asset}",
+    "subnet-fee": "Subnet fee",
+    "claim-button": "Claim",
+    "tx-sent-message": "The transaction was sent, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "delegation-providers-list": {
+    "error-message": "Something went wrong",
+    "no-data-msg": "No subnets yet"
+  },
+  "delegates-list": {
+    "title": "Stakers",
+    "error-message": "Something went wrong",
+    "no-data-message": "No stakers yet",
+    "stake-button": "Stake"
+  },
+  "delegates-list-header": {
+    "address-text": "Name / Address",
+    "delegated-text": "{asset} Delegated",
+    "claimed-text": "{asset} Claimed",
+    "fee-text": "Fee Charged"
+  },
+  "delegates-list-item": {
+    "you-text": "you",
+    "full-rights-lbl": "Full Rights",
+    "provider-rights-lbl": "Provider Rights",
+    "model-rights-lbl": "Model Rights",
+    "session-rights-lbl": "Session Rights",
+    "marketplace-rights-lbl": "Marketplace Rights"
+  },
+  "builder-form-modal": {
+    "create-title": "Become a Builder",
+    "update-title": "Update {name}",
+    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "name-plh": "Builder name",
+    "name-note": "What is the name of your project? This is how users will find your project.",
+    "min-deposit-plh": "Minimum deposit",
+    "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
+    "lock-period-after-stake-plh": "Withdraw lock period after stake, seconds",
+    "lock-period-after-stake-not": "After each stake, the user will not be able to withdraw their tokens for that period",
+    "start-at-plh": "Start time",
+    "start-at-note": "It will be possible to change the Builder settings up to this point. The stake will not be available until this time",
+    "claim-lock-end-plh": "Claim lock ends",
+    "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
+    "lock-period-after-stake-note": "After a user stakes to your project, this is how long they will need to wait before they can unstake. NOTE: each time a user stakes to your project, this lock period will reset.",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm",
+    "min-end-time-validation-err-msg": "Should be more than {time}"
+  },
+  "builders-stake-modal": {
+    "modal-title": "Stake MOR",
+    "available-to-stake-balance-value": "{amount} MOR",
+    "builder-lbl": "Builder",
+    "min-deposit-lbl": "Min Deposit",
+    "lock-period-lbl": "Lock Period",
+    "new-stake-amount-lbl": "New Stake Amount",
+    "new-unlock-date-lbl": "New Unlock Date",
+    "stake-amount-plh": "MOR amount",
+    "stake-amount-max-btn": "max",
+    "available-to-stake-balance": "Available to Stake",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm",
+    "stake-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "builder-withdraw-modal": {
+    "modal-title": "Withdraw MOR",
+    "builder-lbl": "Builder",
+    "current-withdraw-lbl": "Current Stake",
+    "balance-after-withdrawal-lbl": "Stake After Withdrawal",
+    "balance-after-withdrawal-value": "{amount} MOR",
+    "withdraw-amount-plh": "MOR amount",
+    "withdraw-amount-max-btn": "max",
+    "available-to-withdraw-balance": "Available to Withdraw",
+    "available-to-withdraw-amount": "{amount} MOR",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm",
+    "withdraw-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+  },
+  "builders-list": {
+    "title": "Create or Stake in a Builder",
+    "description": "You can become a Builder or participate in an existing one to start earning rewards. When you create a Builder, you can set custom parameters including token lock time and reward details. Or you can join an existing Builder by staking MOR.",
+    "description-underline": "Start staking now and claim your rewards!",
+    "create-builder-btn": "Become a Builder",
+    "main-table-title": "Explore Morpheus Builders",
+    "account-projects-table-title": "Builders I Have Staked To",
+    "loading-projects-error-msg": "Something bad happened",
+    "builders-projects-empty-msg": "There are no projects yet",
+    "loading-account-projects-error-msg": "Something bad happened"
+  },
+  "builders-table": {
+    "name-th": "Name",
+    "starts-time-th": "Start time",
+    "min-deposit-th": "Min MOR Deposit",
+    "total-staked-th": "Total MOR Staked",
+    "withdraw-lock-period-th": "Withdraw lock period",
+    "lock-period-th": "Lock period"
+  },
+  "builders-table-item": {
+    "mobile-min-deposit-lbl": "Min Deposit: {amount} MOR",
+    "mobile-withdraw-lock-period-lbl": "Lock Period: {period}",
+    "stake-btn": "Stake"
+  },
+  "builders-item": {
+    "page-err-msg": "Something bad happened, try reload page",
+    "back-btn": "Back",
+    "your-builder-lbl": "Your Builder",
+    "edit-btn": "Edit",
+    "start-time-lbl": "Start time",
+    "min-deposit-lbl": "Min MOR Deposit",
+    "lock-period-lbl": "Lock Period After Stake",
+    "available-for-withdrawal-lbl": "Available MOR for Withdrawal",
+    "withdraw-btn": "Withdraw",
+    "unlock-time-lbl": "Unlock Time:",
+    "total-claimed-lbl": "Total MOR Claimed",
+    "total-staked-lbl": "Total MOR Staked",
+    "claim-lock-ends-lbl": "Claim lock ends",
+    "claim-btn": "Claim",
+    "admin-addr-lbl": "Admin address:",
+    "stakers-lbl": "Stakers",
+    "stake-btn": "Stake",
+    "staker-addr-name-th": "Name / Address",
+    "staked-th": "MOR Staked",
+    "date-th": "Date",
+    "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "empty-dash": "-"
   }
 }

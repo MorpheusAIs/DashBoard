@@ -1,9 +1,4 @@
-import {
-  ETHEREUM_CHAIN_IDS,
-  ETHEREUM_EXPLORER_URLS,
-  ETHEREUM_RPC_URLS,
-  LAYER_ZERO_ENDPOINT_IDS,
-} from '@/enums'
+import { ROUTE_NAMES } from '@/enums'
 import type { EthereumType, Provider } from '@/types'
 import {
   ApolloClient,
@@ -12,255 +7,378 @@ import {
   NormalizedCacheObject,
 } from '@apollo/client/core'
 import { ethers, providers, utils } from 'ethers'
-import { pickBy, mapKeys } from 'lodash'
 import { LogLevelDesc } from 'loglevel'
 import packageJson from '../package.json'
 
-export enum CONTRACT_IDS {
-  erc1967Proxy = 'erc1967Proxy',
-  stEth = 'stEth',
-  mor = 'mor',
-  endpoint = 'endpoint',
-  l1Factory = 'l1-factory',
-  l2Factory = 'l2-factory',
+/**
+ * Define which network types user could switch between without change network in metamask
+ */
+export enum NetworkTypes {
+  Mainnet = 'mainnet',
+  Testnet = 'testnet',
 }
 
-export enum NETWORK_IDS {
-  mainnet = 'mainnet',
-  testnet = 'testnet',
+/**
+ * Define which networks this Dapp supports
+ */
+export enum EthereumChains {
+  Ethereum = '1',
+  Sepolia = '11155111',
+  Arbitrum = '42161',
+  ArbitrumSepolia = '421614',
+  Base = '8453',
 }
 
-type NetworkLayer = {
-  chainId: ETHEREUM_CHAIN_IDS
-  chainTitle: string
-  layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS
-  provider: Provider
-  explorerUrl: ETHEREUM_EXPLORER_URLS
+export const getEthereumChainsName = (
+  chain: string,
+): keyof typeof EthereumChains => {
+  return Object.keys(EthereumChains).find(
+    key => EthereumChains[key as keyof typeof EthereumChains] === chain,
+  ) as keyof typeof EthereumChains
 }
 
-interface Network {
-  l1: NetworkLayer
-  l2: NetworkLayer
-  contractAddressesMap: Record<CONTRACT_IDS, string>
+/**
+ * Define which network belows to which network type
+ */
+export const ethereumChainsTypes = {
+  [NetworkTypes.Mainnet]: [
+    EthereumChains.Arbitrum,
+    EthereumChains.Ethereum,
+    EthereumChains.Base,
+  ],
+  [NetworkTypes.Testnet]: [
+    EthereumChains.ArbitrumSepolia,
+    EthereumChains.Sepolia,
+  ],
 }
 
-type Metadata = {
-  name: string
-  description: string
-  url: string
-  icons: string[]
-}
-
-export const config = {
-  // General
-  NAME: import.meta.env.VITE_APP_NAME,
-  DESCRIPTION: import.meta.env.VITE_APP_DESCRIPTION,
-  URL: import.meta.env.VITE_APP_URL,
-  WALLET_CONNECT_PROJECT_ID: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID,
-  BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
-  LOG_LEVEL: 'trace' as LogLevelDesc,
-  GITHUB_URL:
-    'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
-  CONTRACT_FAQ_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/!KEYDOCS%20README%20FIRST!/FAQs%20%26%20Guides/Capital%20Providers%20FAQ.md',
-  LANDING_URL: 'https://mor.org/',
-  CODE_CONTRIBUTION_URL: 'https://mor.software/',
-  COMPUTE_CONTRIBUTION_URL:
-    'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
-  COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
-  HOW_GET_STETH_URL: 'https://stake.lido.fi/',
-  WALLET_INSTALL_URL: 'https://metamask.io/download/',
-  DEFAULT_REFEREE: import.meta.env.VITE_APP_DEFAULT_REFEREE,
-
-  // Testnet
-  ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
-  STETH_TESTNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_STETH_TESTNET_CONTRACT_ADDRESS,
-  MOR_TESTNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_MOR_TESTNET_CONTRACT_ADDRESS,
-  ENDPOINT_TESTNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_ENDPOINT_TESTNET_CONTRACT_ADDRESS,
-  L1_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
-  L2_FACTORY_TESTNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
-  TESTNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_TESTNET_GRAPHQL_API_URL,
-
-  // Mainnet
-  ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
-  STETH_MAINNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_STETH_MAINNET_CONTRACT_ADDRESS,
-  MOR_MAINNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_MOR_MAINNET_CONTRACT_ADDRESS,
-  ENDPOINT_MAINNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_ENDPOINT_MAINNET_CONTRACT_ADDRESS,
-  L1_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
-  L2_FACTORY_MAINNET_CONTRACT_ADDRESS: import.meta.env
-    .VITE_APP_L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
-  MAINNET_GRAPHQL_API_URL: import.meta.env.VITE_APP_MAINNET_GRAPHQL_API_URL,
-
-  metadata: {} as Metadata,
-
-  networksMap: {} as Record<NETWORK_IDS, Network>,
-
-  chainsMap: {} as Record<ETHEREUM_CHAIN_IDS, EthereumType.Chain>,
-
-  mainnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
-  testnetApolloClient: {} as ApolloClient<NormalizedCacheObject>,
-
-  yearOfLaunch: 2024,
-  monthOfLaunch: 1,
-}
-
-Object.assign(config, _mapEnvCfg(import.meta.env))
-Object.assign(config, _mapEnvCfg(document.ENV))
-
-config.metadata = {
-  name: config.NAME,
-  description: config.DESCRIPTION,
-  url: config.URL,
-  icons: [`${config.URL}/branding/logo.svg`],
-}
-
-config.networksMap = {
-  [NETWORK_IDS.mainnet]: {
-    l1: {
-      chainId: ETHEREUM_CHAIN_IDS.ethereum,
-      chainTitle: 'Ethereum',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.ethereum,
-      provider: new providers.FallbackProvider(
-        [
-          'https://rpc.mevblocker.io',
-          'https://rpc.mevblocker.io',
-          'https://eth-pokt.nodies.app',
-          'https://eth.drpc.org',
-          'https://rpc.payload.de',
-          'https://eth.merkle.io',
-        ].map((rpcUrl, idx) => ({
-          provider: new providers.StaticJsonRpcProvider(
-            rpcUrl,
-            ethers.providers.getNetwork(Number(ETHEREUM_CHAIN_IDS.ethereum)),
-          ),
-          priority: idx,
-        })),
-        1,
-      ),
-      explorerUrl: ETHEREUM_EXPLORER_URLS.ethereum,
-    },
-    l2: {
-      chainId: ETHEREUM_CHAIN_IDS.arbitrum,
-      chainTitle: 'Arbitrum',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.arbitrum,
-      provider: new providers.StaticJsonRpcProvider(ETHEREUM_RPC_URLS.arbitrum),
-      explorerUrl: ETHEREUM_EXPLORER_URLS.arbitrum,
-    },
-    contractAddressesMap: {
-      [CONTRACT_IDS.erc1967Proxy]:
-        config.ERC1967_PROXY_MAINNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.stEth]: config.STETH_MAINNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.mor]: config.MOR_MAINNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.endpoint]: config.ENDPOINT_MAINNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.l1Factory]: config.L1_FACTORY_MAINNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_MAINNET_CONTRACT_ADDRESS,
-    },
-  },
-  [NETWORK_IDS.testnet]: {
-    l1: {
-      chainId: ETHEREUM_CHAIN_IDS.sepolia,
-      chainTitle: 'Ethereum Sepolia',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.sepolia,
-      provider: new providers.StaticJsonRpcProvider(
-        ETHEREUM_RPC_URLS.sepolia,
-        ethers.providers.getNetwork(Number(ETHEREUM_CHAIN_IDS.sepolia)),
-      ),
-      explorerUrl: ETHEREUM_EXPLORER_URLS.sepolia,
-    },
-    l2: {
-      chainId: ETHEREUM_CHAIN_IDS.arbitrumSepolia,
-      chainTitle: 'Arbitrum Sepolia',
-      layerZeroEndpointId: LAYER_ZERO_ENDPOINT_IDS.arbitrumSepolia,
-      provider: new providers.StaticJsonRpcProvider(
-        ETHEREUM_RPC_URLS.arbitrumSepolia,
-      ),
-      explorerUrl: ETHEREUM_EXPLORER_URLS.arbitrumSepolia,
-    },
-    contractAddressesMap: {
-      [CONTRACT_IDS.erc1967Proxy]:
-        config.ERC1967_PROXY_TESTNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.stEth]: config.STETH_TESTNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.mor]: config.MOR_TESTNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.endpoint]: config.ENDPOINT_TESTNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.l1Factory]: config.L1_FACTORY_TESTNET_CONTRACT_ADDRESS,
-      [CONTRACT_IDS.l2Factory]: config.L2_FACTORY_TESTNET_CONTRACT_ADDRESS,
-    },
-  },
-}
-
-config.chainsMap = {
-  [ETHEREUM_CHAIN_IDS.arbitrum]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.arbitrum)),
+/**
+ * Simple metadata for each network
+ */
+const chainsMap: Record<keyof typeof EthereumChains, EthereumType.Chain> = {
+  Arbitrum: {
+    chainId: utils.hexValue(Number(EthereumChains.Arbitrum)),
     chainName: 'Arbitrum One',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: [ETHEREUM_RPC_URLS.arbitrum],
-    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrum],
+    rpcUrls: ['https://arbitrum-one.publicnode.com'],
+    blockExplorerUrls: ['https://arbiscan.io'],
   },
-  [ETHEREUM_CHAIN_IDS.arbitrumSepolia]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.arbitrumSepolia)),
+  ArbitrumSepolia: {
+    chainId: utils.hexValue(Number(EthereumChains.ArbitrumSepolia)),
     chainName: 'Arbitrum Sepolia (Testnet)',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: [ETHEREUM_RPC_URLS.arbitrumSepolia],
-    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.arbitrumSepolia],
+    rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://sepolia.arbiscan.io'],
   },
-  [ETHEREUM_CHAIN_IDS.ethereum]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.ethereum)),
+  Ethereum: {
+    chainId: utils.hexValue(Number(EthereumChains.Ethereum)),
     chainName: 'Ethereum',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: [ETHEREUM_RPC_URLS.ethereum],
-    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.ethereum],
+    rpcUrls: ['https://eth.llamarpc.com'],
+    blockExplorerUrls: ['https://etherscan.io'],
   },
-  [ETHEREUM_CHAIN_IDS.sepolia]: {
-    chainId: utils.hexValue(Number(ETHEREUM_CHAIN_IDS.sepolia)),
+  Sepolia: {
+    chainId: utils.hexValue(Number(EthereumChains.Sepolia)),
     chainName: 'Sepolia',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18,
     },
-    rpcUrls: [ETHEREUM_RPC_URLS.sepolia],
-    blockExplorerUrls: [ETHEREUM_EXPLORER_URLS.sepolia],
+    rpcUrls: ['https://ethereum-sepolia.publicnode.com'],
+    blockExplorerUrls: ['https://sepolia.etherscan.io'],
+  },
+  Base: {
+    chainId: utils.hexValue(Number(EthereumChains.Base)),
+    chainName: 'Base',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: ['https://base.llamarpc.com'],
+    blockExplorerUrls: ['https://basescan.org'],
   },
 }
 
-config.mainnetApolloClient = new ApolloClient({
-  link: createHttpLink({ uri: config.MAINNET_GRAPHQL_API_URL }),
-  cache: new InMemoryCache(),
-})
+/**
+ * Each page supports it's own networks, it could be same for several or unique.
+ * User will be forced to switch his network on this page to supported one if he still not
+ */
+const perPageAllowedNetworks: Record<ROUTE_NAMES, EthereumChains[]> = {
+  [ROUTE_NAMES.app]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appDashboard]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appDashboardCapital]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appCapital]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appCommunity]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appMor20EcosystemMain]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.contractInfo]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appMor20EcosystemProtocolCreation]: [
+    ...Object.values(EthereumChains),
+  ],
+  [ROUTE_NAMES.appReferrals]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appDelegation]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appDelegatorInfo]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appBuildersList]: [
+    // EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+    EthereumChains.Base,
+  ],
+  [ROUTE_NAMES.appBuildersItem]: [
+    // EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+    EthereumChains.Base,
+  ],
+}
 
-config.testnetApolloClient = new ApolloClient({
-  link: createHttpLink({ uri: config.TESTNET_GRAPHQL_API_URL }),
-  cache: new InMemoryCache(),
-})
+/**
+ * Contracts that dapp utilize at the moment
+ */
+export enum ContractIds {
+  erc1967Proxy = 'erc1967Proxy',
+  stEth = 'stEth',
+  mor = 'mor',
+  endpoint = 'endpoint',
+  l1Factory = 'l1-factory',
+  l2Factory = 'l2-factory',
+  subnetFactory = 'subnet-factory',
+  builders = 'builders',
+}
 
-function _mapEnvCfg(env: ImportMetaEnv | typeof document.ENV): {
-  [k: string]: string | boolean | undefined
-} {
-  return mapKeys(
-    pickBy(env, (v, k) => k.startsWith('VITE_APP_')),
-    (v, k) => k.replace(/^VITE_APP_/, ''),
-  )
+export const layerZeroEndpointIds: Record<EthereumChains, string> = {
+  [EthereumChains.Ethereum]: '101',
+  [EthereumChains.Sepolia]: '10161',
+  [EthereumChains.Arbitrum]: '110',
+  [EthereumChains.ArbitrumSepolia]: '10231',
+  [EthereumChains.Base]: '',
+}
+
+export const perChainFallbackProviders: Record<EthereumChains, Provider> = {
+  [EthereumChains.Ethereum]: new providers.FallbackProvider(
+    [
+      'https://rpc.mevblocker.io',
+      'https://rpc.mevblocker.io',
+      'https://eth-pokt.nodies.app',
+      'https://eth.drpc.org',
+      'https://rpc.payload.de',
+      'https://eth.merkle.io',
+    ].map((rpcUrl, idx) => ({
+      provider: new providers.StaticJsonRpcProvider(
+        rpcUrl,
+        ethers.providers.getNetwork(Number(EthereumChains.Ethereum)),
+      ),
+      priority: idx,
+    })),
+    1,
+  ),
+  [EthereumChains.Arbitrum]: new providers.StaticJsonRpcProvider(
+    chainsMap.Arbitrum.rpcUrls[0],
+  ),
+  [EthereumChains.Base]: new providers.StaticJsonRpcProvider(
+    chainsMap.Base.rpcUrls[0],
+  ),
+  [EthereumChains.Sepolia]: new providers.StaticJsonRpcProvider(
+    chainsMap.Sepolia.rpcUrls[0],
+    ethers.providers.getNetwork(Number(EthereumChains.Sepolia)),
+  ),
+  [EthereumChains.ArbitrumSepolia]: new providers.StaticJsonRpcProvider(
+    chainsMap.ArbitrumSepolia.rpcUrls[0],
+  ),
+}
+
+const _emptyContracts = {
+  [EthereumChains.Ethereum]: '',
+  [EthereumChains.Sepolia]: '',
+  [EthereumChains.Arbitrum]: '',
+  [EthereumChains.ArbitrumSepolia]: '',
+  [EthereumChains.Base]: '',
+}
+
+export const perChainDeployedContracts: Record<
+  ContractIds,
+  Record<EthereumChains, string>
+> = {
+  [ContractIds.erc1967Proxy]: {
+    ..._emptyContracts,
+    [EthereumChains.Ethereum]: '0x47176B2Af9885dC6C4575d4eFd63895f7Aaa4790',
+    [EthereumChains.Sepolia]: '0x7c46d6bebf3dcd902eb431054e59908a02aba524',
+  },
+  [ContractIds.stEth]: {
+    ..._emptyContracts,
+    [EthereumChains.Ethereum]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+    [EthereumChains.Sepolia]: '0xa878Ad6FF38d6fAE81FBb048384cE91979d448DA',
+  },
+  [ContractIds.mor]: {
+    ..._emptyContracts,
+    [EthereumChains.Arbitrum]: '0x092bAaDB7DEf4C3981454dD9c0A0D7FF07bCFc86',
+    [EthereumChains.ArbitrumSepolia]:
+      '0x34a285A1B1C166420Df5b6630132542923B5b27E',
+    [EthereumChains.Base]: '0x7431aDa8a591C955a994a21710752EF9b882b8e3',
+  },
+  [ContractIds.endpoint]: {
+    ..._emptyContracts,
+    [EthereumChains.Ethereum]: '0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675',
+    [EthereumChains.Sepolia]: '0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1',
+  },
+  [ContractIds.l1Factory]: {
+    ..._emptyContracts,
+    [EthereumChains.Ethereum]: '0x969C0F87623dc33010b4069Fea48316Ba2e45382',
+    [EthereumChains.Sepolia]: '0xB791b1B02A8f7A32f370200c05EeeE12B9Bba10A',
+  },
+  [ContractIds.l2Factory]: {
+    ..._emptyContracts,
+    [EthereumChains.Arbitrum]: '0x890BfA255E6EE8DB5c67aB32dc600B14EBc4546c',
+    [EthereumChains.ArbitrumSepolia]:
+      '0x3199555a4552848D522cf3D04bb1fE4C512a5d3B',
+  },
+  [ContractIds.subnetFactory]: {
+    ..._emptyContracts,
+    [EthereumChains.Arbitrum]: '0x37B94Bd80b6012FB214bB6790B31A5C40d6Eb7A5',
+    [EthereumChains.ArbitrumSepolia]:
+      '0xa41178368f393a224b990779baa9b5855759d45d',
+  },
+  [ContractIds.builders]: {
+    ..._emptyContracts,
+    [EthereumChains.Arbitrum]: '0xC0eD68f163d44B6e9985F0041fDf6f67c6BCFF3f',
+    [EthereumChains.ArbitrumSepolia]:
+      '0x649B24D0b6F5A4c3852fD4C0dD91308902E5fe8a',
+    [EthereumChains.Base]: '0x42BB446eAE6dca7723a9eBdb81EA88aFe77eF4B9',
+  },
+}
+
+/**
+ * Some specific features in Dapp required only specific chains to be connected on
+ */
+export const exceptionContractsAllowedChains = {
+  Distribution__factory: [EthereumChains.Ethereum, EthereumChains.Sepolia],
+  Swap: [EthereumChains.Ethereum],
+  L1Sender__factory: [EthereumChains.Ethereum, EthereumChains.Sepolia],
+  L2MessageReceiver__factory: [
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  L2TokenReceiver__factory: [
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  MOR20__factory: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
+  Subnet__factory: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
+  DelegationPage: [EthereumChains.Arbitrum, EthereumChains.ArbitrumSepolia],
+}
+
+// TODO: merge
+const perChainFirstApolloClients: Record<
+  EthereumChains,
+  ApolloClient<NormalizedCacheObject> | null
+> = {
+  [EthereumChains.Ethereum]: new ApolloClient({
+    link: createHttpLink({
+      uri: 'https://api.studio.thegraph.com/query/67225/morpheus-dashboard/version/latest',
+    }),
+    cache: new InMemoryCache(),
+  }),
+  [EthereumChains.Arbitrum]: null,
+  [EthereumChains.Sepolia]: new ApolloClient({
+    link: createHttpLink({
+      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-ethereum-sepolia/version/latest',
+    }),
+    cache: new InMemoryCache(),
+  }),
+  [EthereumChains.ArbitrumSepolia]: null,
+  [EthereumChains.Base]: null,
+}
+
+const perChainSecondApolloClients: Record<
+  EthereumChains,
+  ApolloClient<NormalizedCacheObject> | null
+> = {
+  [EthereumChains.Ethereum]: null,
+  [EthereumChains.Arbitrum]: new ApolloClient({
+    link: createHttpLink({
+      uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node/version/latest',
+    }),
+    cache: new InMemoryCache(),
+    queryDeduplication: false,
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+    },
+  }),
+  [EthereumChains.Sepolia]: null,
+  [EthereumChains.ArbitrumSepolia]: new ApolloClient({
+    link: createHttpLink({
+      uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node-testnet/version/latest',
+      // uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
+    }),
+    cache: new InMemoryCache(),
+    queryDeduplication: false,
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+    },
+  }),
+  [EthereumChains.Base]: new ApolloClient({
+    link: createHttpLink({
+      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-base-mainnet/version/latest',
+    }),
+    cache: new InMemoryCache(),
+    queryDeduplication: false,
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+      },
+    },
+  }),
+}
+
+/* eslint-disable prettier/prettier */
+/* eslint-disable max-len */
+export const config = {
+  // General
+  WALLET_CONNECT_PROJECT_ID: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID,
+  BUILD_VERSION: packageJson.version || import.meta.env.VITE_APP_BUILD_VERSION,
+  LOG_LEVEL: 'trace' as LogLevelDesc,
+  GITHUB_URL: 'https://github.com/MorpheusAIs/Docs/tree/main/!KEYDOCS%20README%20FIRST!',
+  CONTRACT_FAQ_URL: 'https://github.com/MorpheusAIs/Docs/blob/main/!KEYDOCS%20README%20FIRST!/FAQs%20%26%20Guides/Capital%20Providers%20FAQ.md',
+  LANDING_URL: 'https://mor.org/',
+  CODE_CONTRIBUTION_URL: 'https://mor.software/',
+  COMPUTE_CONTRIBUTION_URL: 'https://github.com/MorpheusAIs/Docs/blob/main/Contributions/Compute%20-%20Proof%20of%20Contribution.md',
+  COMMUNITY_CONTRIBUTION_URL: 'https://mor.org/MOR20',
+  HOW_GET_STETH_URL: 'https://stake.lido.fi/',
+  WALLET_INSTALL_URL: 'https://metamask.io/download/',
+  DEFAULT_REFEREE: '0x0000000000000000000000000000000000000000',
+  metadata: {
+    name: import.meta.env.VITE_APP_NAME,
+    description: import.meta.env.VITE_APP_DESCRIPTION,
+    url: import.meta.env.VITE_APP_URL,
+    icons: [`${import.meta.env.VITE_APP_URL}/branding/logo.svg`],
+    monthOfLaunch: 1,
+    yearOfLaunch: 2024,
+  },
+
+  EthereumChains,
+  ethereumChainsTypes: ethereumChainsTypes,
+  chainsMap: chainsMap,
+  ContractIds: ContractIds,
+  perChainFirstApolloClients: perChainFirstApolloClients,
+  perChainSecondApolloClients: perChainSecondApolloClients,
+  perPageAllowedNetworks: perPageAllowedNetworks,
+  perChainDeployedContracts: perChainDeployedContracts,
+  perChainFallbackProviders: perChainFallbackProviders,
+  layerZeroEndpointIds: layerZeroEndpointIds,
+  exceptionContractsAllowedChains: exceptionContractsAllowedChains,
 }

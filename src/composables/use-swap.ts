@@ -12,9 +12,8 @@ import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { Time } from '@distributedlab/tools'
 import { MAX_UINT_256 } from '@/const'
-import { ETHEREUM_CHAIN_IDS } from '@/enums'
-import { config } from '@config'
 import { useI18n, useSwapContracts } from '@/composables'
+import { config } from '@config'
 
 const AVERAGE_GAS_USED_FOR_SWAP_TX = '150292' // gas units
 const SLIPPAGE = '1000'
@@ -36,6 +35,8 @@ export function useSwap(
   const estimatedGasCost = ref('0')
 
   const {
+    swapProvider,
+
     tokenToSendContract,
     tokenToReceiveContract,
     uniswapV2FactoryContract,
@@ -58,12 +59,12 @@ export function useSwap(
 
     const [inToken, outToken] = [
       new Token(
-        Number(ETHEREUM_CHAIN_IDS.ethereum),
+        Number(config.chainsMap.Ethereum.chainId),
         tokenInAddress,
         tokenInDecimals,
       ),
       new Token(
-        Number(ETHEREUM_CHAIN_IDS.ethereum),
+        Number(config.chainsMap.Ethereum.chainId),
         tokenOutAddress,
         tokenOutDecimals,
       ),
@@ -223,7 +224,7 @@ export function useSwap(
   }
 
   const estimateGasPriceForSwaps = async () => {
-    const gasPrice = await web3ProvidersStore.l1Provider.getGasPrice()
+    const gasPrice = await swapProvider.value.getGasPrice()
 
     const txPrice = gasPrice.mul(AVERAGE_GAS_USED_FOR_SWAP_TX)
 
@@ -268,7 +269,7 @@ export function useSwap(
 
   const waitForTx = async (tx: ethers.ContractTransaction) => {
     const explorerTxUrl = getEthExplorerTxUrl(
-      config.networksMap[web3ProvidersStore.networkId].l1.explorerUrl,
+      config.chainsMap.Ethereum.blockExplorerUrls?.[0] ?? '', // FIXME
       tx.hash,
     )
     bus.emit(BUS_EVENTS.info, t('use-swap.tx-sent-message', { explorerTxUrl }))
@@ -304,11 +305,11 @@ export function useSwap(
 
     const allowance = await sentTokenContract.allowance(
       web3ProvidersStore.address,
-      V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+      V2_ROUTER_ADDRESSES[Number(config.chainsMap.Ethereum.chainId)],
     )
     if (allowance.lt(amountIn.quotient.toString())) {
       const tx = await sentTokenContract.approve(
-        V2_ROUTER_ADDRESSES[Number(ETHEREUM_CHAIN_IDS.ethereum)],
+        V2_ROUTER_ADDRESSES[Number(config.chainsMap.Ethereum.chainId)],
         amountIn.quotient.toString(),
       )
       await waitForTx(tx)
@@ -372,7 +373,7 @@ export function useSwap(
     const wethDecimals = await wethContract.value.providerBased.value.decimals()
 
     const wethToken = new Token(
-      Number(ETHEREUM_CHAIN_IDS.ethereum),
+      Number(config.chainsMap.Ethereum.chainId),
       wethContract.value.providerBased.value.address,
       wethDecimals,
     )
@@ -387,7 +388,7 @@ export function useSwap(
       await tokenToReceiveContract.value.providerBased.value.decimals()
 
     const stEthToken = new Token(
-      Number(ETHEREUM_CHAIN_IDS.ethereum),
+      Number(config.chainsMap.Ethereum.chainId),
       tokenToReceiveContract.value.providerBased.value.address,
       tokenToReceiveDecimals,
     )
