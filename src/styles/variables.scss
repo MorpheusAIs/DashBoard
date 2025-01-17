@@ -167,13 +167,13 @@
 
   /* error */
   --field-error-font-family: var(--app-font-family);
-  --field-error-font-size: #{toRem(16)};
+  --field-error-font-size: #{toRem(14)};
   --field-error-font-weight: 400;
   --field-error-line-height: #{toRem(24)};
   --field-error-letter-spacing: 0;
   --field-error: var(--text-secondary-main);
   --field-error-icon: var(--error-main);
-  --field-error-padding-top: #{toRem(10)};
+  --field-error-padding-top: #{toRem(6)};
 
   @include respond-to(medium) {
     --field-error-font-size: #{toRem(14)};

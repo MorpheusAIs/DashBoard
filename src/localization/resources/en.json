@@ -808,7 +808,7 @@
     "name-note": "What is the name of your project? This is how users will find your project.",
     "min-deposit-plh": "Minimum deposit",
     "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
-    "lock-period-after-stake-plh": "Lock period after stake",
+    "lock-period-after-stake-plh": "Withdraw lock period after stake, seconds",
     "lock-period-after-stake-not": "After each stake, the user will not be able to withdraw their tokens for that period",
     "start-at-plh": "Start time",
     "start-at-note": "It will be possible to change the Builder settings up to this point. The stake will not be available until this time",
