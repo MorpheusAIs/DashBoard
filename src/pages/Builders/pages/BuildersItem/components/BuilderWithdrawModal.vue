@@ -87,7 +87,13 @@ import {
 } from '@/types/graphql'
 import { maxValue, numeric, required } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
-import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
+import {
+  bus,
+  BUS_EVENTS,
+  ErrorHandler,
+  getEthExplorerTxUrl,
+  sleep,
+} from '@/helpers'
 import { BigNumber } from 'ethers'
 
 const props = withDefaults(
@@ -174,6 +180,7 @@ const submit = async () => {
       provider.value.chainId !== buildersContractDetails.value.targetChainId
     ) {
       provider.value.selectChain(buildersContractDetails.value.targetChainId)
+      await sleep(1_000)
     }
 
     const tx = await buildersContract.value?.signerBased.value.withdraw(

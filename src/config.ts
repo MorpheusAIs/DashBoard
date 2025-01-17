@@ -218,7 +218,7 @@ export const perChainDeployedContracts: Record<
   [ContractIds.stEth]: {
     ..._emptyContracts,
     [EthereumChains.Ethereum]: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
-    [EthereumChains.Sepolia]: '0x84BE06be19F956dEe06d4870CdDa76AF2e0385f5',
+    [EthereumChains.Sepolia]: '0xa878Ad6FF38d6fAE81FBb048384cE91979d448DA',
   },
   [ContractIds.mor]: {
     ..._emptyContracts,

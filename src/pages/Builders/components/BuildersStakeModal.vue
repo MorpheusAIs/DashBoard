@@ -103,6 +103,7 @@ import {
   ErrorHandler,
   getEthExplorerTxUrl,
   humanizeTime,
+  sleep,
 } from '@/helpers'
 import { formatEther, parseUnits } from '@/utils'
 import {
@@ -239,6 +240,7 @@ const submit = async () => {
       provider.value.chainId !== buildersContractDetails.value.targetChainId
     ) {
       provider.value.selectChain(buildersContractDetails.value.targetChainId)
+      await sleep(1_000)
     }
 
     const allowance = await rewardsContract.value.providerBased.value.allowance(

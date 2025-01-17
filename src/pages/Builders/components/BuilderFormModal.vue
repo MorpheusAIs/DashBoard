@@ -172,6 +172,7 @@ const submit = async () => {
       provider.value.chainId !== buildersContractDetails.value.targetChainId
     ) {
       provider.value.selectChain(buildersContractDetails.value.targetChainId)
+      await sleep(1_000)
     }
 
     const tx = props.buildersProject
