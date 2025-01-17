@@ -13,7 +13,21 @@
     :is-close-by-click-outside="!isSubmitting"
     :has-close-button="!isSubmitting"
   >
-    <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto px-10">
+    <form
+      @submit.prevent="submit"
+      :class="
+        cn(
+          'max-h-[80dvh] overflow-auto px-10',
+          `[&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  [&::-webkit-scrollbar]:w-2`,
+        )
+      "
+    >
       <div class="mt-8 flex flex-col gap-5">
         <input-field
           v-model="form.name"
@@ -95,6 +109,7 @@ import { formatEther, parseUnits } from '@/utils'
 import { helpers } from '@vuelidate/validators'
 import { time } from '@distributedlab/tools'
 import { DOT_TIME_FORMAT } from '@/const'
+import { cn } from '@/theme/utils'
 
 const props = withDefaults(
   defineProps<{
