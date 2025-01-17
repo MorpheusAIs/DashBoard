@@ -801,7 +801,7 @@
     "marketplace-rights-lbl": "Marketplace Rights"
   },
   "builder-form-modal": {
-    "create-title": "Become a builder",
+    "create-title": "Become a Builder",
     "update-title": "Update {name}",
     "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "name-plh": "Builder name",
@@ -851,7 +851,7 @@
     "title": "Create or Stake in a Builder",
     "description": "You can become a Builder or participate in an existing one to start earning rewards. When you create a Builder, you can set custom parameters including token lock time and reward details. Or you can join an existing Builder by staking MOR.",
     "description-underline": "Start staking now and claim your rewards!",
-    "create-builder-btn": "Become a builder",
+    "create-builder-btn": "Become a Builder",
     "main-table-title": "Explore Morpheus Builders",
     "account-projects-table-title": "Builders I Have Staked To",
     "loading-projects-error-msg": "Something bad happened",

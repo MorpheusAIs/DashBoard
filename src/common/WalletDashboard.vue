@@ -164,7 +164,7 @@ onMounted(() => {
   pointer-events: none;
   position: absolute;
   top: 50%;
-  right: toRem(10);
+  right: toRem(4);
   transform: translateY(-50%);
   width: toRem(24);
   height: toRem(24);
@@ -194,7 +194,7 @@ onMounted(() => {
 
 .wallet-dashboard__jazzicon-wrp {
   display: flex;
-  margin-right: toRem(12);
+  margin-right: toRem(28);
 }
 
 .wallet-dashboard__address-wrp {

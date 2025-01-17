@@ -110,11 +110,17 @@ const submit = async (): Promise<void> => {
   isSubmitting.value = true
 
   try {
+    await web3ProvidersStore.provider.selectChain(
+      web3ProvidersStore.erc1967ProxyContractDetails.targetChainId,
+    )
+
     const layerZeroEndpointId =
       config.layerZeroEndpointIds[
         web3ProvidersStore.endpointContractDetails
           .targetChainId as EthereumChains
       ]
+
+    // console.log(layerZeroEndpointId)
 
     const fees =
       // eslint-disable-next-line max-len
@@ -130,6 +136,8 @@ const submit = async (): Promise<void> => {
     const tx = await (
       web3ProvidersStore.erc1967ProxyContract.signerBased.value as ERC1967Proxy
     ).claimReferrerTier(props.poolId, form.address, { value: fees.nativeFee })
+
+    // console.log(2)
 
     const explorerTxUrl = getEthExplorerTxUrl(
       web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,

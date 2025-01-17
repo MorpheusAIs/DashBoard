@@ -120,9 +120,18 @@ const l2Provider = useLimitedProvider([
 ])
 
 const l2ProviderDetails = computed(() => {
-  return config.chainsMap[
-    getEthereumChainsName(String(l2Provider.value.network.chainId))
-  ]
+  if (l2Provider.value.network) {
+    return config.chainsMap[
+      getEthereumChainsName(String(l2Provider.value.network.chainId))
+    ]
+  }
+
+  const network =
+    route.query.network === NetworkTypes.Testnet
+      ? EthereumChains.ArbitrumSepolia
+      : EthereumChains.Arbitrum
+
+  return getEthereumChainsName(network)
 })
 
 const protocol = ref<Mor20EcosystemType.Protocol | null>(null)
