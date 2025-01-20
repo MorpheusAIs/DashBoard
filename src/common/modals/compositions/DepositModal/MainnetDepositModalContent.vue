@@ -21,6 +21,7 @@
       :chosen-asset="chosenAsset"
       :pool-id="poolId"
       :min-stake="minStake"
+      :default-date="defaultDate"
       @stake-tx-sent="emit('cancel')"
       @asset-chosen="chooseAsset"
       @cancel="emit('cancel')"
@@ -53,6 +54,7 @@ const emit = defineEmits<{
 defineProps<{
   poolId: number
   minStake: BigNumber
+  defaultDate?: string
 }>()
 
 const { t } = useI18n()

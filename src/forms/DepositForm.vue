@@ -52,7 +52,7 @@
       <datetime-field
         v-if="isMultiplierShown"
         v-model="form.lockPeriod"
-        position="top"
+        position="center"
         :placeholder="$t('deposit-form.lock-period-placeholder')"
         :error-message="getFieldErrorMessage('lockPeriod')"
         :is-loading="isInitializing"
@@ -129,6 +129,7 @@ const emit = defineEmits<{
 const props = defineProps<{
   poolId: number
   minStake: BigNumber
+  defaultDate?: string
 }>()
 
 const { t } = useI18n()
@@ -165,7 +166,7 @@ const action = computed<ACTIONS>(() => {
 
 const form = reactive({
   amount: '',
-  lockPeriod: '',
+  lockPeriod: props.defaultDate || '',
   referrer: '',
 })
 
@@ -287,8 +288,6 @@ const init = async (): Promise<void> => {
     emit('cancel')
     ErrorHandler.process(error)
   }
-
-  form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber() || '')
 
   isInitializing.value = false
 }
