@@ -52,7 +52,6 @@
           :error-message="getFieldErrorMessage('lockPeriodAfterStake')"
           @blur="touchField('lockPeriodAfterStake')"
           :disabled="isSubmitting"
-          :min="minimalWithdrawLockPeriod"
           type="number"
         />
         <datetime-field
@@ -169,6 +168,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       depositAmount: { required },
       lockPeriodAfterStake: {
         required,
+        minValue: minValue(minimalWithdrawLockPeriod.value),
       },
       startAt: { required },
       claimLockEndTime: {
