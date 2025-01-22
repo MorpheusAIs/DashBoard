@@ -57,20 +57,32 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     return (network as NetworkTypes) || NetworkTypes.Mainnet
   })
 
-  const currentNetworkTypeChains = computed(
-    () => config.ethereumChainsTypes[networkType.value],
-  )
+  // const currentNetworkTypeChains = computed(
+  //   () => config.ethereumChainsTypes[networkType.value],
+  // )
 
   const allowedForCurrentRouteChains = computed(() => {
     return config.perPageAllowedNetworks[_route.name as ROUTE_NAMES]
   })
 
-  const allowedForCurrentRouteChainsLimitedByNetworkType = computed(() => {
+  const getForCurrentRouteChainsLimitedByNetworkType = (
+    networkType: NetworkTypes,
+  ): EthereumChains[] => {
     if (!allowedForCurrentRouteChains.value) return []
 
-    return currentNetworkTypeChains.value.filter(el =>
+    return config.ethereumChainsTypes[networkType].filter(el =>
       allowedForCurrentRouteChains.value.includes(el),
     )
+  }
+
+  const allowedForCurrentRouteChainsLimitedByNetworkType = computed(() => {
+    return getForCurrentRouteChainsLimitedByNetworkType(networkType.value)
+
+    // if (!allowedForCurrentRouteChains.value) return []
+    //
+    // return currentNetworkTypeChains.value.filter(el =>
+    //   allowedForCurrentRouteChains.value.includes(el),
+    // )
   })
 
   const isCurrentChainAllowed = computed(() =>
@@ -386,6 +398,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     networkType,
     isConnected,
     address,
+
+    allowedForCurrentRouteChainsLimitedByNetworkType,
+    getForCurrentRouteChainsLimitedByNetworkType,
 
     erc1967ProxyContractDetails,
     erc1967ProxyContract,

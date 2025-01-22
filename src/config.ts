@@ -118,26 +118,79 @@ const chainsMap: Record<keyof typeof EthereumChains, EthereumType.Chain> = {
  * User will be forced to switch his network on this page to supported one if he still not
  */
 const perPageAllowedNetworks: Record<ROUTE_NAMES, EthereumChains[]> = {
-  [ROUTE_NAMES.app]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appDashboard]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appDashboardCapital]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appCapital]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appCommunity]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appMor20EcosystemMain]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.contractInfo]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appMor20EcosystemProtocolCreation]: [
-    ...Object.values(EthereumChains),
+  [ROUTE_NAMES.app]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
   ],
-  [ROUTE_NAMES.appReferrals]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appDelegation]: [...Object.values(EthereumChains)],
-  [ROUTE_NAMES.appDelegatorInfo]: [...Object.values(EthereumChains)],
+  [ROUTE_NAMES.appDashboard]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appDashboardCapital]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appCapital]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appCommunity]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appMor20EcosystemMain]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.contractInfo]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appMor20EcosystemProtocolCreation]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appReferrals]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appDelegation]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
+  [ROUTE_NAMES.appDelegatorInfo]: [
+    EthereumChains.Ethereum,
+    EthereumChains.Sepolia,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
   [ROUTE_NAMES.appBuildersList]: [
-    // EthereumChains.Arbitrum,
+    EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
     EthereumChains.Base,
   ],
   [ROUTE_NAMES.appBuildersItem]: [
-    // EthereumChains.Arbitrum,
+    EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
     EthereumChains.Base,
   ],
