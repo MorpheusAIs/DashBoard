@@ -52,7 +52,7 @@ const { getRefData } = useReferralInfo(props.poolId)
 
 const isLoaded = ref(false)
 const isLoadFailed = ref(false)
-const referralData = ref<ReferralData | null>(null)
+const referralData = ref<ReferralData>()
 const isRefBonusModalOpened = ref(false)
 
 const openRefBonusModal = () => (isRefBonusModalOpened.value = true)
@@ -65,7 +65,7 @@ const init = async () => {
       return
     }
     referralData.value = await getRefData(
-      route.query.user || web3ProvidersStore.address,
+      (route.query.user as string) || web3ProvidersStore.address,
     )
   } catch (e) {
     isLoadFailed.value = true
@@ -80,7 +80,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  bus.off(BUS_EVENTS.changedCurrentUserRefReward, onChangeBalances)
+  bus.off(BUS_EVENTS.changedCurrentUserRefReward, init)
 })
 
 watch(

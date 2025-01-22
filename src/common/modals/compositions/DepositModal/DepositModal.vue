@@ -14,6 +14,7 @@
           class="deposit-modal__form"
           :pool-id="poolId"
           :min-stake="minStake"
+          :default-date="defaultDate"
           @cancel="modal.close"
           @stake-tx-sent="modal.close"
         />
@@ -42,9 +43,11 @@ withDefaults(
     minStake: BigNumber
     claimLockEnd: string
     isCloseByClickOutside?: boolean
+    defaultDate?: string
   }>(),
   {
     isCloseByClickOutside: true,
+    defaultDate: '',
   },
 )
 

@@ -4,8 +4,8 @@
       <app-navbar class="app__navbar" :class="['app__navbar--desktop']" />
       <app-navbar-mobile class="app__navbar" :class="['app__navbar--mobile']" />
       <div class="app__page-wrp">
-        <router-view v-slot="{ Component, route }">
-          <transition :name="route.meta.transition || 'fade'" mode="out-in">
+        <router-view v-slot="{ Component }">
+          <transition :name="transitionName" mode="out-in">
             <component :is="Component" />
           </transition>
         </router-view>
@@ -21,12 +21,18 @@ import { bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { type NotificationPayload } from '@/types'
 import { config } from '@config'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const isAppInitialized = ref(false)
 
+const route = useRoute()
 const { showToast } = useNotifications()
 const web3ProvidersStore = useWeb3ProvidersStore()
+
+const transitionName = computed(
+  () => (route.meta.transition as string) || 'fade',
+)
 
 const initNotifications = () => {
   bus.on(BUS_EVENTS.success, payload =>

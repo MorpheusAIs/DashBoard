@@ -58,7 +58,7 @@ import type { Options } from 'flatpickr/dist/types/options'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import arrowIconHTML from '@/assets/icons/chevron-down-icon.svg?raw'
 
-type POSITION = 'bottom' | 'bottom-left' | 'bottom-right' | 'top'
+type POSITION = 'bottom' | 'bottom-left' | 'bottom-right' | 'top' | 'center'
 
 const emit = defineEmits<{
   (event: 'update:model-value', value: string): void
@@ -214,6 +214,12 @@ $z-index: 1;
 
   @include respond-to(small) {
     position: static;
+  }
+
+  &--center {
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
   }
 
   &--top {

@@ -52,7 +52,7 @@
       <datetime-field
         v-if="isMultiplierShown"
         v-model="form.lockPeriod"
-        position="top"
+        position="center"
         :placeholder="$t('deposit-form.lock-period-placeholder')"
         :error-message="getFieldErrorMessage('lockPeriod')"
         :is-loading="isInitializing"
@@ -129,6 +129,7 @@ const emit = defineEmits<{
 const props = defineProps<{
   poolId: number
   minStake: BigNumber
+  defaultDate?: string
 }>()
 
 const { t } = useI18n()
@@ -138,14 +139,15 @@ const uid = uuidv4()
 const isInitializing = ref(true)
 const isSubmitting = ref(false)
 
-const depositTokenAllowance = ref('')
+const depositTokenAllowance = ref(BigNumber.from(0))
 
 const { expectedRewardsMultiplier, fetchExpectedMultiplier, userPoolData } =
   usePool(toRef(props.poolId))
 const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isReferrerDisabled = computed(
-  () => ethers.utils.isAddress(route.query?.referrer) || isSubmitting.value,
+  () =>
+    ethers.utils.isAddress(String(route.query?.referrer)) || isSubmitting.value,
 )
 
 const action = computed<ACTIONS>(() => {
@@ -165,7 +167,7 @@ const action = computed<ACTIONS>(() => {
 
 const form = reactive({
   amount: '',
-  lockPeriod: '',
+  lockPeriod: props.defaultDate || '',
   referrer: '',
 })
 
@@ -175,7 +177,7 @@ const isMultiplierShown = computed(
 
 const balanceOfForm = computed(
   () =>
-    `${formatEther(web3ProvidersStore.balances.depositToken)} ${
+    `${formatEther(web3ProvidersStore.balances.depositToken || 0)} ${
       web3ProvidersStore.depositTokenSymbol
     }`,
 )
@@ -186,7 +188,9 @@ const validationRules = computed(() => ({
     ether,
     minEther: minEther(props.minStake.add(parseUnits('0.001', 'ether'))),
     ...(balanceOfForm.value && {
-      maxEther: maxEther(formatEther(web3ProvidersStore.balances.depositToken)),
+      maxEther: maxEther(
+        formatEther(web3ProvidersStore.balances.depositToken || 0),
+      ),
     }),
   },
   lockPeriod: {
@@ -237,10 +241,13 @@ const submit = async (action: ACTIONS): Promise<void> => {
         await web3ProvidersStore.erc1967ProxyContract.signerBased.value.stake(
           props.poolId,
           amountInDecimals,
+          // eslint-disable-next-line
+          // @ts-ignore
           ...(isMultiplierShown.value
             ? [form.lockPeriod || 0, form.referrer || config.DEFAULT_REFEREE]
             : []),
         )
+
       emit('stake-tx-sent')
     }
 
@@ -288,8 +295,6 @@ const init = async (): Promise<void> => {
     ErrorHandler.process(error)
   }
 
-  form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber() || '')
-
   isInitializing.value = false
 }
 
@@ -319,7 +324,7 @@ watch(
   [() => route.query?.referrer, userPoolData],
   async () => {
     if (route.query?.referrer) {
-      form.referrer = route.query.referrer
+      form.referrer = String(route.query.referrer)
       touchField('referrer')
       return
     }
@@ -328,7 +333,7 @@ watch(
     form.referrer =
       contractReferrer === ethers.constants.AddressZero
         ? config.DEFAULT_REFEREE
-        : contractReferrer
+        : contractReferrer || ''
     touchField('referrer')
   },
   { immediate: true },

@@ -1,7 +1,7 @@
 <template>
   <main class="main-page" :class="{ 'main-page--loading': isInitializing }">
     <transition name="fade" mode="out-in">
-      <div class="main-page__wrp" :key="$route.query.network as string">
+      <div class="main-page__wrp" :key="key">
         <transition name="fade" mode="out-in">
           <div v-if="(protocol && cards.length) || isInitializing">
             <h2 class="main-page__title">
@@ -156,6 +156,18 @@ const dashboardLink = computed(() => {
   return `${window.location.origin}${link}`
 })
 
+const key = computed(() => {
+  return route.query.network as string
+})
+
+const l2ProviderUrls = computed(() => {
+  if (typeof l2ProviderDetails.value === 'string') {
+    return []
+  }
+
+  return l2ProviderDetails.value.blockExplorerUrls
+})
+
 const cards = computed<InfoCardType.Card[]>(() => [
   {
     title: t('mor20-ecosystem.main-page.info-card.token.title'),
@@ -163,7 +175,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     description: t('mor20-ecosystem.main-page.info-card.token.description'),
     address: protocol.value?.tokenAddress || '',
     link: getEthExplorerAddressUrl(
-      l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
+      l2ProviderUrls.value?.[0] ?? '',
       protocol.value?.tokenAddress || '',
     ),
   },
@@ -197,7 +209,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.l2MessageReceiverAddress || '',
     link: getEthExplorerAddressUrl(
-      l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
+      l2ProviderUrls.value?.[0] ?? '',
       protocol.value?.l2MessageReceiverAddress || '',
     ),
   },
@@ -209,7 +221,7 @@ const cards = computed<InfoCardType.Card[]>(() => [
     ),
     address: protocol.value?.l2TokenReceiverAddress || '',
     link: getEthExplorerAddressUrl(
-      l2ProviderDetails.value.blockExplorerUrls?.[0] ?? '',
+      l2ProviderUrls.value?.[0] ?? '',
       protocol.value?.l2TokenReceiverAddress || '',
     ),
   },

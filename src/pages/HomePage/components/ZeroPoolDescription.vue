@@ -77,7 +77,9 @@ const listItems = computed<string[]>(() => [
     : [
         t('zero-pool-description.list.text-2-testnet', {
           deposit: web3ProvidersStore.depositTokenSymbol,
-          time: humanizeTime(props.withdrawAfter?.timestamp || 0),
+          time: humanizeTime(
+            props.withdrawAfter ? props.withdrawAfter.timestamp : 0,
+          ),
         }),
       ]),
   t('zero-pool-description.list.text-3', {
@@ -105,7 +107,8 @@ const listItems = computed<string[]>(() => [
 const loadPoolsLimits = async () => {
   try {
     const { claimLockPeriodAfterClaim, claimLockPeriodAfterStake } =
-      // eslint-disable-next-line max-len
+      // eslint-disable-next-line
+      // @ts-ignore
       await web3ProvidersStore.erc1967ProxyContract.providerBased.value.poolsLimits(
         0,
       )
@@ -114,7 +117,7 @@ const loadPoolsLimits = async () => {
       claimLockPeriodAfterStake: claimLockPeriodAfterStake.toNumber(),
     }
   } catch (e) {
-    ErrorHandler.processWithoutFeedback()
+    ErrorHandler.processWithoutFeedback(e)
   }
 }
 

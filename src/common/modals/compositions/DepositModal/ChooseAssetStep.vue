@@ -47,7 +47,11 @@ const radioButtonOptions = computed(() =>
   SWAP_ASSETS.map(({ symbol }) => ({ value: symbol, label: symbol })),
 )
 
-watch(chosenRadioButton, () => emit('asset-chosen', chosenRadioButton.value))
+watch(chosenRadioButton, () => {
+  if (!chosenRadioButton.value) return
+
+  emit('asset-chosen', chosenRadioButton.value)
+})
 </script>
 
 <style scoped lang="scss">

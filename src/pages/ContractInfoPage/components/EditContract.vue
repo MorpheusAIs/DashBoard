@@ -18,7 +18,7 @@
       <div class="edit-contract__content-edit-wrp">
         <contract-editing
           class="edit-contract__content-edit"
-          :key="methodsToEdit[chosenMethod]"
+          :key="String(methodsToEdit[chosenMethod])"
           :contract-type="contractType"
           :method-to-edit="methodsToEdit[chosenMethod]"
         />
@@ -50,9 +50,9 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const chosenMethod = ref(CONTRACT_METHODS.transfer)
+const chosenMethod = ref<ContractMethods>(CONTRACT_METHODS.transfer)
 
-const contractMethods = computed(() => {
+const contractMethods = computed<ContractMethods[]>(() => {
   switch (props.contractType) {
     case CONTRACT_TYPE.token:
       return [
@@ -106,6 +106,9 @@ const contractName = computed(
   () => `${props.projectName} ${props.contractType}`,
 )
 
+// TODO: correct types. not all methods present
+// eslint-disable-next-line
+// @ts-ignore
 const methodsToEdit = computed<ContractMethodsConfig>(() => ({
   [CONTRACT_METHODS.approve]: {
     methodName: CONTRACT_METHODS.approve,

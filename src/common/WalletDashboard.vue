@@ -49,6 +49,9 @@ import { abbrCenter, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { onClickOutside } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
+// no types for this package
+// eslint-disable-next-line
+// @ts-ignore
 import generateJazzicon from 'jazzicon'
 import AppIcon from './AppIcon.vue'
 import CopyButton from './CopyButton.vue'

@@ -29,7 +29,6 @@
                   })
                 "
                 :is-loading="isInitializing"
-                :disabled="isDepositDisabled"
                 @click="isDepositModalShown = true"
               />
               <app-button
@@ -46,11 +45,12 @@
               />
             </div>
             <deposit-modal
-              v-if="!isDepositDisabled && poolData?.minimalStake"
+              v-if="poolData?.minimalStake"
               v-model:is-shown="isDepositModalShown"
               :pool-id="poolId"
               :min-stake="poolData.minimalStake"
               :claim-lock-end="userPoolData?.claimLockEnd?.toString() ?? ''"
+              :default-date="String(claimLockTimeNotFormatted)"
             />
           </div>
         </transition>
@@ -191,8 +191,8 @@ const isChangeLockEnabled = computed(
   () => route.name !== ROUTE_NAMES.appDashboardCapital,
 )
 
-const claimLockTime = computed(() => {
-  if (!poolData.value || !userPoolData.value) return '-'
+const claimLockTimeNotFormatted = computed(() => {
+  if (!poolData.value || !userPoolData.value) return
 
   const claimLockEnd = userPoolData.value.claimLockEnd?.toNumber() || 0
 
@@ -200,6 +200,8 @@ const claimLockTime = computed(() => {
     .add(poolData.value.claimLockPeriod)
     .toNumber()
 
+  // eslint-disable-next-line
+  // @ts-ignore
   const lastClaim = userPoolData.value.lastClaim || ethers.BigNumber.from(0)
   const lastStake = userPoolData.value.lastStake || ethers.BigNumber.from(0)
 
@@ -211,12 +213,18 @@ const claimLockTime = computed(() => {
     .add(poolData.value.claimLockPeriodAfterStake || ethers.BigNumber.from(0))
     .toNumber()
 
-  const maxLockEnd = Math.max(
+  return Math.max(
     claimLockEnd,
     payoutLockEnd,
     claimLockAfterStake,
     claimLockAfterClaimEnd,
   )
+})
+
+const claimLockTime = computed(() => {
+  if (!poolData.value || !userPoolData.value) return '-'
+
+  const maxLockEnd = claimLockTimeNotFormatted.value || 0
 
   if (maxLockEnd > currentTimestamp.value) {
     return new Time(maxLockEnd).format(DEFAULT_TIME_FORMAT)

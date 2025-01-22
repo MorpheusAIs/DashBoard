@@ -82,11 +82,10 @@ export type ContractEditingType = {
     id: CONTRACT_INPUTS
     displayedName: string
   }[]
-  inputNotes: string[]
-  validationRules: {
-    firstInput: ValidationRule
-    secondInput?: ValidationRule
-    thirdInput?: ValidationRule
-    fourthInput?: ValidationRule
+  inputNotes?: string[]
+  validationRules?: {
+    [key: string]: {
+      [key: string]: ValidationRule
+    }
   }
 }
