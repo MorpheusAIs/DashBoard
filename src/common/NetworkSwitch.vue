@@ -58,11 +58,16 @@ import { useI18n } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
 import { Route } from '@/types'
 import { onClickOutside } from '@vueuse/core'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 import DropMenu from './DropMenu.vue'
-import { config, getEthereumChainsName, NetworkTypes } from '@config'
-import { useRouter } from 'vue-router'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+} from '@config'
+import { useRoute, useRouter } from 'vue-router'
 import { cn } from '@/theme/utils'
 
 type Link = {
@@ -70,6 +75,8 @@ type Link = {
   title: string
   onClick: () => void
 }
+
+const route = useRoute()
 
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
@@ -178,6 +185,17 @@ onMounted(() => {
   onClickOutside(rootElement, () => {
     isDropMenuShown.value = false
   })
+})
+
+watch([() => route.name], () => {
+  const currentChainId = web3ProvidersStore.provider.chainId
+
+  const targetChains =
+    web3ProvidersStore.allowedForCurrentRouteChainsLimitedByNetworkType
+
+  if (!targetChains.includes(currentChainId as EthereumChains)) {
+    safeSelectNetwork(targetChains[0])
+  }
 })
 </script>
 
