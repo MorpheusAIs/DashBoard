@@ -109,7 +109,7 @@ const props = withDefaults(
       | 'info'
       | 'none'
     size?: 'large' | 'medium' | 'small' | 'x-small' | 'none'
-    route?: Route
+    route?: Route & { query?: Record<string, string | number> }
     href?: string
     iconLeft?: ICON_NAMES
     iconRight?: ICON_NAMES

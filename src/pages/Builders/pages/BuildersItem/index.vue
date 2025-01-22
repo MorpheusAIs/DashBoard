@@ -497,6 +497,8 @@ const {
         fetchPolicy: 'network-only',
         variables: {
           address: provider.value.selectedAddress,
+          // eslint-disable-next-line
+          // @ts-ignore
           project_id: buildersProjectsResponse.buildersProject?.id,
         },
       })

@@ -75,7 +75,10 @@ watch(
     () => route.query.network,
     () => web3ProvidersStore.address,
   ],
-  getDepositedAmountByUser(route.query.user || web3ProvidersStore.address),
+  () =>
+    getDepositedAmountByUser(
+      (route.query.user as string) || web3ProvidersStore.address,
+    ),
   {
     immediate: true,
   },

@@ -127,6 +127,9 @@ const submit = async () => {
     )
     await sleep(500)
     const tx =
+      // TODO: fix types (wrong abi?)
+      // eslint-disable-next-line
+      // @ts-ignore
       await web3ProvidersStore.erc1967ProxyContract.signerBased.value.lockClaim(
         props.poolId,
         form.lockPeriod,

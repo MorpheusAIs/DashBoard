@@ -29,7 +29,6 @@
                   })
                 "
                 :is-loading="isInitializing"
-                :disabled="isDepositDisabled"
                 @click="isDepositModalShown = true"
               />
               <app-button
@@ -46,7 +45,7 @@
               />
             </div>
             <deposit-modal
-              v-if="!isDepositDisabled && poolData?.minimalStake"
+              v-if="poolData?.minimalStake"
               v-model:is-shown="isDepositModalShown"
               :pool-id="poolId"
               :min-stake="poolData.minimalStake"
@@ -201,6 +200,8 @@ const claimLockTimeNotFormatted = computed(() => {
     .add(poolData.value.claimLockPeriod)
     .toNumber()
 
+  // eslint-disable-next-line
+  // @ts-ignore
   const lastClaim = userPoolData.value.lastClaim || ethers.BigNumber.from(0)
   const lastStake = userPoolData.value.lastStake || ethers.BigNumber.from(0)
 

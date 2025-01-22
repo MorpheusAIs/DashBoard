@@ -79,7 +79,7 @@ const props = withDefaults(
     isCloseByClickOutside?: boolean
   }>(),
   {
-    currentReward: ethers.BigNumber.from('0'),
+    currentReward: () => ethers.BigNumber.from('0'),
     isCloseByClickOutside: true,
   },
 )

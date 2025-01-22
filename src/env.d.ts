@@ -2,10 +2,13 @@
 import { config } from '@config'
 import { ICON_NAMES, ROUTE_NAMES } from '@/enums'
 import { WritableComputedRef } from 'vue'
+import { type Router, RouteLocationNormalized } from 'vue-router'
 
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
     $routes: typeof ROUTE_NAMES
+    $router: Router
+    $route: RouteLocationNormalized
     $icons: typeof ICON_NAMES
     $config: typeof config
     $locale: WritableComputedRef

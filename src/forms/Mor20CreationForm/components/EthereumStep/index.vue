@@ -25,7 +25,7 @@
       <h5 class="ethereum-step__group-title">
         {{
           $t(`${I18N_KEY_PREFIX}.group-title`, {
-            idx: form.ethereumConfig.groups.length,
+            idx: String(form.ethereumConfig.groups.length),
           })
         }}
       </h5>

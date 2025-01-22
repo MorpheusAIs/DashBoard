@@ -6,7 +6,9 @@
     <div class="referral-system-rate__card">
       <h3 class="referral-system-rate__tier">
         {{
-          $t('referral-system-rate.title', { tier: referralData?.tier ?? 0 })
+          $t('referral-system-rate.title', {
+            tier: referralData?.tier ? String(referralData.tier) : '0',
+          })
         }}
       </h3>
       <div class="referral-system-rate__info-wrp">
@@ -68,7 +70,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   poolId: number
-  referralData: ReferralData
+  referralData?: ReferralData
 }>()
 
 const route = useRoute()
@@ -76,7 +78,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const { t } = useI18n()
 
 const availableToClaim = computed(() =>
-  roundNumber(ethers.utils.formatUnits(props.referralData.currentReward)),
+  roundNumber(ethers.utils.formatUnits(props.referralData?.currentReward || 0)),
 )
 
 const isClaimButtonHidden = computed(

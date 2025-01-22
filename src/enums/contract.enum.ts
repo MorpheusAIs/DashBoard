@@ -1,45 +1,45 @@
 export enum CONTRACT_TYPE {
   distribution = 'distribution',
   token = 'token',
-  l1Sender = 'l1 Sender',
-  l2TokenReceiver = 'l2 Token Receiver',
-  l2MessageReceiver = 'l2 Message Receiver',
+  l1Sender = 'l1Sender',
+  l2TokenReceiver = 'l2TokenReceiver',
+  l2MessageReceiver = 'l2MessageReceiver',
 }
 
 export enum TOKEN_CONTRACT_METHODS {
-  renounceOwnership = 'renounce ownership',
+  renounceOwnership = 'renounceOwnership',
   mint = 'mint',
   transfer = 'transfer',
-  transferOwnership = 'transfer ownership',
+  transferOwnership = 'transferOwnership',
   approve = 'approve',
   burn = 'burn',
-  increaseAllowance = 'increase allowance',
+  increaseAllowance = 'increaseAllowance',
 }
 
 export enum DISTRIBUTION_CONTRACT_METHODS {
-  bridgeOverplus = 'bridge overplus',
-  createPool = 'create pool',
-  editPool = 'edit pool',
-  manageUsersInPrivatePool = 'manage users in private pool',
+  bridgeOverplus = 'bridgeOverplus',
+  createPool = 'createPool',
+  editPool = 'editPool',
+  manageUsersInPrivatePool = 'manageUsersInPrivatePool',
 }
 
 export enum L1_SENDER_CONTRACT_METHODS {
-  transferOwnership = 'transfer ownership',
-  setRewardTokenLZParams = 'set reward token lz params',
+  transferOwnership = 'transferOwnership',
+  setRewardTokenLZParams = 'setRewardTokenLZParams',
 }
 
 export enum L2_MESSAGE_RECEIVER_CONTRACT_METHODS {
-  transferOwnership = 'transfer ownership',
-  retryMessage = 'retry message',
-  setLzSender = 'set lz sender',
+  transferOwnership = 'transferOwnership',
+  retryMessage = 'retryMessage',
+  setLzSender = 'setLzSender',
 }
 
 export enum L2_TOKEN_RECEIVER_CONTRACT_METHODS {
-  transferOwnership = 'transfer ownership',
-  collectFees = 'collect fees',
-  decreaseLiquidityCurrentRange = 'decrease liquidity current range',
-  increaseLiquidityCurrentRange = 'increase liquidity current range',
-  withdrawTokenId = 'withdraw token id',
+  transferOwnership = 'transferOwnership',
+  collectFees = 'collectFees',
+  decreaseLiquidityCurrentRange = 'decreaseLiquidityCurrentRange',
+  increaseLiquidityCurrentRange = 'increaseLiquidityCurrentRange',
+  withdrawTokenId = 'withdrawTokenId',
   swap = 'swap',
-  editParams = 'edit params',
+  editParams = 'editParams',
 }

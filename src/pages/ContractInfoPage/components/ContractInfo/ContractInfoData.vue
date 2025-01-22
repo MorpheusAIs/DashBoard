@@ -26,7 +26,7 @@
             rel="noopener noreferrer"
             :href="subdata.link"
             :icon-right="$icons.externalLink"
-            :text="subdata.value"
+            :text="String(subdata.value)"
           />
           <span v-else class="contract-info-data__subdata-description">
             {{ subdata.value }}
@@ -42,7 +42,7 @@
         rel="noopener noreferrer"
         :href="item.link"
         :icon-right="$icons.externalLink"
-        :text="item.value"
+        :text="String(item.value)"
       />
       <span v-else class="contract-info-data__description">
         {{ item.value }}
@@ -56,14 +56,15 @@ import { AppButton } from '@/common'
 
 type ContractInfoData = {
   title: string
-  value: string | number
+  value?: string | number | boolean
   link?: string
 }
 
 defineProps<{
   data: {
-    title: ContractInfoData.title
-    value: ContractInfoData.value | ContractInfoData[]
+    title: ContractInfoData['title']
+    value?: ContractInfoData['value'] | ContractInfoData[]
+    link?: ContractInfoData['link']
   }[]
 }>()
 </script>

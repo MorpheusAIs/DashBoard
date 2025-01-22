@@ -1,7 +1,7 @@
 <template>
   <div class="referral-info-card">
     <p class="referral-info-card__title">
-      {{ $t('referral-info-card.title', { tier: tierNumber }) }}
+      {{ $t('referral-info-card.title', { tier: String(tierNumber) }) }}
     </p>
     <p class="referral-info-card__deposited">
       {{ $t('referral-info-card.deposited-text') }}

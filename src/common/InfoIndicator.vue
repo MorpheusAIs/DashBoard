@@ -22,7 +22,7 @@
         target="_blank"
         rel="noopener noreferrer"
         :href="link"
-        :text="value"
+        :text="String(value)"
       />
       <copy-button
         class="info-indicator__link-copy-button"

@@ -116,6 +116,7 @@ import type {
   Erc1967ProxyType,
   FieldOption,
   InfoDashboardType,
+  Mor1967ProxyType,
 } from '@/types'
 import { Time, formatEther } from '@/utils'
 import { computed, onMounted, reactive, ref, toRef, watch } from 'vue'
@@ -149,7 +150,7 @@ const REFERRAL_REWARD = 1 //%
 const props = withDefaults(
   defineProps<{
     poolId: number
-    poolData: Erc1967ProxyType.PoolData | null
+    poolData: Erc1967ProxyType.PoolData | Mor1967ProxyType.PoolData | null
     indicators?: InfoDashboardType.Indicator[]
     isLoading?: boolean
   }>(),

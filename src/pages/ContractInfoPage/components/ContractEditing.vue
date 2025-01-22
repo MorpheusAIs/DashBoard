@@ -16,15 +16,16 @@
         class="contract-editing__input-wrp"
       >
         <input-field
-          v-model="form[`input-${id}`]"
           class="contract-editing__input"
           :placeholder="displayedName"
           :error-message="getFieldErrorMessage(`input-${id}`)"
           :disabled="isSubmitting || isSubmitted"
+          :model-value="form[`input-${id}`] || ''"
           @blur="touchField(`input-${id}`)"
+          @update:model-value="updateFormField(id, $event)"
         />
         <div
-          v-if="methodToEdit.inputNotes[index]"
+          v-if="methodToEdit.inputNotes?.[index]"
           v-tooltip="methodToEdit.inputNotes[index]"
         >
           <app-icon
@@ -70,6 +71,14 @@ import { ContractTransaction, utils } from 'ethers'
 import { config, getEthereumChainsName } from '@config'
 import { CONTRACT_METHODS } from '@/const'
 
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
+type Input = keyof typeof CONTRACT_INPUTS
+
+type Inputs = {
+  [key in `input-${Input}`]?: string
+}
+
 const props = defineProps<{
   contractType: CONTRACT_TYPE
   methodToEdit: ContractEditingType
@@ -89,7 +98,7 @@ const form = reactive(
     ? props.methodToEdit?.inputs.reduce((acc, item) => {
         acc[`input-${item.id}`] = ''
         return acc
-      }, {})
+      }, {} as Inputs)
     : {},
 )
 
@@ -160,60 +169,12 @@ const contract = computed(() => {
   }
 })
 
-const submitTokenContract = async (): Promise<ContractTransaction | null> => {
-  let tx: ContractTransaction | null = null
-  if (!contract.value) {
-    return null
-  }
-  switch (props.methodToEdit.methodName) {
-    case TOKEN_CONTRACT_METHODS.renounceOwnership:
-      tx = await contract.value?.signerBased.value?.renounceOwnership()
-      break
-    case TOKEN_CONTRACT_METHODS.approve:
-      tx = await contract.value?.signerBased.value?.approve(
-        form[`input-${CONTRACT_INPUTS.spender}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.transfer:
-      tx = await contract.value?.signerBased.value?.transfer(
-        form[`input-${CONTRACT_INPUTS.recipient}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.burn:
-      tx = await contract.value?.signerBased.value?.burn(
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.mint:
-      tx = await contract.value?.signerBased.value?.mint(
-        form[`input-${CONTRACT_INPUTS.recipient}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.increaseAllowance:
-      tx = await contract.value?.signerBased.value?.increaseAllowance(
-        form[`input-${CONTRACT_INPUTS.spender}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
-      )
-      break
-    case TOKEN_CONTRACT_METHODS.transferOwnership:
-      tx = await contract.value?.signerBased.value?.transferOwnership(
-        form[`input-${CONTRACT_INPUTS.newOwner}`],
-      )
-      break
-    default:
-      return tx
-  }
-  return tx
-}
-
 //TODO: ADD NEW LOGIC AS WE TALKED WITH MARK
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
     case DISTRIBUTION_CONTRACT_METHODS.createPool:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.createPool([
         form[`input-${CONTRACT_INPUTS.payoutStart}`],
         form[`input-${CONTRACT_INPUTS.decreaseInterval}`],
@@ -227,6 +188,7 @@ const submitDistributionContract = async () => {
       ])
       break
     case DISTRIBUTION_CONTRACT_METHODS.editPool:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.editPool(
         form[`input-${CONTRACT_INPUTS.poolId}`],
         [
@@ -243,6 +205,7 @@ const submitDistributionContract = async () => {
       )
       break
     case DISTRIBUTION_CONTRACT_METHODS.bridgeOverplus:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.bridgeOverplus(
         form[`input-${CONTRACT_INPUTS.gasLimit}`],
         form[`input-${CONTRACT_INPUTS.maxFee}`],
@@ -253,31 +216,37 @@ const submitDistributionContract = async () => {
       )
       break
     case TOKEN_CONTRACT_METHODS.transfer:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.transfer(
         form[`input-${CONTRACT_INPUTS.recipient}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
       )
       break
     case TOKEN_CONTRACT_METHODS.burn:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.burn(
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
       )
       break
     case TOKEN_CONTRACT_METHODS.mint:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.mint(
         form[`input-${CONTRACT_INPUTS.recipient}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
       )
       break
     case TOKEN_CONTRACT_METHODS.increaseAllowance:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.increaseAllowance(
         form[`input-${CONTRACT_INPUTS.spender}`],
-        utils.parseEther(form[`input-${CONTRACT_INPUTS.amount}`]),
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
       )
       break
+    // @ts-ignore
     case TOKEN_CONTRACT_METHODS.transferOwnership:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.transferOwnership(
-        form[`input-${CONTRACT_INPUTS.newOwner}`],
+        String(form[`input-${CONTRACT_INPUTS.newOwner}`]),
       )
       break
     default:
@@ -289,12 +258,15 @@ const submitDistributionContract = async () => {
 const submitL1SenderContract = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
+    // @ts-ignore
     case L1_SENDER_CONTRACT_METHODS.transferOwnership:
+      // @ts-ignore
       tx = contract.value?.signerBased.value?.transferOwnership(
-        form[`input-${CONTRACT_INPUTS.newOwner}`],
+        String(form[`input-${CONTRACT_INPUTS.newOwner}`]),
       )
       break
     case L1_SENDER_CONTRACT_METHODS.setRewardTokenLZParams:
+      // @ts-ignore
       tx = contract.value?.signerBased.value?.setRewardTokenLZParams(
         form[`input-${CONTRACT_INPUTS.zroPaymentAddress}`],
         form[`input-${CONTRACT_INPUTS.adapterParams}`],
@@ -309,12 +281,15 @@ const submitL1SenderContract = async () => {
 const submitL2MessageReceiver = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
+    // @ts-ignore
     case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.transferOwnership:
+      // @ts-ignore
       tx = contract.value?.signerBased.value?.transferOwnership(
-        form[`input-${CONTRACT_INPUTS.newOwner}`],
+        String(form[`input-${CONTRACT_INPUTS.newOwner}`]),
       )
       break
     case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.retryMessage:
+      // @ts-ignore
       tx = contract.value?.signerBased.value?.retryMessage(
         form[`input-${CONTRACT_INPUTS.senderChainId}`],
         form[`input-${CONTRACT_INPUTS.senderAndReceiverAddresses}`],
@@ -323,6 +298,7 @@ const submitL2MessageReceiver = async () => {
       )
       break
     case L2_MESSAGE_RECEIVER_CONTRACT_METHODS.setLzSender:
+      // @ts-ignore
       tx = contract.value?.signerBased.value?.setLzSender(
         form[`input-${CONTRACT_INPUTS.lzSender}`],
       )
@@ -337,17 +313,20 @@ const submitL2TokenReceiver = async () => {
   let tx: ContractTransaction | null = null
   switch (props.methodToEdit.methodName) {
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.transferOwnership:
+      // @ts-ignore
       tx = contract.value?.signerBased.value?.transferOwnership(
-        form[`input-${CONTRACT_INPUTS.newOwner}`],
+        String(form[`input-${CONTRACT_INPUTS.newOwner}`]),
       )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.collectFees:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.collectFees(
         form[`input-${CONTRACT_INPUTS.tokenId}`],
       )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.decreaseLiquidityCurrentRange:
       tx =
+        // @ts-ignore
         await contract.value?.signerBased.value?.decreaseLiquidityCurrentRange(
           form[`input-${CONTRACT_INPUTS.tokenId}`],
           form[`input-${CONTRACT_INPUTS.amount0Min}`],
@@ -357,6 +336,7 @@ const submitL2TokenReceiver = async () => {
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.increaseLiquidityCurrentRange:
       tx =
+        // @ts-ignore
         await contract.value?.signerBased.value?.increaseLiquidityCurrentRange(
           form[`input-${CONTRACT_INPUTS.tokenId}`],
           form[`input-${CONTRACT_INPUTS.amount0Add}`],
@@ -366,6 +346,7 @@ const submitL2TokenReceiver = async () => {
         )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.swap:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.swap(
         form[`input-${CONTRACT_INPUTS.amountIn}`],
         form[`input-${CONTRACT_INPUTS.amountOutMinimum}`],
@@ -375,6 +356,7 @@ const submitL2TokenReceiver = async () => {
       )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.editParams:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.editParams(
         [
           form[`input-${CONTRACT_INPUTS.tokenIn}`],
@@ -385,6 +367,7 @@ const submitL2TokenReceiver = async () => {
       )
       break
     case L2_TOKEN_RECEIVER_CONTRACT_METHODS.withdrawTokenId:
+      // @ts-ignore
       tx = await contract.value?.signerBased.value?.withdrawTokenId(
         form[`input-${CONTRACT_INPUTS.recipient}`],
         form[`input-${CONTRACT_INPUTS.token}`],
@@ -395,6 +378,10 @@ const submitL2TokenReceiver = async () => {
       return tx
   }
   return tx
+}
+
+const updateFormField = (id: Input, value: string | number) => {
+  form[`input-${id}`] = String(value)
 }
 
 const submit = async () => {

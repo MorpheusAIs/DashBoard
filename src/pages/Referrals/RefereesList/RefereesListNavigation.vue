@@ -54,7 +54,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'sort', SORTING_ORDER): void
+  (e: 'sort', order: SORTING_ORDER): void
 }>()
 </script>
 
