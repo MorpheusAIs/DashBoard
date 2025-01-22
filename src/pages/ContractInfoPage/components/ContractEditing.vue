@@ -169,6 +169,61 @@ const contract = computed(() => {
   }
 })
 
+const submitTokenContract = async (): Promise<ContractTransaction | null> => {
+  let tx: ContractTransaction | null = null
+  if (!contract.value) {
+    return null
+  }
+  switch (props.methodToEdit.methodName) {
+    case TOKEN_CONTRACT_METHODS.renounceOwnership:
+      tx = await contract.value?.signerBased.value?.renounceOwnership()
+      break
+    case TOKEN_CONTRACT_METHODS.approve:
+      // @ts-ignore
+      tx = await contract.value?.signerBased.value?.approve(
+        form[`input-${CONTRACT_INPUTS.spender}`],
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.transfer:
+      // @ts-ignore
+      tx = await contract.value?.signerBased.value?.transfer(
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.burn:
+      // @ts-ignore
+      tx = await contract.value?.signerBased.value?.burn(
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.mint:
+      // @ts-ignore
+      tx = await contract.value?.signerBased.value?.mint(
+        form[`input-${CONTRACT_INPUTS.recipient}`],
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
+      )
+      break
+    case TOKEN_CONTRACT_METHODS.increaseAllowance:
+      // @ts-ignore
+      tx = await contract.value?.signerBased.value?.increaseAllowance(
+        form[`input-${CONTRACT_INPUTS.spender}`],
+        utils.parseEther(String(form[`input-${CONTRACT_INPUTS.amount}`])),
+      )
+      break
+    // @ts-ignore
+    case TOKEN_CONTRACT_METHODS.transferOwnership:
+      tx = await contract.value?.signerBased.value?.transferOwnership(
+        String(form[`input-${CONTRACT_INPUTS.newOwner}`]),
+      )
+      break
+    default:
+      return tx
+  }
+  return tx
+}
+
 //TODO: ADD NEW LOGIC AS WE TALKED WITH MARK
 const submitDistributionContract = async () => {
   let tx: ContractTransaction | null = null
