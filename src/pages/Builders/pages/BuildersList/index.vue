@@ -205,6 +205,7 @@ const {
       currentPage,
       () => route.query.user,
       () => route.query.network,
+      () => provider.value.chainId,
     ],
   },
 )

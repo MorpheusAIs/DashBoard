@@ -17,15 +17,38 @@
         @click="isDropMenuShown = !isDropMenuShown"
       />
     </div>
-    <drop-menu v-model:is-shown="isDropMenuShown">
-      <router-link
-        v-for="(link, idx) in links"
+    <drop-menu v-model:is-shown="isDropMenuShown" class="dropdown-menu">
+      <button
+        v-for="(el, idx) in mainnetItems"
         :key="idx"
-        :to="link.route"
-        class="network-switch__link"
+        :class="
+          cn(
+            'network-switch__item',
+            String(web3ProvidersStore.provider.chainId) ===
+              String(el.chainId) && 'brightness-200',
+          )
+        "
+        @click="el.onClick"
       >
-        {{ link.title }}
-      </router-link>
+        {{ el.title }}
+      </button>
+
+      <div class="h-2" />
+
+      <button
+        v-for="(el, idx) in testnetItems"
+        :key="idx"
+        :class="
+          cn(
+            'network-switch__item',
+            String(web3ProvidersStore.provider.chainId) ===
+              String(el.chainId) && 'brightness-200',
+          )
+        "
+        @click="el.onClick"
+      >
+        {{ el.title }}
+      </button>
     </drop-menu>
   </div>
 </template>
@@ -35,32 +58,120 @@ import { useI18n } from '@/composables'
 import { useWeb3ProvidersStore } from '@/store'
 import { Route } from '@/types'
 import { onClickOutside } from '@vueuse/core'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import AppIcon from './AppIcon.vue'
 import DropMenu from './DropMenu.vue'
-import { NetworkTypes } from '@config'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+} from '@config'
+import { useRoute, useRouter } from 'vue-router'
+import { cn } from '@/theme/utils'
 
 type Link = {
+  chainId: string
   title: string
-  route: Route
+  onClick: () => void
 }
+
+const route = useRoute()
 
 const rootElement = ref<HTMLDivElement | null>(null)
 const isDropMenuShown = ref(false)
 
 const { t } = useI18n()
 const web3ProvidersStore = useWeb3ProvidersStore()
+const router = useRouter()
 
-const links = computed<Link[]>(() => [
-  {
-    title: t('network-switch.mainnet'),
-    route: { query: { network: NetworkTypes.Mainnet } } as Route,
-  },
-  {
-    title: t('network-switch.testnet'),
-    route: { query: { network: NetworkTypes.Testnet } } as Route,
-  },
-])
+const safeSelectNetwork = (chainId: string) => {
+  if (String(web3ProvidersStore.provider.chainId) === chainId) return
+
+  web3ProvidersStore.provider.selectChain(chainId)
+}
+
+const mainnetItems = computed<Link[]>(() => {
+  const route = { query: { network: NetworkTypes.Mainnet } } as Route
+
+  const forCurrentRouteChainsLimitedByMainnet =
+    web3ProvidersStore.getForCurrentRouteChainsLimitedByNetworkType(
+      NetworkTypes.Mainnet,
+    )
+
+  if (forCurrentRouteChainsLimitedByMainnet.length === 1) {
+    return [
+      {
+        chainId: forCurrentRouteChainsLimitedByMainnet[0],
+        title: t('network-switch.mainnet'),
+        onClick: () => {
+          if (web3ProvidersStore.networkType !== NetworkTypes.Mainnet) {
+            router.push(route)
+          }
+
+          safeSelectNetwork(forCurrentRouteChainsLimitedByMainnet[0])
+        },
+      },
+    ]
+  }
+
+  return forCurrentRouteChainsLimitedByMainnet.map(el => {
+    const chainName = config.chainsMap[getEthereumChainsName(el)].chainName
+
+    return {
+      chainId: el,
+      title: chainName,
+      onClick: () => {
+        if (web3ProvidersStore.networkType !== NetworkTypes.Mainnet) {
+          router.push(route)
+        }
+
+        safeSelectNetwork(el)
+      },
+    }
+  })
+})
+
+const testnetItems = computed<Link[]>(() => {
+  const route = { query: { network: NetworkTypes.Testnet } } as Route
+
+  const forCurrentRouteChainsLimitedByTestnet =
+    web3ProvidersStore.getForCurrentRouteChainsLimitedByNetworkType(
+      NetworkTypes.Testnet,
+    )
+
+  if (forCurrentRouteChainsLimitedByTestnet.length === 1) {
+    return [
+      {
+        chainId: forCurrentRouteChainsLimitedByTestnet[0],
+        title: t('network-switch.testnet'),
+        onClick: () => {
+          if (web3ProvidersStore.networkType !== NetworkTypes.Testnet) {
+            router.push(route)
+          }
+
+          safeSelectNetwork(forCurrentRouteChainsLimitedByTestnet[0])
+        },
+      },
+    ]
+  }
+
+  return forCurrentRouteChainsLimitedByTestnet.map(el => {
+    const chainName = config.chainsMap[getEthereumChainsName(el)].chainName
+
+    return {
+      chainId: el,
+      title: chainName,
+      onClick: () => {
+        if (web3ProvidersStore.networkType !== NetworkTypes.Testnet) {
+          router.push(route)
+        }
+
+        safeSelectNetwork(el)
+      },
+    }
+  })
+})
 
 const networkTitle = computed<string>(
   () =>
@@ -75,9 +186,24 @@ onMounted(() => {
     isDropMenuShown.value = false
   })
 })
+
+watch([() => route.name], () => {
+  const currentChainId = web3ProvidersStore.provider.chainId
+
+  const targetChains =
+    web3ProvidersStore.allowedForCurrentRouteChainsLimitedByNetworkType
+
+  if (!targetChains.includes(currentChainId as EthereumChains)) {
+    safeSelectNetwork(targetChains[0])
+  }
+})
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.dropdown-menu {
+  background: none;
+}
+
 .network-switch {
   position: relative;
   background: var(--background-secondary-main);
@@ -139,8 +265,9 @@ onMounted(() => {
   }
 }
 
-.network-switch__link {
+.network-switch__item {
   $shadow-hover: 0 toRem(4) toRem(24) rgba(#ffffff, 0.25);
+  background: var(--field-bg-primary);
 
   padding: toRem(12) toRem(16);
   color: var(--text-secondary-light);

@@ -58,7 +58,7 @@ watch(
 )
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $z-index: 2;
 
 .drop-menu {
