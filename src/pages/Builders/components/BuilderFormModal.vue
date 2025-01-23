@@ -19,12 +19,12 @@
         cn(
           'max-h-[80dvh] overflow-auto px-10',
           `[&::-webkit-scrollbar-thumb]:rounded-full
-  [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-track]:bg-gray-100
-  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-  [&::-webkit-scrollbar]:w-2`,
+        [&::-webkit-scrollbar-thumb]:bg-gray-300
+        dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+          [&::-webkit-scrollbar-track]:rounded-full
+        [&::-webkit-scrollbar-track]:bg-gray-100
+        dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+          [&::-webkit-scrollbar]:w-2`,
         )
       "
     >
@@ -174,9 +174,13 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       claimLockEndTime: {
         required,
         minValue: helpers.withMessage(
-          t('builder-form-modal.min-end-time-validation-err-msg', {
-            time: time(+form.startAt).format(DOT_TIME_FORMAT),
-          }),
+          form.startAt
+            ? t('builder-form-modal.min-end-time-validation-err-msg', {
+                time: time(+form.startAt).format(DOT_TIME_FORMAT),
+              })
+            : t(
+                'builder-form-modal.min-end-time-validation-need-start-time-msg',
+              ),
           minValue(Number(form.startAt)),
         ),
       },

@@ -817,7 +817,8 @@
     "lock-period-after-stake-note": "After a user stakes to your project, this is how long they will need to wait before they can unstake. NOTE: each time a user stakes to your project, this lock period will reset.",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
-    "min-end-time-validation-err-msg": "Should be more than {time}"
+    "min-end-time-validation-err-msg": "Should be more than {time}",
+    "min-end-time-validation-need-start-time-msg": "Enter start time first"
   },
   "builders-stake-modal": {
     "modal-title": "Stake MOR",

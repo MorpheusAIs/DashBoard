@@ -136,8 +136,8 @@
       <div class=""></div>
     </div>
     <builders-table-item
-      v-for="(el, index) in buildersProjects"
-      :key="index"
+      v-for="el in buildersProjects"
+      :key="el.id"
       :builder-project="el"
     />
   </div>
