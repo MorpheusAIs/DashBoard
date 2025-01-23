@@ -27,7 +27,7 @@ export const roundNumber = (
 // number
 const defaultBnFormatConfig: BnFormatConfig = {
   decimals: 2,
-  groupSeparator: ',',
+  groupSeparator: '',
   decimalSeparator: '.',
   fractionGroupSeparator: '',
   fractionGroupSize: 3,

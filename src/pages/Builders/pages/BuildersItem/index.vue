@@ -202,13 +202,13 @@
 
                 <app-button
                   v-if="
-                    isUserAccountAdmin ||
-                    !buildersData.buildersProject ||
-                    !buildersData.buildersProject.claimLockEnd ||
-                    time(+buildersData.buildersProject.claimLockEnd).isAfter(
-                      time(),
-                    ) ||
-                    isClaimSubmitting
+                    isUserAccountAdmin &&
+                    (!buildersData.buildersProject ||
+                      !buildersData.buildersProject.claimLockEnd ||
+                      time(+buildersData.buildersProject.claimLockEnd).isAfter(
+                        time(),
+                      ) ||
+                      isClaimSubmitting)
                   "
                   size="small"
                   @click="claim"

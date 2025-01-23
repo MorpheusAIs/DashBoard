@@ -49,7 +49,6 @@ export const usePool = (poolId: Ref<number>) => {
       .toNumber()
 
     // eslint-disable-next-line
-    // eslint-disable-next-line
     // @ts-ignore
     const lastClaim = userPoolData.value.lastClaim || ethers.BigNumber.from(0)
     const lastStake = userPoolData.value.lastStake || ethers.BigNumber.from(0)
