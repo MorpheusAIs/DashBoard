@@ -39,7 +39,7 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ formatBalance(builderProject.minimalDeposit) }}
+          {{ formatBalance(builderProject.minimalDeposit, 18) }}
         </span>
       </div>
     </div>
