@@ -720,11 +720,11 @@
     "become-subnet-button": "Become a Subnet"
   },
   "delegate-tokens-modal": {
-    "title": "Delegate",
-    "delegate-text": "Available to Delegate",
+    "title": "Stake",
+    "delegate-text": "Available to Stake",
     "wallet-input-placeholder":  "Enter subnet address",
     "mor-input-placeholder":  "Enter {asset} amount",
-    "description-1": "You will be able to claim staked tokens after the Subnet deregistering.",
+    "description-1": "You will be able to claim staked tokens after the Subnet deregistration.",
     "description-2": "Deregistration will be available on {date}",
     "confirm-button":  "Confirm",
     "cancel-button": "Cancel",
@@ -746,7 +746,7 @@
   },
   "delegation-providers": {
     "title": "Computed Subnets",
-    "you-delegated-text": "You Delegated",
+    "you-delegated-text": "You Staked",
     "other-subnets-text": "Other Subnets"
   },
   "delegation-providers-navigation": {
@@ -788,7 +788,7 @@
   },
   "delegates-list-header": {
     "address-text": "Name / Address",
-    "delegated-text": "{asset} Delegated",
+    "delegated-text": "{asset} Staked",
     "claimed-text": "{asset} Claimed",
     "fee-text": "Fee Charged"
   },
