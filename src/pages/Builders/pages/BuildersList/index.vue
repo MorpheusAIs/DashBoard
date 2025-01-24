@@ -54,7 +54,7 @@
     </template>
     <skeleton-table
       v-else
-      :rows="DEFAULT_PAGE_LIMIT"
+      :rows="DEFAULT_BUILDERS_PAGE_LIMIT"
       sizing="1fr"
       :schemes="['medium']"
       common-skeleton-class-names="min-h-[72px]"
@@ -63,10 +63,12 @@
     <pagination
       v-if="
         listData.buildersCounters?.totalBuildersProjects &&
-        buildersProjectsState.isLoaded.value
+        buildersProjectsState.isLoaded.value &&
+        listData.buildersCounters?.totalBuildersProjects >
+          DEFAULT_BUILDERS_PAGE_LIMIT
       "
       v-model:current-page="currentPage"
-      :page-limit="DEFAULT_PAGE_LIMIT"
+      :page-limit="DEFAULT_BUILDERS_PAGE_LIMIT"
       :total-items="+listData.buildersCounters?.totalBuildersProjects"
       class="mt-6"
     />
@@ -96,7 +98,7 @@
       </template>
       <skeleton-table
         v-else
-        :rows="DEFAULT_PAGE_LIMIT"
+        :rows="DEFAULT_BUILDERS_PAGE_LIMIT"
         sizing="1fr"
         :schemes="['medium']"
         common-skeleton-class-names="min-h-[72px]"
@@ -131,7 +133,7 @@ import {
   OrderDirection,
 } from '@/types/graphql'
 import { provide, ref } from 'vue'
-import { DEFAULT_PAGE_LIMIT } from '@/const'
+import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
@@ -159,7 +161,7 @@ const { provider, networkType } = storeToRefs(useWeb3ProvidersStore())
 const currentPage = ref(1)
 
 const orderBy = ref(BuildersProject_OrderBy.TotalStaked)
-const orderDirection = ref(OrderDirection.Asc)
+const orderDirection = ref(OrderDirection.Desc)
 
 const isCreateBuilderModalShown = ref(false)
 
@@ -247,8 +249,10 @@ const {
   async () => {
     if (networkType.value === NetworkTypes.Mainnet) {
       return paginateThroughAllPredefinedBuilders({
-        first: DEFAULT_PAGE_LIMIT,
-        skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
+        first: DEFAULT_BUILDERS_PAGE_LIMIT,
+        skip:
+          currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
+          DEFAULT_BUILDERS_PAGE_LIMIT,
         orderBy: orderBy.value,
         orderDirection: orderDirection.value,
       })
@@ -261,8 +265,10 @@ const {
       query: CombinedBuildersList,
       fetchPolicy: 'network-only',
       variables: {
-        first: DEFAULT_PAGE_LIMIT,
-        skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
+        first: DEFAULT_BUILDERS_PAGE_LIMIT,
+        skip:
+          currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
+          DEFAULT_BUILDERS_PAGE_LIMIT,
         orderBy: orderBy.value,
         orderDirection: orderDirection.value,
 

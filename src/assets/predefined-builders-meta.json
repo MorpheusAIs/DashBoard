@@ -658,5 +658,50 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0
+  },
+  {
+    "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
+    "name": "IamAI-Core",
+    "description": "",
+    "longDescription": "",
+    "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
+    "localImage": "images/iamai-core-icon-circle-512x512.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
+  },
+  {
+    "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
+    "name": "Lumerin MOR Staking",
+    "description": "",
+    "longDescription": "",
+    "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
+    "localImage": "images/lumerin-6fd5736d-11a2-4fb1-986e-68bea06af328.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
+  },
+  {
+    "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
+    "name": "Morlord MOR Staking",
+    "description": "",
+    "longDescription": "",
+    "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
+    "localImage": "images/morlord-faba9889-7550-41fe-8af3-81bf696bd412.jpg",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
   }
 ]
