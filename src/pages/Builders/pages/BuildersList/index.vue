@@ -208,6 +208,7 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       () => route.query.network,
       () => provider.value.chainId,
     ],
+    updateArgs: [orderBy, orderDirection],
   },
 )
 
@@ -292,6 +293,10 @@ const {
         ? () => allPredefinedBuilders.value
         : undefined,
     ],
+    updateArgs:
+      networkType.value === NetworkTypes.Testnet
+        ? [orderBy, orderDirection]
+        : [],
   },
 )
 
