@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="avatarUri || $route.query.network !== NetworkTypes.Mainnet"
     :class="
       cn(
         'builders-table-item relative hidden w-full',
@@ -176,6 +177,7 @@ import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
+import { NetworkTypes } from '@config'
 
 const props = withDefaults(
   defineProps<{
