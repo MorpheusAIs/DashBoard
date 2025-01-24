@@ -42,9 +42,8 @@
         <builders-table
           class="mt-8"
           :builders-projects="listData.buildersProjects"
-          :order-by="orderBy"
-          :order-direction="orderDirection"
-          @update-sorting="handleChangeSorting"
+          v-model:order-by-model="orderBy"
+          v-model:order-direction-model="orderDirection"
         />
       </template>
       <template v-else>
@@ -90,9 +89,8 @@
           <builders-table
             class="w-full"
             :builders-projects="listData.userAccountBuildersProjects"
-            :order-by="orderBy"
-            :order-direction="orderDirection"
-            @update-sorting="handleChangeSorting"
+            v-model:order-by-model="orderBy"
+            v-model:order-direction-model="orderDirection"
           />
         </template>
       </template>
@@ -120,16 +118,19 @@ import {
   Pagination,
   SkeletonTable,
 } from '@/common'
-import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable.vue'
+import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable/index.vue'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import {
   BuildersProject_OrderBy,
   CombinedBuildersList,
+  CombinedBuildersListFilteredByPredefinedBuilders,
+  CombinedBuildersListFilteredByPredefinedBuildersQuery,
+  CombinedBuildersListFilteredByPredefinedBuildersQueryVariables,
   CombinedBuildersListQuery,
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { ref, provide } from 'vue'
+import { provide, ref } from 'vue'
 import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -137,6 +138,14 @@ import { ROUTE_NAMES } from '@/enums'
 import { useLoad } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import { NetworkTypes } from '@config'
+import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
+
+type LoadBuildersResponse = {
+  buildersProjects: CombinedBuildersListQuery['buildersProjects']
+  userAccountBuildersProjects: CombinedBuildersListQuery['buildersProjects']
+  buildersCounters: CombinedBuildersListQuery['counters'][0]
+}
 
 defineOptions({
   inheritAttrs: false,
@@ -145,33 +154,105 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 
-const { provider } = storeToRefs(useWeb3ProvidersStore())
+const { provider, networkType } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
 
-const orderBy = ref(BuildersProject_OrderBy.Id)
-const orderDirection = ref(OrderDirection.Desc)
+const orderBy = ref(BuildersProject_OrderBy.TotalStaked)
+const orderDirection = ref(OrderDirection.Asc)
 
 const isCreateBuilderModalShown = ref(false)
 
 const buildersApolloClient = useSecondApolloClient()
+
+const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
+  {
+    buildersProjects: [],
+    userAccountBuildersProjects: [],
+    buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
+  },
+  async (): Promise<LoadBuildersResponse> => {
+    const { data } = await buildersApolloClient.value.query<
+      CombinedBuildersListFilteredByPredefinedBuildersQuery,
+      CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
+    >({
+      query: CombinedBuildersListFilteredByPredefinedBuilders,
+      fetchPolicy: 'network-only',
+      variables: {
+        orderBy: orderBy.value,
+        orderDirection: orderDirection.value,
+        name_in: predefinedBuildersMeta.map(el => el.name),
+
+        address: provider.value.selectedAddress,
+      },
+    })
+
+    return {
+      buildersProjects: data.buildersProjects,
+      userAccountBuildersProjects: data.buildersUsers.map(
+        el => el.buildersProject,
+      ),
+      buildersCounters: {
+        id: '',
+        totalBuildersProjects: data.buildersProjects.length,
+        totalSubnets: 0,
+      },
+    }
+  },
+  {
+    isLoadOnMount: networkType.value === NetworkTypes.Mainnet,
+    reloadArgs: [
+      orderBy,
+      orderDirection,
+      () => route.query.user,
+      () => route.query.network,
+      () => provider.value.chainId,
+    ],
+  },
+)
+
+const paginateThroughAllPredefinedBuilders = async (args: {
+  skip: number
+  first: number
+  orderBy: BuildersProject_OrderBy
+  orderDirection: OrderDirection
+}): Promise<LoadBuildersResponse> => {
+  const buildersProjects = allPredefinedBuilders.value.buildersProjects.slice(
+    args.skip,
+    args.skip + args.first,
+  )
+  const userAccountBuildersProjects =
+    allPredefinedBuilders.value.userAccountBuildersProjects
+  const buildersCounters = allPredefinedBuilders.value.buildersCounters
+
+  return {
+    buildersProjects,
+    userAccountBuildersProjects,
+    buildersCounters,
+  }
+}
 
 const {
   data: listData,
   reload: reloadList,
   update: updateList,
   ...buildersProjectsState
-} = useLoad<{
-  buildersProjects: CombinedBuildersListQuery['buildersProjects']
-  userAccountBuildersProjects: CombinedBuildersListQuery['buildersProjects']
-  buildersCounters: CombinedBuildersListQuery['counters'][0]
-}>(
+} = useLoad<LoadBuildersResponse>(
   {
     buildersProjects: [],
     userAccountBuildersProjects: [],
     buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
   },
   async () => {
+    if (networkType.value === NetworkTypes.Mainnet) {
+      return paginateThroughAllPredefinedBuilders({
+        first: DEFAULT_PAGE_LIMIT,
+        skip: currentPage.value * DEFAULT_PAGE_LIMIT - DEFAULT_PAGE_LIMIT,
+        orderBy: orderBy.value,
+        orderDirection: orderDirection.value,
+      })
+    }
+
     const { data } = await buildersApolloClient.value.query<
       CombinedBuildersListQuery,
       CombinedBuildersListQueryVariables
@@ -201,11 +282,15 @@ const {
     }
   },
   {
+    isLoadOnMount: networkType.value === NetworkTypes.Testnet,
     reloadArgs: [
       currentPage,
       () => route.query.user,
       () => route.query.network,
       () => provider.value.chainId,
+      networkType.value === NetworkTypes.Mainnet
+        ? () => allPredefinedBuilders.value
+        : undefined,
     ],
   },
 )
@@ -218,20 +303,6 @@ const handleBuilderCreated = async (poolId: string) => {
       id: poolId,
     },
   })
-}
-
-const handleChangeSorting = (order: BuildersProject_OrderBy) => {
-  if (orderBy.value === order) {
-    orderDirection.value =
-      orderDirection.value === OrderDirection.Asc
-        ? OrderDirection.Desc
-        : OrderDirection.Asc
-  } else {
-    orderBy.value = order
-    orderDirection.value = OrderDirection.Asc
-  }
-
-  updateList()
 }
 
 provide('reloadBuildersProjects', reloadList)
