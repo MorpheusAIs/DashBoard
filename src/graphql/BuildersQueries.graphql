@@ -141,3 +141,33 @@ query combinedBuildersList(
     totalSubnets
   }
 }
+
+# TEMP: To filter by name
+query combinedBuildersListFilteredByPredefinedBuilders(
+  $orderBy: BuildersProject_orderBy
+  $orderDirection: OrderDirection
+  $name_in: [String!] = ""
+  $address: Bytes = ""
+) {
+  buildersProjects(
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: {name_in: $name_in}
+  ) {
+    ...BuilderProject
+  }
+
+
+  buildersUsers(where: {
+    address: $address
+    buildersProject_: {name_in: $name_in}
+  }) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      ...BuilderProject
+    }
+  }
+}

@@ -969,6 +969,16 @@ export type CombinedBuildersListQueryVariables = Exact<{
 
 export type CombinedBuildersListQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }>, buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }>, counters: Array<{ __typename?: 'Counter', id: any, totalBuildersProjects: any, totalSubnets: any }> };
 
+export type CombinedBuildersListFilteredByPredefinedBuildersQueryVariables = Exact<{
+  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  name_in?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  address?: InputMaybe<Scalars['Bytes']>;
+}>;
+
+
+export type CombinedBuildersListFilteredByPredefinedBuildersQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }>, buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }> };
+
 export const BuilderProject = gql`
     fragment BuilderProject on BuildersProject {
   admin
@@ -1099,6 +1109,26 @@ export const CombinedBuildersList = gql`
     id
     totalBuildersProjects
     totalSubnets
+  }
+}
+    ${BuilderProject}`;
+export const CombinedBuildersListFilteredByPredefinedBuilders = gql`
+    query combinedBuildersListFilteredByPredefinedBuilders($orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $name_in: [String!] = "", $address: Bytes = "") {
+  buildersProjects(
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: {name_in: $name_in}
+  ) {
+    ...BuilderProject
+  }
+  buildersUsers(where: {address: $address, buildersProject_: {name_in: $name_in}}) {
+    address
+    id
+    lastStake
+    staked
+    buildersProject {
+      ...BuilderProject
+    }
   }
 }
     ${BuilderProject}`;

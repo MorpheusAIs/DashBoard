@@ -1,1 +1,2 @@
 export const DEFAULT_PAGE_LIMIT = 5
+export const DEFAULT_BUILDERS_PAGE_LIMIT = 100
