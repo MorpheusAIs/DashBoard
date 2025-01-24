@@ -151,7 +151,7 @@
   },
   {
     "id": "0ce5d1bd-fe44-4d64-8755-bd997fa423b6",
-    "name": "CoinCap",
+    "name": "coincap",
     "description": "Reliable cryptocurrency prices and market capitalizations",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/9debd5bf-38eb-4090-a606-fbbef2d188e1/Frame_427321696.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=38fd1d562763aab4012f4ec2ce1b4d5ea96d0f06a58fab180f59bbd4f9eba0dc&X-Amz-SignedHeaders=host&x-id=GetObject",
