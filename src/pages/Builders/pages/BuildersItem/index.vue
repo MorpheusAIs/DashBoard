@@ -8,7 +8,7 @@
           :message="$t('builders-item.page-err-msg')"
           class="!gap-10"
         />
-        <app-button @click="$router.go(-1)">
+        <app-button :route="{ name: $routes.appBuildersList }">
           {{ $t('builders-item.page-err-btn') }}
         </app-button>
       </div>
