@@ -3,8 +3,8 @@ import { BuildersProject_OrderBy, OrderDirection } from '@/types/graphql'
 import { AppIcon } from '@/common'
 import { cn } from '@/theme/utils'
 
-const orderByModel = defineModel<BuildersProject_OrderBy>('orderByModel')
-const orderDirectionModel = defineModel<OrderDirection>('orderDirectionModel')
+const orderByModel = defineModel<string>('orderByModel')
+const orderDirectionModel = defineModel<string>('orderDirectionModel')
 
 const props = withDefaults(
   defineProps<{
