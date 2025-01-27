@@ -874,7 +874,8 @@
     "stake-btn": "Stake"
   },
   "builders-item": {
-    "page-err-msg": "Something bad happened, try reload page",
+    "page-err-msg": "Look's like pool you are looking for is not exists",
+    "page-err-btn": "Back to builders",
     "back-btn": "Back",
     "your-builder-lbl": "Your Builder",
     "edit-btn": "Edit",
