@@ -703,5 +703,35 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0
+  },
+  {
+    "id": "",
+    "name": "Aiora Agency",
+    "description": "",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/LogoforAiora.jpeg",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
+  },
+  {
+    "id": "",
+    "name": "Venice Pro",
+    "description": "",
+    "longDescription": "",
+    "image": "",
+    "localImage": "",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
   }
 ]
