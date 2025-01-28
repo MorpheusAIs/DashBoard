@@ -28,9 +28,24 @@
       </div>
     </div>
 
-    <h2 class="mt-16 self-start text-textSecondaryMain">
-      {{ $t('builders-list.main-table-title') }}
-    </h2>
+    <div class="self-start w-full flex justify-between items-center mt-16">
+      <h2 class="text-textSecondaryMain">
+        {{ $t('builders-list.main-table-title') }}
+      </h2>
+
+      <div
+        class="builders-list__search relative flex items-center justify-center w-10 h-10"
+        :class="{
+          'builders-list__search--active': searchQuery,
+        }"
+      >
+        <input-field
+          v-model="searchQuery"
+          :placeholder="$t('builders-list.search-placeholder')"
+        />
+        <app-icon :name="$icons.search" />
+      </div>
+    </div>
 
     <template v-if="buildersProjectsState.isLoaded.value">
       <template v-if="buildersProjectsState.isLoadFailed.value">
@@ -113,8 +128,10 @@
 </template>
 
 <script setup lang="ts">
+import debounce from 'lodash/debounce'
 import {
   AppButton,
+  AppIcon,
   ErrorMessage,
   NoDataMessage,
   Pagination,
@@ -132,7 +149,7 @@ import {
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { provide, ref } from 'vue'
+import { provide, ref, watch } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -142,6 +159,7 @@ import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { NetworkTypes } from '@config'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
+import { InputField } from '@/fields'
 
 type LoadBuildersResponse = {
   buildersProjects: CombinedBuildersListQuery['buildersProjects']
@@ -159,6 +177,7 @@ const router = useRouter()
 const { provider, networkType } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
+const searchQuery = ref('')
 
 const orderBy = ref(BuildersProject_OrderBy.TotalStaked)
 const orderDirection = ref(OrderDirection.Desc)
@@ -183,7 +202,8 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       variables: {
         orderBy: orderBy.value,
         orderDirection: orderDirection.value,
-        name_in: predefinedBuildersMeta.map(el => el.name),
+        nameIn: predefinedBuildersMeta.map(el => el.name),
+        nameFilter: searchQuery.value,
 
         address: provider.value.selectedAddress,
       },
@@ -219,14 +239,23 @@ const paginateThroughAllPredefinedBuilders = async (args: {
   first: number
   orderBy: BuildersProject_OrderBy
   orderDirection: OrderDirection
+  filter?: string
 }): Promise<LoadBuildersResponse> => {
-  const buildersProjects = allPredefinedBuilders.value.buildersProjects.slice(
+  const filteredBuilders = allPredefinedBuilders.value.buildersProjects.filter(
+    el =>
+      el.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+
+  const buildersProjects = filteredBuilders.slice(
     args.skip,
     args.skip + args.first,
   )
   const userAccountBuildersProjects =
-    allPredefinedBuilders.value.userAccountBuildersProjects
+    allPredefinedBuilders.value.userAccountBuildersProjects.filter(
+      el => el.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
   const buildersCounters = allPredefinedBuilders.value.buildersCounters
+  buildersCounters.totalBuildersProjects = filteredBuilders.length
 
   return {
     buildersProjects,
@@ -255,6 +284,7 @@ const {
           DEFAULT_BUILDERS_PAGE_LIMIT,
         orderBy: orderBy.value,
         orderDirection: orderDirection.value,
+        filter: searchQuery.value,
       })
     }
 
@@ -271,6 +301,7 @@ const {
           DEFAULT_BUILDERS_PAGE_LIMIT,
         orderBy: orderBy.value,
         orderDirection: orderDirection.value,
+        nameFilter: searchQuery.value,
 
         address: provider.value.selectedAddress,
       },
@@ -320,6 +351,13 @@ provide('reloadBuildersProjects', reloadList)
 provide('updateBuildersProjects', updateList)
 provide('reloadUserAccountBuildersProjects', reloadList)
 provide('updateUserAccountBuildersProjects', updateList)
+
+watch(
+  () => searchQuery.value,
+  debounce(() => {
+    reloadList()
+  }, 500),
+)
 </script>
 
 <style scoped lang="scss">
@@ -333,5 +371,58 @@ provide('updateUserAccountBuildersProjects', updateList)
   font-size: toRem(17);
   line-height: toRem(25.5);
   margin-bottom: toRem(8);
+}
+
+.builders-list__search {
+  background: linear-gradient(
+    95.36deg,
+    rgba(57, 99, 58, 0.04) 0%,
+    rgba(38, 57, 57, 0.5) 56.4%
+  );
+  border: toRem(1) solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(
+    95.36deg,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+
+  color: var(--text-primary-invert-main);
+  gap: 0;
+
+  :deep(.input-field__input) {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  :deep(.input-field) {
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: .2s;
+  }
+
+  :deep(.app-icon) {
+    max-width: toRem(20);
+    max-height: toRem(20);
+    position: absolute;
+    right: toRem(10);
+  }
+
+  &:hover,
+  &--active {
+    width: fit-content;
+    padding-right: toRem(42);
+    border-image-source: linear-gradient(
+      95.36deg,
+      rgba(3, 255, 133, 0.48) 0%,
+      rgba(3, 255, 133, 0.08) 100%
+    );
+
+    :deep(.input-field) {
+      width: toRem(200);
+    }
+  }
 }
 </style>

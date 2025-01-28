@@ -962,6 +962,7 @@ export type CombinedBuildersListQueryVariables = Exact<{
   skip?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<BuildersProject_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
+  nameFilter?: InputMaybe<Scalars['String']>;
   address?: InputMaybe<Scalars['Bytes']>;
   project_id?: InputMaybe<Scalars['Bytes']>;
 }>;
@@ -972,7 +973,8 @@ export type CombinedBuildersListQuery = { __typename?: 'Query', buildersProjects
 export type CombinedBuildersListFilteredByPredefinedBuildersQueryVariables = Exact<{
   orderBy?: InputMaybe<BuildersProject_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
-  name_in?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  nameFilter?: InputMaybe<Scalars['String']>;
+  nameIn?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   address?: InputMaybe<Scalars['Bytes']>;
 }>;
 
@@ -1078,12 +1080,13 @@ export const GetBuildersCounters = gql`
 }
     `;
 export const CombinedBuildersList = gql`
-    query combinedBuildersList($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $address: Bytes = "", $project_id: Bytes = "") {
+    query combinedBuildersList($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $nameFilter: String = "", $address: Bytes = "", $project_id: Bytes = "") {
   buildersProjects(
     first: $first
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
+    where: {name_contains_nocase: $nameFilter}
   ) {
     ...BuilderProject
   }
@@ -1113,15 +1116,15 @@ export const CombinedBuildersList = gql`
 }
     ${BuilderProject}`;
 export const CombinedBuildersListFilteredByPredefinedBuilders = gql`
-    query combinedBuildersListFilteredByPredefinedBuilders($orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $name_in: [String!] = "", $address: Bytes = "") {
+    query combinedBuildersListFilteredByPredefinedBuilders($orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $nameFilter: String = "", $nameIn: [String!] = "", $address: Bytes = "") {
   buildersProjects(
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: {name_in: $name_in}
+    where: {name_contains_nocase: $nameFilter}
   ) {
     ...BuilderProject
   }
-  buildersUsers(where: {address: $address, buildersProject_: {name_in: $name_in}}) {
+  buildersUsers(where: {address: $address, buildersProject_: {name_in: $nameIn}}) {
     address
     id
     lastStake
