@@ -733,5 +733,50 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0
+  },
+  {
+    "id": "",
+    "name": "brainpower",
+    "description": "",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/brainpower.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
+  },
+  {
+    "id": "",
+    "name": "MOR Builders",
+    "description": "",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/mor-builders-white-bkrd-square.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
+  },
+  {
+    "id": "",
+    "name": "Aigent Z",
+    "description": "",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/aigentz.jpg",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
   }
 ]
