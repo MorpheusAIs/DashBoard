@@ -59,13 +59,12 @@ import BuildersTableItem from '../BuildersTableItem.vue'
 import {
   BuilderProjectFragment,
   BuildersProject_OrderBy,
-  OrderDirection,
 } from '@/types/graphql'
 import { cn } from '@/theme/utils'
-import SortingIconButton from '@/pages/Builders/pages/BuildersList/components/BuildersTable/components/SortingIconButton.vue'
+import SortingIconButton from './components/SortingIconButton.vue'
 
-const orderByModel = defineModel<BuildersProject_OrderBy>('orderByModel')
-const orderDirectionModel = defineModel<OrderDirection>('orderDirectionModel')
+const orderByModel = defineModel<string>('orderByModel')
+const orderDirectionModel = defineModel<string>('orderDirectionModel')
 
 withDefaults(
   defineProps<{

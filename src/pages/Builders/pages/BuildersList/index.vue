@@ -28,7 +28,13 @@
       </div>
     </div>
 
-    <div class="self-start w-full flex justify-between items-center mt-16">
+    <div
+      v-if="
+        !buildersProjectsState.isLoaded.value ||
+        listData.buildersProjects.length
+      "
+      class="self-start w-full flex justify-between items-center mt-16"
+    >
       <h2 class="text-textSecondaryMain">
         {{ $t('builders-list.main-table-title') }}
       </h2>
@@ -89,7 +95,10 @@
     />
 
     <h2
-      v-if="listData.userAccountBuildersProjects.length"
+      v-if="
+        !buildersProjectsState.isLoaded.value ||
+        listData.userAccountBuildersProjects.length
+      "
       class="mt-16 self-start text-textSecondaryMain"
     >
       {{ $t('builders-list.account-projects-table-title') }}
@@ -106,8 +115,8 @@
           <builders-table
             class="w-full"
             :builders-projects="listData.userAccountBuildersProjects"
-            v-model:order-by-model="orderBy"
-            v-model:order-direction-model="orderDirection"
+            v-model:order-by-model="usersBuildersOrderBy"
+            v-model:order-direction-model="usersOrderDirection"
           />
         </template>
       </template>
@@ -141,6 +150,7 @@ import BuildersTable from '@/pages/Builders/pages/BuildersList/components/Builde
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import {
   BuildersProject_OrderBy,
+  BuildersUser_OrderBy,
   CombinedBuildersList,
   CombinedBuildersListFilteredByPredefinedBuilders,
   CombinedBuildersListFilteredByPredefinedBuildersQuery,
@@ -149,7 +159,7 @@ import {
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { provide, ref, watch } from 'vue'
+import { provide, ref, watch, computed } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -182,9 +192,36 @@ const searchQuery = ref('')
 const orderBy = ref(BuildersProject_OrderBy.TotalStaked)
 const orderDirection = ref(OrderDirection.Desc)
 
+const usersBuildersOrderBy = ref(BuildersProject_OrderBy.TotalStaked)
+const usersOrderDirection = ref(OrderDirection.Asc)
+
 const isCreateBuilderModalShown = ref(false)
 
 const buildersApolloClient = useSecondApolloClient()
+
+const mapperUsersBuildersOrderBy = computed(
+  () =>
+    ({
+      [BuildersProject_OrderBy.Admin]:
+        BuildersUser_OrderBy.BuildersProjectAdmin,
+      [BuildersProject_OrderBy.ClaimLockEnd]:
+        BuildersUser_OrderBy.BuildersProjectClaimLockEnd,
+      [BuildersProject_OrderBy.Id]: BuildersUser_OrderBy.BuildersProjectId,
+      [BuildersProject_OrderBy.MinimalDeposit]:
+        BuildersUser_OrderBy.BuildersProjectMinimalDeposit,
+      [BuildersProject_OrderBy.Name]: BuildersUser_OrderBy.BuildersProjectName,
+      [BuildersProject_OrderBy.StartsAt]:
+        BuildersUser_OrderBy.BuildersProjectStartsAt,
+      [BuildersProject_OrderBy.TotalClaimed]:
+        BuildersUser_OrderBy.BuildersProjectTotalClaimed,
+      [BuildersProject_OrderBy.TotalStaked]:
+        BuildersUser_OrderBy.BuildersProjectTotalStaked,
+      [BuildersProject_OrderBy.TotalUsers]:
+        BuildersUser_OrderBy.BuildersProjectTotalUsers,
+      [BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit]:
+        BuildersUser_OrderBy.BuildersProjectWithdrawLockPeriodAfterDeposit,
+    })[usersBuildersOrderBy.value],
+)
 
 const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
   {
@@ -201,6 +238,8 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       fetchPolicy: 'network-only',
       variables: {
         orderBy: orderBy.value,
+        usersOrderBy: mapperUsersBuildersOrderBy.value,
+        usersDirection: usersOrderDirection.value,
         orderDirection: orderDirection.value,
         nameIn: predefinedBuildersMeta.map(el => el.name),
         nameFilter: searchQuery.value,
@@ -226,6 +265,8 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
     reloadArgs: [
       orderBy,
       orderDirection,
+      mapperUsersBuildersOrderBy,
+      usersOrderDirection,
       () => route.query.user,
       () => route.query.network,
       () => provider.value.chainId,
@@ -300,6 +341,8 @@ const {
           currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
           DEFAULT_BUILDERS_PAGE_LIMIT,
         orderBy: orderBy.value,
+        usersOrderBy: mapperUsersBuildersOrderBy.value,
+        usersDirection: usersOrderDirection.value,
         orderDirection: orderDirection.value,
         nameFilter: searchQuery.value,
 
@@ -332,7 +375,12 @@ const {
     ],
     updateArgs:
       networkType.value === NetworkTypes.Testnet
-        ? [orderBy, orderDirection]
+        ? [
+            orderBy,
+            orderDirection,
+            mapperUsersBuildersOrderBy,
+            usersOrderDirection,
+          ]
         : [],
   },
 )

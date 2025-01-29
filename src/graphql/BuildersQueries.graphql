@@ -103,9 +103,10 @@ query combinedBuildersList(
   $orderBy: BuildersProject_orderBy
   $orderDirection: OrderDirection
   $nameFilter: String = ""
+  $usersOrderBy: BuildersUser_orderBy
+  $usersDirection: OrderDirection
 
   $address: Bytes = ""
-  $project_id: Bytes = ""
 ) {
   buildersProjects(
     first: $first
@@ -118,7 +119,11 @@ query combinedBuildersList(
   }
 
 
-  buildersUsers(where: {address: $address}) {
+  buildersUsers(
+    orderBy: $usersOrderBy
+    orderDirection: $usersDirection
+    where: {address: $address}
+  ) {
     address
     id
     lastStake
@@ -146,6 +151,8 @@ query combinedBuildersList(
 
 query combinedBuildersListFilteredByPredefinedBuilders(
   $orderBy: BuildersProject_orderBy
+  $usersOrderBy: BuildersUser_orderBy
+  $usersDirection: OrderDirection
   $orderDirection: OrderDirection
   $nameFilter: String = ""
   $nameIn: [String!] = ""
@@ -160,10 +167,14 @@ query combinedBuildersListFilteredByPredefinedBuilders(
   }
 
 
-  buildersUsers(where: {
-    address: $address
-    buildersProject_: {name_in: $nameIn}
-  }) {
+  buildersUsers(
+    orderBy: $usersOrderBy
+    orderDirection: $usersDirection
+    where: {
+      address: $address
+      buildersProject_: {name_in: $nameIn}
+    }
+  ) {
     address
     id
     lastStake

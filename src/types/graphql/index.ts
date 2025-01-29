@@ -963,8 +963,9 @@ export type CombinedBuildersListQueryVariables = Exact<{
   orderBy?: InputMaybe<BuildersProject_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   nameFilter?: InputMaybe<Scalars['String']>;
+  usersOrderBy?: InputMaybe<BuildersUser_OrderBy>;
+  usersDirection?: InputMaybe<OrderDirection>;
   address?: InputMaybe<Scalars['Bytes']>;
-  project_id?: InputMaybe<Scalars['Bytes']>;
 }>;
 
 
@@ -972,6 +973,8 @@ export type CombinedBuildersListQuery = { __typename?: 'Query', buildersProjects
 
 export type CombinedBuildersListFilteredByPredefinedBuildersQueryVariables = Exact<{
   orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  usersOrderBy?: InputMaybe<BuildersUser_OrderBy>;
+  usersDirection?: InputMaybe<OrderDirection>;
   orderDirection?: InputMaybe<OrderDirection>;
   nameFilter?: InputMaybe<Scalars['String']>;
   nameIn?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -1080,7 +1083,7 @@ export const GetBuildersCounters = gql`
 }
     `;
 export const CombinedBuildersList = gql`
-    query combinedBuildersList($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $nameFilter: String = "", $address: Bytes = "", $project_id: Bytes = "") {
+    query combinedBuildersList($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $nameFilter: String = "", $usersOrderBy: BuildersUser_orderBy, $usersDirection: OrderDirection, $address: Bytes = "") {
   buildersProjects(
     first: $first
     skip: $skip
@@ -1090,7 +1093,11 @@ export const CombinedBuildersList = gql`
   ) {
     ...BuilderProject
   }
-  buildersUsers(where: {address: $address}) {
+  buildersUsers(
+    orderBy: $usersOrderBy
+    orderDirection: $usersDirection
+    where: {address: $address}
+  ) {
     address
     id
     lastStake
@@ -1116,7 +1123,7 @@ export const CombinedBuildersList = gql`
 }
     ${BuilderProject}`;
 export const CombinedBuildersListFilteredByPredefinedBuilders = gql`
-    query combinedBuildersListFilteredByPredefinedBuilders($orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $nameFilter: String = "", $nameIn: [String!] = "", $address: Bytes = "") {
+    query combinedBuildersListFilteredByPredefinedBuilders($orderBy: BuildersProject_orderBy, $usersOrderBy: BuildersUser_orderBy, $usersDirection: OrderDirection, $orderDirection: OrderDirection, $nameFilter: String = "", $nameIn: [String!] = "", $address: Bytes = "") {
   buildersProjects(
     orderBy: $orderBy
     orderDirection: $orderDirection
@@ -1124,7 +1131,11 @@ export const CombinedBuildersListFilteredByPredefinedBuilders = gql`
   ) {
     ...BuilderProject
   }
-  buildersUsers(where: {address: $address, buildersProject_: {name_in: $nameIn}}) {
+  buildersUsers(
+    orderBy: $usersOrderBy
+    orderDirection: $usersDirection
+    where: {address: $address, buildersProject_: {name_in: $nameIn}}
+  ) {
     address
     id
     lastStake

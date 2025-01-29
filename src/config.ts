@@ -180,10 +180,12 @@ const perPageAllowedNetworks: Record<ROUTE_NAMES, EthereumChains[]> = {
     EthereumChains.ArbitrumSepolia,
   ],
   [ROUTE_NAMES.appBuildersList]: [
+    EthereumChains.Base,
     EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
   ],
   [ROUTE_NAMES.appBuildersItem]: [
+    EthereumChains.Base,
     EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
   ],
@@ -379,7 +381,7 @@ const perChainSecondApolloClients: Record<
   }),
   [EthereumChains.Base]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-base-mainnet/version/latest',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-mainnet-base/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,

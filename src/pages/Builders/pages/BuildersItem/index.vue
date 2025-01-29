@@ -1,10 +1,17 @@
 <template>
   <div :class="cn('flex flex-col overflow-y-auto')">
     <template v-if="isLoadFailed">
-      <error-message
-        :message="$t('builders-item.page-err-msg')"
-        class="self-center"
-      />
+      <div
+        class="flex h-[100dvh] w-full flex-col items-center justify-center gap-4 self-center"
+      >
+        <error-message
+          :message="$t('builders-item.page-err-msg')"
+          class="!gap-10"
+        />
+        <app-button :route="{ name: $routes.appBuildersList }">
+          {{ $t('builders-item.page-err-btn') }}
+        </app-button>
+      </div>
     </template>
     <template v-else>
       <button class="flex items-center gap-2" @click="$router.go(-1)">
