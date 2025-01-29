@@ -63,7 +63,7 @@ watch(
     document.body.style.overflow = val ? 'hidden' : 'auto'
     document.body.style.maxHeight = val ? '100vh' : 'auto'
   },
-  { immediate: true }
+  { immediate: true },
 )
 </script>
 
