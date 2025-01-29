@@ -35,7 +35,9 @@
 import AppIcon from '../AppIcon.vue'
 import AppModal from '../AppModal.vue'
 
-withDefaults(
+import { watch } from 'vue'
+
+const props = withDefaults(
   defineProps<{
     isShown: boolean
     isCloseByClickOutside?: boolean
@@ -54,6 +56,15 @@ withDefaults(
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
+
+watch(
+  () => props.isShown,
+  val => {
+    document.body.style.overflow = val ? 'hidden' : 'auto'
+    document.body.style.maxHeight = val ? '100vh' : 'auto'
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss">
