@@ -212,9 +212,9 @@ const delegate = () => {
   &--with-btn {
     margin-right: toRem(112); // 80 + 32
     grid-template-columns: minmax(toRem(132), 1fr) repeat(
-      3,
-      minmax(toRem(42), 1fr)
-    );
+        3,
+        minmax(toRem(42), 1fr)
+      );
   }
 }
 

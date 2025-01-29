@@ -62,6 +62,8 @@ const emit = defineEmits<{
   width: toRem(584);
   border: toRem(1) solid;
   border-image-slice: 1;
+  max-height: 100vh;
+  overflow: auto;
   border-image-source: linear-gradient(
     180deg,
     var(--border-quaternary-main) 0%,

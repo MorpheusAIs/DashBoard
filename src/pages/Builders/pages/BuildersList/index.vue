@@ -33,14 +33,14 @@
         !buildersProjectsState.isLoaded.value ||
         listData.buildersProjects.length
       "
-      class="self-start w-full flex justify-between items-center mt-16"
+      class="mt-16 flex w-full items-center justify-between self-start"
     >
       <h2 class="text-textSecondaryMain">
         {{ $t('builders-list.main-table-title') }}
       </h2>
 
       <div
-        class="builders-list__search relative flex items-center justify-center w-10 h-10"
+        class="builders-list__search relative flex h-10 w-10 items-center justify-center"
         :class="{
           'builders-list__search--active': searchQuery,
         }"
@@ -283,8 +283,7 @@ const paginateThroughAllPredefinedBuilders = async (args: {
   filter?: string
 }): Promise<LoadBuildersResponse> => {
   const filteredBuilders = allPredefinedBuilders.value.buildersProjects.filter(
-    el =>
-      el.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    el => el.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   )
 
   const buildersProjects = filteredBuilders.slice(
@@ -292,8 +291,8 @@ const paginateThroughAllPredefinedBuilders = async (args: {
     args.skip + args.first,
   )
   const userAccountBuildersProjects =
-    allPredefinedBuilders.value.userAccountBuildersProjects.filter(
-      el => el.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    allPredefinedBuilders.value.userAccountBuildersProjects.filter(el =>
+      el.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
     )
   const buildersCounters = allPredefinedBuilders.value.buildersCounters
   buildersCounters.totalBuildersProjects = filteredBuilders.length
@@ -448,7 +447,7 @@ watch(
     width: 0;
     overflow: hidden;
     white-space: nowrap;
-    transition: .2s;
+    transition: 0.2s;
   }
 
   :deep(.app-icon) {
