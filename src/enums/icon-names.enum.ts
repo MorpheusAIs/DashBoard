@@ -18,6 +18,7 @@ export enum ICON_NAMES {
   menuAlt1 = 'menu-alt-1',
   morpheus = 'morpheus',
   save = 'save',
+  search = 'search',
   steth = 'steth',
   trash = 'trash',
   xCircle = 'x-circle',
