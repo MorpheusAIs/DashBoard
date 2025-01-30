@@ -778,5 +778,20 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0
+  },
+  {
+    "id": "",
+    "name": "PALcapital",
+    "description": "",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/palcapital.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0
   }
 ]
