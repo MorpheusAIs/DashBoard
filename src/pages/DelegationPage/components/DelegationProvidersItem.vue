@@ -20,31 +20,26 @@
       <div
         class="delegation-providers-item__col"
         :class="{
-          'delegation-providers-item__col--with-img': localImage,
+          'delegation-providers-item__col--username': user.name,
         }"
       >
-        <template v-if="localImage">
-          <img
-            class="delegation-providers-item__col delegation-providers-item__img"
-            :src="localImage"
-            alt="Subnet logo"
-            width="48"
-            height="48"
-          />
-        </template>
-        <div class="delegation-providers-item__col-name">
-          <span class="delegation-providers-item__row-name">
-            <span v-if="isYou" class="delegation-providers-item__row-you">
-              {{ $t('delegation-providers-item.you-text') }}
-            </span>
+        <span v-if="user.name" class="delegation-providers-item__row-name">
+          <span v-if="isYou" class="delegation-providers-item__row-you">{{
+            $t('delegation-providers-item.you-text')
+          }}</span>
 
-            {{ user.name }}
-          </span>
+          {{ user.name }}
+        </span>
+        <span class="delegation-providers-item__row-address">
+          {{ abbrCenter(user.id) }}
 
-          <span class="delegation-providers-item__row-address">
-            {{ abbrCenter(user.id) }}
+          <span
+            v-if="isYou && !user.name"
+            class="delegation-providers-item__row-you"
+          >
+            {{ $t('delegation-providers-item.you-text') }}
           </span>
-        </div>
+        </span>
       </div>
       <div class="delegation-providers-item__col">
         <span class="delegation-providers-item__text">
@@ -96,7 +91,6 @@ import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
 import { useRouter } from 'vue-router'
 import { BN } from '@distributedlab/tools'
-import predefinedSubnetsMeta from '@/assets/predefined-subnets-meta.json'
 
 const props = defineProps<{
   user: SubnetItem
@@ -129,13 +123,6 @@ const totalClaimed = computed(() =>
     BN.fromRaw(props.user.totalClaimed).div(BN.fromRaw(10).pow(18)).toString(),
   ),
 )
-const localImage = computed(() => {
-  const predefinedSubnet = predefinedSubnetsMeta.find(
-    subnet => subnet.name.toLowerCase() === props.user.name.toLowerCase(),
-  )
-
-  return predefinedSubnet?.localImage
-})
 
 const showDelegateButton = () => {
   isDelegateButtonShown.value = true
@@ -202,18 +189,18 @@ const delegate = () => {
 .delegation-providers-item__content {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(toRem(180), 1fr) repeat(
+  grid-template-columns: minmax(toRem(100), 1fr) repeat(
       3,
-      minmax(toRem(70), 1fr)
+      minmax(toRem(80), 1fr)
     );
   gap: toRem(16);
   transition: 0.1s;
 
   &--with-btn {
     margin-right: toRem(112); // 80 + 32
-    grid-template-columns: minmax(toRem(132), 1fr) repeat(
+    grid-template-columns: minmax(toRem(72), 1fr) repeat(
         3,
-        minmax(toRem(42), 1fr)
+        minmax(toRem(52), 1fr)
       );
   }
 }
@@ -225,25 +212,11 @@ const delegate = () => {
   gap: toRem(24);
   align-items: center;
 
-  &--with-img {
-    gap: toRem(8);
+  &--username {
+    flex-direction: column;
+    gap: toRem(4);
+    align-items: flex-start;
   }
-}
-
-.delegation-providers-item__col-name {
-  display: flex;
-  flex-direction: column;
-  gap: toRem(4);
-  align-items: flex-start;
-}
-
-.delegation-providers-item__img {
-  max-width: toRem(48);
-  max-height: toRem(48);
-  min-width: toRem(48);
-  min-height: toRem(48);
-  width: 100%;
-  height: 100%;
 }
 
 .delegation-providers-item__stake-button-wrp {
@@ -278,10 +251,15 @@ const delegate = () => {
 }
 
 .delegation-providers-item__row-address {
-  font-size: toRem(14);
-  font-weight: 400;
-  color: var(--text-tertiary-main);
+  font-size: toRem(18);
+  font-weight: 600;
   transition: color 0.2s ease-in-out;
+
+  .delegation-providers-item__col--username & {
+    font-size: toRem(14);
+    font-weight: 400;
+    color: var(--text-tertiary-main);
+  }
 
   .delegation-providers-item:hover &,
   .delegation-providers-item:active &,

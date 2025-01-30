@@ -35,9 +35,7 @@
 import AppIcon from '../AppIcon.vue'
 import AppModal from '../AppModal.vue'
 
-import { watch } from 'vue'
-
-const props = withDefaults(
+withDefaults(
   defineProps<{
     isShown: boolean
     isCloseByClickOutside?: boolean
@@ -56,15 +54,6 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
 }>()
-
-watch(
-  () => props.isShown,
-  val => {
-    document.body.style.overflow = val ? 'hidden' : 'auto'
-    document.body.style.maxHeight = val ? '100vh' : 'auto'
-  },
-  { immediate: true },
-)
 </script>
 
 <style lang="scss">
@@ -73,8 +62,6 @@ watch(
   width: toRem(584);
   border: toRem(1) solid;
   border-image-slice: 1;
-  max-height: 100vh;
-  overflow: auto;
   border-image-source: linear-gradient(
     180deg,
     var(--border-quaternary-main) 0%,

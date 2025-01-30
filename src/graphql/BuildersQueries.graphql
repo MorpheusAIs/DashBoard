@@ -102,7 +102,6 @@ query combinedBuildersList(
   $skip: Int = 10
   $orderBy: BuildersProject_orderBy
   $orderDirection: OrderDirection
-  $nameFilter: String = ""
   $usersOrderBy: BuildersUser_orderBy
   $usersDirection: OrderDirection
 
@@ -113,7 +112,6 @@ query combinedBuildersList(
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: { name_contains_nocase: $nameFilter }
   ) {
     ...BuilderProject
   }
@@ -149,19 +147,19 @@ query combinedBuildersList(
   }
 }
 
+# TEMP: To filter by name
 query combinedBuildersListFilteredByPredefinedBuilders(
   $orderBy: BuildersProject_orderBy
   $usersOrderBy: BuildersUser_orderBy
   $usersDirection: OrderDirection
   $orderDirection: OrderDirection
-  $nameFilter: String = ""
-  $nameIn: [String!] = ""
+  $name_in: [String!] = ""
   $address: Bytes = ""
 ) {
   buildersProjects(
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: {name_contains_nocase: $nameFilter}
+    where: {name_in: $name_in}
   ) {
     ...BuilderProject
   }
@@ -172,7 +170,7 @@ query combinedBuildersListFilteredByPredefinedBuilders(
     orderDirection: $usersDirection
     where: {
       address: $address
-      buildersProject_: {name_in: $nameIn}
+      buildersProject_: {name_in: $name_in}
     }
   ) {
     address
