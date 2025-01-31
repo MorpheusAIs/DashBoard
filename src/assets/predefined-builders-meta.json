@@ -816,11 +816,11 @@
     "website": ""
   },
   {
-    "id": "",
+    "id": "f9df1f1f-e7ff-4c33-b2f9-ad6dcd0a1721",
     "name": "Venice Pro",
-    "description": "",
+    "description": "Venice.AI is a private, uncensored AI platform prioritizing user data privacy.",
     "longDescription": "",
-    "image": "",
+    "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/959ed682-8c4b-48bd-96f8-bf811fca0bb7/Frame_427321694.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=20d1f504a9c9168e7287f8164c6148957ecab48aa14b8c9200e11a7da0d8dcee&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/VeniceAIlogo.webp",
     "tags": [],
     "githubUrl": "",
@@ -829,8 +829,8 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0,
-    "rewardType": "To Be Announced",
-    "website": ""
+    "rewardType": "Pro Account",
+    "website": "https://venice.ai/chat"
   },
   {
     "id": "",
