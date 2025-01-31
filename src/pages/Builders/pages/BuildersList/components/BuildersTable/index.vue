@@ -18,8 +18,8 @@
       </div>
       <sorting-icon-button
         class="justify-self-end"
-        :label="$t('builders-table.starts-time-th')"
-        :order-by="BuildersProject_OrderBy.StartsAt"
+        :label="$t('builders-table.reward-type-th')"
+        :order-by="AdditionalBuildersOrderBy.RewardType"
         v-model:order-by-model="orderByModel"
         v-model:order-direction-model="orderDirectionModel"
       />
@@ -62,6 +62,7 @@ import {
 } from '@/types/graphql'
 import { cn } from '@/theme/utils'
 import SortingIconButton from './components/SortingIconButton.vue'
+import { AdditionalBuildersOrderBy } from '@/enums'
 
 const orderByModel = defineModel<string>('orderByModel')
 const orderDirectionModel = defineModel<string>('orderDirectionModel')

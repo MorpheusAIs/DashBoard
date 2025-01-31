@@ -146,7 +146,7 @@ import { computed, provide, ref } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
-import { ROUTE_NAMES } from '@/enums'
+import { ROUTE_NAMES, AdditionalBuildersOrderBy } from '@/enums'
 import { useLoad } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
@@ -170,7 +170,9 @@ const { provider, networkType } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
 
-const orderBy = ref(BuildersProject_OrderBy.TotalStaked)
+const orderBy = ref<BuildersProject_OrderBy | AdditionalBuildersOrderBy>(
+  BuildersProject_OrderBy.TotalStaked,
+)
 const orderDirection = ref(OrderDirection.Desc)
 
 const usersBuildersOrderBy = ref(BuildersProject_OrderBy.TotalStaked)
@@ -201,6 +203,8 @@ const mapperUsersBuildersOrderBy = computed(
         BuildersUser_OrderBy.BuildersProjectTotalUsers,
       [BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit]:
         BuildersUser_OrderBy.BuildersProjectWithdrawLockPeriodAfterDeposit,
+      [AdditionalBuildersOrderBy.RewardType]:
+        BuildersUser_OrderBy.BuildersProjectId,
     })[usersBuildersOrderBy.value],
 )
 
@@ -211,6 +215,10 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
     buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
   },
   async (): Promise<LoadBuildersResponse> => {
+    const isSortingLocal = Object.keys(AdditionalBuildersOrderBy).includes(
+      orderBy.value,
+    )
+
     const { data } = await buildersApolloClient.value.query<
       CombinedBuildersListFilteredByPredefinedBuildersQuery,
       CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
@@ -218,7 +226,9 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       query: CombinedBuildersListFilteredByPredefinedBuilders,
       fetchPolicy: 'network-only',
       variables: {
-        orderBy: orderBy.value,
+        orderBy: isSortingLocal
+          ? BuildersProject_OrderBy.TotalStaked
+          : (orderBy.value as BuildersProject_OrderBy),
         usersOrderBy: mapperUsersBuildersOrderBy.value,
         usersDirection: usersOrderDirection.value,
         orderDirection: orderDirection.value,
@@ -227,6 +237,13 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
         address: provider.value.selectedAddress,
       },
     })
+
+    if (isSortingLocal)
+      return sortLocally(
+        orderBy.value as AdditionalBuildersOrderBy,
+        orderDirection.value,
+        data,
+      )
 
     return {
       buildersProjects: data.buildersProjects,
@@ -353,6 +370,53 @@ const {
         : [],
   },
 )
+
+const sortLocally = (
+  orderBy: AdditionalBuildersOrderBy,
+  orderDirection: OrderDirection,
+  data: CombinedBuildersListFilteredByPredefinedBuildersQuery,
+): LoadBuildersResponse => {
+  const mappedSortingHandler = {
+    [AdditionalBuildersOrderBy.RewardType]: (
+      a: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
+      b: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
+    ) => {
+      const aType = predefinedBuildersMeta.find(
+        el => el.name === a.name,
+      )?.rewardType
+      const bType = predefinedBuildersMeta.find(
+        el => el.name === b.name,
+      )?.rewardType
+
+      if (aType && bType) {
+        return orderDirection === OrderDirection.Asc
+          ? aType.localeCompare(bType)
+          : bType.localeCompare(aType)
+      }
+
+      return 0
+    },
+  }
+
+  return {
+    // TODO: implement this sorting when adding multichain builders support
+    buildersProjects: data.buildersProjects,
+    userAccountBuildersProjects: data.buildersUsers
+      .map(el => el.buildersProject)
+      .sort((a, b) => {
+        if (mappedSortingHandler[orderBy]) {
+          return mappedSortingHandler[orderBy](a, b)
+        }
+
+        return 0
+      }),
+    buildersCounters: {
+      id: '',
+      totalBuildersProjects: data.buildersProjects.length,
+      totalSubnets: 0,
+    },
+  }
+}
 
 const handleBuilderCreated = async (poolId: string) => {
   isCreateBuilderModalShown.value = false

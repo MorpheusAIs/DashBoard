@@ -19,10 +19,12 @@ export enum ICON_NAMES {
   morpheus = 'morpheus',
   save = 'save',
   steth = 'steth',
+  search = 'search',
   trash = 'trash',
   xCircle = 'x-circle',
   x = 'x',
   archive = 'archive',
   sort = 'sort',
+  link = 'link',
   info = 'info',
 }
