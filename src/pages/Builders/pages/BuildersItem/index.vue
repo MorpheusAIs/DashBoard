@@ -36,42 +36,73 @@
         >
           {{ $t('builders-item.your-builder-lbl') }}
         </span>
-        <div
-          v-if="isLoaded"
-          :class="
-            cn('flex flex-col items-start gap-8', 'md:flex-row md:items-center')
-          "
-        >
-          <span class="typography-h1">
-            {{ buildersData.buildersProject?.name }}
-          </span>
-
-          <button
-            v-if="isUserAccountAdmin"
-            class="flex items-center gap-2"
-            @click="isEditModalShown = true"
-            :disabled="
-              time(+buildersData.buildersProject?.startsAt)
-                .subtract(editPoolDeadline?.toNumber() ?? 0, 'seconds')
-                .isBefore(time()) || isClaimSubmitting
+        <template v-if="isLoaded">
+          <div
+            :class="
+              cn(
+                'flex flex-col items-start gap-8',
+                'md:flex-row md:items-center',
+              )
             "
           >
-            <span class="text-primaryMain">
-              {{ $t('builders-item.edit-btn') }}
-            </span>
-            <app-icon :name="$icons.edit" class="size-6 text-primaryMain" />
-          </button>
-        </div>
+            <div class="flex items-center gap-4">
+              <template v-if="builderMeta?.localImage">
+                <img
+                  :src="builderMeta?.localImage"
+                  class="aspect-square size-10 min-w-10"
+                />
+              </template>
+
+              <span class="typography-h1">
+                {{ buildersData.buildersProject?.name }}
+              </span>
+            </div>
+
+            <button
+              v-if="isUserAccountAdmin"
+              class="flex items-center gap-2"
+              @click="isEditModalShown = true"
+              :disabled="
+                time(+buildersData.buildersProject?.startsAt)
+                  .subtract(editPoolDeadline?.toNumber() ?? 0, 'seconds')
+                  .isBefore(time()) || isClaimSubmitting
+              "
+            >
+              <span class="text-primaryMain">
+                {{ $t('builders-item.edit-btn') }}
+              </span>
+              <app-icon :name="$icons.edit" class="size-6 text-primaryMain" />
+            </button>
+          </div>
+
+          <span class="text-textTertiaryMain">
+            {{ builderMeta?.description }}
+          </span>
+        </template>
+
         <skeleton class="my-4 h-[80px] w-[250px]" v-else />
 
-        <div v-if="isLoaded" class="flex items-center gap-2">
-          <span class="text-textSecondaryMain">
-            {{ abbrCenter(buildersData.buildersProject?.admin) }}
-          </span>
-          <copy-button
-            :content="buildersData.buildersProject?.admin"
-            message="copied"
-          />
+        <div v-if="isLoaded" class="mt-6 flex items-center gap-8">
+          <div class="flex items-center gap-2">
+            <span class="text-textSecondaryMain">
+              {{ abbrCenter(buildersData.buildersProject?.admin) }}
+            </span>
+            <copy-button
+              :content="buildersData.buildersProject?.admin"
+              message="copied"
+            />
+          </div>
+          <a
+            v-if="builderMeta?.website"
+            class="flex items-center gap-2"
+            :href="builderMeta.website"
+            target="_blank"
+          >
+            <span class="text-textSecondaryMain">
+              {{ beautifyLink(builderMeta?.website) }}
+            </span>
+            <app-icon class="h-6 w-6 text-primaryMain" :name="$icons.link" />
+          </a>
         </div>
         <skeleton class="w-[350px]" v-else />
       </div>
@@ -417,6 +448,7 @@ import {
   getEthExplorerTxUrl,
   humanizeTime,
   sleep,
+  beautifyLink,
 } from '@/helpers'
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
 import { computed, ref, watch } from 'vue'
@@ -442,6 +474,7 @@ import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 
 defineOptions({
   inheritAttrs: true,
@@ -519,6 +552,16 @@ const {
     isLoadOnMount: true,
   },
 )
+
+const builderMeta = computed(() => {
+  if (!buildersData.value.buildersProject) return
+
+  return predefinedBuildersMeta.find(
+    el =>
+      el.name.toLowerCase() ===
+      buildersData.value.buildersProject?.name.toLowerCase(),
+  )
+})
 
 const isUserAccountAdmin = computed(
   () =>

@@ -863,7 +863,7 @@
   },
   "builders-table": {
     "name-th": "Name",
-    "starts-time-th": "Start time",
+    "reward-type-th": "Reward Type",
     "min-deposit-th": "Min MOR Deposit",
     "total-staked-th": "Total MOR Staked",
     "withdraw-lock-period-th": "Withdraw lock period",

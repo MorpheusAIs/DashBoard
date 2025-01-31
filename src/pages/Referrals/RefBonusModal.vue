@@ -120,8 +120,6 @@ const submit = async (): Promise<void> => {
           .targetChainId as EthereumChains
       ]
 
-    // console.log(layerZeroEndpointId)
-
     const fees =
       // eslint-disable-next-line max-len
       await web3ProvidersStore.endpointContract.providerBased.value.estimateFees(
@@ -136,8 +134,6 @@ const submit = async (): Promise<void> => {
     const tx = await (
       web3ProvidersStore.erc1967ProxyContract.signerBased.value as ERC1967Proxy
     ).claimReferrerTier(props.poolId, form.address, { value: fees.nativeFee })
-
-    // console.log(2)
 
     const explorerTxUrl = getEthExplorerTxUrl(
       web3ProvidersStore.erc1967ProxyContractDetails.explorerUrl,

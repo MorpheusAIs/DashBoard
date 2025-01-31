@@ -11,8 +11,8 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <img
-          v-if="avatarUri"
-          :src="avatarUri"
+          v-if="builderMeta?.localImage"
+          :src="builderMeta?.localImage"
           class="aspect-square size-10 min-w-10"
         />
         <div
@@ -29,10 +29,10 @@
     <div class="builders-table-item__col">
       <div
         class="builders-table-item__col-content"
-        :title="time(+builderProject.startsAt).format(DOT_TIME_FORMAT)"
+        :title="builderMeta?.rewardType"
       >
         <span class="builders-table-item__col-text">
-          {{ time(+builderProject.startsAt).format(DOT_TIME_FORMAT) }}
+          {{ builderMeta?.rewardType }}
         </span>
       </div>
     </div>
@@ -100,8 +100,8 @@
       }"
     >
       <img
-        v-if="avatarUri"
-        :src="avatarUri"
+        v-if="builderMeta?.localImage"
+        :src="builderMeta?.localImage"
         class="aspect-square size-[75px] min-w-[75px]"
       />
       <div
@@ -168,7 +168,6 @@
 import { AppButton } from '@/common'
 import { formatBalance, humanizeTime } from '@/helpers'
 import { BuilderProjectFragment } from '@/types/graphql'
-import { DOT_TIME_FORMAT } from '@/const'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { inject, ref } from 'vue'
@@ -192,9 +191,9 @@ const reloadBuildersProjects = inject<() => Promise<void>>(
 
 const isStakeModalShown = ref(false)
 
-const avatarUri = predefinedBuildersMeta.find(
+const builderMeta = predefinedBuildersMeta.find(
   el => el.name.toLowerCase() === props.builderProject.name.toLowerCase(),
-)?.localImage
+)
 
 const handleStaked = async () => {
   isStakeModalShown.value = false

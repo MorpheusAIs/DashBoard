@@ -12,12 +12,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://6079.ai/"
   },
   {
-    "id": "f2e0e447-26b5-4467-960a-280e4f14ca6e",
+    "id": "f2e0e447-26b5-4467-960a-280e4f14cae",
     "name": "Akash",
-    "description": "DecentralizedCompute Marketplace",
+    "description": "Decentralized Compute Marketplace",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/f125a69e-32a3-49d5-9a34-b714f7575c31/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=bc654a06bc6082d6102958866c3da04de476df07b3fdb4ea9a3509ec15599e3b&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/akash-network-f2e0e447-26b5-4467-960a-280e4f14ca6e.png",
@@ -27,7 +29,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://akash.network/"
   },
   {
     "id": "452f9d53-230c-48f1-bfa8-2da0c89bcefa",
@@ -42,7 +46,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://ao.arweave.dev/"
   },
   {
     "id": "e3c17d9f-f1f0-4f09-b8a0-7d4ce329f374",
@@ -57,7 +63,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://arkeo.network/"
   },
   {
     "id": "8c95ab4f-3028-453c-8aad-f25d3b0cbbb7",
@@ -72,7 +80,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "0e9c31fb-0b39-4f83-8145-7cafc23a3685",
@@ -87,7 +97,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.atxdao.com/"
   },
   {
     "id": "b872895b-8566-4def-a059-5a270687e746",
@@ -102,7 +114,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "f4688b7f-ed79-43bc-9e64-2a5ec6c15745",
@@ -117,7 +131,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://mee.biconomy.io/"
   },
   {
     "id": "fe57c776-c03e-4223-96db-b43e78138684",
@@ -132,12 +148,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "d728bdc6-968d-4168-97a5-fc0b4a6a8644",
     "name": "CETI",
-    "description": "",
+    "description": "Globally distributed, high-performance, scalable decentralized AI infrastructure",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/f83bd325-be0f-472f-9bb0-f7a19dc9d331/ceti.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=42c7fc3ac032692b163bc5f727bfafb4af25de426a11178e5f72226ed5abba41&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/ceti-d728bdc6-968d-4168-97a5-fc0b4a6a8644.jpg",
@@ -147,7 +165,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://taoceti.ai/"
   },
   {
     "id": "0ce5d1bd-fe44-4d64-8755-bd997fa423b6",
@@ -162,12 +182,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "API Access",
+    "website": "https://coincap.io/"
   },
   {
     "id": "ccd5c537-6c5b-47b4-8028-0b3193da32ee",
     "name": "DAIS",
-    "description": "Decentralized AI Society.",
+    "description": "Decentralized AI Society",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/f33b5f67-7dc8-4756-ab87-63968bd1f333/ai-s.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=0296329a972533cd7c2c60e7d8865a8332ca9a9cc195fac0490553df5058e918&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/dais-ccd5c537-6c5b-47b4-8028-0b3193da32ee.jpg",
@@ -177,7 +199,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://dais.global/"
   },
   {
     "id": "111b6519-0d6f-808b-95d1-e101dea41c15",
@@ -192,7 +216,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "f54cff5d-bb3c-4ec9-9d9a-d2b32e192e6d",
@@ -207,7 +233,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.exabits.ai/"
   },
   {
     "id": "b91e4daa-0c34-4a22-b933-896e7834f9bf",
@@ -222,7 +250,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "82b61046-6fab-4dec-8d11-880595b550b0",
@@ -237,12 +267,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.flock.io/"
   },
   {
     "id": "0036a155-c812-4b24-8f22-39e55768df38",
     "name": "Freedom GPT",
-    "description": "Access uncensored AI securely",
+    "description": "Access to Uncensored AI",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/ab433ef9-ba5e-42dd-a8c1-662ad4887c0a/freedom.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=9ce964777dbbf3360679d291017be05a29972b5ad0ccb6526193d41bcb514d06&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/freedom-gpt-0036a155-c812-4b24-8f22-39e55768df38.jpg",
@@ -252,12 +284,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.freedomgpt.com/"
   },
   {
     "id": "6cfd3133-a237-42e4-9e06-fc26e24f93ad",
     "name": "Gen Layer",
-    "description": "Decentralized AI-powered smart contracts with access to the the Internet.",
+    "description": "Decentralized AI-powered smart contracts with access to the the Internet",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/7796fbd4-46d3-47e1-b872-5b7a89637a9a/genlayer.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=9bde9aef1324b5ea3fa94628b939d52af79c021b82f013484c81226f6aaeed45&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/gen-layer-6cfd3133-a237-42e4-9e06-fc26e24f93ad.jpg",
@@ -267,7 +301,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.genlayer.com/"
   },
   {
     "id": "c9bc21bc-c466-4fdc-a8c4-b19ce0f51983",
@@ -282,7 +318,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "3ae359b6-6264-49d8-acc7-a019ecf50db1",
@@ -297,7 +335,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://hyperbolic.xyz/"
   },
   {
     "id": "de4b7d87-2a88-4cc6-9d6c-3ccdf94cc916",
@@ -312,7 +352,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "e7f42dc5-7e66-486f-ae3f-c631533c5541",
@@ -327,7 +369,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "6fd5736d-11a2-4fb1-986e-68bea06af328",
@@ -342,7 +386,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.lumerin.io/"
   },
   {
     "id": "f9576476-5a01-4aa9-90f6-60774fee4a6e",
@@ -357,12 +403,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "faba9889-7550-41fe-8af3-81bf696bd412",
     "name": "Morlord",
-    "description": "Data about Morpheous",
+    "description": "Stats and tools for the Morpheus Community",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/539abbde-2fd9-45b3-8022-92258a344d07/morlord.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=01e533f928c231d07438de30fd4f5d9fb91c724cd568dec666657f5a890e0d4d&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/morlord-faba9889-7550-41fe-8af3-81bf696bd412.jpg",
@@ -372,12 +420,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://morlord.com/"
   },
   {
     "id": "1f37f91c-63fa-47b5-ae4e-eda78e689072",
     "name": "NEAR",
-    "description": "Chain abstraction stack for builders",
+    "description": "Near Blockchain For AI",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/5b1423c2-6a4a-4bab-84b3-45a28e998bb7/near.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=62cd95d64edc3756d5d59455ba375452eaf851a658875e3c9d6d41011d12ae49&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/near-1f37f91c-63fa-47b5-ae4e-eda78e689072.jpg",
@@ -387,7 +437,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://near.org/"
   },
   {
     "id": "55207887-7fea-4e01-96e0-a8c2cf60b340",
@@ -402,12 +454,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "Special nOGs NFT",
+    "website": "https://nounspace.com/"
   },
   {
     "id": "3b76d19e-6035-462a-b4e8-9482614b1d4b",
     "name": "OLAS",
-    "description": "Own a share of AI, specifically autonomous agent economies.",
+    "description": "Own a share of AI, specifically autonomous agent economies",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/50b9a7b3-5c02-4ae3-8794-757279e93094/olas-network.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=a5a6ce4b0e45b7da47ec9f85cd9a49082f1d6e4c2a9e53e63bc482023a9cff97&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/olas-3b76d19e-6035-462a-b4e8-9482614b1d4b.jpg",
@@ -417,7 +471,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://olas.network/"
   },
   {
     "id": "606b8f89-7375-4bba-b9ea-2594a190ea55",
@@ -432,7 +488,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://phala.network/"
   },
   {
     "id": "640ce707-dfe3-49d3-99c3-c8fd000b26c9",
@@ -447,7 +505,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://renascence-labs.xyz/"
   },
   {
     "id": "638c5b90-4142-4eda-96ae-2794324869f5",
@@ -462,7 +522,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "6b915c51-d356-425d-b3c4-e9c6d9821238",
@@ -477,12 +539,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.sapien.io/"
   },
   {
     "id": "1d5c71eb-918a-4c70-b287-85fc3592c171",
     "name": "Shapeshift",
-    "description": "Decentralized Exchange",
+    "description": "Multichain Crypto Exchange",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/501d8265-83d5-4987-be24-70e4ab91022d/shapeshift.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=3e0049531fe00322e4ad249599d3a48e3ba506450214aa6447062cbc5d2d791b&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/shapeshift-1d5c71eb-918a-4c70-b287-85fc3592c171.jpg",
@@ -492,12 +556,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://shapeshift.com/"
   },
   {
     "id": "b66fc9c6-6f87-4dd0-9d9d-5dc1745e0c1f",
     "name": "Theoriq",
-    "description": "Build and deploy on-chain multi-agent systems",
+    "description": "The Future of Agentic Finance Powered by Swarms",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/65b87a4d-6ca1-4879-b008-b5ba7310d8e7/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=538be632aa2c8ebecd339e9e4efab091b75e392a59ead16cb653289c8324048e&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/theoriq-b66fc9c6-6f87-4dd0-9d9d-5dc1745e0c1f.png",
@@ -507,12 +573,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.theoriq.ai/"
   },
   {
     "id": "0e998b04-53b2-41ad-9d66-2932dbe23e35",
     "name": "Topology",
-    "description": "An early-stage frontier tech firm.",
+    "description": "An early-stage frontier tech firm.",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/02c45b96-d61f-463f-bdae-be028af80b9d/topology.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=49479a2e94a7a9121625decad0881cd8ad8d2aa4060fe086e5955ef332d7caad&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/topology-0e998b04-53b2-41ad-9d66-2932dbe23e35.jpg",
@@ -522,12 +590,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "f9df1f1f-e7ff-4c33-b2f9-ad6dcd0a1721",
     "name": "Venice",
-    "description": "Private & Uncensored AI",
+    "description": "Venice.AI is a private, uncensored AI platform prioritizing user data privacy.",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/959ed682-8c4b-48bd-96f8-bf811fca0bb7/Frame_427321694.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=20d1f504a9c9168e7287f8164c6148957ecab48aa14b8c9200e11a7da0d8dcee&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/venice-f9df1f1f-e7ff-4c33-b2f9-ad6dcd0a1721.png",
@@ -537,12 +607,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "Pro Account",
+    "website": "https://venice.ai/chat"
   },
   {
     "id": "02f63cdd-2bf8-4853-9f6c-5710d86e2d80",
     "name": "Wire Network",
-    "description": "The Blockchain for the AI Economy",
+    "description": "The Blockchain for the AI Economy",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/610e4cc4-1d00-4e09-80b8-dad415bb1eab/wire-net.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=1a6e13f861f35a84e30b0fa5222458a16ab292c568f3e7e72e438d56aa5c7c8b&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/wire-network-02f63cdd-2bf8-4853-9f6c-5710d86e2d80.jpg",
@@ -552,12 +624,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.wire.network/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Zo.Me",
-    "description": "",
+    "description": "Chat with friends & AI",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/zome.jpeg",
@@ -567,12 +641,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://zo.me/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Rainfall",
-    "description": "",
+    "description": "Empower of people via self-sovereign Personal AI",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/Rainfalllogo.png",
@@ -582,12 +658,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://rainfall.one/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Bloq",
-    "description": "",
+    "description": "Infrastructure & Applications for Web3",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/bloq.jpeg",
@@ -597,12 +675,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://bloq.com/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Hemi",
-    "description": "",
+    "description": "The Hemi Network is a modular Layer-2 protocol for Bitcoin and Ethereum",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/Hemilogo.png",
@@ -612,12 +692,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://docs.hemi.xyz/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Virtuals",
-    "description": "",
+    "description": "Launchpad for AI Agents",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/Virtuals.jpeg",
@@ -627,12 +709,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://app.virtuals.io/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "AI16Z",
-    "description": "",
+    "description": "Operating System for AI Agents",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/ai16zlogo.jpeg",
@@ -642,12 +726,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.elizaos.ai/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Gif Studios",
-    "description": "",
+    "description": "Gif Studios",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/signal-2025-01-24-13-14-17-231-1.png",
@@ -657,12 +743,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://gifstudios.com/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "IamAI-Core",
-    "description": "",
+    "description": "I am AI Core",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/iamai-core-icon-circle-512x512.png",
@@ -672,12 +760,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://github.com/iamai-core"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Lumerin MOR Staking",
-    "description": "",
+    "description": "Bitcoin Hashpower, AI, RWAs & DePIN",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/lumerin-6fd5736d-11a2-4fb1-986e-68bea06af328.png",
@@ -687,12 +777,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.lumerin.io/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
     "name": "Morlord MOR Staking",
-    "description": "",
+    "description": "Stats and tools for the Morpheus Community",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/morlord-faba9889-7550-41fe-8af3-81bf696bd412.jpg",
@@ -702,12 +794,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://morlord.com/"
   },
   {
     "id": "",
     "name": "Aiora Agency",
-    "description": "",
+    "description": "Aiora Agency",
     "longDescription": "",
     "image": "",
     "localImage": "images/LogoforAiora.jpeg",
@@ -717,7 +811,9 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "",
@@ -732,12 +828,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "",
     "name": "brainpower",
-    "description": "",
+    "description": "Brainpower Podcast",
     "longDescription": "",
     "image": "",
     "localImage": "images/brainpower.png",
@@ -747,12 +845,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://open.spotify.com/show/56eTDgUARPiaUntXLnxIGg"
   },
   {
     "id": "",
     "name": "MOR Builders",
-    "description": "",
+    "description": "MOR Builders Accelerator",
     "longDescription": "",
     "image": "",
     "localImage": "images/mor-builders-white-bkrd-square.png",
@@ -762,12 +862,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.mor.builders/"
   },
   {
     "id": "",
     "name": "Aigent Z",
-    "description": "",
+    "description": "Aigent Z",
     "longDescription": "",
     "image": "",
     "localImage": "images/aigentz.jpg",
@@ -777,12 +879,14 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": ""
   },
   {
     "id": "",
     "name": "PALcapital",
-    "description": "",
+    "description": "Creating a launchpad, dealmaking and introduction platform for the Morpheus ecosystem hosted by PALcapital.com.",
     "longDescription": "",
     "image": "",
     "localImage": "images/palcapital.png",
@@ -792,6 +896,8 @@
     "discordUrl": "",
     "contributors": 0,
     "githubStars": 0,
-    "totalStaked": 0
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.palcapital.com/"
   }
 ]

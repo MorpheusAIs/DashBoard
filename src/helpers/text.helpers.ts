@@ -156,3 +156,12 @@ export function formatBalance(
     return '0'
   }
 }
+
+export function beautifyLink(link: string) {
+  const result = link
+    .replace('https://', '')
+    .replace('http://', '')
+    .replace('www.', '')
+
+  return result.slice(0, result.indexOf('/'))
+}
