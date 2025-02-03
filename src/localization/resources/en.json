@@ -745,7 +745,7 @@
     "success-message": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
   "delegation-providers": {
-    "title": "Computed Subnets",
+    "title": "Compute Subnets",
     "you-delegated-text": "You Staked",
     "other-subnets-text": "Other Subnets"
   },
