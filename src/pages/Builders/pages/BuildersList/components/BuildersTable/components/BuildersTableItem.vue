@@ -168,6 +168,7 @@
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
     :builder-project="builderProject"
+    :chain="chain"
     @staked="handleStaked"
   />
 </template>

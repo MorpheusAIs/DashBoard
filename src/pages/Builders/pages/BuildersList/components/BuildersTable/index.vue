@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import BuildersTableItem from '../BuildersTableItem.vue'
+import BuildersTableItem from './components/BuildersTableItem.vue'
 import {
   BuilderProjectFragment,
   BuildersProject_OrderBy,

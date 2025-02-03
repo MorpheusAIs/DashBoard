@@ -115,14 +115,17 @@ import {
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import { EthereumChains } from '@config'
 
 const props = withDefaults(
   defineProps<{
     builderProject: GetBuildersProjectQuery['buildersProject']
     isShown?: boolean
+    chain?: EthereumChains
   }>(),
   {
     isShown: true,
+    chain: undefined,
   },
 )
 
@@ -237,10 +240,13 @@ const submit = async () => {
 
   try {
     if (
-      provider.value.chainId !== buildersContractDetails.value.targetChainId
+      provider.value.chainId !==
+      (props.chain ?? buildersContractDetails.value.targetChainId)
     ) {
-      provider.value.selectChain(buildersContractDetails.value.targetChainId)
-      await sleep(1_000)
+      provider.value.selectChain(
+        props.chain ?? buildersContractDetails.value.targetChainId,
+      )
+      await sleep(1_500)
     }
 
     const allowance = await rewardsContract.value.providerBased.value.allowance(
