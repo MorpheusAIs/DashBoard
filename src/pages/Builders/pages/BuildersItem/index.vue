@@ -484,7 +484,7 @@ const route = useRoute()
 const { provider, buildersContract, buildersContractDetails, balances } =
   storeToRefs(useWeb3ProvidersStore())
 
-const buildersApolloClient = useSecondApolloClient()
+const { client: buildersApolloClient } = useSecondApolloClient()
 
 const { t } = useI18n()
 

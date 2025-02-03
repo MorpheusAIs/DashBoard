@@ -153,8 +153,9 @@ const form = reactive<{
 }>({
   name: props.buildersProject?.name ?? '',
   depositAmount: formatEther(props.buildersProject?.minimalDeposit ?? 0),
-  lockPeriodAfterStake: props.buildersProject?.withdrawLockPeriodAfterDeposit,
-  startAt: props.buildersProject?.startsAt,
+  lockPeriodAfterStake:
+    props.buildersProject?.withdrawLockPeriodAfterDeposit ?? '',
+  startAt: props.buildersProject?.startsAt ?? '',
   claimLockEndTime: +props.buildersProject?.claimLockEnd
     ? props.buildersProject?.claimLockEnd
     : '',

@@ -145,7 +145,7 @@ const formValidationData = ref<ReturnType<typeof useFormValidation>>({
   },
 })
 
-const apolloClient = useSecondApolloClient()
+const { client: apolloClient } = useSecondApolloClient()
 
 const form = reactive({
   address: '',

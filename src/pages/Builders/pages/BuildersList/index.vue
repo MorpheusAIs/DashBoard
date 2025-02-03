@@ -28,15 +28,60 @@
       </div>
     </div>
 
-    <h2
-      v-if="
-        !buildersProjectsState.isLoaded.value ||
-        listData.buildersProjects.length
-      "
-      class="mt-16 self-start text-textSecondaryMain"
-    >
-      {{ $t('builders-list.main-table-title') }}
-    </h2>
+    <div class="z-30 mt-16 flex w-full items-center justify-between">
+      <h2
+        v-if="
+          !buildersProjectsState.isLoaded.value ||
+          listData.buildersProjects.length
+        "
+        class="self-start text-textSecondaryMain"
+      >
+        {{ $t('builders-list.main-table-title') }}
+      </h2>
+
+      <div class="relative flex">
+        <button
+          :class="
+            cn(
+              'flex items-center gap-2 px-4 py-2',
+              'bg-backgroundSecondaryMain text-textSecondaryMain',
+            )
+          "
+          @click="isDropMenuShown = !isDropMenuShown"
+        >
+          {{ localizeChainSelection(selectedChain) }}
+
+          <app-icon
+            :name="$icons.chevronDown"
+            :class="
+              cn(
+                'size-6 transition-transform duration-300 ease-in-out',
+                isDropMenuShown && 'rotate-180',
+              )
+            "
+          />
+        </button>
+        <drop-menu
+          v-model:is-shown="isDropMenuShown"
+          class="bg-backgroundSecondaryMain"
+          is-hide-on-click-outside
+        >
+          <button
+            class="z-20 px-3 py-2 text-left text-textSecondaryMain hover:brightness-150"
+            v-for="(el, idx) in chainOptions"
+            :key="idx"
+            @click.stop="
+              () => {
+                selectedChain = el
+                isDropMenuShown = false
+              }
+            "
+          >
+            {{ localizeChainSelection(el) }}
+          </button>
+        </drop-menu>
+      </div>
+    </div>
 
     <template v-if="buildersProjectsState.isLoaded.value">
       <template v-if="buildersProjectsState.isLoadFailed.value">
@@ -46,7 +91,7 @@
       </template>
       <template v-else-if="listData.buildersProjects.length">
         <builders-table
-          class="mt-8"
+          class="z-10 mt-8"
           :builders-projects="listData.buildersProjects"
           v-model:order-by-model="orderBy"
           v-model:order-direction-model="orderDirection"
@@ -124,6 +169,7 @@
 <script setup lang="ts">
 import {
   AppButton,
+  AppIcon,
   ErrorMessage,
   NoDataMessage,
   Pagination,
@@ -150,8 +196,16 @@ import { ROUTE_NAMES, AdditionalBuildersOrderBy } from '@/enums'
 import { useLoad } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
-import { NetworkTypes } from '@config'
+import {
+  config,
+  EthereumChains,
+  getEthereumChainsName,
+  NetworkTypes,
+} from '@config'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
+import DropMenu from '@/common/DropMenu.vue'
+import { cn } from '@/theme/utils'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 
 type LoadBuildersResponse = {
   buildersProjects: CombinedBuildersListQuery['buildersProjects']
@@ -166,7 +220,13 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 
-const { provider, networkType } = storeToRefs(useWeb3ProvidersStore())
+const isDropMenuShown = ref(false)
+
+const {
+  provider,
+  networkType,
+  allowedForCurrentRouteChainsLimitedByNetworkType,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
 
@@ -175,12 +235,20 @@ const orderBy = ref<BuildersProject_OrderBy | AdditionalBuildersOrderBy>(
 )
 const orderDirection = ref(OrderDirection.Desc)
 
-const usersBuildersOrderBy = ref(BuildersProject_OrderBy.TotalStaked)
+const usersBuildersOrderBy = ref<
+  BuildersProject_OrderBy | AdditionalBuildersOrderBy
+>(BuildersProject_OrderBy.TotalStaked)
 const usersOrderDirection = ref(OrderDirection.Asc)
 
 const isCreateBuilderModalShown = ref(false)
 
-const buildersApolloClient = useSecondApolloClient()
+const { client: buildersApolloClient, clients } = useSecondApolloClient()
+
+const chainOptions = computed(() => [
+  undefined,
+  ...allowedForCurrentRouteChainsLimitedByNetworkType.value,
+])
+const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
 
 const mapperUsersBuildersOrderBy = computed(
   () =>
@@ -215,35 +283,66 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
     buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
   },
   async (): Promise<LoadBuildersResponse> => {
-    const isSortingLocal = Object.keys(AdditionalBuildersOrderBy).includes(
-      orderBy.value,
-    )
+    const loadFn = (client: ApolloClient<NormalizedCacheObject>) => {
+      return client.query<
+        CombinedBuildersListFilteredByPredefinedBuildersQuery,
+        CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
+      >({
+        query: CombinedBuildersListFilteredByPredefinedBuilders,
+        fetchPolicy: 'network-only',
+        variables: {
+          orderBy:
+            orderBy.value in BuildersProject_OrderBy
+              ? (orderBy.value as BuildersProject_OrderBy)
+              : BuildersProject_OrderBy.TotalStaked,
+          usersOrderBy: mapperUsersBuildersOrderBy.value,
+          usersDirection: usersOrderDirection.value,
+          orderDirection: orderDirection.value,
+          name_in: predefinedBuildersMeta.map(el => el.name),
 
-    const { data } = await buildersApolloClient.value.query<
-      CombinedBuildersListFilteredByPredefinedBuildersQuery,
-      CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
-    >({
-      query: CombinedBuildersListFilteredByPredefinedBuilders,
-      fetchPolicy: 'network-only',
-      variables: {
-        orderBy: isSortingLocal
-          ? BuildersProject_OrderBy.TotalStaked
-          : (orderBy.value as BuildersProject_OrderBy),
-        usersOrderBy: mapperUsersBuildersOrderBy.value,
-        usersDirection: usersOrderDirection.value,
-        orderDirection: orderDirection.value,
-        name_in: predefinedBuildersMeta.map(el => el.name),
+          address: provider.value.selectedAddress,
+        },
+      })
+    }
 
-        address: provider.value.selectedAddress,
-      },
-    })
-
-    if (isSortingLocal)
-      return sortLocally(
-        orderBy.value as AdditionalBuildersOrderBy,
-        orderDirection.value,
-        data,
+    if (!selectedChain.value) {
+      const response = await Promise.all(
+        Object.values(clients.value).map(client => {
+          return loadFn(client)
+        }),
       )
+
+      const result = response.reduce(
+        (acc, curr) => {
+          acc['buildersProjects'] = acc['buildersProjects'].concat(
+            curr.data.buildersProjects,
+          )
+          acc['userAccountBuildersProjects'] = acc[
+            'userAccountBuildersProjects'
+          ].concat(curr.data.buildersUsers.map(el => el.buildersProject))
+
+          acc['buildersCounters'] = {
+            id: '',
+            totalBuildersProjects: acc.buildersProjects.length,
+            totalSubnets: 0,
+          }
+
+          return acc
+        },
+        {
+          buildersProjects: [],
+          userAccountBuildersProjects: [],
+          buildersCounters: {
+            totalBuildersProjects: 0,
+            totalSubnets: 0,
+          } as LoadBuildersResponse['buildersCounters'],
+        } as LoadBuildersResponse,
+      )
+
+      return result
+    }
+
+    const { data } = await loadFn(clients.value[selectedChain.value])
 
     return {
       buildersProjects: data.buildersProjects,
@@ -267,23 +366,49 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       () => route.query.user,
       () => route.query.network,
       () => provider.value.chainId,
+      selectedChain,
     ],
-    updateArgs: [orderBy, orderDirection],
+    updateArgs: [[orderBy, orderDirection]],
   },
 )
 
 const paginateThroughAllPredefinedBuilders = async (args: {
   skip: number
   first: number
-  orderBy: BuildersProject_OrderBy
+  orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy
   orderDirection: OrderDirection
 }): Promise<LoadBuildersResponse> => {
-  const buildersProjects = allPredefinedBuilders.value.buildersProjects.slice(
+  const isSortingLocal = Object.keys(AdditionalBuildersOrderBy).includes(
+    orderBy.value,
+  )
+
+  let buildersProjects = allPredefinedBuilders.value.buildersProjects.slice(
     args.skip,
     args.skip + args.first,
   )
-  const userAccountBuildersProjects =
+
+  if (isSortingLocal) {
+    buildersProjects = sortByCustomType(
+      buildersProjects,
+      orderBy.value as AdditionalBuildersOrderBy,
+      orderDirection.value,
+    )
+  }
+
+  const isUsersSortingLocal = Object.keys(AdditionalBuildersOrderBy).includes(
+    usersBuildersOrderBy.value,
+  )
+
+  let userAccountBuildersProjects =
     allPredefinedBuilders.value.userAccountBuildersProjects
+  if (isUsersSortingLocal) {
+    userAccountBuildersProjects = sortByCustomType(
+      userAccountBuildersProjects,
+      usersBuildersOrderBy.value as AdditionalBuildersOrderBy,
+      usersOrderDirection.value,
+    )
+  }
+
   const buildersCounters = allPredefinedBuilders.value.buildersCounters
 
   return {
@@ -327,7 +452,10 @@ const {
         skip:
           currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
           DEFAULT_BUILDERS_PAGE_LIMIT,
-        orderBy: orderBy.value,
+        orderBy:
+          orderBy.value in BuildersProject_OrderBy
+            ? (orderBy.value as BuildersProject_OrderBy)
+            : BuildersProject_OrderBy.TotalStaked,
         usersOrderBy: mapperUsersBuildersOrderBy.value,
         usersDirection: usersOrderDirection.value,
         orderDirection: orderDirection.value,
@@ -371,11 +499,11 @@ const {
   },
 )
 
-const sortLocally = (
+const sortByCustomType = (
+  data: CombinedBuildersListQuery['buildersProjects'],
   orderBy: AdditionalBuildersOrderBy,
   orderDirection: OrderDirection,
-  data: CombinedBuildersListFilteredByPredefinedBuildersQuery,
-): LoadBuildersResponse => {
+): CombinedBuildersListQuery['buildersProjects'] => {
   const mappedSortingHandler = {
     [AdditionalBuildersOrderBy.RewardType]: (
       a: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
@@ -398,24 +526,13 @@ const sortLocally = (
     },
   }
 
-  return {
-    // TODO: implement this sorting when adding multichain builders support
-    buildersProjects: data.buildersProjects,
-    userAccountBuildersProjects: data.buildersUsers
-      .map(el => el.buildersProject)
-      .sort((a, b) => {
-        if (mappedSortingHandler[orderBy]) {
-          return mappedSortingHandler[orderBy](a, b)
-        }
+  return data.sort((a, b) => {
+    if (mappedSortingHandler[orderBy]) {
+      return mappedSortingHandler[orderBy](a, b)
+    }
 
-        return 0
-      }),
-    buildersCounters: {
-      id: '',
-      totalBuildersProjects: data.buildersProjects.length,
-      totalSubnets: 0,
-    },
-  }
+    return 0
+  })
 }
 
 const handleBuilderCreated = async (poolId: string) => {
@@ -426,6 +543,12 @@ const handleBuilderCreated = async (poolId: string) => {
       id: poolId,
     },
   })
+}
+
+const localizeChainSelection = (chainId: string | undefined) => {
+  if (!chainId) return 'All Networks'
+
+  return config.chainsMap[getEthereumChainsName(chainId)].chainName
 }
 
 provide('reloadBuildersProjects', reloadList)

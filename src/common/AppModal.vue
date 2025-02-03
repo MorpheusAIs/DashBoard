@@ -12,6 +12,10 @@
 </template>
 
 <script lang="ts" setup>
+defineOptions({
+  inheritAttrs: false,
+})
+
 const props = withDefaults(
   defineProps<{
     isShown?: boolean

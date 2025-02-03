@@ -141,7 +141,7 @@ const {
   balances,
 } = storeToRefs(useWeb3ProvidersStore())
 
-const buildersApolloClient = useSecondApolloClient()
+const { client: buildersApolloClient } = useSecondApolloClient()
 
 const { data: buildersProjectUserAccount } = useLoad<
   GetUserAccountBuildersProjectQuery['buildersUsers'][0]

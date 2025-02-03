@@ -105,7 +105,7 @@ const chooseSortingOrder = (
   sortingType.value = type
 }
 
-const apolloClient = useSecondApolloClient()
+const { client: apolloClient } = useSecondApolloClient()
 
 const init = async () => {
   isLoaded.value = false
