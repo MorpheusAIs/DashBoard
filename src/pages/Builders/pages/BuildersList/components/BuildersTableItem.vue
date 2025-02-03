@@ -24,6 +24,14 @@
         <span class="builders-table-item__col-text">
           {{ builderProject.name }}
         </span>
+
+        <template v-if="chain">
+          <img
+            :src="$config.chainsMap[getEthereumChainsName(chain)].iconUrls?.[0]"
+            :alt="$config.chainsMap[getEthereumChainsName(chain)].chainName"
+            class="ml-1 h-4 w-4"
+          />
+        </template>
       </div>
     </div>
     <div class="builders-table-item__col">
@@ -175,12 +183,16 @@ import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
+import { EthereumChains, getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
     builderProject: BuilderProjectFragment
+    chain?: EthereumChains
   }>(),
-  {},
+  {
+    chain: undefined,
+  },
 )
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())

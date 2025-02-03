@@ -46,10 +46,12 @@
       />
       <div class=""></div>
     </div>
+    <!-- FIXME: el.chain: inserted in BuildersList.vue in loadFn -->
     <builders-table-item
       v-for="el in buildersProjects"
       :key="el.id"
       :builder-project="el"
+      :chain="el.chain"
     />
   </div>
 </template>
@@ -63,13 +65,14 @@ import {
 import { cn } from '@/theme/utils'
 import SortingIconButton from './components/SortingIconButton.vue'
 import { AdditionalBuildersOrderBy } from '@/enums'
+import { EthereumChains } from '@config'
 
 const orderByModel = defineModel<string>('orderByModel')
 const orderDirectionModel = defineModel<string>('orderDirectionModel')
 
 withDefaults(
   defineProps<{
-    buildersProjects: BuilderProjectFragment[]
+    buildersProjects: ({ chain?: EthereumChains } & BuilderProjectFragment)[]
   }>(),
   {},
 )

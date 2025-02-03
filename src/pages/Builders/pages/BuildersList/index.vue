@@ -250,30 +250,34 @@ const chainOptions = computed(() => [
 ])
 const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
 
-const mapperUsersBuildersOrderBy = computed(
-  () =>
-    ({
-      [BuildersProject_OrderBy.Admin]:
-        BuildersUser_OrderBy.BuildersProjectAdmin,
-      [BuildersProject_OrderBy.ClaimLockEnd]:
-        BuildersUser_OrderBy.BuildersProjectClaimLockEnd,
-      [BuildersProject_OrderBy.Id]: BuildersUser_OrderBy.BuildersProjectId,
-      [BuildersProject_OrderBy.MinimalDeposit]:
-        BuildersUser_OrderBy.BuildersProjectMinimalDeposit,
-      [BuildersProject_OrderBy.Name]: BuildersUser_OrderBy.BuildersProjectName,
-      [BuildersProject_OrderBy.StartsAt]:
-        BuildersUser_OrderBy.BuildersProjectStartsAt,
-      [BuildersProject_OrderBy.TotalClaimed]:
-        BuildersUser_OrderBy.BuildersProjectTotalClaimed,
-      [BuildersProject_OrderBy.TotalStaked]:
-        BuildersUser_OrderBy.BuildersProjectTotalStaked,
-      [BuildersProject_OrderBy.TotalUsers]:
-        BuildersUser_OrderBy.BuildersProjectTotalUsers,
-      [BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit]:
-        BuildersUser_OrderBy.BuildersProjectWithdrawLockPeriodAfterDeposit,
-      [AdditionalBuildersOrderBy.RewardType]:
-        BuildersUser_OrderBy.BuildersProjectId,
-    })[usersBuildersOrderBy.value],
+const mapUsersOrderFilter = (
+  orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy,
+): BuildersUser_OrderBy => {
+  return {
+    [BuildersProject_OrderBy.Admin]: BuildersUser_OrderBy.BuildersProjectAdmin,
+    [BuildersProject_OrderBy.ClaimLockEnd]:
+      BuildersUser_OrderBy.BuildersProjectClaimLockEnd,
+    [BuildersProject_OrderBy.Id]: BuildersUser_OrderBy.BuildersProjectId,
+    [BuildersProject_OrderBy.MinimalDeposit]:
+      BuildersUser_OrderBy.BuildersProjectMinimalDeposit,
+    [BuildersProject_OrderBy.Name]: BuildersUser_OrderBy.BuildersProjectName,
+    [BuildersProject_OrderBy.StartsAt]:
+      BuildersUser_OrderBy.BuildersProjectStartsAt,
+    [BuildersProject_OrderBy.TotalClaimed]:
+      BuildersUser_OrderBy.BuildersProjectTotalClaimed,
+    [BuildersProject_OrderBy.TotalStaked]:
+      BuildersUser_OrderBy.BuildersProjectTotalStaked,
+    [BuildersProject_OrderBy.TotalUsers]:
+      BuildersUser_OrderBy.BuildersProjectTotalUsers,
+    [BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit]:
+      BuildersUser_OrderBy.BuildersProjectWithdrawLockPeriodAfterDeposit,
+    [AdditionalBuildersOrderBy.RewardType]:
+      BuildersUser_OrderBy.BuildersProjectId,
+  }[orderBy]
+}
+
+const mapperUsersBuildersOrderBy = computed(() =>
+  mapUsersOrderFilter(usersBuildersOrderBy.value),
 )
 
 const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
@@ -283,18 +287,22 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
     buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
   },
   async (): Promise<LoadBuildersResponse> => {
-    const loadFn = (client: ApolloClient<NormalizedCacheObject>) => {
-      return client.query<
+    const loadFn = async (
+      client: ApolloClient<NormalizedCacheObject>,
+      chain: EthereumChains,
+    ) => {
+      const { data } = await client.query<
         CombinedBuildersListFilteredByPredefinedBuildersQuery,
         CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
       >({
         query: CombinedBuildersListFilteredByPredefinedBuilders,
         fetchPolicy: 'network-only',
         variables: {
-          orderBy:
-            orderBy.value in BuildersProject_OrderBy
-              ? (orderBy.value as BuildersProject_OrderBy)
-              : BuildersProject_OrderBy.TotalStaked,
+          orderBy: Object.values(BuildersProject_OrderBy).includes(
+            orderBy.value as BuildersProject_OrderBy,
+          )
+            ? (orderBy.value as BuildersProject_OrderBy)
+            : BuildersProject_OrderBy.TotalStaked,
           usersOrderBy: mapperUsersBuildersOrderBy.value,
           usersDirection: usersOrderDirection.value,
           orderDirection: orderDirection.value,
@@ -303,12 +311,32 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
           address: provider.value.selectedAddress,
         },
       })
+
+      return {
+        data: {
+          buildersProjects: data.buildersProjects.map(el => ({ ...el, chain })),
+          buildersUsers: data.buildersUsers.map(el => {
+            return {
+              ...el,
+              buildersProject: {
+                ...el.buildersProject,
+                chain,
+              },
+            }
+          }),
+          buildersCounters: {
+            id: '',
+            totalBuildersProjects: data.buildersProjects.length,
+            totalSubnets: 0,
+          },
+        },
+      }
     }
 
     if (!selectedChain.value) {
       const response = await Promise.all(
-        Object.values(clients.value).map(client => {
-          return loadFn(client)
+        Object.entries(clients.value).map(([chain, client]) => {
+          return loadFn(client, chain as EthereumChains)
         }),
       )
 
@@ -342,7 +370,10 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       return result
     }
 
-    const { data } = await loadFn(clients.value[selectedChain.value])
+    const { data } = await loadFn(
+      clients.value[selectedChain.value],
+      selectedChain.value,
+    )
 
     return {
       buildersProjects: data.buildersProjects,
@@ -378,16 +409,26 @@ const paginateThroughAllPredefinedBuilders = async (args: {
   orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy
   orderDirection: OrderDirection
 }): Promise<LoadBuildersResponse> => {
-  const isSortingLocal = Object.keys(AdditionalBuildersOrderBy).includes(
-    orderBy.value,
-  )
-
   let buildersProjects = allPredefinedBuilders.value.buildersProjects.slice(
     args.skip,
     args.skip + args.first,
   )
+  if (!selectedChain.value) {
+    buildersProjects = localSortBuilders(
+      buildersProjects,
+      Object.values(BuildersProject_OrderBy).includes(
+        args.orderBy as BuildersProject_OrderBy,
+      )
+        ? (args.orderBy as BuildersProject_OrderBy)
+        : BuildersProject_OrderBy.TotalStaked,
+      args.orderDirection,
+    )
+  }
 
-  if (isSortingLocal) {
+  const isCustomSorting = Object.keys(AdditionalBuildersOrderBy).includes(
+    orderBy.value,
+  )
+  if (isCustomSorting) {
     buildersProjects = sortByCustomType(
       buildersProjects,
       orderBy.value as AdditionalBuildersOrderBy,
@@ -395,13 +436,25 @@ const paginateThroughAllPredefinedBuilders = async (args: {
     )
   }
 
-  const isUsersSortingLocal = Object.keys(AdditionalBuildersOrderBy).includes(
-    usersBuildersOrderBy.value,
-  )
-
   let userAccountBuildersProjects =
     allPredefinedBuilders.value.userAccountBuildersProjects
-  if (isUsersSortingLocal) {
+
+  if (!selectedChain.value) {
+    userAccountBuildersProjects = localSortBuilders(
+      userAccountBuildersProjects,
+      Object.values(BuildersProject_OrderBy).includes(
+        args.orderBy as BuildersProject_OrderBy,
+      )
+        ? (args.orderBy as BuildersProject_OrderBy)
+        : BuildersProject_OrderBy.TotalStaked,
+      args.orderDirection,
+    )
+  }
+
+  const isUsersCustomSorting = Object.keys(AdditionalBuildersOrderBy).includes(
+    usersBuildersOrderBy.value,
+  )
+  if (isUsersCustomSorting) {
     userAccountBuildersProjects = sortByCustomType(
       userAccountBuildersProjects,
       usersBuildersOrderBy.value as AdditionalBuildersOrderBy,
@@ -452,10 +505,11 @@ const {
         skip:
           currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
           DEFAULT_BUILDERS_PAGE_LIMIT,
-        orderBy:
-          orderBy.value in BuildersProject_OrderBy
-            ? (orderBy.value as BuildersProject_OrderBy)
-            : BuildersProject_OrderBy.TotalStaked,
+        orderBy: Object.values(BuildersProject_OrderBy).includes(
+          orderBy.value as BuildersProject_OrderBy,
+        )
+          ? (orderBy.value as BuildersProject_OrderBy)
+          : BuildersProject_OrderBy.TotalStaked,
         usersOrderBy: mapperUsersBuildersOrderBy.value,
         usersDirection: usersOrderDirection.value,
         orderDirection: orderDirection.value,
@@ -498,6 +552,41 @@ const {
         : [],
   },
 )
+
+const localSortBuilders = (
+  data: CombinedBuildersListQuery['buildersProjects'],
+  orderBy: BuildersProject_OrderBy,
+  orderDirection: OrderDirection,
+) => {
+  if (!data || data.length === 0) return data
+
+  return data.sort((a, b) => {
+    const keyA = a[orderBy]
+    const keyB = b[orderBy]
+
+    if (keyA == null || keyB == null) return 0
+
+    const isNumeric = !isNaN(Number(keyA)) && !isNaN(Number(keyB))
+
+    if (orderDirection === OrderDirection.Asc) {
+      if (isNumeric) {
+        return Number(keyA) - Number(keyB)
+      }
+
+      return keyA.localeCompare(keyB)
+    }
+
+    if (orderDirection === OrderDirection.Desc) {
+      if (isNumeric) {
+        return Number(keyB) - Number(keyA)
+      }
+
+      return keyB.localeCompare(keyA)
+    }
+
+    return 0
+  })
+}
 
 const sortByCustomType = (
   data: CombinedBuildersListQuery['buildersProjects'],
