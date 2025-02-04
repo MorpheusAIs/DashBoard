@@ -222,7 +222,7 @@
   },
   {
     "id": "f54cff5d-bb3c-4ec9-9d9a-d2b32e192e6d",
-    "name": "Exabits",
+    "name": "exaBITS",
     "description": "The AI compute base layer",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/07a4c588-8204-4643-b793-55bd713afa54/exabits.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=b768e7a61eb6a5be57a7998d4ede884799ccc081f7e72afd12e57088f127eabe&X-Amz-SignedHeaders=host&x-id=GetObject",
@@ -392,8 +392,8 @@
   },
   {
     "id": "f9576476-5a01-4aa9-90f6-60774fee4a6e",
-    "name": "Manifest AI",
-    "description": "Decentralized Physical Infrastructure",
+    "name": "Manifest Network",
+    "description": "Decentralized AI Platform",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/91030777-51df-4a66-b7e7-754b00eeb9ce/manifest.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=a12af19ac2b8584cbf11ffa2668c0952e5070fe29640f1be28310c7a995d5cc9&X-Amz-SignedHeaders=host&x-id=GetObject",
     "localImage": "images/manifest-ai-f9576476-5a01-4aa9-90f6-60774fee4a6e.jpg",
@@ -405,7 +405,7 @@
     "githubStars": 0,
     "totalStaked": 0,
     "rewardType": "To Be Announced",
-    "website": ""
+    "website": "https://manifestai.org/"
   },
   {
     "id": "faba9889-7550-41fe-8af3-81bf696bd412",
@@ -426,7 +426,7 @@
   },
   {
     "id": "1f37f91c-63fa-47b5-ae4e-eda78e689072",
-    "name": "NEAR",
+    "name": "Near",
     "description": "Near Blockchain For AI",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/5b1423c2-6a4a-4bab-84b3-45a28e998bb7/near.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=62cd95d64edc3756d5d59455ba375452eaf851a658875e3c9d6d41011d12ae49&X-Amz-SignedHeaders=host&x-id=GetObject",
@@ -630,7 +630,7 @@
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
-    "name": "Zo.Me",
+    "name": "ZO.ME",
     "description": "Chat with friends & AI",
     "longDescription": "",
     "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/3a01387c-361e-45b8-93e6-cdb5818741cc/e6f6b8ce-82b5-4390-9055-af20ea02cc20/Frame_427321695.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45FSPPWI6X%2F20250114%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20250114T124517Z&X-Amz-Expires=3600&X-Amz-Signature=e4f49a63cfe2712f785daa89c0391fe0d16efedbd69ae2e5dcab4e7f52d6928f&X-Amz-SignedHeaders=host&x-id=GetObject",
@@ -899,5 +899,56 @@
     "totalStaked": 0,
     "rewardType": "To Be Announced",
     "website": "https://www.palcapital.com/"
+  },
+  {
+    "id": "",
+    "name": "Pattern",
+    "description": "Agentic RAG protocol",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/Pattern.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://pattern.global/"
+  },
+  {
+    "id": "",
+    "name": "Agent Access",
+    "description": "Access to Agents",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/AgentAccess.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "Agent Access",
+    "website": ""
+  },
+  {
+    "id": "",
+    "name": "Morpheus Node",
+    "description": "Morpheus Node Written in Node JS Programming Language",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/MorpheusNode.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "Ready for White List",
+    "website": "https://github.com/domsteil/morpheus-node.git"
   }
 ]
