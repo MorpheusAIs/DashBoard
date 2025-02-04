@@ -27,4 +27,5 @@ export enum ICON_NAMES {
   sort = 'sort',
   link = 'link',
   info = 'info',
+  arrowUp = 'arrow-up',
 }

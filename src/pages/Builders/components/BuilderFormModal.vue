@@ -37,6 +37,52 @@
           @blur="touchField('name')"
           :disabled="isSubmitting || !!buildersProject"
         />
+
+        <input-field
+          v-model="form.slug"
+          :placeholder="$t('builder-form-modal.slug-plh')"
+          :note="$t('builder-form-modal.slug-note')"
+          :error-message="getFieldErrorMessage('slug')"
+          @blur="touchField('slug')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
+        <input-field
+          v-model="form.stakingReward"
+          :placeholder="$t('builder-form-modal.staking-reward-plh')"
+          :note="$t('builder-form-modal.staking-reward-note')"
+          :error-message="getFieldErrorMessage('stakingReward')"
+          @blur="touchField('staking-reward')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
+        <input-field
+          v-model="form.website"
+          :placeholder="$t('builder-form-modal.website-plh')"
+          :note="$t('builder-form-modal.website-note')"
+          :error-message="getFieldErrorMessage('website')"
+          @blur="touchField('website')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
+        <textarea-field
+          v-model="form.description"
+          :placeholder="$t('builder-form-modal.description-plh')"
+          :note="$t('builder-form-modal.description-note')"
+          :error-message="getFieldErrorMessage('description')"
+          @blur="touchField('description')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
+        <file-field
+          v-model="form.logo"
+          :placeholder="$t('builder-form-modal.logo-plh')"
+          :note="$t('builder-form-modal.logo-note')"
+          :error-message="getFieldErrorMessage('logo')"
+          @blur="touchField('logo')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
         <input-field
           v-model="form.depositAmount"
           :placeholder="$t('builder-form-modal.min-deposit-plh')"
@@ -91,7 +137,7 @@
 
 <script setup lang="ts">
 import { AppButton, BasicModal } from '@/common'
-import { InputField, DatetimeField } from '@/fields'
+import { InputField, DatetimeField, TextareaField, FileField } from '@/fields'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import {
   bus,
@@ -146,12 +192,26 @@ const isSubmitting = ref(false)
 
 const form = reactive<{
   name: string
+
+  slug: string
+  stakingReward: string
+  website: string
+  description: string
+  logo: File | undefined
+
   depositAmount: string
   lockPeriodAfterStake: string
   startAt: string
   claimLockEndTime: string
 }>({
   name: props.buildersProject?.name ?? '',
+
+  slug: '',
+  stakingReward: '',
+  website: '',
+  description: '',
+  logo: undefined,
+
   depositAmount: formatEther(props.buildersProject?.minimalDeposit ?? 0),
   lockPeriodAfterStake:
     props.buildersProject?.withdrawLockPeriodAfterDeposit ?? '',
@@ -166,6 +226,13 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     form,
     computed(() => ({
       name: { required },
+
+      slug: { required },
+      stakingReward: { required },
+      website: { required },
+      description: { required },
+      logo: { required },
+
       depositAmount: { required },
       lockPeriodAfterStake: {
         required,

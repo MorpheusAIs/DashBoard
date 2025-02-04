@@ -806,6 +806,18 @@
     "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "name-plh": "Builder name",
     "name-note": "What is the name of your project? This is how users will find your project.",
+
+    "slug-plh": "Builder Slug",
+    "slug-note": "3-5 words describing what your project does.",
+    "staking-reward-plh": "Staking Reward",
+    "staking-reward-note": "2-3 sentences describing what you will give users for staking MOR to your project. Users will see this when searching the list of Morpheus builders.",
+    "website-plh": "Builder Website",
+    "website-note": "Add a link to a website or other external location where stakers can access your project, learn more information, etc.",
+    "description-plh": "Builder Description",
+    "description-note": "A longer description of what your project does and why users should support your project. You should include a more detailed outline of all the benefits or features that users will receive when staking MOR to your project.",
+    "logo-plh": "Drag & drop",
+    "logo-note": "Upload a logo for your project. Minimum size: 128 x 128. Maximum file size: 2Mb. Supported file types: JPEG, PNG.",
+
     "min-deposit-plh": "Minimum deposit",
     "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
     "lock-period-after-stake-plh": "Withdraw lock period after stake, seconds",
