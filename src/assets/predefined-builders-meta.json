@@ -970,11 +970,11 @@
   },
   {
     "id": "",
-    "name": "Tails & Conquest",
-    "description": "An agentic dungeon master with an X account recruits players and guides them through tails and conquests.",
+    "name": "Tales & Conquests",
+    "description": "An AI agent-driven roleplaying game powered by Morpheus' decentralized inference router.",
     "longDescription": "",
     "image": "",
-    "localImage": "images/MORBuilderTalesLogo.png",
+    "localImage": "images/TalesLogo.jpeg",
     "tags": [],
     "githubUrl": "",
     "twitterUrl": "",
@@ -983,7 +983,7 @@
     "githubStars": 0,
     "totalStaked": 0,
     "rewardType": "Early Access / MOR Yield",
-    "website": "https://panoramablock.com/"
+    "website": "https://talesgame.com "
   },
   {
     "id": "",
