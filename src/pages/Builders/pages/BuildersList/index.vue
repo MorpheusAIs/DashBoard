@@ -39,47 +39,62 @@
         {{ $t('builders-list.main-table-title') }}
       </h2>
 
-      <div class="relative flex">
-        <button
-          :class="
-            cn(
-              'flex items-center gap-2 px-4 py-2',
-              'bg-backgroundSecondaryMain text-textSecondaryMain',
-            )
-          "
-          @click="isDropMenuShown = !isDropMenuShown"
+      <div class="flex gap-5">
+        <div
+          class="builders-list__search relative flex h-10 w-10 items-center justify-center"
+          :class="{
+            'builders-list__search--active': searchQuery,
+          }"
         >
-          {{ localizeChainSelection(selectedChain) }}
+          <input-field
+            v-model="searchQuery"
+            :placeholder="$t('builders-list.search-placeholder')"
+          />
+          <app-icon :name="$icons.search" />
+        </div>
 
-          <app-icon
-            :name="$icons.chevronDown"
+        <div class="relative flex">
+          <button
             :class="
               cn(
-                'size-6 transition-transform duration-300 ease-in-out',
-                isDropMenuShown && 'rotate-180',
+                'flex items-center gap-2 px-4 py-2',
+                'bg-backgroundSecondaryMain text-textSecondaryMain',
               )
             "
-          />
-        </button>
-        <drop-menu
-          v-model:is-shown="isDropMenuShown"
-          class="bg-backgroundSecondaryMain"
-          is-hide-on-click-outside
-        >
-          <button
-            class="z-20 px-3 py-2 text-left text-textSecondaryMain hover:brightness-150"
-            v-for="(el, idx) in chainOptions"
-            :key="idx"
-            @click.stop="
-              () => {
-                selectedChain = el
-                isDropMenuShown = false
-              }
-            "
+            @click="isDropMenuShown = !isDropMenuShown"
           >
-            {{ localizeChainSelection(el) }}
+            {{ localizeChainSelection(selectedChain) }}
+
+            <app-icon
+              :name="$icons.chevronDown"
+              :class="
+                cn(
+                  'size-6 transition-transform duration-300 ease-in-out',
+                  isDropMenuShown && 'rotate-180',
+                )
+              "
+            />
           </button>
-        </drop-menu>
+          <drop-menu
+            v-model:is-shown="isDropMenuShown"
+            class="bg-backgroundSecondaryMain"
+            is-hide-on-click-outside
+          >
+            <button
+              class="z-20 px-3 py-2 text-left text-textSecondaryMain hover:brightness-150"
+              v-for="(el, idx) in chainOptions"
+              :key="idx"
+              @click.stop="
+                () => {
+                  selectedChain = el
+                  isDropMenuShown = false
+                }
+              "
+            >
+              {{ localizeChainSelection(el) }}
+            </button>
+          </drop-menu>
+        </div>
       </div>
     </div>
 
@@ -188,7 +203,7 @@ import {
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { computed, provide, ref } from 'vue'
+import { provide, ref, computed } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -206,6 +221,7 @@ import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import DropMenu from '@/common/DropMenu.vue'
 import { cn } from '@/theme/utils'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
+import { InputField } from '@/fields'
 
 type LoadBuildersResponse = {
   buildersProjects: CombinedBuildersListQuery['buildersProjects']
@@ -229,6 +245,7 @@ const {
 } = storeToRefs(useWeb3ProvidersStore())
 
 const currentPage = ref(1)
+const searchQuery = ref('')
 
 const orderBy = ref<BuildersProject_OrderBy | AdditionalBuildersOrderBy>(
   BuildersProject_OrderBy.TotalStaked,
@@ -306,7 +323,11 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
           usersOrderBy: mapperUsersBuildersOrderBy.value,
           usersDirection: usersOrderDirection.value,
           orderDirection: orderDirection.value,
-          name_in: predefinedBuildersMeta.map(el => el.name),
+          name_in: predefinedBuildersMeta
+            .map(el => el.name)
+            .filter(el =>
+              el.toLowerCase().includes(searchQuery.value.toLowerCase()),
+            ),
 
           address: provider.value.selectedAddress,
         },
@@ -398,6 +419,7 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       () => route.query.network,
       () => provider.value.chainId,
       selectedChain,
+      searchQuery,
     ],
     updateArgs: [[orderBy, orderDirection]],
   },
@@ -657,5 +679,52 @@ provide('updateUserAccountBuildersProjects', updateList)
   font-size: toRem(17);
   line-height: toRem(25.5);
   margin-bottom: toRem(8);
+}
+
+.builders-list__search {
+  background: linear-gradient(
+    95.36deg,
+    rgba(57, 99, 58, 0.04) 0%,
+    rgba(38, 57, 57, 0.5) 56.4%
+  );
+  border: toRem(1) solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(
+    95.36deg,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  color: var(--text-primary-invert-main);
+  gap: 0;
+  :deep(.input-field__input) {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  :deep(.input-field) {
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: 0.2s;
+  }
+  :deep(.app-icon) {
+    max-width: toRem(20);
+    max-height: toRem(20);
+    position: absolute;
+    right: toRem(10);
+  }
+  &:hover,
+  &--active {
+    width: fit-content;
+    padding-right: toRem(42);
+    border-image-source: linear-gradient(
+      95.36deg,
+      rgba(3, 255, 133, 0.48) 0%,
+      rgba(3, 255, 133, 0.08) 100%
+    );
+    :deep(.input-field) {
+      width: toRem(200);
+    }
+  }
 }
 </style>
