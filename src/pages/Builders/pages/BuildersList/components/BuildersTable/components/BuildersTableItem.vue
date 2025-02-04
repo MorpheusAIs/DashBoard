@@ -25,10 +25,16 @@
           {{ builderProject.name }}
         </span>
 
-        <template v-if="chain">
+        <template v-if="builderProject.chain">
           <img
-            :src="$config.chainsMap[getEthereumChainsName(chain)].iconUrls?.[0]"
-            :alt="$config.chainsMap[getEthereumChainsName(chain)].chainName"
+            :src="
+              $config.chainsMap[getEthereumChainsName(builderProject.chain)]
+                .iconUrls?.[0]
+            "
+            :alt="
+              $config.chainsMap[getEthereumChainsName(builderProject.chain)]
+                .chainName
+            "
             class="ml-1 h-4 w-4"
           />
         </template>
@@ -71,6 +77,7 @@
         :to="{
           name: $routes.appBuildersItem,
           params: { id: builderProject.id },
+          query: { chain: builderProject.chain },
         }"
       ></RouterLink>
       <app-button
@@ -105,6 +112,7 @@
       :to="{
         name: $routes.appBuildersItem,
         params: { id: builderProject.id },
+        query: { chain: builderProject.chain },
       }"
     >
       <img
@@ -168,7 +176,7 @@
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
     :builder-project="builderProject"
-    :chain="chain"
+    :chain="builderProject.chain"
     @staked="handleStaked"
   />
 </template>
@@ -176,7 +184,7 @@
 <script setup lang="ts">
 import { AppButton } from '@/common'
 import { formatBalance, humanizeTime } from '@/helpers'
-import { BuilderProjectFragment } from '@/types/graphql'
+import { BuilderProject } from '@/types'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { inject, ref } from 'vue'
@@ -184,17 +192,11 @@ import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { EthereumChains, getEthereumChainsName } from '@config'
+import { getEthereumChainsName } from '@config'
 
-const props = withDefaults(
-  defineProps<{
-    builderProject: BuilderProjectFragment
-    chain?: EthereumChains
-  }>(),
-  {
-    chain: undefined,
-  },
-)
+const props = defineProps<{
+  builderProject: BuilderProject
+}>()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 

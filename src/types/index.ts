@@ -7,6 +7,7 @@ export * as InfoCardType from './info-card.types'
 export * as InfoDashboardType from './info-dashboard.types'
 export * as Mor20EcosystemType from './mor20-ecosystem.types'
 export * from './subnet.types'
+export * from './builders.types'
 export * from './referral.types'
 
 export * from './pool-data.types'

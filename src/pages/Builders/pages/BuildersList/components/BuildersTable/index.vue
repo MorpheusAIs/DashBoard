@@ -51,28 +51,24 @@
       v-for="el in buildersProjects"
       :key="el.id"
       :builder-project="el"
-      :chain="el.chain"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import BuildersTableItem from './components/BuildersTableItem.vue'
-import {
-  BuilderProjectFragment,
-  BuildersProject_OrderBy,
-} from '@/types/graphql'
+import { BuildersProject_OrderBy } from '@/types/graphql'
 import { cn } from '@/theme/utils'
 import SortingIconButton from './components/SortingIconButton.vue'
 import { AdditionalBuildersOrderBy } from '@/enums'
-import { EthereumChains } from '@config'
+import { BuilderProject } from '@/types'
 
 const orderByModel = defineModel<string>('orderByModel')
 const orderDirectionModel = defineModel<string>('orderDirectionModel')
 
 withDefaults(
   defineProps<{
-    buildersProjects: ({ chain?: EthereumChains } & BuilderProjectFragment)[]
+    buildersProjects: BuilderProject[]
   }>(),
   {},
 )

@@ -484,7 +484,7 @@ const route = useRoute()
 const { provider, buildersContract, buildersContractDetails, balances } =
   storeToRefs(useWeb3ProvidersStore())
 
-const { client: buildersApolloClient } = useSecondApolloClient()
+const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
 const { t } = useI18n()
 
@@ -502,6 +502,14 @@ const { data: editPoolDeadline } = useLoad(undefined, async () =>
   buildersContract.value.providerBased.value.editPoolDeadline(),
 )
 
+const currentClient = computed(() => {
+  const client = Object.entries(clients.value).find(
+    item => item[0] === route.query.chain,
+  )?.[1]
+
+  return client || buildersApolloClient.value
+})
+
 const {
   data: buildersData,
   isLoaded,
@@ -516,7 +524,7 @@ const {
   { buildersProject: null, buildersProjectUserAccount: null },
   async () => {
     const [{ data: buildersProjectsResponse }] = await Promise.all([
-      buildersApolloClient.value.query<
+      currentClient.value.query<
         GetBuildersProjectQuery,
         GetBuildersProjectQueryVariables
       >({
@@ -528,20 +536,19 @@ const {
       }),
     ])
 
-    const { data: userAccountInProject } =
-      await buildersApolloClient.value.query<
-        GetUserAccountBuildersProjectQuery,
-        GetUserAccountBuildersProjectQueryVariables
-      >({
-        query: GetUserAccountBuildersProject,
-        fetchPolicy: 'network-only',
-        variables: {
-          address: provider.value.selectedAddress,
-          // eslint-disable-next-line
-          // @ts-ignore
-          project_id: buildersProjectsResponse.buildersProject?.id,
-        },
-      })
+    const { data: userAccountInProject } = await currentClient.value.query<
+      GetUserAccountBuildersProjectQuery,
+      GetUserAccountBuildersProjectQueryVariables
+    >({
+      query: GetUserAccountBuildersProject,
+      fetchPolicy: 'network-only',
+      variables: {
+        address: provider.value.selectedAddress,
+        // eslint-disable-next-line
+        // @ts-ignore
+        project_id: buildersProjectsResponse.buildersProject?.id,
+      },
+    })
 
     return {
       buildersProject: buildersProjectsResponse.buildersProject,
@@ -586,7 +593,7 @@ const withdrawalUnlockTime = computed(() => {
 
 const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
   try {
-    const { data } = await buildersApolloClient.value.query<
+    const { data } = await currentClient.value.query<
       GetBuildersProjectUsersQuery,
       GetBuildersProjectUsersQueryVariables
     >({
@@ -608,6 +615,7 @@ const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
 watch(
   [
     () => route.query.user,
+    () => route.query.chain,
     () => route.query.network,
     () => buildersData.value.buildersProject,
     stakersCurrentPage,
