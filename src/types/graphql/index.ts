@@ -939,6 +939,8 @@ export type GetBuildersProjectUsersQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
   buildersProjectId?: InputMaybe<Scalars['Bytes']>;
+  orderBy?: InputMaybe<BuildersUser_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
 }>;
 
 
@@ -1036,11 +1038,13 @@ export const GetAccountUserBuildersProjects = gql`
 }
     ${BuilderProject}`;
 export const GetBuildersProjectUsers = gql`
-    query getBuildersProjectUsers($first: Int = 10, $skip: Int = 10, $buildersProjectId: Bytes = "") {
+    query getBuildersProjectUsers($first: Int = 10, $skip: Int = 10, $buildersProjectId: Bytes = "", $orderBy: BuildersUser_orderBy, $orderDirection: OrderDirection) {
   buildersUsers(
     first: $first
     skip: $skip
     where: {buildersProject_: {id: $buildersProjectId}}
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     address
     id
