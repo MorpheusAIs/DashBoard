@@ -11,10 +11,19 @@
       <delegation-info-title class="delegator-info-page__title" />
       <div class="delegator-info-page__content-wrapper">
         <delegator-info-cards class="delegator-info-page__info-cards" />
-        <delegates-list class="delegator-info-page__list" />
+        <delegates-list
+          class="delegator-info-page__list"
+          @stake="isStakeModalShown = true"
+        />
       </div>
     </div>
   </div>
+
+  <delegate-tokens-modal
+    v-if="subnetAddress"
+    v-model:is-shown="isStakeModalShown"
+    :delegate-address="subnetAddress"
+  />
 </template>
 
 <script setup lang="ts">
@@ -23,11 +32,20 @@ import { ICON_NAMES } from '@/enums'
 import DelegationInfoTitle from './components/DelegationInfoTitle.vue'
 import DelegatorInfoCards from './components/DelegatorInfoCards.vue'
 import DelegatesList from './components/DelegatesList.vue'
+import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
 import { useWeb3ProvidersStore } from '@/store'
 import { useExceptionContractsProvider } from '@/composables'
-import { watch } from 'vue'
+import { watch, ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
+const isStakeModalShown = ref(false)
+
+const subnetAddress = computed(() => {
+  const addr = route.query.subnetAddress
+  return typeof addr === 'string' ? addr : undefined
+})
 
 const DelegationPageProvider = useExceptionContractsProvider('DelegationPage')
 
