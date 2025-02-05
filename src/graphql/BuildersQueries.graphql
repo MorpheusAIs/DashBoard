@@ -55,11 +55,15 @@ query getBuildersProjectUsers(
   $first: Int = 10
   $skip: Int = 10
   $buildersProjectId: Bytes = ""
+  $orderBy: BuildersUser_OrderBy = staked
+  $orderDirection: OrderDirection = desc
 ) {
   buildersUsers(
     first: $first
     skip: $skip
     where: { buildersProject_: {id: $buildersProjectId} }
+    orderBy: $orderBy
+    orderDirection: $orderDirection
   ) {
     address
     id
