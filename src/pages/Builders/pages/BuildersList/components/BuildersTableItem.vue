@@ -39,14 +39,16 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ formatBalance(builderProject.minimalDeposit, 18) }}
+          {{ formatEther(builderProject.minimalDeposit) }}
+          <span class="ml-1">{{ $t('builders-item.mor-currency') }}</span>
         </span>
       </div>
     </div>
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ formatBalance(builderProject.totalStaked) }}
+          {{ formatEther(builderProject.totalStaked) }}
+          <span class="ml-1">{{ $t('builders-item.mor-currency') }}</span>
         </span>
       </div>
     </div>
@@ -122,7 +124,7 @@
         <span class="w-full py-3 text-center text-textTertiaryMain">
           {{
             $t('builders-table-item.mobile-min-deposit-lbl', {
-              amount: formatBalance(builderProject.minimalDeposit),
+              amount: formatEther(builderProject.minimalDeposit),
             })
           }}
         </span>
@@ -166,7 +168,7 @@
 
 <script setup lang="ts">
 import { AppButton } from '@/common'
-import { formatBalance, humanizeTime } from '@/helpers'
+import { humanizeTime } from '@/helpers'
 import { BuilderProjectFragment } from '@/types/graphql'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
@@ -175,6 +177,7 @@ import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
+import { formatEther } from '@/utils/formatters'
 
 const props = withDefaults(
   defineProps<{
