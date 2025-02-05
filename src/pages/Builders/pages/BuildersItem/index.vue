@@ -321,6 +321,15 @@
                           :content="el.address"
                           :message="'copied'"
                         />
+                        <span
+                          v-if="
+                            el.address.toLowerCase() ===
+                            provider?.selectedAddress?.toLowerCase()
+                          "
+                          class="text-sm text-primaryMain"
+                        >
+                          {{ $t('builders-item.user-address-lbl') }}
+                        </span>
                       </div>
                       <div class="py-8 text-end">
                         <span class="text-textSecondaryMain">

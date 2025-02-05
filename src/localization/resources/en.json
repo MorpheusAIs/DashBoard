@@ -891,6 +891,7 @@
     "claim-lock-ends-lbl": "Claim lock ends",
     "claim-btn": "Claim",
     "admin-addr-lbl": "Admin address",
+    "user-address-lbl": "User address",
     "stakers-lbl": "Stakers",
     "you-have-staked-lbl": "You have staked:",
     "mor-currency": "MOR",
