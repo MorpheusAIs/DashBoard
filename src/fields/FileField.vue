@@ -3,9 +3,14 @@
     <label v-if="label" :for="`file-field--${uid}`" class="file-field__label">
       {{ label }}
     </label>
-    <div class="file-field__input-wrp relative">
+    <div ref="dropZoneRef" class="file-field__input-wrp relative">
       <div
-        class="file-field__input flex flex-col items-center justify-center gap-3 py-5"
+        :class="
+          cn(
+            'file-field__input flex flex-col items-center justify-center gap-3 py-5',
+            isOverDropZone && 'brightness-200',
+          )
+        "
       >
         <template v-if="modelValue?.name">
           <span class="text-textSecondaryMain">{{ modelValue?.name }}</span>
@@ -76,9 +81,11 @@
 </template>
 
 <script lang="ts" setup>
-import { AppButton, AppIcon } from '@/common'
+import { AppIcon } from '@/common'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, ref, useAttrs } from 'vue'
+import { useDropZone } from '@vueuse/core'
+import { cn } from '@/theme/utils'
 
 const modelValue = defineModel<File>('modelValue')
 
@@ -91,6 +98,7 @@ const props = withDefaults(
     errorMessage?: string
     note?: string
     isLoading?: boolean
+    allowedFileTypes?: string[]
   }>(),
   {
     scheme: 'primary',
@@ -100,6 +108,12 @@ const props = withDefaults(
     errorMessage: '',
     note: '',
     isLoading: false,
+    allowedFileTypes: () => [
+      'image/png',
+      'image/jpeg',
+      'image/gif',
+      'image/svg+xml',
+    ],
   },
 )
 
@@ -108,6 +122,17 @@ const attrs = useAttrs()
 const uid = uuidv4()
 
 const inputEl = ref<HTMLInputElement>()
+
+const dropZoneRef = ref<HTMLDivElement>()
+
+const { isOverDropZone } = useDropZone(dropZoneRef, {
+  dataTypes: props.allowedFileTypes,
+  onDrop: (files: File[] | null) => {
+    if (!files || files.length === 0) return
+
+    modelValue.value = files[0]
+  },
+})
 
 const isDisabled = computed(() =>
   ['', 'disabled', true].includes(attrs.disabled as string | boolean),
