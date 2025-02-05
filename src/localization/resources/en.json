@@ -760,7 +760,7 @@
     "you-text": "you"
   },
   "delegator-info-page":  {
-    "back-button": "Compute Subnets"
+    "back-button": "Back to Compute Subnets"
   },
   "delegation-info-title": {
     "your-subnet-text": "Your Subnet",
@@ -877,7 +877,7 @@
   "builders-item": {
     "page-err-msg": "Look's like the builder subnet you are looking for is not exists",
     "page-err-btn": "Back to builders",
-    "back-btn": "Back",
+    "back-btn": "Back to Builder Subnets",
     "your-builder-lbl": "Your Builder",
     "edit-btn": "Edit",
     "start-time-lbl": "Start time",
