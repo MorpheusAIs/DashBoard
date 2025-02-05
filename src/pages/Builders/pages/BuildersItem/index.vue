@@ -82,7 +82,7 @@
 
         <skeleton class="my-4 h-[80px] w-[250px]" v-else />
 
-        <div v-if="isLoaded" class="mt-6 flex items-center gap-8">
+        <div v-if="isLoaded" class="mt-2 flex items-center gap-8">
           <div class="flex items-center gap-2">
             <span class="text-textSecondaryMain">
               {{ abbrCenter(buildersData.buildersProject?.admin) }}
@@ -190,9 +190,7 @@
               <div class="flex items-center gap-8">
                 <span class="text-textSecondaryMain typography-h2">
                   {{
-                    formatEther(
-                      buildersData.buildersProjectUserAccount?.staked ?? 0,
-                    )
+                    formatEther(buildersData.buildersProjectUserAccount?.staked)
                   }}
                   <span class="ml-1">{{
                     $t('builders-item.mor-currency')
@@ -256,9 +254,7 @@
                 "
               >
                 {{
-                  formatEther(
-                    buildersData.buildersProjectUserAccount?.staked ?? 0,
-                  )
+                  formatEther(buildersData.buildersProjectUserAccount?.staked)
                 }}
                 <span class="ml-1">{{ $t('builders-item.mor-currency') }}</span>
               </app-gradient-border-card>
@@ -313,13 +309,14 @@
                 <div class="flex flex-col gap-2">
                   <app-gradient-border-card v-for="el in stakers" :key="el.id">
                     <div class="grid grid-cols-3 gap-2 px-10">
-                      <div class="flex items-center gap-2 py-8">
-                        <span class="text-textSecondaryMain">
+                      <div class="group flex items-center gap-2 py-8">
+                        <span class="image.png">
                           {{ abbrCenter(el.address) }}
                         </span>
                         <copy-button
                           :content="el.address"
                           :message="'copied'"
+                          class="opacity-0 transition-opacity group-hover:opacity-100"
                         />
                         <span
                           v-if="
@@ -441,9 +438,11 @@ import {
   GetUserAccountBuildersProject,
   GetUserAccountBuildersProjectQuery,
   GetUserAccountBuildersProjectQueryVariables,
+  BuildersUser_OrderBy,
+  OrderDirection,
 } from '@/types/graphql'
 import { useRoute } from 'vue-router'
-import { formatEther } from '@/utils'
+import { formatEther } from '@/utils/formatters'
 import { time } from '@distributedlab/tools'
 import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
@@ -574,6 +573,8 @@ const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
         first: limit,
         skip: stakersCurrentPage.value * limit - limit,
         buildersProjectId: buildersData.value.buildersProject?.id,
+        orderBy: BuildersUser_OrderBy.Staked,
+        orderDirection: OrderDirection.Desc,
       },
     })
 
@@ -627,5 +628,24 @@ const shouldShowPagination = computed(
 <style lang="scss">
 main {
   padding-top: toRem(24);
+}
+
+.flex-col.gap-2 {
+  .app-gradient-border-card {
+    .flex.items-center.gap-2.py-8 {
+      :deep(.copy-button) {
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+    }
+
+    &:hover {
+      .flex.items-center.gap-2.py-8 {
+        :deep(.copy-button) {
+          opacity: 1;
+        }
+      }
+    }
+  }
 }
 </style>
