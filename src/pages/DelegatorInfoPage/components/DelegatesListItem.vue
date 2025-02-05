@@ -1,17 +1,12 @@
 <template>
-  <div
-    class="delegates-list-item"
-    :class="{
-      'delegates-list-item--secondary': isYou,
-    }"
-  >
+  <div class="delegates-list-item">
     <div class="delegates-list-item__content">
       <div class="delegates-list-item__col">
         <span class="delegates-list-item__row-address" :title="user.address">
           {{ abbrCenter(user.address) }}
-
-          <span v-if="isYou" class="delegates-list-item__row-you">
-            {{ $t('delegates-list-item.you-text') }}
+          <copy-button :content="user.address" :message="'copied'" />
+          <span v-if="isYou" class="delegates-list-item__user-address">
+            {{ $t('builders-item.user-address-lbl') }}
           </span>
         </span>
       </div>
@@ -40,6 +35,8 @@ import { SubnetProvider } from '@/types'
 import { abbrCenter, trimStringNumber } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { BN } from '@distributedlab/tools'
+import { CopyButton } from '@/common'
+import { formatDecimal } from '@/utils/formatters'
 
 const props = defineProps<{
   user: SubnetProvider
@@ -56,19 +53,25 @@ const isYou = computed(
 
 const fee = computed(() => {
   const claimed = BN.fromRaw(props.user.claimed).div(BN.fromRaw(10).pow(18))
-  return BN.fromRaw(props.fee).div(BN.fromRaw(10).pow(25)).mul(claimed)
+  const feeAmount = BN.fromRaw(props.fee)
+    .div(BN.fromRaw(10).pow(25))
+    .mul(claimed)
+  return formatDecimal(feeAmount.toString())
 })
 
-const staked = computed(() =>
-  trimStringNumber(
-    BN.fromRaw(props.user.staked).div(BN.fromRaw(10).pow(18)).toString(),
-  ),
-)
+const staked = computed(() => {
+  const stakedAmount = BN.fromRaw(props.user.staked).div(BN.fromRaw(10).pow(18))
+  return formatDecimal(stakedAmount.toString())
+})
 
 const claimed = computed(() => {
-  const claimed = BN.fromRaw(props.user.claimed).div(BN.fromRaw(10).pow(18))
-
-  return trimStringNumber(claimed.sub(fee.value).toString())
+  const claimedAmount = BN.fromRaw(props.user.claimed).div(
+    BN.fromRaw(10).pow(18),
+  )
+  const feeAmount = BN.fromRaw(props.fee)
+    .div(BN.fromRaw(10).pow(25))
+    .mul(claimedAmount)
+  return formatDecimal(claimedAmount.sub(feeAmount).toString())
 })
 </script>
 
@@ -84,24 +87,21 @@ const claimed = computed(() => {
   border-image-source: var(--card-border-gradient-reversed);
   background: var(--card-background-gradient);
 
-  &:not([disabled]):hover,
-  &:not([disabled]):focus,
-  &:not([disabled]):active {
+  &:hover {
     border: toRem(1) solid;
     border-image-slice: 1;
-    border-image-source: var(--card-border-gradient-reversed);
+    border-image-source: var(--card-border-gradient-secondary);
     background: var(--card-background-gradient);
   }
+}
 
-  &--secondary {
-    border-image-source: var(--card-border-gradient-secondary);
+.delegates-list-item :deep(.copy-button) {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
 
-    &:not([disabled]):hover,
-    &:not([disabled]):focus,
-    &:not([disabled]):active {
-      border-image-source: var(--card-border-gradient-secondary);
-    }
-  }
+.delegates-list-item:hover :deep(.copy-button) {
+  opacity: 1;
 }
 
 .delegates-list-item__content {
@@ -117,6 +117,7 @@ const claimed = computed(() => {
   gap: toRem(24);
   align-items: center;
   justify-content: flex-end;
+  position: relative;
 
   &:first-child {
     justify-content: flex-start;
@@ -124,9 +125,13 @@ const claimed = computed(() => {
 }
 
 .delegates-list-item__row-address {
-  font-size: toRem(18);
+  font-size: toRem(16);
   font-weight: 600;
   transition: color 0.2s ease-in-out;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: toRem(8);
 
   .delegates-list-item__col--username & {
     font-size: toRem(14);
@@ -141,9 +146,14 @@ const claimed = computed(() => {
   }
 }
 
-.delegates-list-item__row-you {
-  font-weight: 200;
+.delegates-list-item__user-address {
+  font-size: toRem(14);
   color: var(--primary-main);
+  position: absolute;
+  left: calc(100% + 0.25rem);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
 }
 
 .delegates-list-item__text {

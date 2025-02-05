@@ -20,6 +20,9 @@
           :content="String(route.query.subnetAddress)"
           :message="$t('delegation-info-title.coppied-text')"
         />
+        <span class="delegation-info-title__admin-label">
+          {{ $t('builders-item.admin-addr-lbl') }}
+        </span>
       </div>
     </div>
   </div>
@@ -86,9 +89,18 @@ init()
 }
 
 .delegation-info-title__address {
+  font-size: toRem(16);
+  font-weight: 400;
+  color: var(--text-secondary-main);
+
   &--username {
-    font-size: toRem(24);
+    font-size: toRem(16);
     font-weight: 400;
   }
+}
+
+.delegation-info-title__admin-label {
+  font-size: toRem(14);
+  color: var(--text-secondary-main);
 }
 </style>

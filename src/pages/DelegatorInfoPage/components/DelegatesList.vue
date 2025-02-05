@@ -1,187 +1,184 @@
 <template>
-  <div class="delegates-list">
-    <div class="delegates-list__title-wrapper">
-      <div class="delegates-list__title-text-wrapper">
-        <h3 class="delegates-list__title">
-          {{ $t('delegates-list.title') }}
-        </h3>
-        <div class="delegates-list__amount">
-          {{ usersList.length ?? 0 }}
-        </div>
-      </div>
-      <app-button
-        size="small"
-        :text="$t('delegates-list.stake-button')"
-        @click="openDelegateModal"
-      />
-    </div>
-    <no-data-message
-      v-if="isLoaded && !isLoadFailed && !usersList.length"
-      class="delegates-list__no-data-message"
-      :message="$t('delegates-list.no-data-message')"
-    />
-    <template v-else>
-      <delegates-list-header
-        class="delegates-list__list"
-        :sorting="sortingOrder"
-        :sorting-type="sortingType"
-        @sort="chooseSortingOrder"
-      />
-      <div class="delegates-list__content">
-        <div
-          class="delegates-list__users-wrapper"
-          :class="{
-            'delegates-list__users-wrapper--small': !isPaginationShown,
-          }"
+  <div class="flex flex-1 flex-col gap-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="whitespace-nowrap text-textSecondaryMain">
+          {{ $t('builders-item.you-have-staked-lbl') }}
+        </span>
+        <app-gradient-border-card
+          :class="
+            cn(
+              'size-10 min-w-10 items-center justify-center',
+              'bg-transparent p-2 text-textSecondaryMain',
+            )
+          "
         >
-          <template v-if="isLoaded">
-            <error-message
-              v-if="isLoadFailed"
-              class="delegates-list__system-message"
-              :message="$t('delegates-list.error-message')"
-            />
-            <template v-else>
-              <div class="delegates-list__users">
-                <delegates-list-item
-                  v-for="(user, idx) in usersList"
-                  :key="idx"
-                  :fee="fee"
-                  :user="user"
-                />
-              </div>
-              <div
-                v-if="isPaginationShown"
-                class="delegates-list__pagination-wrapper"
-              >
-                <pagination
-                  v-model:current-page="currentPage"
-                  :total-items="totalUsers"
-                  :page-limit="DEFAULT_PAGE_LIMIT"
-                />
-              </div>
-            </template>
-          </template>
-          <loader v-else class="delegates-list__system-message" />
-        </div>
+          {{ formattedUserStaked }}
+          <span class="ml-1">{{ $t('builders-item.mor-currency') }}</span>
+        </app-gradient-border-card>
       </div>
-    </template>
-    <delegate-tokens-modal
-      v-model:is-shown="isDelegateModalOpened"
-      :delegate-address="delegateAddress"
-      :deregistration-date="deregistrationDate"
-    />
+
+      <app-button @click="$emit('stake')">
+        {{ $t('delegates-list.stake-button') }}
+      </app-button>
+    </div>
+
+    <div class="flex flex-1 flex-col">
+      <template v-if="isLoaded">
+        <template v-if="delegates?.length">
+          <delegates-list-header
+            :sorting="SORTING_ORDER.none"
+            :sorting-type="DELEGATES_SORTING_TYPES.none"
+          />
+
+          <div class="flex flex-col gap-2">
+            <delegates-list-item
+              v-for="delegate in delegates"
+              :key="delegate.id"
+              :user="delegate"
+              :fee="'0'"
+            />
+          </div>
+
+          <div class="mt-6 flex items-center gap-4 self-start">
+            <span class="text-textSecondaryMain">
+              {{ $t('builders-item.stakers-lbl') }}
+            </span>
+            <app-gradient-border-card
+              :class="
+                cn(
+                  'size-10 min-w-10 items-center justify-center',
+                  'bg-transparent p-2 text-textSecondaryMain',
+                )
+              "
+            >
+              {{ totalDelegates }}
+            </app-gradient-border-card>
+          </div>
+
+          <pagination
+            v-if="shouldShowPagination"
+            v-model:current-page="currentPage"
+            :page-limit="DEFAULT_PAGE_LIMIT"
+            :total-items="totalDelegates"
+            class="mt-6 self-center"
+          />
+        </template>
+        <template v-else>
+          <no-data-message
+            :title="$t('delegates-list.no-data-message')"
+            :message="$t('delegates-list.no-data-message')"
+          />
+        </template>
+      </template>
+      <template v-else>
+        <div class="flex flex-col gap-2">
+          <skeleton v-for="i in 10" :key="i" class="h-16 animate-pulse" />
+        </div>
+      </template>
+    </div>
   </div>
 </template>
-<script setup lang="ts">
-import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateTokensModal.vue'
-import DelegatesListHeader from './DelegatesListHeader.vue'
-import DelegatesListItem from './DelegatesListItem.vue'
 
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useLoad } from '@/composables'
+import { ErrorHandler } from '@/helpers'
+import { formatEther } from '@/utils'
+import { DEFAULT_PAGE_LIMIT } from '@/const'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import { SORTING_ORDER, DELEGATES_SORTING_TYPES } from '@/enums'
 import {
   AppButton,
-  ErrorMessage,
-  Loader,
-  Pagination,
+  AppGradientBorderCard,
   NoDataMessage,
+  Pagination,
+  Skeleton,
 } from '@/common'
-import { SubnetProvider } from '@/types'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { DELEGATES_SORTING_TYPES, SORTING_ORDER } from '@/enums'
-// import { DEFAULT_PAGE_LIMIT } from '@/const'
-import { bus, BUS_EVENTS, ErrorHandler, fetchProviders, sleep } from '@/helpers'
-import { useRoute } from 'vue-router'
-import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import DelegatesListHeader from './DelegatesListHeader.vue'
+import DelegatesListItem from './DelegatesListItem.vue'
+import { gql } from '@apollo/client/core'
+import { BigNumber } from '@ethersproject/bignumber'
+import { useWeb3ProvidersStore } from '@/store'
+import type { SubnetUser } from '@/types/graphql'
+import { cn } from '@/theme/utils'
 
-const DEFAULT_PAGE_LIMIT = 2
+defineEmits(['stake'])
 
 const route = useRoute()
+const apolloClient = useSecondApolloClient()
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const currentPage = ref(1)
-const isLoaded = ref(false)
-const isLoadFailed = ref(false)
-const sortingOrder = ref(SORTING_ORDER.none)
-const sortingType = ref(DELEGATES_SORTING_TYPES.none)
-const usersList = ref<SubnetProvider[]>([])
-const isDelegateModalOpened = ref(false)
-const totalUsers = ref(0)
-const fee = ref('0')
-const deregistrationDate = ref('0')
+const delegates = ref<SubnetUser[]>([])
+const totalDelegates = ref(0)
+const userStaked = ref(BigNumber.from('0'))
 
-const isPaginationShown = computed(() => totalUsers.value > DEFAULT_PAGE_LIMIT)
-
-const apolloClient = useSecondApolloClient()
-
-const loadPage = async () => {
-  isLoaded.value = false
-  isLoadFailed.value = false
+const loadDelegates = async (limit = DEFAULT_PAGE_LIMIT) => {
   try {
-    const data = await fetchProviders(
-      apolloClient.value,
-      String(route.query.subnetAddress),
-      {
-        ...(sortingOrder.value !== SORTING_ORDER.none && {
-          order: sortingOrder.value,
-        }),
-        ...(sortingType.value !== DELEGATES_SORTING_TYPES.none && {
-          type:
-            // fee is not actual sorting type here
-            // so we need to change it to claimed
-            sortingType.value === DELEGATES_SORTING_TYPES.fee
-              ? DELEGATES_SORTING_TYPES.claimed
-              : sortingType.value,
-        }),
-        skip: (currentPage.value - 1) * DEFAULT_PAGE_LIMIT,
-        first: DEFAULT_PAGE_LIMIT,
+    const { data } = await apolloClient.value.query({
+      query: gql`
+        query GetDelegates($first: Int!, $skip: Int!, $subnetAddress: Bytes!) {
+          subnetUsers(
+            first: $first
+            skip: $skip
+            where: { subnet_: { id: $subnetAddress } }
+            orderBy: staked
+            orderDirection: desc
+          ) {
+            id
+            address
+            staked
+            claimed
+          }
+          subnet(id: $subnetAddress) {
+            totalUsers
+          }
+        }
+      `,
+      fetchPolicy: 'network-only',
+      variables: {
+        first: limit,
+        skip: currentPage.value * limit - limit,
+        subnetAddress: route.query.subnetAddress as string,
       },
+    })
+
+    delegates.value = data.subnetUsers
+    totalDelegates.value = Number(data.subnet?.totalUsers) || 0
+    const currentUserDelegate = delegates.value.find(
+      delegate =>
+        delegate.address.toLowerCase() ===
+        web3ProvidersStore.address.toLowerCase(),
     )
-
-    usersList.value = data.subnetUsers || []
-    totalUsers.value = Number(data.subnets[0].totalUsers) || 0
-    fee.value = data.subnets[0].fee
-    deregistrationDate.value = data.subnets[0].deregistrationOpensAt
-  } catch (e) {
-    isLoadFailed.value = true
-    ErrorHandler.process(e)
+    userStaked.value = currentUserDelegate
+      ? BigNumber.from(currentUserDelegate.staked || '0')
+      : BigNumber.from('0')
+  } catch (error) {
+    ErrorHandler.processWithoutFeedback(error)
   }
-  isLoaded.value = true
 }
 
-const openDelegateModal = () => {
-  isDelegateModalOpened.value = true
-}
-
-const chooseSortingOrder = (
-  order: SORTING_ORDER,
-  type: DELEGATES_SORTING_TYPES,
-) => {
-  if (sortingOrder.value === order && sortingType.value === type) {
-    sortingOrder.value = SORTING_ORDER.none
-    sortingType.value = DELEGATES_SORTING_TYPES.none
-    return
+const formattedUserStaked = computed(() => {
+  try {
+    return formatEther(userStaked.value)
+  } catch (error) {
+    return '0'
   }
-
-  sortingOrder.value = order
-  sortingType.value = type
-}
-
-const delegateAddress = computed(() => String(route.query.subnetAddress))
-
-watch([currentPage, sortingOrder], loadPage, { immediate: true })
-
-onMounted(() => {
-  bus.on(BUS_EVENTS.changedCurrentUserRefReward, async () => {
-    await sleep(1000)
-    loadPage()
-  })
-  bus.on(BUS_EVENTS.changedDelegation, async () => {
-    await sleep(1000)
-    loadPage()
-  })
 })
-onBeforeUnmount(() => {
-  bus.off(BUS_EVENTS.changedCurrentUserRefReward, () => [])
-  bus.off(BUS_EVENTS.changedDelegation, () => [])
+
+const { isLoaded } = useLoad(undefined, loadDelegates, {
+  isLoadOnMount: true,
 })
+
+watch([() => route.query.subnetAddress, currentPage], () => {
+  loadDelegates()
+})
+
+const shouldShowPagination = computed(
+  () => isLoaded.value && totalDelegates.value >= DEFAULT_PAGE_LIMIT,
+)
 </script>
 
 <style scoped lang="scss">
