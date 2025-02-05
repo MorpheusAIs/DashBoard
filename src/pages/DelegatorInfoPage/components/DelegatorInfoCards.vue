@@ -46,7 +46,7 @@ const isLoaded = ref(false)
 const isLoadFailed = ref(false)
 const rewards = ref('0')
 
-const apolloClient = useSecondApolloClient()
+const { client: apolloClient } = useSecondApolloClient()
 
 const isRewardClaimable = computed(() =>
   BN.fromRaw(rewards.value).gt(BN.fromRaw(0)),

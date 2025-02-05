@@ -82,7 +82,7 @@ const isPaginationShown = computed(
   () => paginationItemsLength.value > DEFAULT_PAGE_LIMIT,
 )
 
-const apolloClient = useSecondApolloClient()
+const { client: apolloClient } = useSecondApolloClient()
 
 const loadPage = async () => {
   isLoaded.value = false

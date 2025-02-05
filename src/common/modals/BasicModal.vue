@@ -1,6 +1,7 @@
 <template>
   <app-modal
     class="basic-modal"
+    v-bind="$attrs"
     :is-shown="isShown"
     :is-close-by-click-outside="isCloseByClickOutside"
     @update:is-shown="emit('update:is-shown', $event)"

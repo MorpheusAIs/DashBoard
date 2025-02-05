@@ -109,7 +109,7 @@ const deregistrationDate = ref('0')
 
 const isPaginationShown = computed(() => totalUsers.value > DEFAULT_PAGE_LIMIT)
 
-const apolloClient = useSecondApolloClient()
+const { client: apolloClient } = useSecondApolloClient()
 
 const loadPage = async () => {
   isLoaded.value = false

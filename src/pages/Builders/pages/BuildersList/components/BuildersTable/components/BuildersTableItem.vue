@@ -24,6 +24,20 @@
         <span class="builders-table-item__col-text">
           {{ builderProject.name }}
         </span>
+
+        <template v-if="builderProject.chain">
+          <img
+            :src="
+              $config.chainsMap[getEthereumChainsName(builderProject.chain)]
+                .iconUrls?.[0]
+            "
+            :alt="
+              $config.chainsMap[getEthereumChainsName(builderProject.chain)]
+                .chainName
+            "
+            class="ml-1 h-4 w-4"
+          />
+        </template>
       </div>
     </div>
     <div class="builders-table-item__col">
@@ -63,6 +77,7 @@
         :to="{
           name: $routes.appBuildersItem,
           params: { id: builderProject.id },
+          query: { chain: builderProject.chain },
         }"
       ></RouterLink>
       <app-button
@@ -97,6 +112,7 @@
       :to="{
         name: $routes.appBuildersItem,
         params: { id: builderProject.id },
+        query: { chain: builderProject.chain },
       }"
     >
       <img
@@ -160,6 +176,7 @@
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
     :builder-project="builderProject"
+    :chain="builderProject.chain"
     @staked="handleStaked"
   />
 </template>
@@ -167,7 +184,7 @@
 <script setup lang="ts">
 import { AppButton } from '@/common'
 import { formatBalance, humanizeTime } from '@/helpers'
-import { BuilderProjectFragment } from '@/types/graphql'
+import { BuilderProject } from '@/types'
 import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { inject, ref } from 'vue'
@@ -175,13 +192,11 @@ import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
+import { getEthereumChainsName } from '@config'
 
-const props = withDefaults(
-  defineProps<{
-    builderProject: BuilderProjectFragment
-  }>(),
-  {},
-)
+const props = defineProps<{
+  builderProject: BuilderProject
+}>()
 
 const { provider } = storeToRefs(useWeb3ProvidersStore())
 

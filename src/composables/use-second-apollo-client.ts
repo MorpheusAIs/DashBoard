@@ -1,6 +1,6 @@
 import { storeToRefs } from 'pinia'
 import { useWeb3ProvidersStore } from '@/store'
-import { config, NetworkTypes } from '@config'
+import { config, EthereumChains, NetworkTypes } from '@config'
 import { computed, Ref, ref, watch } from 'vue'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { useRoute } from 'vue-router'
@@ -16,7 +16,10 @@ const getDefaultSecondApolloClient = (networkType: NetworkTypes) => {
 
 export const useSecondApolloClient = (
   initial?: keyof typeof config.perChainSecondApolloClients,
-): Ref<ApolloClient<NormalizedCacheObject>> => {
+): {
+  client: Ref<ApolloClient<NormalizedCacheObject>>
+  clients: Ref<Record<EthereumChains, ApolloClient<NormalizedCacheObject>>>
+} => {
   const route = useRoute()
 
   const currentAllowedChainsForRoute = computed(
@@ -28,6 +31,27 @@ export const useSecondApolloClient = (
     getDefaultSecondApolloClient(networkType.value),
   )
 
+  const allowedChainsForRouteUnderNetworkType = computed(() =>
+    currentAllowedChainsForRoute.value.filter(el =>
+      config.ethereumChainsTypes[networkType.value].includes(el),
+    ),
+  )
+
+  const clients = computed<
+    Record<EthereumChains, ApolloClient<NormalizedCacheObject>>
+  >(() => {
+    return allowedChainsForRouteUnderNetworkType.value.reduce(
+      (acc, curr) => {
+        if (config.perChainSecondApolloClients[curr]) {
+          acc[curr] = config.perChainSecondApolloClients[curr]
+        }
+
+        return acc
+      },
+      {} as Record<EthereumChains, ApolloClient<NormalizedCacheObject>>,
+    )
+  })
+
   watch(
     [() => provider.value.chainId],
     () => {
@@ -37,11 +61,6 @@ export const useSecondApolloClient = (
         return
       }
 
-      const allowedChainsForRouteUnderNetworkType =
-        currentAllowedChainsForRoute.value.filter(el =>
-          config.ethereumChainsTypes[networkType.value].includes(el),
-        )
-
       const clientForCurrentChain =
         config.perChainSecondApolloClients[
           provider.value
@@ -49,7 +68,7 @@ export const useSecondApolloClient = (
         ]
 
       const isCurrentChainUnderAllowedList =
-        allowedChainsForRouteUnderNetworkType.includes(
+        allowedChainsForRouteUnderNetworkType.value.includes(
           provider.value
             .chainId as keyof typeof config.perChainSecondApolloClients,
         )
@@ -60,7 +79,7 @@ export const useSecondApolloClient = (
         return
       }
 
-      const newClient = allowedChainsForRouteUnderNetworkType
+      const newClient = allowedChainsForRouteUnderNetworkType.value
         .map(el => config.perChainSecondApolloClients[el])
         .find(el => el !== null)
 
@@ -73,5 +92,8 @@ export const useSecondApolloClient = (
     },
   )
 
-  return client as Ref<ApolloClient<NormalizedCacheObject>>
+  return {
+    client: client as Ref<ApolloClient<NormalizedCacheObject>>,
+    clients: clients,
+  }
 }
