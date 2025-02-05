@@ -91,6 +91,9 @@
               :content="buildersData.buildersProject?.admin"
               message="copied"
             />
+            <span class="text-sm text-textSecondaryMain">
+              {{ $t('builders-item.admin-addr-lbl') }}
+            </span>
           </div>
           <a
             v-if="builderMeta?.website"
@@ -191,20 +194,24 @@
                       buildersData.buildersProjectUserAccount?.staked ?? 0,
                     )
                   }}
+                  <span class="ml-1">{{
+                    $t('builders-item.mor-currency')
+                  }}</span>
                 </span>
               </div>
               <div
+                v-if="withdrawalUnlockTime?.isAfter(time())"
                 class="flex items-center gap-2"
-                v-if="time(withdrawalUnlockTime).isAfter(time())"
               >
-                <span class="text-textSecondary">
-                  {{ $t('builders-item.unlock-time-lbl') }}
+                <span class="text-sm">
+                  {{
+                    $t('builders-item.withdrawal-locked-msg', {
+                      time: humanizeTime(
+                        withdrawalUnlockTime.diff(time(), 'seconds'),
+                      ),
+                    })
+                  }}
                 </span>
-                <div class="flex items-center gap-2">
-                  <span class="text-textSecondaryMain">
-                    {{ withdrawalUnlockTime?.format(DOT_TIME_FORMAT) }}
-                  </span>
-                </div>
               </div>
             </div>
           </app-gradient-border-card>
@@ -231,67 +238,14 @@
             </div>
           </app-gradient-border-card>
           <skeleton class="h-[160px]" v-else />
-          <app-gradient-border-card v-if="isLoaded">
-            <div class="flex flex-col gap-8 p-6">
-              <div class="flex justify-between">
-                <span class="text-textSecondaryMain typography-body3">
-                  {{ $t('builders-item.claim-lock-ends-lbl') }}
-                </span>
-
-                <app-button
-                  v-if="
-                    isUserAccountAdmin &&
-                    (!buildersData.buildersProject ||
-                      !buildersData.buildersProject.claimLockEnd ||
-                      time(+buildersData.buildersProject.claimLockEnd).isAfter(
-                        time(),
-                      ) ||
-                      isClaimSubmitting)
-                  "
-                  size="small"
-                  @click="claim"
-                >
-                  {{ $t('builders-item.claim-btn') }}
-                </app-button>
-              </div>
-              <div class="flex items-center gap-8">
-                <span
-                  class="whitespace-pre text-textSecondaryMain typography-h2"
-                >
-                  {{
-                    +buildersData.buildersProject?.claimLockEnd
-                      ? time(
-                          +buildersData.buildersProject?.claimLockEnd,
-                        ).format(DOT_TIME_FORMAT)
-                      : $t('builders-item.empty-dash')
-                  }}
-                </span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-textSecondary">
-                  {{ $t('builders-item.admin-addr-lbl') }}
-                </span>
-                <div class="flex items-center gap-2">
-                  <span class="text-textSecondaryMain">
-                    {{ abbrCenter(buildersData.buildersProject?.admin) }}
-                  </span>
-                  <copy-button
-                    :content="buildersData.buildersProject?.admin"
-                    message="Copied"
-                  />
-                </div>
-              </div>
-            </div>
-          </app-gradient-border-card>
-          <skeleton class="h-[160px]" v-else />
         </div>
         <div
           :class="cn('col-span-2 flex flex-[0.65] flex-col gap-6', 'md:pl-12')"
         >
           <div class="flex items-center justify-between">
             <div v-if="isLoaded" class="flex items-center gap-4">
-              <span class="span text-textSecondaryMain">
-                {{ $t('builders-item.stakers-lbl') }}
+              <span class="span whitespace-nowrap text-textSecondaryMain">
+                {{ $t('builders-item.you-have-staked-lbl') }}
               </span>
               <app-gradient-border-card
                 :class="
@@ -301,7 +255,12 @@
                   )
                 "
               >
-                {{ buildersData?.buildersProject?.totalUsers }}
+                {{
+                  formatEther(
+                    buildersData.buildersProjectUserAccount?.staked ?? 0,
+                  )
+                }}
+                <span class="ml-1">{{ $t('builders-item.mor-currency') }}</span>
               </app-gradient-border-card>
             </div>
             <div v-else class="flex items-center gap-4">
@@ -318,16 +277,18 @@
               "
               @click="isStakeModalShown = true"
             >
-              {{ $t('builders-item.stake-btn') }}
+              {{
+                buildersData.buildersProjectUserAccount?.staked
+                  ? $t('builders-item.stake-more-btn')
+                  : $t('builders-item.stake-btn')
+              }}
             </app-button>
           </div>
 
           <div class="flex flex-1 flex-col">
             <template v-if="isLoaded">
               <template v-if="stakers?.length">
-                <div
-                  class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
-                >
+                <div class="mb-2 grid grid-cols-3 items-center gap-2 px-10">
                   <div class="">
                     <span class="text-textTertiaryMain">
                       {{ $t('builders-item.staker-addr-name-th') }}
@@ -375,13 +336,25 @@
                   </app-gradient-border-card>
                 </div>
 
+                <div class="mt-6 flex items-center gap-4 self-start">
+                  <span class="span text-textSecondaryMain">
+                    {{ $t('builders-item.stakers-lbl') }}
+                  </span>
+                  <app-gradient-border-card
+                    :class="
+                      cn(
+                        'flex items-center justify-center bg-transparent p-2',
+                        'text-textSecondaryMain',
+                        'size-10 min-w-10',
+                      )
+                    "
+                  >
+                    {{ buildersData?.buildersProject?.totalUsers }}
+                  </app-gradient-border-card>
+                </div>
+
                 <pagination
-                  v-if="
-                    isLoaded &&
-                    !isLoadFailed &&
-                    buildersData.buildersProject?.totalUsers >=
-                      DEFAULT_PAGE_LIMIT
-                  "
+                  v-if="shouldShowPagination"
                   v-model:current-page="stakersCurrentPage"
                   :page-limit="DEFAULT_PAGE_LIMIT"
                   :total-items="buildersData.buildersProject?.totalUsers"
@@ -442,10 +415,7 @@ import {
 } from '@/common'
 import {
   abbrCenter,
-  bus,
-  BUS_EVENTS,
   ErrorHandler,
-  getEthExplorerTxUrl,
   humanizeTime,
   sleep,
   beautifyLink,
@@ -469,7 +439,7 @@ import { time } from '@distributedlab/tools'
 import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { cn } from '@/theme/utils'
-import { useI18n, useLoad } from '@/composables'
+import { useLoad } from '@/composables'
 import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
@@ -481,12 +451,11 @@ defineOptions({
 })
 
 const route = useRoute()
-const { provider, buildersContract, buildersContractDetails, balances } =
-  storeToRefs(useWeb3ProvidersStore())
+const { provider, buildersContract, balances } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const buildersApolloClient = useSecondApolloClient()
-
-const { t } = useI18n()
 
 const isWithdrawModalShown = ref(false)
 const isEditModalShown = ref(false)
@@ -632,45 +601,18 @@ const handleWithdrawalSubmitted = async () => {
   await update()
 }
 
-const claim = async () => {
-  isClaimSubmitting.value = true
-  try {
-    if (
-      provider.value.chainId !== buildersContractDetails.value.targetChainId
-    ) {
-      provider.value.selectChain(buildersContractDetails.value.targetChainId)
-      await sleep(1_000)
-    }
-
-    const tx = await buildersContract.value.signerBased.value.claim(
-      buildersData.value.buildersProject?.id,
-      provider.value.selectedAddress,
-    )
-
-    const txReceipt = await tx.wait()
-
-    if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
-
-    const explorerTxUrl = getEthExplorerTxUrl(
-      buildersContractDetails.value.explorerUrl,
-      txReceipt.transactionHash,
-    )
-
-    bus.emit(
-      BUS_EVENTS.success,
-      t('builders-item.claim-success-msg', { explorerTxUrl }),
-    )
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-  isClaimSubmitting.value = false
-}
-
 const handleBuilderPoolUpdated = async () => {
   isEditModalShown.value = false
   await sleep(1000)
   await update()
 }
+
+const shouldShowPagination = computed(
+  () =>
+    isLoaded.value &&
+    !isLoadFailed.value &&
+    (buildersData.value.buildersProject?.totalUsers ?? 0) >= DEFAULT_PAGE_LIMIT,
+)
 </script>
 
 <style lang="scss">
