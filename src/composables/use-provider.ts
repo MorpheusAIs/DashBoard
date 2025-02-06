@@ -4,18 +4,16 @@ import { type EthereumType } from '@/types'
 import { config } from '@config'
 import { createAppKit, AppKit } from '@reown/appkit/vue'
 import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5'
-import { type Web3Modal } from '@web3modal/ethers5/dist/types/src/client'
 import { reactive, ref, toRefs, type Ref, type UnwrapRef } from 'vue'
 import { utils } from 'ethers'
 import { chainConfig } from 'viem/op-stack'
 import { defineChain } from 'viem'
 import type { AppKitNetwork } from '@reown/appkit-common'
 import * as chainsList from 'viem/chains'
-import { ApiController } from '@reown/appkit-core'
 
 export interface IUseProvider {
   selectedAddress: Ref<string>
-  rawProvider: Ref<ReturnType<Web3Modal['getWalletProvider']> | null>
+  rawProvider: Ref<unknown | null>
   chainId: Ref<string>
 
   isChainSelecting: Ref<boolean>
@@ -124,8 +122,6 @@ export const useProvider = (): IUseProvider => {
   }
 
   const init: I['init'] = () => {
-    console.log(ApiController._getSdkProperties())
-
     _web3Modal = createAppKit({
       adapters: [new Ethers5Adapter()],
       networks: Object.values(config.chainsMap).map(chain =>
@@ -147,15 +143,13 @@ export const useProvider = (): IUseProvider => {
     })
 
     _web3Modal.subscribeNetwork(() => {
-      const provider = _web3Modal?.getWalletProvider() as
-        | (ReturnType<Web3Modal['getWalletProvider']> & {
-            selectedAddress: string
-            chainId: string
-            _state: {
-              isConnected: boolean
-            }
-          })
-        | null
+      const provider = _web3Modal?.getWalletProvider() as {
+        selectedAddress: string
+        chainId: string
+        _state: {
+          isConnected: boolean
+        }
+      } | null
 
       _providerReactiveState.selectedAddress = provider?.selectedAddress || ''
       _providerReactiveState.rawProvider = provider
