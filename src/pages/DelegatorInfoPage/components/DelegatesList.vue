@@ -86,7 +86,6 @@ import { DEFAULT_PAGE_LIMIT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { SORTING_ORDER, DELEGATES_SORTING_TYPES } from '@/enums'
 import {
-  AppButton,
   AppGradientBorderCard,
   NoDataMessage,
   Pagination,
