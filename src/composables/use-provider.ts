@@ -130,7 +130,6 @@ export const useProvider = (): IUseProvider => {
       ) as [AppKitNetwork, ...AppKitNetwork[]],
       metadata: config.metadata,
       projectId: config.WALLET_CONNECT_PROJECT_ID,
-      enableWalletGuide: false,
       features: {
         analytics: true,
         email: false,
