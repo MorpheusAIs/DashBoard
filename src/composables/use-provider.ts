@@ -11,7 +11,7 @@ import { chainConfig } from 'viem/op-stack'
 import { defineChain } from 'viem'
 import type { AppKitNetwork } from '@reown/appkit-common'
 import * as chainsList from 'viem/chains'
-import { OptionsController } from '@reown/appkit-core'
+import { ApiController } from '@reown/appkit-core'
 
 export interface IUseProvider {
   selectedAddress: Ref<string>
@@ -124,7 +124,7 @@ export const useProvider = (): IUseProvider => {
   }
 
   const init: I['init'] = () => {
-    if(!OptionsController.state.projectId) OptionsController.setProjectId(config.WALLET_CONNECT_PROJECT_ID)
+    console.log(ApiController._getSdkProperties())
 
     _web3Modal = createAppKit({
       adapters: [new Ethers5Adapter()],
