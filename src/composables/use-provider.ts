@@ -2,24 +2,18 @@ import { errors } from '@/errors'
 import { sleep } from '@/helpers'
 import { type EthereumType } from '@/types'
 import { config } from '@config'
-import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5'
-import {
-  type Web3Modal,
-  type Web3ModalClientOptions,
-} from '@web3modal/ethers5/dist/types/src/client'
-import {
-  onUnmounted,
-  reactive,
-  ref,
-  toRefs,
-  type Ref,
-  type UnwrapRef,
-} from 'vue'
+import { createAppKit, AppKit } from '@reown/appkit/vue'
+import { Ethers5Adapter } from '@reown/appkit-adapter-ethers5'
+import { type Web3Modal } from '@web3modal/ethers5/dist/types/src/client'
+import { reactive, ref, toRefs, type Ref, type UnwrapRef } from 'vue'
 import { utils } from 'ethers'
+import { chainConfig } from 'viem/op-stack'
+import { defineChain } from 'viem'
+import type { AppKitNetwork } from '@reown/appkit-common'
+import * as chainsList from 'viem/chains'
 
 export interface IUseProvider {
   selectedAddress: Ref<string>
-  selectedProvider: Ref<string>
   rawProvider: Ref<ReturnType<Web3Modal['getWalletProvider']> | null>
   chainId: Ref<string>
 
@@ -41,7 +35,6 @@ export interface IUseProvider {
 
 type ProviderState = {
   selectedAddress: UnwrapRef<IUseProvider['selectedAddress']>
-  selectedProvider: UnwrapRef<IUseProvider['selectedProvider']>
   rawProvider: UnwrapRef<IUseProvider['rawProvider']>
   chainId: UnwrapRef<IUseProvider['chainId']>
   isConnected: UnwrapRef<IUseProvider['isConnected']>
@@ -49,11 +42,10 @@ type ProviderState = {
 
 export const useProvider = (): IUseProvider => {
   type I = IUseProvider
-  let _web3Modal: Web3Modal | null = null
+  let _web3Modal: AppKit | null = null
 
   const _providerReactiveState = reactive<ProviderState>({
     selectedAddress: '',
-    selectedProvider: '',
     rawProvider: null,
     chainId: '',
     isConnected: false,
@@ -103,12 +95,10 @@ export const useProvider = (): IUseProvider => {
     } catch (error) {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
-      const chainToAdd = Object.values(config.chainsMap).find(el =>
-          el.chainId === (
-            utils.isHexString(chainId)
-              ? chainId
-              : utils.hexValue(chainId)
-          ),
+      const chainToAdd = Object.values(config.chainsMap).find(
+        el =>
+          el.chainId ===
+          (utils.isHexString(chainId) ? chainId : utils.hexValue(chainId)),
       )
 
       if (!chainToAdd) throw new TypeError('Chain not found')
@@ -132,15 +122,20 @@ export const useProvider = (): IUseProvider => {
     await _providerReactiveState.rawProvider.request(body)
   }
 
-  let _unsubscribeProvider: (() => void) | null = null
   const init: I['init'] = () => {
-    _web3Modal = createWeb3Modal({
-      ethersConfig: defaultConfig({ metadata: config.metadata }),
-      chains: Object.values(config.chainsMap).map(chain =>
+    _web3Modal = createAppKit({
+      adapters: [new Ethers5Adapter()],
+      networks: Object.values(config.chainsMap).map(chain =>
         _parseChainToWeb3ModalChain(chain),
-      ),
+      ) as [AppKitNetwork, ...AppKitNetwork[]],
+      metadata: config.metadata,
       projectId: config.WALLET_CONNECT_PROJECT_ID,
-      enableAnalytics: true,
+      enableWalletGuide: false,
+      features: {
+        analytics: true,
+        email: false,
+        socials: false,
+      },
       themeVariables: {
         '--w3m-font-family': 'var(--app-font-family)',
         '--w3m-accent': 'var(--primary-main)',
@@ -149,20 +144,27 @@ export const useProvider = (): IUseProvider => {
       },
     })
 
-    _unsubscribeProvider = _web3Modal.subscribeProvider(newState => {
-      _providerReactiveState.selectedAddress = newState.address || ''
-      _providerReactiveState.selectedProvider = newState.providerType || ''
-      _providerReactiveState.rawProvider = newState.provider || null
-      _providerReactiveState.chainId = newState.chainId
-        ? String(newState.chainId)
+    _web3Modal.subscribeNetwork(() => {
+      const provider = _web3Modal?.getWalletProvider() as
+        | (ReturnType<Web3Modal['getWalletProvider']> & {
+            selectedAddress: string
+            chainId: string
+            _state: {
+              isConnected: boolean
+            }
+          })
+        | null
+
+      _providerReactiveState.selectedAddress = provider?.selectedAddress || ''
+      _providerReactiveState.rawProvider = provider
+      _providerReactiveState.chainId = provider?.chainId
+        ? String(Number(provider.chainId))
         : ''
-      _providerReactiveState.isConnected = newState.isConnected
+      _providerReactiveState.isConnected = Boolean(
+        provider?._state?.isConnected,
+      )
     })
   }
-
-  onUnmounted(() => {
-    _unsubscribeProvider?.()
-  })
 
   return {
     ...toRefs(_providerReactiveState),
@@ -179,14 +181,39 @@ export const useProvider = (): IUseProvider => {
   }
 }
 
-function _parseChainToWeb3ModalChain(
-  chain: EthereumType.Chain,
-): Web3ModalClientOptions['chains'][number] {
-  return {
-    chainId: Number(chain.chainId),
-    name: chain.chainName,
-    currency: chain.nativeCurrency.symbol,
-    explorerUrl: chain.blockExplorerUrls?.[0] || '',
-    rpcUrl: chain.rpcUrls[0],
+function _parseChainToWeb3ModalChain(chain: EthereumType.Chain): AppKitNetwork {
+  const currentChain = Object.values(chainsList).find(
+    el => el.id === Number(chain.chainId),
+  )
+
+  const resultObj = {
+    ...chainConfig,
+    ...(currentChain || chainsList.mainnet), // if doesn't exist, use mainnet
   }
+
+  Object.assign(resultObj, {
+    id: Number(chain.chainId),
+    name: chain.chainName,
+    nativeCurrency: {
+      name: chain.nativeCurrency.name,
+      symbol: chain.nativeCurrency.symbol,
+      decimals: chain.nativeCurrency.decimals,
+    },
+    rpcUrls: {
+      default: {
+        http: [chain.rpcUrls[0]],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: currentChain?.blockExplorers?.default?.name || '',
+        url:
+          chain.blockExplorerUrls?.[0] ||
+          currentChain?.blockExplorers?.default?.url ||
+          '',
+      },
+    },
+  })
+
+  return defineChain(resultObj) as AppKitNetwork
 }
