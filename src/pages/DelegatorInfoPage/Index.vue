@@ -6,7 +6,7 @@
         scheme="link"
         :text="$t('delegator-info-page.back-button')"
         :icon-left="ICON_NAMES.arrowLeft"
-        :route="{ name: $routes.appDelegation }"
+        @click="handleBack"
       />
       <delegation-info-title class="delegator-info-page__title" />
       <div class="delegator-info-page__content-wrapper">
@@ -36,28 +36,73 @@ import DelegateTokensModal from '@/pages/DelegationPage/components/DelegateToken
 import { useWeb3ProvidersStore } from '@/store'
 import { useExceptionContractsProvider } from '@/composables'
 import { watch, ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ROUTE_NAMES as $routes } from '@/enums'
+import { utils } from 'ethers'
+import { sleep } from '@/helpers'
+import { ErrorHandler } from '@/helpers'
 
 const route = useRoute()
+const router = useRouter()
 const web3ProvidersStore = useWeb3ProvidersStore()
 const isStakeModalShown = ref(false)
 
 const subnetAddress = computed(() => {
-  const addr = route.query.subnetAddress
-  return typeof addr === 'string' ? addr : undefined
+  return route.params.id as string
 })
 
 const DelegationPageProvider = useExceptionContractsProvider('DelegationPage')
 
-watch(DelegationPageProvider.value.network, () => {
-  if (DelegationPageProvider.value.network === undefined) {
-    return
-  }
+const handleBack = async () => {
+  try {
+    // First switch to the correct chain
+    if (DelegationPageProvider.value?.network?.chainId) {
+      await web3ProvidersStore.provider.selectChain(
+        utils.hexValue(Number(DelegationPageProvider.value.network.chainId)),
+      )
+      // Add a small delay to ensure chain switch completes
+      await sleep(500)
+    }
 
-  web3ProvidersStore.provider.selectChain(
-    String(DelegationPageProvider.value.network.chainId),
-  )
-})
+    // Then navigate back
+    await router.push({
+      name: $routes.appDelegation,
+      query: { network: route.query.network },
+    })
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+const loadPage = async () => {
+  try {
+    // Wait for network to be available
+    if (!DelegationPageProvider.value?.network?.chainId) {
+      return
+    }
+
+    await web3ProvidersStore.provider.selectChain(
+      utils.hexValue(Number(DelegationPageProvider.value.network.chainId)),
+    )
+    // Add a small delay to ensure chain switch completes
+    await sleep(500)
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+}
+
+// Watch both route changes and chain changes
+watch(
+  [
+    () => route.params.id,
+    () => web3ProvidersStore.provider.chainId,
+    () => DelegationPageProvider.value?.network?.chainId,
+  ],
+  async () => {
+    await loadPage()
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped lang="scss">

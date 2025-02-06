@@ -71,7 +71,7 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/delegator-info',
+    path: '/delegation/:id',
     name: ROUTE_NAMES.appDelegatorInfo,
     component: () => import('@/pages/DelegatorInfoPage/Index.vue'),
   },

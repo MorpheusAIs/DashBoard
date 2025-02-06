@@ -93,7 +93,7 @@ import { AppButton } from '@/common'
 import { abbrCenter, trimStringNumber } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
 import { ROUTE_NAMES } from '@/enums'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { BN } from '@distributedlab/tools'
 import predefinedSubnetsMeta from '@/assets/predefined-subnets-meta.json'
 
@@ -104,6 +104,7 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+const route = useRoute()
 const web3ProvidersStore = useWeb3ProvidersStore()
 const isDelegateButtonShown = ref(false)
 const isDelegateModalShown = ref(false)
@@ -147,7 +148,8 @@ const hideDelegateButton = () => {
 const goToDelegatorPage = () => {
   router.push({
     name: ROUTE_NAMES.appDelegatorInfo,
-    query: { subnetAddress: props.user.id },
+    params: { id: props.user.id },
+    query: { network: route.query.network },
   })
 }
 

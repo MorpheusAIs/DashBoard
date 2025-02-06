@@ -14,10 +14,10 @@
             'delegation-info-title__address--username': subnet?.name,
           }"
         >
-          {{ abbrCenter(String(route.query.subnetAddress), CUT_LENGTH) }}
+          {{ abbrCenter(String(route.params.id), CUT_LENGTH) }}
         </h3>
         <copy-button
-          :content="String(route.query.subnetAddress)"
+          :content="String(route.params.id)"
           :message="$t('delegation-info-title.coppied-text')"
         />
         <span class="delegation-info-title__admin-label">
@@ -60,7 +60,7 @@ const infoText = computed(() => {
 
 const init = async () => {
   subnet.value = (
-    await fetchSubnet(apolloClient.value, route.query.subnetAddress as string)
+    await fetchSubnet(apolloClient.value, route.params.id as string)
   ).subnets[0]
 }
 

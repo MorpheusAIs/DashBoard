@@ -138,7 +138,7 @@ const Subnet__factoryProvider = useExceptionContractsProvider('Subnet__factory')
 const subnetContract = computed(() =>
   useContract(
     'Subnet__factory',
-    route.query.subnetAddress as string,
+    route.params.id as string,
     Subnet__factoryProvider.value,
   ),
 )
@@ -187,7 +187,7 @@ const loadPage = async () => {
     )
 
     const [data, reward] = await Promise.all([
-      fetchSubnet(apolloClient.value, route.query.subnetAddress as string),
+      fetchSubnet(apolloClient.value, route.params.id as string),
       subnetContract.value.providerBased.value.getCurrentStakerRewards(
         web3ProvidersStore.address,
       ),

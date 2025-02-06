@@ -17,10 +17,6 @@
           <span class="ml-1">{{ $t('builders-item.mor-currency') }}</span>
         </app-gradient-border-card>
       </div>
-
-      <app-button @click="$emit('stake')">
-        {{ $t('delegates-list.stake-button') }}
-      </app-button>
     </div>
 
     <div class="flex flex-1 flex-col">
@@ -141,7 +137,7 @@ const loadDelegates = async (limit = DEFAULT_PAGE_LIMIT) => {
       variables: {
         first: limit,
         skip: currentPage.value * limit - limit,
-        subnetAddress: route.query.subnetAddress as string,
+        subnetAddress: route.params.id as string,
       },
     })
 
@@ -172,7 +168,7 @@ const { isLoaded } = useLoad(undefined, loadDelegates, {
   isLoadOnMount: true,
 })
 
-watch([() => route.query.subnetAddress, currentPage], () => {
+watch([() => route.params.id, currentPage], () => {
   loadDelegates()
 })
 
