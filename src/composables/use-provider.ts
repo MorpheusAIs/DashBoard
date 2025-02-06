@@ -104,9 +104,11 @@ export const useProvider = (): IUseProvider => {
       if (error instanceof errors.ProviderUserRejectedRequest) throw error
 
       const chainToAdd = Object.values(config.chainsMap).find(el =>
-        utils.isHexString(chainId)
-          ? el.chainId === chainId
-          : utils.hexValue(chainId),
+          el.chainId === (
+            utils.isHexString(chainId)
+              ? chainId
+              : utils.hexValue(chainId)
+          ),
       )
 
       if (!chainToAdd) throw new TypeError('Chain not found')
