@@ -61,6 +61,9 @@
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
           {{ formatBalance(builderProject.totalStaked) }}
+          <span class="ml-2 text-xs text-textTertiaryMain">
+            {{ builderProject.totalUsers }} {{ $t('staking') }}
+          </span>
         </span>
       </div>
     </div>
