@@ -203,7 +203,7 @@ import {
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { provide, ref, computed } from 'vue'
+import { provide, ref, computed, watch } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -262,10 +262,33 @@ const isCreateBuilderModalShown = ref(false)
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
 const chainOptions = computed(() => [
-  undefined,
+  // undefined,
   ...allowedForCurrentRouteChainsLimitedByNetworkType.value,
 ])
 const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
+
+// FIXME: remove once provider multiple chain selecting is done
+watch(
+  selectedChain,
+  val => {
+    if (!val) return
+
+    provider.value.switchChain(val)
+  },
+  {
+    immediate: true,
+  },
+)
+
+watch(
+  () => provider.value.chainId,
+  val => {
+    selectedChain.value = val as EthereumChains
+  },
+  {
+    immediate: true,
+  },
+)
 
 const mapUsersOrderFilter = (
   orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy,

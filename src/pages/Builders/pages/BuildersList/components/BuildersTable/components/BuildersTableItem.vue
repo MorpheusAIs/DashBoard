@@ -3,7 +3,7 @@
     :class="
       cn(
         'builders-table-item relative hidden w-full',
-        'md:grid md:grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,max(100px)]',
+        'md:grid md:grid-cols-[max(216px),max(160px),max(190px),1fr,1fr]',
         'md:h-[72px] md:items-center md:gap-2 md:px-8 md:py-4',
       )
     "
@@ -70,8 +70,6 @@
           {{ humanizeTime(+builderProject.withdrawLockPeriodAfterDeposit) }}
         </span>
       </div>
-    </div>
-    <div class="builders-table-item__col justify-end">
       <RouterLink
         class="absolute left-0 top-0 z-10 size-full"
         :to="{
@@ -80,18 +78,6 @@
           query: { chain: builderProject.chain },
         }"
       ></RouterLink>
-      <app-button
-        v-if="
-          provider.isConnected &&
-          time(+builderProject?.startsAt).isBefore(time())
-        "
-        class="z-20 mx-auto"
-        color="secondary"
-        size="small"
-        @click="isStakeModalShown = true"
-      >
-        {{ $t('builders-table-item.stake-btn') }}
-      </app-button>
     </div>
   </div>
 
@@ -182,10 +168,8 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton } from '@/common'
 import { formatBalance, humanizeTime } from '@/helpers'
 import { BuilderProject } from '@/types'
-import { time } from '@distributedlab/tools'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { inject, ref } from 'vue'
 import { cn } from '@/theme/utils'

@@ -207,14 +207,6 @@ const delegate = () => {
     );
   gap: toRem(16);
   transition: 0.1s;
-
-  &--with-btn {
-    margin-right: toRem(112); // 80 + 32
-    grid-template-columns: minmax(toRem(132), 1fr) repeat(
-        3,
-        minmax(toRem(42), 1fr)
-      );
-  }
 }
 
 .delegation-providers-item__col {
@@ -235,6 +227,7 @@ const delegate = () => {
   gap: toRem(4);
   align-items: flex-start;
 }
+
 .delegation-providers-item__img {
   max-width: toRem(48);
   max-height: toRem(48);
@@ -249,9 +242,21 @@ const delegate = () => {
   right: toRem(32);
   top: 50%;
   transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease-in-out,
+    visibility 0.2s ease-in-out;
+  z-index: 1;
 
   &--hidden {
-    display: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .delegation-providers-item:hover & {
+    opacity: 1;
+    visibility: visible;
   }
 }
 
