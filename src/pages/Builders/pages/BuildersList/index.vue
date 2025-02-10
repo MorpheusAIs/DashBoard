@@ -280,6 +280,16 @@ watch(
   },
 )
 
+watch(
+  () => provider.value.chainId,
+  val => {
+    selectedChain.value = val as EthereumChains
+  },
+  {
+    immediate: true,
+  },
+)
+
 const mapUsersOrderFilter = (
   orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy,
 ): BuildersUser_OrderBy => {

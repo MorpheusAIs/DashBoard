@@ -115,9 +115,13 @@ export const useProvider = (): IUseProvider => {
   }
 
   const request: I['request'] = async body => {
+    // eslint-disable-next-line
+    // @ts-ignore
     if (!_providerReactiveState.rawProvider?.request)
       throw new errors.ProviderMethodNotFound()
 
+    // eslint-disable-next-line
+    // @ts-ignore
     await _providerReactiveState.rawProvider.request(body)
   }
 
