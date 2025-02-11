@@ -43,7 +43,29 @@
         </div>
       </div>
 
-      <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
+      <div
+        v-if="chainDetails?.chainName"
+        class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4"
+      >
+        <div class="flex items-center justify-between">
+          <span class="text-textSecondaryMain typography-body3">
+            {{ $t('builders-stake-modal.network-lbl') }}
+          </span>
+          <div class="flex items-center gap-2">
+            <img
+              class="size-5"
+              :src="chainDetails.iconUrls?.[0]"
+              :alt="chainDetails?.chainName"
+            />
+
+            <span class="font-bold text-textSecondaryMain typography-body3">
+              {{ chainDetails?.chainName }}
+            </span>
+          </div>
+        </div>
+
+        <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
+
         <div
           class="flex items-center justify-between"
           v-for="(el, i) in builderDetails.slice(0, 3)"
@@ -115,13 +137,13 @@ import {
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
-import { EthereumChains } from '@config'
+import { config, getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
     builderProject: GetBuildersProjectQuery['buildersProject']
     isShown?: boolean
-    chain?: EthereumChains
+    chain?: string
   }>(),
   {
     isShown: true,
@@ -173,6 +195,12 @@ const { data: buildersProjectUserAccount } = useLoad<
     reloadArgs: [() => props.isShown, () => provider.value.selectedAddress],
   },
 )
+
+const chainDetails = computed(() => {
+  if (!props.chain) return undefined
+
+  return config.chainsMap[getEthereumChainsName(props.chain)]
+})
 
 const isSubmitting = ref(false)
 

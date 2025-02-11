@@ -852,6 +852,8 @@
   "builders-stake-modal": {
     "modal-title": "Stake MOR",
     "available-to-stake-balance-value": "{amount} MOR",
+
+    "network-lbl": "Network",
     "builder-lbl": "Builder",
     "min-deposit-lbl": "Min Deposit",
     "lock-period-lbl": "Lock Period",
