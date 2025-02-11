@@ -4,7 +4,7 @@
       :class="
         cn(
           'hidden',
-          'grid-cols-[max(216px),max(160px),max(190px),1fr,1fr] items-center md:grid',
+          'grid-cols-[max(216px),max(48px),max(160px),max(190px),1fr,1fr] items-center md:grid',
           'gap-2 px-8',
         )
       "
@@ -16,6 +16,7 @@
           {{ $t('builders-table.name-th') }}
         </span>
       </div>
+      <div class=""></div>
       <sorting-icon-button
         class="justify-self-end"
         :label="$t('builders-table.reward-type-th')"
@@ -44,7 +45,6 @@
         v-model:order-by-model="orderByModel"
         v-model:order-direction-model="orderDirectionModel"
       />
-      <div class=""></div>
     </div>
     <!-- FIXME: el.chain: inserted in BuildersList.vue in loadFn -->
     <builders-table-item
