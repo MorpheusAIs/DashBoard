@@ -424,6 +424,7 @@
     v-model:is-shown="isStakeModalShown"
     v-if="buildersData.buildersProject"
     :builder-project="buildersData.buildersProject"
+    :chain="provider.chainId"
     @staked="handleStaked"
   />
 </template>
