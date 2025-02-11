@@ -23,7 +23,7 @@
 
         <template v-if="modelValue?.name">
           <button class="bg-primaryMain px-5 py-2 font-medium text-black">
-            Change
+            {{ $t('file-field.change-file-btn') }}
           </button>
         </template>
         <template v-else>
@@ -31,15 +31,15 @@
             <span
               class="font-[18px] font-semibold leading-[26px] text-textSecondaryMain"
             >
-              Drag & drop
+              {{ $t('file-field.drag-n-drop-lbl') }}
             </span>
             <span class="font-[14px] leading-[26px] text-textSecondaryMain">
-              or
+              {{ $t('file-field.drag-n-drop-divider') }}
             </span>
           </div>
 
           <button class="bg-primaryMain px-5 py-2 font-medium text-black">
-            Upload
+            {{ $t('file-field.choose-file-lbl') }}
           </button>
         </template>
       </div>

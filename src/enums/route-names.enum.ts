@@ -11,6 +11,7 @@ export enum ROUTE_NAMES {
   appDelegation = 'app-delegation',
   appDelegatorInfo = 'app-delegator-info',
   appBuildersForm = 'app-builders-form',
+  appBuildersFormUpdate = 'app-builders-form-update',
   appBuildersList = 'app-builders-list',
   appBuildersItem = 'app-builders-item',
 }

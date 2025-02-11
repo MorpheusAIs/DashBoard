@@ -195,6 +195,11 @@ const perPageAllowedNetworks: Record<ROUTE_NAMES, EthereumChains[]> = {
     EthereumChains.Arbitrum,
     EthereumChains.ArbitrumSepolia,
   ],
+  [ROUTE_NAMES.appBuildersFormUpdate]: [
+    EthereumChains.Base,
+    EthereumChains.Arbitrum,
+    EthereumChains.ArbitrumSepolia,
+  ],
 }
 
 /**
