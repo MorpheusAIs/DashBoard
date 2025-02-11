@@ -16,11 +16,7 @@
         <app-button
           scheme="filled"
           color="secondary"
-          @click="
-            () => {
-              isCreateBuilderModalShown = true
-            }
-          "
+          :route="{ name: $routes.appBuildersForm }"
           :disabled="!provider.isConnected"
         >
           {{ $t('builders-list.create-builder-btn') }}
@@ -173,11 +169,6 @@
         common-skeleton-class-names="min-h-[72px]"
       />
     </div>
-
-    <builder-form-modal
-      v-model:is-shown="isCreateBuilderModalShown"
-      @submitted="handleBuilderCreated"
-    />
   </div>
 </template>
 
@@ -191,7 +182,6 @@ import {
   SkeletonTable,
 } from '@/common'
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable/index.vue'
-import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import {
   BuildersProject_OrderBy,
   BuildersUser_OrderBy,
@@ -256,8 +246,6 @@ const usersBuildersOrderBy = ref<
   BuildersProject_OrderBy | AdditionalBuildersOrderBy
 >(BuildersProject_OrderBy.TotalStaked)
 const usersOrderDirection = ref(OrderDirection.Asc)
-
-const isCreateBuilderModalShown = ref(false)
 
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
@@ -666,16 +654,6 @@ const sortByCustomType = (
     }
 
     return 0
-  })
-}
-
-const handleBuilderCreated = async (poolId: string) => {
-  isCreateBuilderModalShown.value = false
-  await router.push({
-    name: ROUTE_NAMES.appBuildersItem,
-    params: {
-      id: poolId,
-    },
   })
 }
 

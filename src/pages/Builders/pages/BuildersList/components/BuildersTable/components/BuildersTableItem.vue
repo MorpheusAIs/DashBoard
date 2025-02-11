@@ -3,7 +3,7 @@
     :class="
       cn(
         'builders-table-item relative hidden w-full',
-        'md:grid md:grid-cols-[max(216px),max(160px),max(190px),1fr,1fr]',
+        'md:grid md:grid-cols-[max(216px),max(48px),max(160px),max(190px),1fr,1fr]',
         'md:h-[72px] md:items-center md:gap-2 md:px-8 md:py-4',
       )
     "
@@ -24,8 +24,11 @@
         <span class="builders-table-item__col-text">
           {{ builderProject.name }}
         </span>
-
-        <template v-if="builderProject.chain">
+      </div>
+    </div>
+    <template v-if="builderProject.chain">
+      <div class="builders-table-item__col">
+        <div class="builders-table-item__col-content">
           <img
             :src="
               $config.chainsMap[getEthereumChainsName(builderProject.chain)]
@@ -37,15 +40,15 @@
             "
             class="ml-1 h-4 w-4"
           />
-        </template>
+        </div>
       </div>
-    </div>
+    </template>
     <div class="builders-table-item__col">
       <div
         class="builders-table-item__col-content"
         :title="builderMeta?.rewardType"
       >
-        <span class="builders-table-item__col-text">
+        <span class="builders-table-item__col-text text-right">
           {{ builderMeta?.rewardType }}
         </span>
       </div>
@@ -123,6 +126,19 @@
       <span class="text-textSecondaryMain typography-h4">
         {{ builderProject.name }}
       </span>
+
+      <img
+        v-if="builderProject.chain"
+        :src="
+          $config.chainsMap[getEthereumChainsName(builderProject.chain)]
+            .iconUrls?.[0]
+        "
+        :alt="
+          $config.chainsMap[getEthereumChainsName(builderProject.chain)]
+            .chainName
+        "
+        class="absolute right-5 top-5 ml-1 h-5 w-5"
+      />
     </RouterLink>
 
     <div
@@ -152,60 +168,25 @@
             })
           }}
         </span>
-        <div
-          class="col-span-2 w-full border-0 border-t border-solid border-[#FFFFFF29]"
-        >
-          <button
-            class="z-20 h-12 w-full text-[16px] font-medium text-textSecondaryMain"
-            @click="isStakeModalShown = true"
-            :disabled="!provider.isConnected"
-          >
-            {{ $t('builders-table-item.stake-btn') }}
-          </button>
-        </div>
       </div>
     </div>
   </div>
-
-  <builders-stake-modal
-    v-model:is-shown="isStakeModalShown"
-    :builder-project="builderProject"
-    :chain="builderProject.chain"
-    @staked="handleStaked"
-  />
 </template>
 
 <script setup lang="ts">
 import { formatBalance, humanizeTime } from '@/helpers'
 import { BuilderProject } from '@/types'
-import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
-import { inject, ref } from 'vue'
 import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
-import { storeToRefs } from 'pinia'
-import { useWeb3ProvidersStore } from '@/store'
 import { getEthereumChainsName } from '@config'
 
 const props = defineProps<{
   builderProject: BuilderProject
 }>()
 
-const { provider } = storeToRefs(useWeb3ProvidersStore())
-
-const reloadBuildersProjects = inject<() => Promise<void>>(
-  'reloadBuildersProjects',
-)
-
-const isStakeModalShown = ref(false)
-
 const builderMeta = predefinedBuildersMeta.find(
   el => el.name.toLowerCase() === props.builderProject.name.toLowerCase(),
 )
-
-const handleStaked = async () => {
-  isStakeModalShown.value = false
-  reloadBuildersProjects?.()
-}
 </script>
 
 <style scoped lang="scss">

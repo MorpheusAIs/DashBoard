@@ -42,6 +42,12 @@ const routes: RouteRecordRaw[] = [
         props: { poolId: 0 },
       },
       {
+        path: 'builders/create',
+        name: ROUTE_NAMES.appBuildersForm,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersForm/index.vue'),
+      },
+      {
         path: 'builders',
         name: ROUTE_NAMES.appBuildersList,
         component: () =>
