@@ -26,7 +26,7 @@
 
       <div class="mt-14 flex flex-col">
         <span
-          v-if="!!buildersData.buildersProjectUserAccount?.staked"
+          v-if="!!buildersData.builderSubnetUserAccount?.staked"
           :class="
             cn(
               'self-start px-3 py-1 text-[#15151D]',
@@ -54,7 +54,7 @@
               </template>
 
               <span class="typography-h1">
-                {{ buildersData.buildersProject?.name }}
+                {{ buildersData.builderSubnet?.name }}
               </span>
             </div>
 
@@ -64,11 +64,11 @@
               @click="
                 $router.push({
                   name: $routes.appBuildersFormUpdate,
-                  params: { id: buildersData.buildersProject?.id },
+                  params: { id: buildersData.builderSubnet?.id },
                 })
               "
               :disabled="
-                time(+buildersData.buildersProject?.startsAt)
+                time(+buildersData.builderSubnet?.startsAt)
                   .subtract(editPoolDeadline?.toNumber() ?? 0, 'seconds')
                   .isBefore(time()) || isClaimSubmitting
               "
@@ -90,10 +90,10 @@
         <div v-if="isLoaded" class="mt-6 flex items-center gap-8">
           <div class="flex items-center gap-2">
             <span class="text-textSecondaryMain">
-              {{ abbrCenter(buildersData.buildersProject?.admin) }}
+              {{ abbrCenter(buildersData.builderSubnet?.owner) }}
             </span>
             <copy-button
-              :content="buildersData.buildersProject?.admin"
+              :content="buildersData.builderSubnet?.owner"
               message="copied"
             />
           </div>
@@ -128,7 +128,7 @@
             <div class="flex items-center gap-2">
               <span class="whitespace-pre text-textSecondaryMain typography-h2">
                 {{
-                  time(+buildersData.buildersProject?.startsAt).format(
+                  time(+buildersData.builderSubnet?.startsAt).format(
                     DOT_TIME_FORMAT,
                   )
                 }}
@@ -145,7 +145,7 @@
             <span
               class="w-full overflow-hidden text-ellipsis text-textSecondaryMain typography-h2"
             >
-              {{ formatEther(buildersData.buildersProject?.minimalDeposit) }}
+              {{ formatEther(buildersData.builderSubnet?.minStake) }}
             </span>
           </div>
         </app-gradient-border-card>
@@ -158,7 +158,7 @@
             <span class="whitespace-pre text-textSecondaryMain typography-h2">
               {{
                 humanizeTime(
-                  +buildersData.buildersProject?.withdrawLockPeriodAfterDeposit,
+                  +buildersData.builderSubnet?.withdrawLockPeriodAfterStake,
                 )
               }}</span
             >
@@ -178,7 +178,7 @@
 
                 <app-button
                   v-if="
-                    !!buildersData.buildersProjectUserAccount?.staked &&
+                    !!buildersData.builderSubnetUserAccount?.staked &&
                     !(
                       withdrawalUnlockTime?.isAfter(time()) || isClaimSubmitting
                     )
@@ -193,7 +193,7 @@
                 <span class="text-textSecondaryMain typography-h2">
                   {{
                     formatEther(
-                      buildersData.buildersProjectUserAccount?.staked ?? 0,
+                      buildersData.builderSubnetUserAccount?.staked ?? 0,
                     )
                   }}
                 </span>
@@ -220,7 +220,7 @@
                 {{ $t('builders-item.total-claimed-lbl') }}
               </span>
               <span class="text-textSecondaryMain typography-h2">
-                {{ formatEther(buildersData.buildersProject?.totalClaimed) }}
+                {{ formatEther(buildersData.builderSubnet?.totalClaimed) }}
               </span>
             </div>
           </app-gradient-border-card>
@@ -231,7 +231,7 @@
                 {{ $t('builders-item.total-staked-lbl') }}
               </span>
               <span class="text-textSecondaryMain typography-h2">
-                {{ formatEther(buildersData.buildersProject?.totalStaked) }}
+                {{ formatEther(buildersData.builderSubnet?.totalStaked) }}
               </span>
             </div>
           </app-gradient-border-card>
@@ -246,9 +246,9 @@
                 <app-button
                   v-if="
                     isUserAccountAdmin &&
-                    (!buildersData.buildersProject ||
-                      !buildersData.buildersProject.claimLockEnd ||
-                      time(+buildersData.buildersProject.claimLockEnd).isAfter(
+                    (!buildersData.builderSubnet ||
+                      !buildersData.builderSubnet.minClaimLockEnd ||
+                      time(+buildersData.builderSubnet.minClaimLockEnd).isAfter(
                         time(),
                       ) ||
                       isClaimSubmitting)
@@ -264,9 +264,9 @@
                   class="whitespace-pre text-textSecondaryMain typography-h2"
                 >
                   {{
-                    +buildersData.buildersProject?.claimLockEnd
+                    +buildersData.builderSubnet?.minClaimLockEnd
                       ? time(
-                          +buildersData.buildersProject?.claimLockEnd,
+                          +buildersData.builderSubnet?.minClaimLockEnd,
                         ).format(DOT_TIME_FORMAT)
                       : $t('builders-item.empty-dash')
                   }}
@@ -278,10 +278,10 @@
                 </span>
                 <div class="flex items-center gap-2">
                   <span class="text-textSecondaryMain">
-                    {{ abbrCenter(buildersData.buildersProject?.admin) }}
+                    {{ abbrCenter(buildersData.builderSubnet?.owner) }}
                   </span>
                   <copy-button
-                    :content="buildersData.buildersProject?.admin"
+                    :content="buildersData.builderSubnet?.owner"
                     message="Copied"
                   />
                 </div>
@@ -306,7 +306,7 @@
                   )
                 "
               >
-                {{ buildersData?.buildersProject?.totalUsers }}
+                {{ buildersData?.builderSubnet?.totalUsers }}
               </app-gradient-border-card>
             </div>
             <div v-else class="flex items-center gap-4">
@@ -319,7 +319,7 @@
                 !isLoaded ||
                 balances.rewardsToken?.isZero() ||
                 isClaimSubmitting ||
-                time(+buildersData?.buildersProject?.startsAt).isAfter(time())
+                time(+buildersData?.builderSubnet?.startsAt).isAfter(time())
               "
               @click="isStakeModalShown = true"
             >
@@ -384,12 +384,11 @@
                   v-if="
                     isLoaded &&
                     !isLoadFailed &&
-                    buildersData.buildersProject?.totalUsers >=
-                      DEFAULT_PAGE_LIMIT
+                    buildersData.builderSubnet?.totalUsers >= DEFAULT_PAGE_LIMIT
                   "
                   v-model:current-page="stakersCurrentPage"
                   :page-limit="DEFAULT_PAGE_LIMIT"
-                  :total-items="buildersData.buildersProject?.totalUsers"
+                  :total-items="buildersData.builderSubnet?.totalUsers"
                   class="mt-6 self-center"
                 />
               </template>
@@ -412,18 +411,16 @@
   </div>
 
   <builder-withdraw-modal
-    v-if="
-      buildersData.buildersProject && buildersData.buildersProjectUserAccount
-    "
+    v-if="buildersData.builderSubnet && buildersData.builderSubnetUserAccount"
     v-model:is-shown="isWithdrawModalShown"
-    :builder-project="buildersData.buildersProject"
-    :builders-project-user-account="buildersData.buildersProjectUserAccount"
+    :builder-subnet="buildersData.builderSubnet"
+    :builders-subnet-user-account="buildersData.builderSubnetUserAccount"
     @submitted="handleWithdrawalSubmitted"
   />
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
-    v-if="buildersData.buildersProject"
-    :builder-project="buildersData.buildersProject"
+    v-if="buildersData.builderSubnet"
+    :builder-subnet="buildersData.builderSubnet"
     :chain="provider.chainId"
     @staked="handleStaked"
   />
@@ -453,15 +450,17 @@ import {
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
 import { computed, ref, watch, onBeforeMount } from 'vue'
 import {
-  GetBuildersProject,
-  GetBuildersProjectQuery,
-  GetBuildersProjectQueryVariables,
-  GetBuildersProjectUsers,
-  GetBuildersProjectUsersQuery,
-  GetBuildersProjectUsersQueryVariables,
-  GetUserAccountBuildersProject,
-  GetUserAccountBuildersProjectQuery,
-  GetUserAccountBuildersProjectQueryVariables,
+  BuilderSubnetDefaultFragment,
+  BuilderUserDefaultFragment,
+  GetBuilderSubnet,
+  GetBuilderSubnetQuery,
+  GetBuilderSubnetQueryVariables,
+  GetBuilderSubnetUsers,
+  GetBuilderSubnetUsersQuery,
+  GetBuilderSubnetUsersQueryVariables,
+  GetUserAccountBuilderSubnets,
+  GetUserAccountBuilderSubnetsQuery,
+  GetUserAccountBuilderSubnetsQueryVariables,
 } from '@/types/graphql'
 import { useRoute } from 'vue-router'
 import { formatEther } from '@/utils'
@@ -494,7 +493,7 @@ const isClaimSubmitting = ref(false)
 
 const stakersCurrentPage = ref(1)
 
-const stakers = ref<GetBuildersProjectUsersQuery['buildersUsers']>([])
+const stakers = ref<BuilderUserDefaultFragment[]>([])
 
 const { data: editPoolDeadline } = useLoad(undefined, async () =>
   buildersContract.value.providerBased.value.editPoolDeadline(),
@@ -514,19 +513,17 @@ const {
   isLoadFailed,
   update,
 } = useLoad<{
-  buildersProject: GetBuildersProjectQuery['buildersProject'] | null
-  buildersProjectUserAccount:
-    | GetUserAccountBuildersProjectQuery['buildersUsers'][0]
-    | null
+  builderSubnet: BuilderSubnetDefaultFragment | null
+  builderSubnetUserAccount: BuilderUserDefaultFragment | null
 }>(
-  { buildersProject: null, buildersProjectUserAccount: null },
+  { builderSubnet: null, builderSubnetUserAccount: null },
   async () => {
-    const [{ data: buildersProjectsResponse }] = await Promise.all([
+    const [{ data: builderSubnetsResponse }] = await Promise.all([
       currentClient.value.query<
-        GetBuildersProjectQuery,
-        GetBuildersProjectQueryVariables
+        GetBuilderSubnetQuery,
+        GetBuilderSubnetQueryVariables
       >({
-        query: GetBuildersProject,
+        query: GetBuilderSubnet,
         fetchPolicy: 'network-only',
         variables: {
           id: route.params.id as string,
@@ -534,23 +531,23 @@ const {
       }),
     ])
 
-    const { data: userAccountInProject } = await currentClient.value.query<
-      GetUserAccountBuildersProjectQuery,
-      GetUserAccountBuildersProjectQueryVariables
-    >({
-      query: GetUserAccountBuildersProject,
-      fetchPolicy: 'network-only',
-      variables: {
-        address: provider.value.selectedAddress,
-        // eslint-disable-next-line
-        // @ts-ignore
-        project_id: buildersProjectsResponse.buildersProject?.id,
-      },
-    })
+    const { data: userAccountInBuilderSubnet } =
+      await currentClient.value.query<
+        GetUserAccountBuilderSubnetsQuery,
+        GetUserAccountBuilderSubnetsQueryVariables
+      >({
+        query: GetUserAccountBuilderSubnets,
+        fetchPolicy: 'network-only',
+        variables: {
+          address: provider.value.selectedAddress,
+          builder_subnet_id: builderSubnetsResponse.builderSubnet?.id,
+        },
+      })
 
     return {
-      buildersProject: buildersProjectsResponse.buildersProject,
-      buildersProjectUserAccount: userAccountInProject.buildersUsers[0],
+      builderSubnet: builderSubnetsResponse.builderSubnet ?? null,
+      builderSubnetUserAccount:
+        userAccountInBuilderSubnet.builderUsers[0] ?? null,
     }
   },
   {
@@ -559,32 +556,32 @@ const {
 )
 
 const builderMeta = computed(() => {
-  if (!buildersData.value.buildersProject) return
+  if (!buildersData.value.builderSubnet) return
 
   return predefinedBuildersMeta.find(
     el =>
       el.name.toLowerCase() ===
-      buildersData.value.buildersProject?.name.toLowerCase(),
+      buildersData.value.builderSubnet?.name.toLowerCase(),
   )
 })
 
 const isUserAccountAdmin = computed(
   () =>
     provider.value.selectedAddress?.toLowerCase() ===
-    buildersData.value.buildersProject?.admin?.toLowerCase(),
+    buildersData.value.builderSubnet?.owner?.toLowerCase(),
 )
 
 const withdrawalUnlockTime = computed(() => {
   if (
-    !buildersData.value.buildersProjectUserAccount ||
-    !buildersData.value.buildersProject
+    !buildersData.value.builderSubnetUserAccount ||
+    !buildersData.value.builderSubnet
   )
     return
 
-  if (!+buildersData.value.buildersProjectUserAccount.lastStake) return
+  if (!+buildersData.value.builderSubnetUserAccount.lastStake) return
 
-  return time(+buildersData.value.buildersProjectUserAccount.lastStake).add(
-    buildersData.value.buildersProject.withdrawLockPeriodAfterDeposit,
+  return time(+buildersData.value.builderSubnetUserAccount.lastStake).add(
+    buildersData.value.builderSubnet.withdrawLockPeriodAfterStake,
     'seconds',
   )
 })
@@ -592,19 +589,19 @@ const withdrawalUnlockTime = computed(() => {
 const loadStakers = async (limit = DEFAULT_PAGE_LIMIT) => {
   try {
     const { data } = await currentClient.value.query<
-      GetBuildersProjectUsersQuery,
-      GetBuildersProjectUsersQueryVariables
+      GetBuilderSubnetUsersQuery,
+      GetBuilderSubnetUsersQueryVariables
     >({
-      query: GetBuildersProjectUsers,
+      query: GetBuilderSubnetUsers,
       fetchPolicy: 'network-only',
       variables: {
         first: limit,
         skip: stakersCurrentPage.value * limit - limit,
-        buildersProjectId: buildersData.value.buildersProject?.id,
+        builderSubnetId: buildersData.value.builderSubnet?.id,
       },
     })
 
-    stakers.value = data.buildersUsers
+    stakers.value = data.builderUsers
   } catch (error) {
     ErrorHandler.processWithoutFeedback(error)
   }
@@ -615,7 +612,7 @@ watch(
     () => route.query.user,
     () => route.query.chain,
     () => route.query.network,
-    () => buildersData.value.buildersProject,
+    () => buildersData.value.builderSubnet,
     stakersCurrentPage,
   ],
   () => {
@@ -649,7 +646,7 @@ const claim = async () => {
     }
 
     const tx = await buildersContract.value.signerBased.value.claim(
-      buildersData.value.buildersProject?.id,
+      buildersData.value.builderSubnet?.id,
       provider.value.selectedAddress,
     )
 

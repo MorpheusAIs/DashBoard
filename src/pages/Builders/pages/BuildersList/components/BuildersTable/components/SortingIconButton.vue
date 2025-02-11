@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BuildersProject_OrderBy, OrderDirection } from '@/types/graphql'
+import { BuilderSubnet_OrderBy, OrderDirection } from '@/types/graphql'
 import { AppIcon } from '@/common'
 import { cn } from '@/theme/utils'
 import { AdditionalBuildersOrderBy } from '@/enums'
@@ -10,7 +10,7 @@ const orderDirectionModel = defineModel<string>('orderDirectionModel')
 const props = withDefaults(
   defineProps<{
     label: string
-    orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy
+    orderBy: BuilderSubnet_OrderBy | AdditionalBuildersOrderBy
   }>(),
   {},
 )

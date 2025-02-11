@@ -56,7 +56,7 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text">
-          {{ formatBalance(builderProject.minimalDeposit, 18) }}
+          {{ formatBalance(builderProject.minStake, 18) }}
         </span>
       </div>
     </div>
@@ -78,7 +78,7 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text text-right">
-          {{ humanizeTime(+builderProject.withdrawLockPeriodAfterDeposit) }}
+          {{ humanizeTime(+builderProject.withdrawLockPeriodAfterStake) }}
         </span>
       </div>
       <RouterLink
@@ -148,7 +148,7 @@
         <span class="w-full py-3 text-center text-textTertiaryMain">
           {{
             $t('builders-table-item.mobile-min-deposit-lbl', {
-              amount: formatBalance(builderProject.minimalDeposit),
+              amount: formatBalance(builderProject.minStake),
             })
           }}
         </span>
@@ -163,7 +163,7 @@
           {{
             $t('builders-table-item.mobile-withdraw-lock-period-lbl', {
               period: humanizeTime(
-                +builderProject.withdrawLockPeriodAfterDeposit,
+                +builderProject.withdrawLockPeriodAfterStake,
               ),
             })
           }}

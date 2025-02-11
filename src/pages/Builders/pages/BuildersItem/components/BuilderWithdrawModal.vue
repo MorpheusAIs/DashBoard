@@ -35,7 +35,7 @@
             <span class="stake-modal__details-value">
               {{
                 $t('builder-withdraw-modal.available-to-withdraw-amount', {
-                  amount: formatEther(buildersProjectUserAccount?.staked ?? 0),
+                  amount: formatEther(buildersSubnetUserAccount?.staked ?? 0),
                 })
               }}
             </span>
@@ -82,8 +82,8 @@ import { useFormValidation, useI18n } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, reactive, ref } from 'vue'
 import {
-  GetBuildersProjectQuery,
-  GetUserAccountBuildersProjectQuery,
+  BuilderSubnetDefaultFragment,
+  BuilderUserDefaultFragment,
 } from '@/types/graphql'
 import { maxValue, numeric, required } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
@@ -98,8 +98,8 @@ import { BigNumber } from 'ethers'
 
 const props = withDefaults(
   defineProps<{
-    builderProject: GetBuildersProjectQuery['buildersProject']
-    buildersProjectUserAccount: GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+    builderSubnet: BuilderSubnetDefaultFragment
+    buildersSubnetUserAccount: BuilderUserDefaultFragment
     isShown?: boolean
   }>(),
   {
@@ -130,25 +130,25 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       required,
       numeric,
       maxValue: maxValue(
-        +formatEther(props.buildersProjectUserAccount.staked || 0),
+        +formatEther(props.buildersSubnetUserAccount.staked || 0),
       ),
     },
   })
 
 const builderDetails = computed(() => {
   const balanceAfterWithdrawal = BigNumber.from(
-    props.buildersProjectUserAccount.staked ?? 0,
+    props.buildersSubnetUserAccount.staked ?? 0,
   ).sub(parseUnits(form.withdrawAmount || '0'))
 
   return [
     {
       label: t('builder-withdraw-modal.builder-lbl'),
-      value: props.builderProject?.name,
+      value: props.builderSubnet?.name,
     },
     {
       label: t('builder-withdraw-modal.current-withdraw-lbl'),
       value: t('builder-withdraw-modal.available-to-withdraw-amount', {
-        amount: formatEther(props.buildersProjectUserAccount.staked || 0),
+        amount: formatEther(props.buildersSubnetUserAccount.staked || 0),
       }),
     },
     {
@@ -163,7 +163,7 @@ const builderDetails = computed(() => {
 })
 
 const setMaxAmount = () => {
-  form.withdrawAmount = formatEther(props.buildersProjectUserAccount.staked)
+  form.withdrawAmount = formatEther(props.buildersSubnetUserAccount.staked)
 }
 
 const clearForm = () => {
@@ -184,7 +184,7 @@ const submit = async () => {
     }
 
     const tx = await buildersContract.value?.signerBased.value.withdraw(
-      props.builderProject?.id,
+      props.builderSubnet?.id,
       parseUnits(form.withdrawAmount),
     )
 

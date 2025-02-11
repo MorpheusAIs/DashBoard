@@ -174,9 +174,10 @@
 <script setup lang="ts">
 import { AppGradientBorderCard, AppButton } from '@/common'
 import {
-  GetBuildersProject,
-  GetBuildersProjectQuery,
-  GetBuildersProjectQueryVariables,
+  BuilderSubnetDefaultFragment,
+  GetBuilderSubnet,
+  GetBuilderSubnetQuery,
+  GetBuilderSubnetQueryVariables,
 } from '@/types/graphql'
 
 import { InputField, DatetimeField, TextareaField } from '@/fields'
@@ -224,7 +225,7 @@ const currentClient = computed(() => {
 
 const { data: loadedData } = useLoad<{
   minimalWithdrawLockPeriod: number
-  buildersProject: GetBuildersProjectQuery['buildersProject'] | null
+  buildersProject: BuilderSubnetDefaultFragment | null
 }>(
   {
     minimalWithdrawLockPeriod: 0,
@@ -236,10 +237,10 @@ const { data: loadedData } = useLoad<{
 
     const [{ data: buildersProjectsResponse }] = await Promise.all([
       currentClient.value.query<
-        GetBuildersProjectQuery,
-        GetBuildersProjectQueryVariables
+        GetBuilderSubnetQuery,
+        GetBuilderSubnetQueryVariables
       >({
-        query: GetBuildersProject,
+        query: GetBuilderSubnet,
         fetchPolicy: 'network-only',
         variables: {
           id: route.params.id as string,
@@ -249,7 +250,7 @@ const { data: loadedData } = useLoad<{
 
     return {
       minimalWithdrawLockPeriod: minWithdrawLockPeriod.toNumber(),
-      buildersProject: buildersProjectsResponse.buildersProject,
+      buildersProject: buildersProjectsResponse.builderSubnet ?? null,
     }
   },
   {
@@ -277,18 +278,16 @@ const form = reactive<{
   description: string
 }>({
   name: loadedData.value.buildersProject?.name ?? '',
-  address: '',
-  website: '',
-  imageUrl: '',
+  address: loadedData.value.buildersProject?.owner ?? '',
+  website: loadedData.value.buildersProject?.website ?? '',
+  imageUrl: loadedData.value.buildersProject?.image ?? '',
 
   startAt: loadedData.value.buildersProject?.startsAt ?? '',
   lockPeriodAfterStake:
-    loadedData.value.buildersProject?.withdrawLockPeriodAfterDeposit ?? '',
-  depositAmount: formatEther(
-    loadedData.value.buildersProject?.minimalDeposit ?? 0,
-  ),
-  claimLockEndTime: +loadedData.value.buildersProject?.claimLockEnd
-    ? loadedData.value.buildersProject?.claimLockEnd
+    loadedData.value.buildersProject?.withdrawLockPeriodAfterStake ?? '',
+  depositAmount: formatEther(loadedData.value.buildersProject?.minStake ?? 0),
+  claimLockEndTime: +loadedData.value.buildersProject?.minClaimLockEnd
+    ? loadedData.value.buildersProject?.minClaimLockEnd
     : '',
 
   emissionsFee: '',
@@ -300,16 +299,16 @@ const form = reactive<{
 
 watch(loadedData, val => {
   form.name = val.buildersProject?.name ?? ''
-  form.address = val.buildersProject?.admin ?? ''
+  form.address = val.buildersProject?.owner ?? ''
   form.website = val.buildersProject?.website ?? ''
-  form.imageUrl = val.buildersProject?.imageUrl ?? ''
+  form.imageUrl = val.buildersProject?.image ?? ''
 
   form.startAt = val.buildersProject?.startsAt ?? ''
   form.lockPeriodAfterStake =
-    val.buildersProject?.withdrawLockPeriodAfterDeposit ?? ''
-  form.depositAmount = formatEther(val.buildersProject?.minimalDeposit ?? 0)
-  form.claimLockEndTime = +val.buildersProject?.claimLockEnd
-    ? val.buildersProject?.claimLockEnd
+    val.buildersProject?.withdrawLockPeriodAfterStake ?? ''
+  form.depositAmount = formatEther(val.buildersProject?.minStake ?? 0)
+  form.claimLockEndTime = +val.buildersProject?.minClaimLockEnd
+    ? val.buildersProject?.minClaimLockEnd
     : ''
 })
 

@@ -27,28 +27,28 @@
       <sorting-icon-button
         class="justify-self-end"
         :label="$t('builders-table.min-deposit-th')"
-        :order-by="BuildersProject_OrderBy.MinimalDeposit"
+        :order-by="BuilderSubnet_OrderBy.MinStake"
         v-model:order-by-model="orderByModel"
         v-model:order-direction-model="orderDirectionModel"
       />
       <sorting-icon-button
         class="justify-self-end"
         :label="$t('builders-table.total-staked-th')"
-        :order-by="BuildersProject_OrderBy.TotalStaked"
+        :order-by="BuilderSubnet_OrderBy.TotalStaked"
         v-model:order-by-model="orderByModel"
         v-model:order-direction-model="orderDirectionModel"
       />
       <sorting-icon-button
         class="justify-self-end"
         :label="$t('builders-table.withdraw-lock-period-th')"
-        :order-by="BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit"
+        :order-by="BuilderSubnet_OrderBy.WithdrawLockPeriodAfterStake"
         v-model:order-by-model="orderByModel"
         v-model:order-direction-model="orderDirectionModel"
       />
     </div>
     <!-- FIXME: el.chain: inserted in BuildersList.vue in loadFn -->
     <builders-table-item
-      v-for="el in buildersProjects"
+      v-for="el in builderSubnets"
       :key="el.id"
       :builder-project="el"
     />
@@ -57,18 +57,18 @@
 
 <script setup lang="ts">
 import BuildersTableItem from './components/BuildersTableItem.vue'
-import { BuildersProject_OrderBy } from '@/types/graphql'
 import { cn } from '@/theme/utils'
 import SortingIconButton from './components/SortingIconButton.vue'
 import { AdditionalBuildersOrderBy } from '@/enums'
 import { BuilderProject } from '@/types'
+import { BuilderSubnet_OrderBy } from '@/types/graphql'
 
 const orderByModel = defineModel<string>('orderByModel')
 const orderDirectionModel = defineModel<string>('orderDirectionModel')
 
 withDefaults(
   defineProps<{
-    buildersProjects: BuilderProject[]
+    builderSubnets: BuilderProject[]
   }>(),
   {},
 )

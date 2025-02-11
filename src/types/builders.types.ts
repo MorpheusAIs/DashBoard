@@ -1,4 +1,6 @@
 import { EthereumChains } from '@config'
-import { BuilderProjectFragment } from '@/types/graphql'
+import { BuilderSubnetDefaultFragment } from '@/types/graphql'
 
-export type BuilderProject = { chain?: EthereumChains } & BuilderProjectFragment
+export type BuilderProject = {
+  chain?: EthereumChains
+} & BuilderSubnetDefaultFragment

@@ -129,10 +129,10 @@ import {
 } from '@/helpers'
 import { formatEther, parseUnits } from '@/utils'
 import {
-  GetBuildersProjectQuery,
-  GetUserAccountBuildersProject,
-  GetUserAccountBuildersProjectQuery,
-  GetUserAccountBuildersProjectQueryVariables,
+  BuilderSubnetDefaultFragment,
+  GetUserAccountBuilderSubnets,
+  GetUserAccountBuilderSubnetsQuery,
+  GetUserAccountBuilderSubnetsQueryVariables,
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT } from '@/const'
@@ -141,7 +141,7 @@ import { config, getEthereumChainsName } from '@config'
 
 const props = withDefaults(
   defineProps<{
-    builderProject: GetBuildersProjectQuery['buildersProject']
+    builderSubnet: BuilderSubnetDefaultFragment
     isShown?: boolean
     chain?: string
   }>(),
@@ -168,28 +168,28 @@ const {
 
 const { client: buildersApolloClient } = useSecondApolloClient()
 
-const { data: buildersProjectUserAccount } = useLoad<
-  GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+const { data: buildersSubnetUserAccount } = useLoad<
+  GetUserAccountBuilderSubnetsQuery['builderUsers'][0]
 >(
-  {} as GetUserAccountBuildersProjectQuery['buildersUsers'][0],
+  {} as GetUserAccountBuilderSubnetsQuery['builderUsers'][0],
   async () => {
     if (!props.isShown)
-      return {} as GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+      return {} as GetUserAccountBuilderSubnetsQuery['builderUsers'][0]
 
-    const { data: userAccountInProject } =
+    const { data: userAccountInSubnet } =
       await buildersApolloClient.value.query<
-        GetUserAccountBuildersProjectQuery,
-        GetUserAccountBuildersProjectQueryVariables
+        GetUserAccountBuilderSubnetsQuery,
+        GetUserAccountBuilderSubnetsQueryVariables
       >({
-        query: GetUserAccountBuildersProject,
+        query: GetUserAccountBuilderSubnets,
         fetchPolicy: 'network-only',
         variables: {
           address: provider.value.selectedAddress,
-          project_id: props.builderProject?.id,
+          builder_subnet_id: props.builderSubnet?.id,
         },
       })
 
-    return userAccountInProject.buildersUsers?.[0]
+    return userAccountInSubnet.builderUsers?.[0]
   },
   {
     reloadArgs: [() => props.isShown, () => provider.value.selectedAddress],
@@ -223,27 +223,27 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 const builderDetails = computed(() => [
   {
     label: t('builders-stake-modal.builder-lbl'),
-    value: props.builderProject?.name,
+    value: props.builderSubnet?.name,
   },
   {
     label: t('builders-stake-modal.min-deposit-lbl'),
-    value: `${formatEther(props.builderProject?.minimalDeposit)} MOR`,
+    value: `${formatEther(props.builderSubnet?.minStake)} MOR`,
   },
   {
     label: t('builders-stake-modal.lock-period-lbl'),
-    value: humanizeTime(+props.builderProject?.withdrawLockPeriodAfterDeposit),
+    value: humanizeTime(+props.builderSubnet?.withdrawLockPeriodAfterStake),
   },
   {
     label: t('builders-stake-modal.new-stake-amount-lbl'),
-    value: `${+formatEther(buildersProjectUserAccount.value?.staked || 0) + +form.stakeAmount} MOR`,
+    value: `${+formatEther(buildersSubnetUserAccount.value?.staked || 0) + +form.stakeAmount} MOR`,
   },
   {
     label: t('builders-stake-modal.new-unlock-date-lbl'),
-    value: props.builderProject
+    value: props.builderSubnet
       ? time()
           .add(
             duration(
-              +props.builderProject?.withdrawLockPeriodAfterDeposit,
+              +props.builderSubnet?.withdrawLockPeriodAfterStake,
               'seconds',
             ).asSeconds,
             'seconds',
@@ -292,7 +292,7 @@ const submit = async () => {
     }
 
     const tx = await buildersContract.value.signerBased.value.deposit(
-      props.builderProject?.id,
+      props.builderSubnet?.id,
       parseUnits(form.stakeAmount),
     )
 
