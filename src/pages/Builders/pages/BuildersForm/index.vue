@@ -4,59 +4,95 @@
     class="mx-auto flex w-full max-w-[1030px] flex-col"
   >
     <div class="mx-auto mb-12 flex flex-col gap-6 text-center">
-      <h2 class="typography-h1">Create Your Subnet</h2>
+      <h2 class="typography-h1">
+        {{
+          !!buildersProject
+            ? $t('builders-form.update-title')
+            : $t('builders-form.create-title')
+        }}
+      </h2>
 
       <span class="typography-body3">
-        Complete this form to become a Morpheus builder and launch your Subnet.
+        {{ $t('builders-form.subtitle') }}
       </span>
     </div>
 
     <div class="flex flex-col gap-6">
       <app-gradient-border-card class="grid grid-cols-2 gap-6 p-10">
-        <span class="col-span-2 mb-2 typography-h2"> Subnet information </span>
+        <span class="col-span-2 mb-2 typography-h2">
+          {{ $t('builders-form.section-1-title') }}
+        </span>
 
         <input-field
           v-model="form.name"
-          :placeholder="$t('builder-form-modal.name-plh')"
-          :note="$t('builder-form-modal.name-note')"
+          :placeholder="$t('builders-form.name-plh')"
+          :note="$t('builders-form.name-note')"
           :error-message="getFieldErrorMessage('name')"
           @blur="touchField('name')"
           :disabled="isSubmitting || !!buildersProject"
         />
         <input-field
-          v-model="form.depositAmount"
-          :placeholder="$t('builder-form-modal.min-deposit-plh')"
-          :note="$t('builder-form-modal.min-deposit-note')"
-          :error-message="getFieldErrorMessage('depositAmount')"
-          @blur="touchField('depositAmount')"
+          v-model="form.address"
+          :placeholder="$t('builders-form.address-plh')"
+          :note="$t('builders-form.address-note')"
+          :error-message="getFieldErrorMessage('address')"
+          @blur="touchField('address')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
+        <input-field
+          v-model="form.website"
+          :placeholder="$t('builders-form.website-plh')"
+          :note="$t('builders-form.website-note')"
+          :error-message="getFieldErrorMessage('website')"
+          @blur="touchField('website')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+
+        <input-field
+          v-model="form.imageUrl"
+          :placeholder="$t('builders-form.image-url-plh')"
+          :note="$t('builders-form.image-url-note')"
+          :error-message="getFieldErrorMessage('imageUrl')"
+          @blur="touchField('imageUrl')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+      </app-gradient-border-card>
+
+      <app-gradient-border-card class="grid grid-cols-2 gap-6 p-10">
+        <span class="col-span-2 mb-2 typography-h2">
+          {{ $t('builders-form.section-2-title') }}
+        </span>
+
+        <datetime-field
+          v-model="form.startAt"
+          :placeholder="$t('builders-form.start-at-plh')"
+          :note="$t('builders-form.start-at-note')"
+          :error-message="getFieldErrorMessage('startAt')"
+          @blur="touchField('startAt')"
           :disabled="isSubmitting"
         />
         <input-field
           v-model="form.lockPeriodAfterStake"
-          :placeholder="$t('builder-form-modal.lock-period-after-stake-plh')"
-          :note="$t('builder-form-modal.lock-period-after-stake-note')"
+          :placeholder="$t('builders-form.lock-period-after-stake-plh')"
+          :note="$t('builders-form.lock-period-after-stake-note')"
           :error-message="getFieldErrorMessage('lockPeriodAfterStake')"
           @blur="touchField('lockPeriodAfterStake')"
           :disabled="isSubmitting"
           type="number"
         />
-        <datetime-field
-          v-model="form.startAt"
-          :placeholder="$t('builder-form-modal.start-at-plh')"
-          :note="$t('builder-form-modal.start-at-note')"
-          :error-message="getFieldErrorMessage('startAt')"
-          @blur="touchField('startAt')"
+        <input-field
+          v-model="form.depositAmount"
+          :placeholder="$t('builders-form.min-deposit-plh')"
+          :note="$t('builders-form.min-deposit-note')"
+          :error-message="getFieldErrorMessage('depositAmount')"
+          @blur="touchField('depositAmount')"
           :disabled="isSubmitting"
         />
-      </app-gradient-border-card>
-
-      <app-gradient-border-card class="grid grid-cols-2 gap-6 p-10">
-        <span class="col-span-2 mb-2 typography-h2"> Stake and Claim </span>
-
         <datetime-field
           v-model="form.claimLockEndTime"
-          :placeholder="$t('builder-form-modal.claim-lock-end-plh')"
-          :note="$t('builder-form-modal.claim-lock-end-note')"
+          :placeholder="$t('builders-form.claim-lock-end-plh')"
+          :note="$t('builders-form.claim-lock-end-note')"
           :error-message="getFieldErrorMessage('claimLockEndTime')"
           @blur="touchField('claimLockEndTime')"
           :disabled="isSubmitting"
@@ -64,46 +100,77 @@
       </app-gradient-border-card>
 
       <app-gradient-border-card class="grid grid-cols-2 gap-6 p-10">
-        <span class="col-span-2 mb-2 typography-h2"> Stake and Claim </span>
+        <span class="col-span-2 mb-2 typography-h2">
+          {{ $t('builders-form.section-3-title') }}
+        </span>
 
-        <datetime-field
-          v-model="form.claimLockEndTime"
-          :placeholder="$t('builder-form-modal.claim-lock-end-plh')"
-          :note="$t('builder-form-modal.claim-lock-end-note')"
-          :error-message="getFieldErrorMessage('claimLockEndTime')"
-          @blur="touchField('claimLockEndTime')"
+        <input-field
+          v-model="form.emissionsFee"
+          :placeholder="$t('builders-form.emissions-fee-plh')"
+          :note="$t('builders-form.emissions-fee-note')"
+          :error-message="getFieldErrorMessage('emissionsFee')"
+          @blur="touchField('emissionsFee')"
+          :disabled="isSubmitting"
+        />
+        <input-field
+          v-model="form.treasuryFee"
+          :placeholder="$t('builders-form.treasury-fee-plh')"
+          :note="$t('builders-form.treasury-fee-note')"
+          :error-message="getFieldErrorMessage('treasuryFee')"
+          @blur="touchField('treasuryFee')"
           :disabled="isSubmitting"
         />
       </app-gradient-border-card>
 
       <app-gradient-border-card class="grid grid-cols-2 gap-6 p-10">
-        <span class="col-span-2 mb-2 typography-h2"> Stake and Claim </span>
+        <div class="col-span-2 flex gap-5">
+          <span class="mb-2 text-textSecondaryMain typography-h2">
+            {{ $t('builders-form.section-4-title') }}
+          </span>
+          <span
+            class="col-span-2 mb-2 !font-light text-[#CCCCCC] typography-h2"
+          >
+            {{ $t('builders-form.optional-mark') }}
+          </span>
+        </div>
 
-        <datetime-field
-          v-model="form.claimLockEndTime"
-          :placeholder="$t('builder-form-modal.claim-lock-end-plh')"
-          :note="$t('builder-form-modal.claim-lock-end-note')"
-          :error-message="getFieldErrorMessage('claimLockEndTime')"
-          @blur="touchField('claimLockEndTime')"
-          :disabled="isSubmitting"
+        <input-field
+          class="col-span-2"
+          v-model="form.slug"
+          :placeholder="$t('builders-form.slug-plh')"
+          :note="$t('builders-form.slug-note')"
+          :error-message="getFieldErrorMessage('slug')"
+          @blur="touchField('slug')"
+          :disabled="isSubmitting || !!buildersProject"
+        />
+        <textarea-field
+          class="col-span-2"
+          v-model="form.description"
+          :placeholder="$t('builders-form.description-plh')"
+          :note="$t('builders-form.description-note')"
+          :error-message="getFieldErrorMessage('description')"
+          @blur="touchField('description')"
+          :disabled="isSubmitting || !!buildersProject"
         />
       </app-gradient-border-card>
     </div>
 
     <div class="mt-10 flex items-center justify-center gap-4">
       <app-button scheme="filled" color="secondary" :disabled="isSubmitting">
-        {{ $t('builder-form-modal.cancel-btn') }}
+        {{ $t('builders-form.cancel-btn') }}
       </app-button>
       <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
-        {{ $t('builder-form-modal.submit-btn') }}
+        {{ $t('builders-form.submit-btn') }}
       </app-button>
     </div>
   </form>
 </template>
 
 <script setup lang="ts">
-import { AppButton, AppGradientBorderCard } from '@/common'
-import { InputField, DatetimeField } from '@/fields'
+import { AppGradientBorderCard, AppButton } from '@/common'
+import { GetBuildersProjectQuery } from '@/types/graphql'
+
+import { InputField, DatetimeField, TextareaField } from '@/fields'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import {
   bus,
@@ -114,16 +181,19 @@ import {
 } from '@/helpers'
 import { computed, reactive, ref } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
-import { minValue, required } from '@/validators'
-import { GetBuildersProjectQuery } from '@/types/graphql'
+import { maxLength, minValue, required, validUrl } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
 import { helpers } from '@vuelidate/validators'
 import { time } from '@distributedlab/tools'
 import { DOT_TIME_FORMAT } from '@/const'
+import { useRoute, useRouter } from 'vue-router'
 
 defineOptions({
   inheritAttrs: false,
 })
+
+const route = useRoute()
+const router = useRouter()
 
 const props = withDefaults(
   defineProps<{
@@ -158,19 +228,39 @@ const isSubmitting = ref(false)
 
 const form = reactive<{
   name: string
-  depositAmount: string
-  lockPeriodAfterStake: string
+  address: string
+  website: string
+  imageUrl: string
+
   startAt: string
+  lockPeriodAfterStake: string
+  depositAmount: string
   claimLockEndTime: string
+
+  emissionsFee: string
+  treasuryFee: string
+
+  slug: string
+  description: string
 }>({
   name: props.buildersProject?.name ?? '',
-  depositAmount: formatEther(props.buildersProject?.minimalDeposit ?? 0),
+  address: '',
+  website: '',
+  imageUrl: '',
+
+  startAt: props.buildersProject?.startsAt ?? '',
   lockPeriodAfterStake:
     props.buildersProject?.withdrawLockPeriodAfterDeposit ?? '',
-  startAt: props.buildersProject?.startsAt ?? '',
+  depositAmount: formatEther(props.buildersProject?.minimalDeposit ?? 0),
   claimLockEndTime: +props.buildersProject?.claimLockEnd
     ? props.buildersProject?.claimLockEnd
     : '',
+
+  emissionsFee: '',
+  treasuryFee: '',
+
+  slug: '',
+  description: '',
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -178,25 +268,33 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     form,
     computed(() => ({
       name: { required },
-      depositAmount: { required },
+      address: { required },
+      website: { validUrl },
+      imageUrl: { validUrl },
+
+      startAt: { required },
       lockPeriodAfterStake: {
         required,
         minValue: minValue(minimalWithdrawLockPeriod.value),
       },
-      startAt: { required },
+      depositAmount: { required },
       claimLockEndTime: {
         required,
         minValue: helpers.withMessage(
           form.startAt
-            ? t('builder-form-modal.min-end-time-validation-err-msg', {
+            ? t('builders-form.min-end-time-validation-err-msg', {
                 time: time(+form.startAt).format(DOT_TIME_FORMAT),
               })
-            : t(
-                'builder-form-modal.min-end-time-validation-need-start-time-msg',
-              ),
+            : t('builders-form.min-end-time-validation-need-start-time-msg'),
           minValue(Number(form.startAt)),
         ),
       },
+
+      emissionsFee: { required },
+      treasuryFee: { required },
+
+      slug: { maxLength: maxLength(120) },
+      description: { maxLength: maxLength(800) },
     })),
   )
 
@@ -256,7 +354,7 @@ const submit = async () => {
 
     bus.emit(
       BUS_EVENTS.success,
-      t('builder-form-modal.confirm-success-msg', { explorerTxUrl }),
+      t('builders-form.confirm-success-msg', { explorerTxUrl }),
     )
 
     emit('submitted', poolId)

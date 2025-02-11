@@ -195,9 +195,9 @@ import {
 } from '@/types/graphql'
 import { provide, ref, computed, watch } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
-import { ROUTE_NAMES, AdditionalBuildersOrderBy } from '@/enums'
+import { AdditionalBuildersOrderBy } from '@/enums'
 import { useLoad } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
@@ -224,7 +224,6 @@ defineOptions({
 })
 
 const route = useRoute()
-const router = useRouter()
 
 const isDropMenuShown = ref(false)
 

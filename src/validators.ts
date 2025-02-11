@@ -7,6 +7,7 @@ import {
   minValue as _minValue,
   maxValue as _maxValue,
   required as _required,
+  maxLength as _maxLength,
 } from '@vuelidate/validators'
 import { type ValidationRule } from '@vuelidate/core'
 import { createI18nMessage, type MessageProps } from '@vuelidate/validators'
@@ -71,4 +72,17 @@ export const minEther = (min: BigNumber): ValidationRule => ({
   },
   $message: () =>
     t('validations.field-error_minEther', { min: formatUnits(min, 18) }),
+})
+
+export const maxLength = (length: number): ValidationRule =>
+  <ValidationRule>withI18nMessage(_maxLength(length))
+
+export const validUrl = <ValidationRule>withI18nMessage(value => {
+  try {
+    const url = new URL(value)
+
+    return Boolean(url.origin && url.pathname)
+  } catch (error) {
+    return false
+  }
 })

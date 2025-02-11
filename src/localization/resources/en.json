@@ -229,7 +229,9 @@
     "field-error_maxEther": "Insufficient amount of tokens",
     "field-error_minEther": "Field must be greater than or equal to {min}",
     "field-error_minValue": "The entered value is less than the minimum value {min}",
-    "field-error_maxValue": "Amount should be less than or equal to {max}"
+    "field-error_maxValue": "Amount should be less than or equal to {max}",
+    "field-error_maxLength": "Field should not exceed the maximum length {max}",
+    "field-error_validUrl": "Field must be a valid URL"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",
@@ -800,35 +802,50 @@
     "session-rights-lbl": "Session Rights",
     "marketplace-rights-lbl": "Marketplace Rights"
   },
-  "builder-form-modal": {
-    "create-title": "Become a Builder",
+  "builders-form": {
+    "create-title": "Create Your Subnet",
     "update-title": "Update {name}",
-    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
-    "name-plh": "Builder name",
+    "subtitle": "Complete this form to become a Morpheus builder and launch your Subnet.",
+
+    "section-1-title": "Subnet information",
+    "name-plh": "Subnet name",
     "name-note": "What is the name of your project? This is how users will find your project.",
-
-    "slug-plh": "Builder Slug",
-    "slug-note": "3-5 words describing what your project does.",
-    "staking-reward-plh": "Staking Reward",
-    "staking-reward-note": "2-3 sentences describing what you will give users for staking MOR to your project. Users will see this when searching the list of Morpheus builders.",
-    "website-plh": "Builder Website",
+    "address-plh": "Builder address",
+    "address-note": "This address will be able to edit information about the Subnet",
+    "website-plh": "Builder Website (optional)",
     "website-note": "Add a link to a website or other external location where stakers can access your project, learn more information, etc.",
-    "description-plh": "Builder Description",
-    "description-note": "A longer description of what your project does and why users should support your project. You should include a more detailed outline of all the benefits or features that users will receive when staking MOR to your project.",
-    "logo-plh": "Drag & drop",
-    "logo-note": "Upload a logo for your project. Minimum size: 128 x 128. Maximum file size: 2Mb. Supported file types: JPEG, PNG.",
+    "image-url-plh": "Image URL (optional)",
+    "image-url-note": "Link to the Subnet image.  Example: “https://…”",
 
-    "min-deposit-plh": "Minimum deposit",
-    "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
-    "lock-period-after-stake-plh": "Withdraw lock period after stake, seconds",
-    "lock-period-after-stake-not": "After each stake, the user will not be able to withdraw their tokens for that period",
-    "start-at-plh": "Start time",
-    "start-at-note": "It will be possible to change the Builder settings up to this point. The stake will not be available until this time",
-    "claim-lock-end-plh": "Claim lock ends",
-    "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
-    "lock-period-after-stake-note": "After a user stakes to your project, this is how long they will need to wait before they can unstake. NOTE: each time a user stakes to your project, this lock period will reset.",
+    "section-2-title": "Stake and Claim",
+    "start-at-plh": "Stake start timestamp",
+    "start-at-note": "Example: “01.01.2030 01:00 PM”",
+    "lock-period-after-stake-plh": "Withdraw lock period after the stake",
+    "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time. It should be longer than 1 day",
+    "min-deposit-plh": "Minimal stake",
+    "min-deposit-note": "Example: “0.001 MOR”",
+    "claim-lock-end-plh": "Subnet claim lock end timestamp",
+    "claim-lock-end-note": "At this point, the claim will open. Example: “05.05.2030 02:00 PM”",
+
+    "section-3-title": "Fee",
+    "emissions-fee-plh": "% of the MOR Emissions the Subnet receives",
+    "emissions-fee-note": "Example: “100%”",
+    "treasury-fee-plh": "Subnet emission treasury",
+    "treasury-fee-note": "% of the MOR emissions that the Subnet receives will be transferred to the current address. Example: '0xabc…123'",
+
+    "section-4-title": "Subnet Description",
+    "slug-plh": "Slug",
+    "slug-note": "Short Subnet description (max 120 characters)",
+    "description-plh": "Builder Description",
+    "description-note": "Detailed Subnet description (up to 800 characters)",
+
+    "optional-mark": "(Optional)",
+
+    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
+
     "min-end-time-validation-err-msg": "Should be more than {time}",
     "min-end-time-validation-need-start-time-msg": "Enter start time first"
   },
