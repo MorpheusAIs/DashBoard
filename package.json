@@ -26,6 +26,8 @@
     "@distributedlab/tools": "^1.0.0-rc.17",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
+    "@reown/appkit": "^1.6.5",
+    "@reown/appkit-adapter-ethers5": "^1.6.5",
     "@uniswap/sdk-core": "^5.8.0",
     "@uniswap/smart-order-router": "^4.6.0",
     "@uniswap/v2-core": "^1.0.1",
