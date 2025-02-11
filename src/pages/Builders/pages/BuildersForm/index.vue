@@ -6,7 +6,7 @@
     <div class="mx-auto mb-12 flex flex-col gap-6 text-center">
       <h2 class="typography-h1">
         {{
-          !!buildersProject
+          !!loadedData.buildersProject
             ? $t('builders-form.update-title')
             : $t('builders-form.create-title')
         }}
@@ -29,7 +29,7 @@
           :note="$t('builders-form.name-note')"
           :error-message="getFieldErrorMessage('name')"
           @blur="touchField('name')"
-          :disabled="isSubmitting || !!buildersProject"
+          :disabled="isSubmitting || !!loadedData.buildersProject"
         />
         <input-field
           v-model="form.address"
@@ -37,7 +37,7 @@
           :note="$t('builders-form.address-note')"
           :error-message="getFieldErrorMessage('address')"
           @blur="touchField('address')"
-          :disabled="isSubmitting || !!buildersProject"
+          :disabled="isSubmitting || !!loadedData.buildersProject"
         />
 
         <input-field
@@ -46,7 +46,7 @@
           :note="$t('builders-form.website-note')"
           :error-message="getFieldErrorMessage('website')"
           @blur="touchField('website')"
-          :disabled="isSubmitting || !!buildersProject"
+          :disabled="isSubmitting || !!loadedData.buildersProject"
         />
 
         <input-field
@@ -55,7 +55,7 @@
           :note="$t('builders-form.image-url-note')"
           :error-message="getFieldErrorMessage('imageUrl')"
           @blur="touchField('imageUrl')"
-          :disabled="isSubmitting || !!buildersProject"
+          :disabled="isSubmitting || !!loadedData.buildersProject"
         />
       </app-gradient-border-card>
 
@@ -141,7 +141,7 @@
           :note="$t('builders-form.slug-note')"
           :error-message="getFieldErrorMessage('slug')"
           @blur="touchField('slug')"
-          :disabled="isSubmitting || !!buildersProject"
+          :disabled="isSubmitting || !!loadedData.buildersProject"
         />
         <textarea-field
           class="col-span-2"
@@ -150,13 +150,18 @@
           :note="$t('builders-form.description-note')"
           :error-message="getFieldErrorMessage('description')"
           @blur="touchField('description')"
-          :disabled="isSubmitting || !!buildersProject"
+          :disabled="isSubmitting || !!loadedData.buildersProject"
         />
       </app-gradient-border-card>
     </div>
 
     <div class="mt-10 flex items-center justify-center gap-4">
-      <app-button scheme="filled" color="secondary" :disabled="isSubmitting">
+      <app-button
+        scheme="filled"
+        color="secondary"
+        :disabled="isSubmitting"
+        @click="$router.back()"
+      >
         {{ $t('builders-form.cancel-btn') }}
       </app-button>
       <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
@@ -168,7 +173,11 @@
 
 <script setup lang="ts">
 import { AppGradientBorderCard, AppButton } from '@/common'
-import { GetBuildersProjectQuery } from '@/types/graphql'
+import {
+  GetBuildersProject,
+  GetBuildersProjectQuery,
+  GetBuildersProjectQueryVariables,
+} from '@/types/graphql'
 
 import { InputField, DatetimeField, TextareaField } from '@/fields'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
@@ -179,7 +188,7 @@ import {
   getEthExplorerTxUrl,
   sleep,
 } from '@/helpers'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { maxLength, minValue, required, validUrl } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
@@ -187,6 +196,8 @@ import { helpers } from '@vuelidate/validators'
 import { time } from '@distributedlab/tools'
 import { DOT_TIME_FORMAT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
+import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
+import { ROUTE_NAMES } from '@/enums'
 
 defineOptions({
   inheritAttrs: false,
@@ -195,33 +206,55 @@ defineOptions({
 const route = useRoute()
 const router = useRouter()
 
-const props = withDefaults(
-  defineProps<{
-    buildersProject?: GetBuildersProjectQuery['buildersProject']
-  }>(),
-  {
-    buildersProject: null,
-  },
-)
-
-const emit = defineEmits<{
-  (e: 'submitted', poolId: string): void
-}>()
-
 const { t } = useI18n()
 
 const { provider, buildersContract, buildersContractDetails } = storeToRefs(
   useWeb3ProvidersStore(),
 )
 
-const { data: minimalWithdrawLockPeriod } = useLoad(
-  0,
-  async () => {
-    return (
-      await buildersContract.value.providerBased.value.minimalWithdrawLockPeriod()
-    ).toNumber()
+const { client: buildersApolloClient, clients } = useSecondApolloClient()
+
+const currentClient = computed(() => {
+  const client = Object.entries(clients.value).find(
+    item => item[0] === route.query.chain,
+  )?.[1]
+
+  return client || buildersApolloClient.value
+})
+
+const { data: loadedData } = useLoad<{
+  minimalWithdrawLockPeriod: number
+  buildersProject: GetBuildersProjectQuery['buildersProject'] | null
+}>(
+  {
+    minimalWithdrawLockPeriod: 0,
+    buildersProject: null,
   },
-  {},
+  async () => {
+    const minWithdrawLockPeriod =
+      await buildersContract.value.providerBased.value.minimalWithdrawLockPeriod()
+
+    const [{ data: buildersProjectsResponse }] = await Promise.all([
+      currentClient.value.query<
+        GetBuildersProjectQuery,
+        GetBuildersProjectQueryVariables
+      >({
+        query: GetBuildersProject,
+        fetchPolicy: 'network-only',
+        variables: {
+          id: route.params.id as string,
+        },
+      }),
+    ])
+
+    return {
+      minimalWithdrawLockPeriod: minWithdrawLockPeriod.toNumber(),
+      buildersProject: buildersProjectsResponse.buildersProject,
+    }
+  },
+  {
+    reloadArgs: [route],
+  },
 )
 
 const isSubmitting = ref(false)
@@ -243,17 +276,19 @@ const form = reactive<{
   slug: string
   description: string
 }>({
-  name: props.buildersProject?.name ?? '',
+  name: loadedData.value.buildersProject?.name ?? '',
   address: '',
   website: '',
   imageUrl: '',
 
-  startAt: props.buildersProject?.startsAt ?? '',
+  startAt: loadedData.value.buildersProject?.startsAt ?? '',
   lockPeriodAfterStake:
-    props.buildersProject?.withdrawLockPeriodAfterDeposit ?? '',
-  depositAmount: formatEther(props.buildersProject?.minimalDeposit ?? 0),
-  claimLockEndTime: +props.buildersProject?.claimLockEnd
-    ? props.buildersProject?.claimLockEnd
+    loadedData.value.buildersProject?.withdrawLockPeriodAfterDeposit ?? '',
+  depositAmount: formatEther(
+    loadedData.value.buildersProject?.minimalDeposit ?? 0,
+  ),
+  claimLockEndTime: +loadedData.value.buildersProject?.claimLockEnd
+    ? loadedData.value.buildersProject?.claimLockEnd
     : '',
 
   emissionsFee: '',
@@ -261,6 +296,21 @@ const form = reactive<{
 
   slug: '',
   description: '',
+})
+
+watch(loadedData, val => {
+  form.name = val.buildersProject?.name ?? ''
+  form.address = val.buildersProject?.admin ?? ''
+  form.website = val.buildersProject?.website ?? ''
+  form.imageUrl = val.buildersProject?.imageUrl ?? ''
+
+  form.startAt = val.buildersProject?.startsAt ?? ''
+  form.lockPeriodAfterStake =
+    val.buildersProject?.withdrawLockPeriodAfterDeposit ?? ''
+  form.depositAmount = formatEther(val.buildersProject?.minimalDeposit ?? 0)
+  form.claimLockEndTime = +val.buildersProject?.claimLockEnd
+    ? val.buildersProject?.claimLockEnd
+    : ''
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -275,7 +325,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       startAt: { required },
       lockPeriodAfterStake: {
         required,
-        minValue: minValue(minimalWithdrawLockPeriod.value),
+        minValue: minValue(loadedData.value.minimalWithdrawLockPeriod),
       },
       depositAmount: { required },
       claimLockEndTime: {
@@ -319,7 +369,7 @@ const submit = async () => {
       await sleep(1_000)
     }
 
-    const tx = props.buildersProject
+    const tx = loadedData.value.buildersProject
       ? await buildersContract.value?.signerBased.value.editBuilderPool({
           name: form.name,
           admin: provider.value.selectedAddress,
@@ -357,7 +407,13 @@ const submit = async () => {
       t('builders-form.confirm-success-msg', { explorerTxUrl }),
     )
 
-    emit('submitted', poolId)
+    await router.push({
+      name: ROUTE_NAMES.appBuildersItem,
+      params: {
+        id: loadedData.value.buildersProject?.id ?? poolId,
+      },
+    })
+
     clearForm()
   } catch (error) {
     ErrorHandler.process(error)

@@ -61,7 +61,12 @@
             <button
               v-if="isUserAccountAdmin"
               class="flex items-center gap-2"
-              @click="isEditModalShown = true"
+              @click="
+                $router.push({
+                  name: $routes.appBuildersFormUpdate,
+                  params: { id: buildersData.buildersProject?.id },
+                })
+              "
               :disabled="
                 time(+buildersData.buildersProject?.startsAt)
                   .subtract(editPoolDeadline?.toNumber() ?? 0, 'seconds')
@@ -415,12 +420,6 @@
     :builders-project-user-account="buildersData.buildersProjectUserAccount"
     @submitted="handleWithdrawalSubmitted"
   />
-  <builder-form-modal
-    v-if="buildersData.buildersProject"
-    v-model:is-shown="isEditModalShown"
-    :builders-project="buildersData.buildersProject"
-    @submitted="handleBuilderPoolUpdated"
-  />
   <builders-stake-modal
     v-model:is-shown="isStakeModalShown"
     v-if="buildersData.buildersProject"
@@ -470,7 +469,6 @@ import { DEFAULT_PAGE_LIMIT, DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { cn } from '@/theme/utils'
 import { useI18n, useLoad } from '@/composables'
-import BuilderFormModal from '@/pages/Builders/components/BuilderFormModal.vue'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
@@ -489,7 +487,6 @@ const { client: buildersApolloClient, clients } = useSecondApolloClient()
 const { t } = useI18n()
 
 const isWithdrawModalShown = ref(false)
-const isEditModalShown = ref(false)
 const isStakeModalShown = ref(false)
 
 const isClaimSubmitting = ref(false)
@@ -672,12 +669,6 @@ const claim = async () => {
     ErrorHandler.process(error)
   }
   isClaimSubmitting.value = false
-}
-
-const handleBuilderPoolUpdated = async () => {
-  isEditModalShown.value = false
-  await sleep(1000)
-  await update()
 }
 
 onBeforeMount(() => {

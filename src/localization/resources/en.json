@@ -932,5 +932,11 @@
     "date-th": "Date",
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "empty-dash": "-"
+  },
+  "file-field": {
+    "drag-n-drop-lbl": "Drag & drop",
+    "drag-n-drop-divider": "or",
+    "choose-file-lbl": "Upload",
+    "change-file-btn": "Change"
   }
 }

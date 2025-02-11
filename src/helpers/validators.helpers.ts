@@ -2,7 +2,6 @@ import {
   required as _required,
   email as _email,
   minLength as _minLength,
-  maxLength as _maxLength,
   sameAs as _sameAs,
 } from '@vuelidate/validators'
 import { ValidationRule } from '@vuelidate/core'

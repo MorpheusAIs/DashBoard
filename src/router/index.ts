@@ -59,6 +59,12 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('@/pages/Builders/pages/BuildersItem/index.vue'),
       },
+      {
+        path: 'builders/:id/update',
+        name: ROUTE_NAMES.appBuildersFormUpdate,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersForm/index.vue'),
+      },
     ],
   },
   {
