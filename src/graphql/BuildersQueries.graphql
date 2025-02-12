@@ -4,6 +4,7 @@ fragment BuilderUserDefault on BuilderUser {
   staked
   claimed
   claimLockEnd
+  lastStake
 }
 
 fragment BuilderSubnetDefault on BuilderSubnet {
