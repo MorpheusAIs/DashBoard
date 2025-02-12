@@ -383,8 +383,8 @@ const submit = async () => {
     const tx = await builderSubnetsContract.value.signerBased.value.stake(
       props.builderSubnet?.id,
       provider.value.selectedAddress,
-      form.claimLockEnd ? Number(form.claimLockEnd) : 0,
       parseUnits(form.stakeAmount),
+      form.claimLockEnd ? Number(form.claimLockEnd) : 0,
     )
 
     const txReceipt = await tx.wait()

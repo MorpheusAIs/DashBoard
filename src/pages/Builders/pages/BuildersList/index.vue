@@ -554,7 +554,10 @@ const { data: listData, ...builderSubnetsState } =
         },
       })
 
-      const builderSubnets = data.builderSubnets
+      const builderSubnets = data.builderSubnets.map(el => ({
+        ...el,
+        chain: selectedChain.value,
+      }))
       const userAccountBuilderSubnets = data.builderUsers.map(
         el => el.builderSubnet,
       )

@@ -871,6 +871,20 @@
     "submit-btn": "Confirm",
     "stake-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
+  "builders-claim-modal": {
+    "modal-title": "Claim MOR",
+
+    "network-lbl": "Network",
+    "subnet-lbl": "Subnet",
+    "claim-receiver-lbl": "Claim Receiver",
+    "amount-lbl": "Amount",
+    "protocol-fee-lbl": "Protocol fee",
+    "emissions-lbl": "% of the MOR Emissions the Subnet receives",
+    "final-claim-lbl": "Final Claim",
+
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm"
+  },
   "builder-withdraw-modal": {
     "modal-title": "Withdraw MOR",
     "builder-lbl": "Builder",

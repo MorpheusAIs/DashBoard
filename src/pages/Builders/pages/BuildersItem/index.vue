@@ -301,7 +301,7 @@
 
                   <app-button
                     size="small"
-                    @click="claim"
+                    @click="isClaimModalShown = true"
                     :disabled="
                       isClaimSubmitting ||
                       !+buildersData.builderSubnetUserAccount?.staked ||
@@ -487,6 +487,13 @@
     :chain="provider.chainId"
     @staked="handleStaked"
   />
+  <claim-modal
+    v-if="buildersData.builderSubnet && buildersData.builderSubnetUserAccount"
+    v-model:is-shown="isClaimModalShown"
+    :builder-subnet="buildersData.builderSubnet"
+    :builder-user="buildersData.builderSubnetUserAccount"
+    :chain="chainDetails?.chainId"
+  />
 </template>
 
 <script setup lang="ts">
@@ -502,10 +509,6 @@ import {
 } from '@/common'
 import {
   abbrCenter,
-  bus,
-  BUS_EVENTS,
-  ErrorHandler,
-  getEthExplorerTxUrl,
   humanizeTime,
   sleep,
   beautifyLink,
@@ -534,40 +537,39 @@ import { time } from '@distributedlab/tools'
 import { DOT_TIME_FORMAT } from '@/const'
 import { useWeb3ProvidersStore } from '@/store'
 import { cn } from '@/theme/utils'
-import { useI18n, useLoad } from '@/composables'
+import { useLoad } from '@/composables'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { config, getEthereumChainsName } from '@config'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
+import ClaimModal from './components/ClaimModal.vue'
 
 defineOptions({
   inheritAttrs: true,
 })
 
 const route = useRoute()
-const {
-  provider,
-  builderSubnetsContract,
-  builderSubnetsContractDetails,
-  balances,
-} = storeToRefs(useWeb3ProvidersStore())
+const { provider, balances } = storeToRefs(useWeb3ProvidersStore())
 
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
-const { t } = useI18n()
-
 const isWithdrawModalShown = ref(false)
 const isStakeModalShown = ref(false)
+const isClaimModalShown = ref(true)
 
 const isClaimSubmitting = ref(false)
 
 const stakersCurrentPage = ref(1)
 
 const chainDetails = computed(() => {
-  if (!provider.value.chainId) return undefined
+  if (!route.query.chain || !provider.value.chainId) return undefined
 
-  return config.chainsMap[getEthereumChainsName(provider.value.chainId)]
+  return config.chainsMap[
+    getEthereumChainsName(
+      (route.query.chain as string) ?? provider.value.chainId,
+    )
+  ]
 })
 
 const currentClient = computed(() => {
@@ -699,43 +701,6 @@ const handleWithdrawalSubmitted = async () => {
   isWithdrawModalShown.value = false
   await sleep(1000)
   await update()
-}
-
-const claim = async () => {
-  isClaimSubmitting.value = true
-  try {
-    if (
-      provider.value.chainId !==
-      builderSubnetsContractDetails.value.targetChainId
-    ) {
-      provider.value.selectChain(
-        builderSubnetsContractDetails.value.targetChainId,
-      )
-      await sleep(1_000)
-    }
-
-    const tx = await builderSubnetsContract.value.signerBased.value.claim(
-      buildersData.value.builderSubnet?.id,
-      provider.value.selectedAddress,
-    )
-
-    const txReceipt = await tx.wait()
-
-    if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
-
-    const explorerTxUrl = getEthExplorerTxUrl(
-      builderSubnetsContractDetails.value.explorerUrl,
-      txReceipt.transactionHash,
-    )
-
-    bus.emit(
-      BUS_EVENTS.success,
-      t('builders-item.claim-success-msg', { explorerTxUrl }),
-    )
-  } catch (error) {
-    ErrorHandler.process(error)
-  }
-  isClaimSubmitting.value = false
 }
 
 onBeforeMount(() => {
