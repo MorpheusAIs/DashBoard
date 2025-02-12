@@ -203,7 +203,7 @@ import {
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { provide, ref, computed, watch } from 'vue'
+import { provide, ref, computed, watch, onBeforeMount } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -267,13 +267,23 @@ const chainOptions = computed(() => [
 ])
 const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
 
+onBeforeMount(() => {
+  if(
+    !(Object.values(
+      allowedForCurrentRouteChainsLimitedByNetworkType.value
+    ) as string[])
+    .includes(provider.value.chainId)) {
+      provider.value.selectChain(allowedForCurrentRouteChainsLimitedByNetworkType.value[0])
+  }
+})
+
 // FIXME: remove once provider multiple chain selecting is done
 watch(
   selectedChain,
   val => {
     if (!val) return
 
-    provider.value.switchChain(val)
+    provider.value.selectChain(val)
   },
   {
     immediate: true,
