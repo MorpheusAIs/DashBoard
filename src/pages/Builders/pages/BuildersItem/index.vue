@@ -401,7 +401,7 @@
             <template v-if="isStakersLoaded">
               <template v-if="stakers?.length">
                 <div
-                  class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
+                  class="mb-2 grid grid-cols-2 items-center justify-between gap-2 px-10"
                 >
                   <div class="">
                     <span class="text-textTertiaryMain">
@@ -409,24 +409,18 @@
                     </span>
                   </div>
 
-                  <button class="flex items-center justify-end gap-2">
-                    <span class="text-textTertiaryMain">
-                      {{ $t('builders-item.staked-th') }}
-                    </span>
-                    <app-icon :name="$icons.sort" class="size-6" />
-                  </button>
-
-                  <button class="flex items-center justify-end gap-2">
-                    <span class="text-textTertiaryMain">
-                      {{ $t('builders-item.date-th') }}
-                    </span>
-                    <app-icon :name="$icons.sort" class="size-6" />
-                  </button>
+                  <sorting-icon-button
+                    class="justify-self-end"
+                    :label="$t('builders-item.date-th')"
+                    :order-by="BuilderUser_OrderBy.ClaimLockEnd"
+                    v-model:order-by-model="stakersOrderBy"
+                    v-model:order-direction-model="stakersOrderDirection"
+                  />
                 </div>
 
                 <div class="flex flex-col gap-2">
                   <app-gradient-border-card v-for="el in stakers" :key="el.id">
-                    <div class="grid grid-cols-3 gap-2 px-10">
+                    <div class="grid grid-cols-2 gap-2 px-10">
                       <div class="flex items-center gap-2 py-8">
                         <span class="text-textSecondaryMain">
                           {{ abbrCenter(el.address) }}
@@ -435,11 +429,6 @@
                           :content="el.address"
                           :message="'copied'"
                         />
-                      </div>
-                      <div class="py-8 text-end">
-                        <span class="text-textSecondaryMain">
-                          {{ formatEther(el.staked) }}
-                        </span>
                       </div>
                       <div class="py-8 text-end">
                         <span class="text-textSecondaryMain">
@@ -526,6 +515,7 @@ import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components
 import { computed, ref, onBeforeMount } from 'vue'
 import {
   BuilderSubnetDefaultFragment,
+  BuilderUser_OrderBy,
   BuilderUserDefaultFragment,
   GetBuilderSubnet,
   GetBuilderSubnetQuery,
@@ -536,6 +526,7 @@ import {
   GetUserAccountBuilderSubnets,
   GetUserAccountBuilderSubnetsQuery,
   GetUserAccountBuilderSubnetsQueryVariables,
+  OrderDirection,
 } from '@/types/graphql'
 import { useRoute } from 'vue-router'
 import { formatEther } from '@/utils'
@@ -548,6 +539,7 @@ import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.v
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { config, getEthereumChainsName } from '@config'
+import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
 
 defineOptions({
   inheritAttrs: true,
@@ -587,6 +579,11 @@ const currentClient = computed(() => {
 })
 
 const STAKERS_PAGE_LIMIT = 5
+
+const stakersOrderBy = ref<BuilderUser_OrderBy>(
+  BuilderUser_OrderBy.ClaimLockEnd,
+)
+const stakersOrderDirection = ref<OrderDirection>(OrderDirection.Asc)
 
 const {
   data: buildersData,
@@ -654,13 +651,20 @@ const {
         skip:
           stakersCurrentPage.value * STAKERS_PAGE_LIMIT - STAKERS_PAGE_LIMIT,
         builderSubnetId: buildersData.value.builderSubnet?.id,
+        orderBy: stakersOrderBy.value,
+        orderDirection: stakersOrderDirection.value,
       },
     })
 
     return data.builderUsers
   },
   {
-    reloadArgs: [stakersCurrentPage, buildersData],
+    reloadArgs: [
+      stakersCurrentPage,
+      buildersData,
+      stakersOrderBy,
+      stakersOrderDirection,
+    ],
   },
 )
 

@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import BuildersTableItem from './components/BuildersTableItem.vue'
 import { cn } from '@/theme/utils'
-import SortingIconButton from './components/SortingIconButton.vue'
+import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
 import { AdditionalBuildersOrderBy } from '@/enums'
 import { BuilderProject } from '@/types'
 import { BuilderSubnet_OrderBy } from '@/types/graphql'

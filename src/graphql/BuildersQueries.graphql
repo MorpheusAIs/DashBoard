@@ -38,11 +38,15 @@ query getBuilderSubnet($id: ID! = "") {
 query getBuilderSubnetUsers(
   $first: Int = 10
   $skip: Int = 10
+  $orderBy: BuilderUser_orderBy
+  $orderDirection: OrderDirection
   $builderSubnetId: Bytes = ""
 ) {
   builderUsers(
     first: $first
     skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
     where: { builderSubnet_: {id: $builderSubnetId} }
   ) {
     ...BuilderUserDefault

@@ -940,16 +940,11 @@
 
     "desc-title": "Subnet Description",
 
-    "admin-addr-lbl": "Admin address",
     "stakers-lbl": "Stakers",
-    "you-have-staked-lbl": "You have staked:",
-    "mor-currency": "MOR",
     "stake-btn": "Stake",
-    "stake-more-btn": "Stake More",
-    "withdrawal-locked-msg": "Withdrawal will be available in {time}",
     "staker-addr-name-th": "Name / Address",
-    "staked-th": "MOR Staked",
-    "date-th": "Date",
+    "date-th": "Claim Lock End",
+
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "empty-dash": "-"
   },

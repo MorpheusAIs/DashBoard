@@ -1064,6 +1064,8 @@ export type GetBuilderSubnetQuery = { __typename?: 'Query', builderSubnet?: { __
 export type GetBuilderSubnetUsersQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<BuilderUser_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
   builderSubnetId?: InputMaybe<Scalars['Bytes']>;
 }>;
 
@@ -1144,10 +1146,12 @@ export const GetBuilderSubnet = gql`
 }
     ${BuilderSubnetDefault}`;
 export const GetBuilderSubnetUsers = gql`
-    query getBuilderSubnetUsers($first: Int = 10, $skip: Int = 10, $builderSubnetId: Bytes = "") {
+    query getBuilderSubnetUsers($first: Int = 10, $skip: Int = 10, $orderBy: BuilderUser_orderBy, $orderDirection: OrderDirection, $builderSubnetId: Bytes = "") {
   builderUsers(
     first: $first
     skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
     where: {builderSubnet_: {id: $builderSubnetId}}
   ) {
     ...BuilderUserDefault
