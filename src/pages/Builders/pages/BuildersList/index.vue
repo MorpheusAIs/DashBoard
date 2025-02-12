@@ -268,12 +268,16 @@ const chainOptions = computed(() => [
 const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
 
 onBeforeMount(() => {
-  if(
-    !(Object.values(
-      allowedForCurrentRouteChainsLimitedByNetworkType.value
-    ) as string[])
-    .includes(provider.value.chainId)) {
-      provider.value.selectChain(allowedForCurrentRouteChainsLimitedByNetworkType.value[0])
+  if (
+    !(
+      Object.values(
+        allowedForCurrentRouteChainsLimitedByNetworkType.value,
+      ) as string[]
+    ).includes(provider.value.chainId)
+  ) {
+    provider.value.selectChain(
+      allowedForCurrentRouteChainsLimitedByNetworkType.value[0],
+    )
   }
 })
 

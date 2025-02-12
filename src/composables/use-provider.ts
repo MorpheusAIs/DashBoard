@@ -97,7 +97,9 @@ export const useProvider = (): IUseProvider => {
       const chainToAdd = Object.values(config.chainsMap).find(
         el =>
           el.chainId ===
-          (utils.isHexString(chainId) ? chainId : utils.hexValue(Number(chainId))),
+          (utils.isHexString(chainId)
+            ? chainId
+            : utils.hexValue(Number(chainId))),
       )
 
       if (!chainToAdd) throw new TypeError('Chain not found')
