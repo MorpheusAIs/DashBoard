@@ -852,7 +852,10 @@
   "builders-stake-modal": {
     "modal-title": "Stake MOR",
     "available-to-stake-balance-value": "{amount} MOR",
-
+    "claim-lock-end-validation-msg": "Should be more that {date}",
+    "power-factor-lbl": "Power Factor",
+    "power-factor-tooltip": "The power factor depends on the claim lock timestamp, the longer the claim lock, the larger the power factor.",
+    "power-factor-value": "x{powerFactor}",
     "network-lbl": "Network",
     "builder-lbl": "Builder",
     "min-deposit-lbl": "Min Deposit",
@@ -860,6 +863,8 @@
     "new-stake-amount-lbl": "New Stake Amount",
     "new-unlock-date-lbl": "New Unlock Date",
     "stake-amount-plh": "MOR amount",
+    "claim-lock-end-plh": "Lock your claim until (optional)",
+    "claim-lock-end-note": "Claim will be locked until {date}",
     "stake-amount-max-btn": "max",
     "available-to-stake-balance": "Available to Stake",
     "cancel-btn": "Cancel",

@@ -67,11 +67,6 @@
                   params: { id: buildersData.builderSubnet?.id },
                 })
               "
-              :disabled="
-                time(+buildersData.builderSubnet?.startsAt)
-                  .subtract(editPoolDeadline?.toNumber() ?? 0, 'seconds')
-                  .isBefore(time()) || isClaimSubmitting
-              "
             >
               <span class="text-primaryMain">
                 {{ $t('builders-item.edit-btn') }}
@@ -479,8 +474,12 @@ defineOptions({
 })
 
 const route = useRoute()
-const { provider, buildersContract, buildersContractDetails, balances } =
-  storeToRefs(useWeb3ProvidersStore())
+const {
+  provider,
+  builderSubnetsContract,
+  builderSubnetsContractDetails,
+  balances,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
@@ -494,10 +493,6 @@ const isClaimSubmitting = ref(false)
 const stakersCurrentPage = ref(1)
 
 const stakers = ref<BuilderUserDefaultFragment[]>([])
-
-const { data: editPoolDeadline } = useLoad(undefined, async () =>
-  buildersContract.value.providerBased.value.editPoolDeadline(),
-)
 
 const currentClient = computed(() => {
   const client = Object.entries(clients.value).find(
@@ -639,13 +634,16 @@ const claim = async () => {
   isClaimSubmitting.value = true
   try {
     if (
-      provider.value.chainId !== buildersContractDetails.value.targetChainId
+      provider.value.chainId !==
+      builderSubnetsContractDetails.value.targetChainId
     ) {
-      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+      provider.value.selectChain(
+        builderSubnetsContractDetails.value.targetChainId,
+      )
       await sleep(1_000)
     }
 
-    const tx = await buildersContract.value.signerBased.value.claim(
+    const tx = await builderSubnetsContract.value.signerBased.value.claim(
       buildersData.value.builderSubnet?.id,
       provider.value.selectedAddress,
     )
@@ -655,7 +653,7 @@ const claim = async () => {
     if (!txReceipt) throw new TypeError('Transaction receipt is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      buildersContractDetails.value.explorerUrl,
+      builderSubnetsContractDetails.value.explorerUrl,
       txReceipt.transactionHash,
     )
 

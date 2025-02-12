@@ -223,16 +223,16 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
-  const buildersContractDetails = computed(() => {
+  const builderSubnetsContractDetails = computed(() => {
     return _pickContractDetails(config.ContractIds.builders)
   })
 
-  const buildersContract = computed(() => {
+  const builderSubnetsContract = computed(() => {
     const { address, targetChainId, fallbackProvider } =
-      buildersContractDetails.value
+      builderSubnetsContractDetails.value
 
     return useContract(
-      'Builders__factory',
+      'BuilderSubnets__factory',
       address,
       targetChainId === provider.chainId
         ? wrappedEthProvider
@@ -423,8 +423,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     subnetFactoryContractDetails,
     subnetFactoryContract,
 
-    buildersContractDetails,
-    buildersContract,
+    builderSubnetsContractDetails,
+    builderSubnetsContract,
 
     rewardsTokenSymbol,
     depositTokenSymbol,

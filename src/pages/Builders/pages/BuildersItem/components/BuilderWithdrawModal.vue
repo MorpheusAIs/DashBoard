@@ -114,9 +114,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const { provider, buildersContractDetails, buildersContract } = storeToRefs(
-  useWeb3ProvidersStore(),
-)
+const { provider, builderSubnetsContractDetails, builderSubnetsContract } =
+  storeToRefs(useWeb3ProvidersStore())
 
 const isSubmitting = ref(false)
 
@@ -177,13 +176,16 @@ const submit = async () => {
 
   try {
     if (
-      provider.value.chainId !== buildersContractDetails.value.targetChainId
+      provider.value.chainId !==
+      builderSubnetsContractDetails.value.targetChainId
     ) {
-      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+      provider.value.selectChain(
+        builderSubnetsContractDetails.value.targetChainId,
+      )
       await sleep(1_000)
     }
 
-    const tx = await buildersContract.value?.signerBased.value.withdraw(
+    const tx = await builderSubnetsContract.value?.signerBased.value.withdraw(
       props.builderSubnet?.id,
       parseUnits(form.withdrawAmount),
     )
@@ -191,7 +193,7 @@ const submit = async () => {
     if (!tx) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      buildersContractDetails.value.explorerUrl,
+      builderSubnetsContractDetails.value.explorerUrl,
       tx.hash,
     )
 
