@@ -451,7 +451,7 @@ import {
   beautifyLink,
 } from '@/helpers'
 import BuilderWithdrawModal from '@/pages/Builders/pages/BuildersItem/components/BuilderWithdrawModal.vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onBeforeMount } from 'vue'
 import {
   GetBuildersProject,
   GetBuildersProjectQuery,
@@ -679,6 +679,12 @@ const handleBuilderPoolUpdated = async () => {
   await sleep(1000)
   await update()
 }
+
+onBeforeMount(() => {
+  if (provider.value.chainId === route.query.chain) return
+
+  provider.value.selectChain(route.query.chain as string)
+})
 </script>
 
 <style lang="scss">

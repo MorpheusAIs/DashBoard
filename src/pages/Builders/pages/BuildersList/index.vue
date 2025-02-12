@@ -262,7 +262,7 @@ const isCreateBuilderModalShown = ref(false)
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
 const chainOptions = computed(() => [
-  // undefined,
+  undefined,
   ...allowedForCurrentRouteChainsLimitedByNetworkType.value,
 ])
 const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
@@ -274,6 +274,16 @@ watch(
     if (!val) return
 
     provider.value.switchChain(val)
+  },
+  {
+    immediate: true,
+  },
+)
+
+watch(
+  () => provider.value.chainId,
+  val => {
+    selectedChain.value = val as EthereumChains
   },
   {
     immediate: true,
