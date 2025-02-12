@@ -914,19 +914,32 @@
   "builders-item": {
     "page-err-msg": "Look's like the builder subnet you are looking for is not exists",
     "page-err-btn": "Back to builders",
+
     "back-btn": "Back",
+
     "your-builder-lbl": "Your Builder",
+
     "edit-btn": "Edit",
-    "start-time-lbl": "Start time",
-    "min-deposit-lbl": "Min MOR Deposit",
-    "lock-period-lbl": "Lock Period After Stake",
-    "available-for-withdrawal-lbl": "Available MOR for Withdrawal",
-    "withdraw-btn": "Withdraw",
-    "unlock-time-lbl": "Unlock Time:",
+
+    "starts-at-lbl": "Stake Start",
     "total-claimed-lbl": "Total MOR Claimed",
     "total-staked-lbl": "Total MOR Staked",
-    "claim-lock-ends-lbl": "Claim lock ends",
+
+    "claim-lock-ends-lbl": "Subnet Claim Lock End",
+    "min-deposit-lbl": "Min MOR stake",
+    "lock-period-lbl": "Withdraw lock period after the stake",
+    "fee-emissions-lbl": "% of the MOR Emissions the Subnet receives",
+
+    "available-for-withdrawal-lbl": "Your MOR Staked",
+    "withdraw-btn": "Withdraw",
+    "withdraw-unlock-time-lbl": "Locked until:",
+
+    "available-to-claim-lbl": "Available to Claim",
     "claim-btn": "Claim",
+    "claim-unlock-time-lbl": "Locked until:",
+
+    "desc-title": "Subnet Description",
+
     "admin-addr-lbl": "Admin address",
     "stakers-lbl": "Stakers",
     "you-have-staked-lbl": "You have staked:",
