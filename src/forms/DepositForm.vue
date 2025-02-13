@@ -95,7 +95,7 @@ import { MAX_UINT_256 } from '@/const'
 import { DatetimeField, InputField } from '@/fields'
 import { getEthExplorerTxUrl, bus, BUS_EVENTS, ErrorHandler } from '@/helpers'
 import { useWeb3ProvidersStore } from '@/store'
-import { BigNumber, formatEther, parseUnits, Time } from '@/utils'
+import { BigNumber, formatEther, parseUnits } from '@/utils'
 import {
   ether,
   maxEther,
@@ -111,6 +111,7 @@ import { ROUTE_NAMES } from '@/enums'
 import { useRoute } from 'vue-router'
 import { type Erc1967ProxyType } from '@/types'
 import { ethers } from 'ethers'
+import { time } from '@distributedlab/tools'
 
 enum ACTIONS {
   approve = 'approve',
@@ -165,9 +166,19 @@ const action = computed<ACTIONS>(() => {
   return ACTIONS.stake
 })
 
+const getLockPeriodMinValue = () => {
+  const userLockPeriod = time(userPoolData.value?.claimLockEnd?.toNumber() || 0)
+
+  if (userLockPeriod.isAfter(time())) {
+    return userLockPeriod
+  }
+
+  return time().add(1, 'minute')
+}
+
 const form = reactive({
   amount: '',
-  lockPeriod: props.defaultDate || '',
+  lockPeriod: getLockPeriodMinValue().timestamp.toString() || '',
   referrer: '',
 })
 
@@ -194,7 +205,7 @@ const validationRules = computed(() => ({
     }),
   },
   lockPeriod: {
-    minValue: minValue(new Time().timestamp),
+    minValue: minValue(getLockPeriodMinValue().timestamp),
   },
   referrer: {
     address,
@@ -307,12 +318,7 @@ watch(
   ],
   async () => {
     if (!form.lockPeriod) {
-      const claimLockEnd = String(
-        userPoolData.value?.claimLockEnd?.toNumber() || '',
-      )
-      form.lockPeriod = new Time().isAfter(claimLockEnd)
-        ? new Time().timestamp.toString()
-        : claimLockEnd
+      form.lockPeriod = getLockPeriodMinValue().timestamp.toString()
     }
     if (isMultiplierShown.value) {
       await fetchExpectedMultiplier(form.lockPeriod)
