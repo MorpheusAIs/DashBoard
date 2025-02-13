@@ -187,8 +187,8 @@ watch(
   () => [props.isShown, userPoolData.value?.claimLockEnd],
   () => {
     form.lockPeriod = String(
-      userPoolData.value?.claimLockEnd?.toNumber()
-        || new Time().add(1, 'minute').timestamp,
+      userPoolData.value?.claimLockEnd?.toNumber() ||
+        new Time().add(1, 'minute').timestamp,
     )
   },
 )
