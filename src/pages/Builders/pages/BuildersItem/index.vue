@@ -40,7 +40,7 @@
           v-if="!!buildersData.builderSubnetUserAccount?.staked"
           :class="
             cn(
-              'self-start px-3 py-1 text-[#15151D]',
+              'mt-2 self-start px-3 py-1 text-[#15151D]',
               'bg-gradient-to-r from-[var(--primary-main)] to-[var(--primary-dark)]',
             )
           "
@@ -60,7 +60,7 @@
               <template v-if="buildersData.builderSubnet?.image">
                 <img
                   :src="buildersData.builderSubnet?.image"
-                  class="aspect-square size-10 min-w-10"
+                  class="aspect-square size-10 min-w-10 object-cover object-center"
                 />
               </template>
               <template v-else>
@@ -318,11 +318,7 @@
                   <span
                     class="whitespace-pre text-textSecondaryMain typography-h2"
                   >
-                    {{
-                      formatEther(
-                        buildersData?.builderSubnetUserAccount?.claimed ?? 0,
-                      )
-                    }}
+                    {{ formatEther(stakerRewards ?? 0) }}
                   </span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -487,12 +483,14 @@
     :chain="provider.chainId"
     @staked="handleStaked"
   />
-  <claim-modal
+  <builders-claim-modal
     v-if="buildersData.builderSubnet && buildersData.builderSubnetUserAccount"
     v-model:is-shown="isClaimModalShown"
     :builder-subnet="buildersData.builderSubnet"
     :builder-user="buildersData.builderSubnetUserAccount"
     :chain="chainDetails?.chainId"
+    :staker-rewards="stakerRewards"
+    @claimed="handleClaimed"
   />
 </template>
 
@@ -543,20 +541,22 @@ import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { config, getEthereumChainsName } from '@config'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
-import ClaimModal from './components/ClaimModal.vue'
+import BuildersClaimModal from './components/BuildersClaimModal.vue'
 
 defineOptions({
   inheritAttrs: true,
 })
 
 const route = useRoute()
-const { provider, balances } = storeToRefs(useWeb3ProvidersStore())
+const { provider, balances, builderSubnetsContract } = storeToRefs(
+  useWeb3ProvidersStore(),
+)
 
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
 const isWithdrawModalShown = ref(false)
 const isStakeModalShown = ref(false)
-const isClaimModalShown = ref(true)
+const isClaimModalShown = ref(false)
 
 const isClaimSubmitting = ref(false)
 
@@ -670,6 +670,23 @@ const {
   },
 )
 
+const { data: stakerRewards } = useLoad(
+  '',
+  async () => {
+    const res =
+      await builderSubnetsContract.value.providerBased.value.getStakerRewards(
+        buildersData.value.builderSubnet?.id ?? '',
+        provider.value.selectedAddress,
+        time().timestamp,
+      )
+
+    return res.toString()
+  },
+  {
+    reloadArgs: [buildersData, provider.value.selectedAddress],
+  },
+)
+
 const isOwner = computed(
   () =>
     provider.value.selectedAddress?.toLowerCase() ===
@@ -693,6 +710,12 @@ const withdrawalUnlockTime = computed(() => {
 
 const handleStaked = async () => {
   isStakeModalShown.value = false
+  await sleep(1000)
+  await update()
+}
+
+const handleClaimed = async () => {
+  isClaimModalShown.value = false
   await sleep(1000)
   await update()
 }

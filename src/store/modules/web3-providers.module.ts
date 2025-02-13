@@ -240,6 +240,23 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     )
   })
 
+  const feeConfigContractDetails = computed(() => {
+    return _pickContractDetails(config.ContractIds.feeConfig)
+  })
+
+  const feeConfigContract = computed(() => {
+    const { address, targetChainId, fallbackProvider } =
+      feeConfigContractDetails.value
+
+    return useContract(
+      'FeeConfig__factory',
+      address,
+      targetChainId === provider.chainId
+        ? wrappedEthProvider
+        : fallbackProvider!,
+    )
+  })
+
   const _pickContractDetails = (
     contractId: keyof typeof perChainDeployedContracts,
   ) => {
@@ -425,6 +442,9 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
 
     builderSubnetsContractDetails,
     builderSubnetsContract,
+
+    feeConfigContractDetails,
+    feeConfigContract,
 
     rewardsTokenSymbol,
     depositTokenSymbol,

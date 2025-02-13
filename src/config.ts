@@ -214,6 +214,7 @@ export enum ContractIds {
   l2Factory = 'l2-factory',
   subnetFactory = 'subnet-factory',
   builders = 'builders',
+  feeConfig = 'fee-config',
 }
 
 export const layerZeroEndpointIds: Record<EthereumChains, string> = {
@@ -314,6 +315,11 @@ export const perChainDeployedContracts: Record<
     [EthereumChains.ArbitrumSepolia]:
       '0xCB27aC872bfF99b643c9276041FA4b3CCC713759',
     [EthereumChains.Base]: '0x42BB446eAE6dca7723a9eBdb81EA88aFe77eF4B9',
+  },
+  [ContractIds.feeConfig]: {
+    ..._emptyContracts,
+    [EthereumChains.ArbitrumSepolia]:
+      '0x300aEB39b9bd45b375b918f398e2fB9E25eb7287',
   },
 }
 

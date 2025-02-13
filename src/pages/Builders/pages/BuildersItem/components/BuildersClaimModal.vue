@@ -48,7 +48,9 @@
           v-for="(el, i) in builderDetails.slice(2, 5)"
           :key="i"
         >
-          <span class="text-textSecondaryMain typography-body3">
+          <span
+            class="whitespace-pre-line text-textSecondaryMain typography-body3"
+          >
             {{ el.label }}
           </span>
           <span class="font-bold text-textSecondaryMain typography-body3">
@@ -91,7 +93,7 @@
 
 <script setup lang="ts">
 import { AppButton, BasicModal } from '@/common'
-import { useI18n } from '@/composables'
+import { useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, ref } from 'vue'
 import {
@@ -109,11 +111,13 @@ import {
   BuilderUserDefaultFragment,
 } from '@/types/graphql'
 import { config, getEthereumChainsName } from '@config'
+import { BN } from '@distributedlab/tools'
 
 const props = withDefaults(
   defineProps<{
     builderSubnet: BuilderSubnetDefaultFragment
     builderUser: BuilderUserDefaultFragment
+    stakerRewards: string
     isShown?: boolean
     chain?: string
   }>(),
@@ -125,15 +129,38 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
-  (e: 'staked'): void
+  (e: 'claimed'): void
 }>()
 
 const { t } = useI18n()
 
-const { provider, builderSubnetsContract, builderSubnetsContractDetails } =
-  storeToRefs(useWeb3ProvidersStore())
+const {
+  provider,
+  builderSubnetsContract,
+  builderSubnetsContractDetails,
+  feeConfigContract,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const isSubmitting = ref(false)
+
+const { data: protocolFee } = useLoad(
+  '',
+  async () => {
+    const res =
+      await feeConfigContract.value.providerBased.value.getFeeAndTreasuryForOperation(
+        provider.value.selectedAddress,
+        '0x0e619df840e43eeee4aeaa3968c0faee58f09a7a73123ecda6e02d944995c90e',
+      )
+
+    return res[0].toString()
+  },
+  {
+    reloadArgs: [
+      () => provider.value.selectedAddress,
+      () => props.builderSubnet.feeTreasury,
+    ],
+  },
+)
 
 const chainDetails = computed(() => {
   if (!props.chain) return undefined
@@ -152,19 +179,35 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-claim-modal.amount-lbl'),
-    value: `${formatEther(props.builderUser.staked)} MOR`,
+    value: `${formatEther(props.stakerRewards)} MOR`,
   },
   {
     label: t('builders-claim-modal.protocol-fee-lbl'),
-    value: `${formatAmount(props.builderSubnet.feeTreasury)}%`,
+    value: formatAmount(protocolFee.value, 25, {
+      decimals: 4,
+      suffix: '%',
+    }),
   },
   {
     label: t('builders-claim-modal.emissions-lbl'),
-    value: `${formatAmount(props.builderSubnet.fee)}%`,
+    value: formatAmount(
+      props.builderSubnet.fee,
+      {
+        decimals: 25,
+      },
+      {
+        decimals: 4,
+        suffix: '%',
+      },
+    ),
   },
   {
     label: t('builders-claim-modal.final-claim-lbl'),
-    value: `${formatEther(props.builderUser.staked)} MOR`, // TODO: calculate
+    value: `${BN.fromBigInt(props.stakerRewards ?? 0, 18)
+      .mul(BN.fromBigInt(protocolFee.value, 25))
+      .format({
+        decimals: 4,
+      })} MOR`,
   },
 ])
 
@@ -194,6 +237,8 @@ const claim = async () => {
       builderSubnetsContractDetails.value.explorerUrl,
       txReceipt.transactionHash,
     )
+
+    emit('claimed')
 
     bus.emit(
       BUS_EVENTS.success,

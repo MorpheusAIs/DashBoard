@@ -879,7 +879,7 @@
     "claim-receiver-lbl": "Claim Receiver",
     "amount-lbl": "Amount",
     "protocol-fee-lbl": "Protocol fee",
-    "emissions-lbl": "% of the MOR Emissions the Subnet receives",
+    "emissions-lbl": "% of the MOR Emissions \n the Subnet receives",
     "final-claim-lbl": "Final Claim",
 
     "cancel-btn": "Cancel",
