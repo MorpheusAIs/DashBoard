@@ -90,7 +90,6 @@ const safeSelectNetwork = (chainId: string) => {
   if (String(web3ProvidersStore.provider.chainId) === chainId) return
 
   web3ProvidersStore.provider.selectChain(chainId)
-  bus.emit(BUS_EVENTS.navbarChainSwitched, chainId as EthereumChains)
 }
 
 const mainnetItems = computed<Link[]>(() => {
@@ -111,6 +110,10 @@ const mainnetItems = computed<Link[]>(() => {
             router.push(route)
           }
 
+          bus.emit(
+            BUS_EVENTS.navbarChainSwitched,
+            forCurrentRouteChainsLimitedByMainnet[0] as EthereumChains,
+          )
           safeSelectNetwork(forCurrentRouteChainsLimitedByMainnet[0])
         },
       },
@@ -128,6 +131,7 @@ const mainnetItems = computed<Link[]>(() => {
           router.push(route)
         }
 
+        bus.emit(BUS_EVENTS.navbarChainSwitched, el)
         safeSelectNetwork(el)
       },
     }
@@ -152,6 +156,10 @@ const testnetItems = computed<Link[]>(() => {
             router.push(route)
           }
 
+          bus.emit(
+            BUS_EVENTS.navbarChainSwitched,
+            forCurrentRouteChainsLimitedByTestnet[0],
+          )
           safeSelectNetwork(forCurrentRouteChainsLimitedByTestnet[0])
         },
       },
@@ -169,6 +177,7 @@ const testnetItems = computed<Link[]>(() => {
           router.push(route)
         }
 
+        bus.emit(BUS_EVENTS.navbarChainSwitched, el)
         safeSelectNetwork(el)
       },
     }
