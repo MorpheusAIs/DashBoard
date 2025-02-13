@@ -69,6 +69,7 @@ import {
 } from '@config'
 import { useRoute, useRouter } from 'vue-router'
 import { cn } from '@/theme/utils'
+import { bus, BUS_EVENTS } from '@/helpers'
 
 type Link = {
   chainId: string
@@ -89,6 +90,7 @@ const safeSelectNetwork = (chainId: string) => {
   if (String(web3ProvidersStore.provider.chainId) === chainId) return
 
   web3ProvidersStore.provider.selectChain(chainId)
+  bus.emit(BUS_EVENTS.navbarChainSwitched, chainId as EthereumChains)
 }
 
 const mainnetItems = computed<Link[]>(() => {

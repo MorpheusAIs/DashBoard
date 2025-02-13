@@ -98,7 +98,12 @@
       </div>
     </div>
 
-    <template v-if="buildersProjectsState.isLoaded.value">
+    <template
+      v-if="
+        buildersProjectsState.isLoaded.value &&
+        allPredefinedBuildersState.isLoaded.value
+      "
+    >
       <template v-if="buildersProjectsState.isLoadFailed.value">
         <error-message
           :message="$t('builders-list.loading-projects-error-msg')"
@@ -203,7 +208,7 @@ import {
   CombinedBuildersListQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { provide, ref, computed, watch } from 'vue'
+import { provide, ref, computed, onBeforeMount, onBeforeUnmount } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -222,6 +227,7 @@ import DropMenu from '@/common/DropMenu.vue'
 import { cn } from '@/theme/utils'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { InputField } from '@/fields'
+import { bus, BUS_EVENTS } from '@/helpers'
 
 type LoadBuildersResponse = {
   buildersProjects: CombinedBuildersListQuery['buildersProjects']
@@ -265,17 +271,21 @@ const chainOptions = computed(() => [
   undefined,
   ...allowedForCurrentRouteChainsLimitedByNetworkType.value,
 ])
-// hack: get first chain from allowed, configured in config.ts
-const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[1])
+const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
 
-watch(
-  () => provider.value.chainId,
-  val => {
-    if (!chainOptions.value.includes(val as EthereumChains)) return
+const onNavbarSwitchChain = (chain: EthereumChains | undefined) => {
+  if (!chainOptions.value.includes(chain)) return
 
-    selectedChain.value = val as EthereumChains
-  },
-)
+  selectedChain.value = chain
+}
+
+onBeforeMount(() => {
+  bus.on(BUS_EVENTS.navbarChainSwitched, onNavbarSwitchChain)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.navbarChainSwitched, onNavbarSwitchChain)
+})
 
 const mapUsersOrderFilter = (
   orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy,
@@ -307,133 +317,137 @@ const mapperUsersBuildersOrderBy = computed(() =>
   mapUsersOrderFilter(usersBuildersOrderBy.value),
 )
 
-const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
-  {
-    buildersProjects: [],
-    userAccountBuildersProjects: [],
-    buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
-  },
-  async (): Promise<LoadBuildersResponse> => {
-    const loadFn = async (
-      client: ApolloClient<NormalizedCacheObject>,
-      chain: EthereumChains,
-    ) => {
-      const { data } = await client.query<
-        CombinedBuildersListFilteredByPredefinedBuildersQuery,
-        CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
-      >({
-        query: CombinedBuildersListFilteredByPredefinedBuilders,
-        fetchPolicy: 'network-only',
-        variables: {
-          orderBy: Object.values(BuildersProject_OrderBy).includes(
-            orderBy.value as BuildersProject_OrderBy,
-          )
-            ? (orderBy.value as BuildersProject_OrderBy)
-            : BuildersProject_OrderBy.TotalStaked,
-          usersOrderBy: mapperUsersBuildersOrderBy.value,
-          usersDirection: usersOrderDirection.value,
-          orderDirection: orderDirection.value,
-          name_in: predefinedBuildersMeta
-            .map(el => el.name)
-            .filter(el =>
-              el.toLowerCase().includes(searchQuery.value.toLowerCase()),
-            ),
+const { data: allPredefinedBuilders, ...allPredefinedBuildersState } =
+  useLoad<LoadBuildersResponse>(
+    {
+      buildersProjects: [],
+      userAccountBuildersProjects: [],
+      buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
+    },
+    async (): Promise<LoadBuildersResponse> => {
+      const loadFn = async (
+        client: ApolloClient<NormalizedCacheObject>,
+        chain: EthereumChains,
+      ) => {
+        const { data } = await client.query<
+          CombinedBuildersListFilteredByPredefinedBuildersQuery,
+          CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
+        >({
+          query: CombinedBuildersListFilteredByPredefinedBuilders,
+          fetchPolicy: 'network-only',
+          variables: {
+            orderBy: Object.values(BuildersProject_OrderBy).includes(
+              orderBy.value as BuildersProject_OrderBy,
+            )
+              ? (orderBy.value as BuildersProject_OrderBy)
+              : BuildersProject_OrderBy.TotalStaked,
+            usersOrderBy: mapperUsersBuildersOrderBy.value,
+            usersDirection: usersOrderDirection.value,
+            orderDirection: orderDirection.value,
+            name_in: predefinedBuildersMeta
+              .map(el => el.name)
+              .filter(el =>
+                el.toLowerCase().includes(searchQuery.value.toLowerCase()),
+              ),
 
-          address: provider.value.selectedAddress,
-        },
-      })
+            address: provider.value.selectedAddress,
+          },
+        })
+
+        return {
+          data: {
+            buildersProjects: data.buildersProjects.map(el => ({
+              ...el,
+              chain,
+            })),
+            buildersUsers: data.buildersUsers.map(el => {
+              return {
+                ...el,
+                buildersProject: {
+                  ...el.buildersProject,
+                  chain,
+                },
+              }
+            }),
+            buildersCounters: {
+              id: '',
+              totalBuildersProjects: data.buildersProjects.length,
+              totalSubnets: 0,
+            },
+          },
+        }
+      }
+
+      if (!selectedChain.value) {
+        const response = await Promise.all(
+          Object.entries(clients.value).map(([chain, client]) => {
+            return loadFn(client, chain as EthereumChains)
+          }),
+        )
+
+        const result = response.reduce(
+          (acc, curr) => {
+            acc['buildersProjects'] = acc['buildersProjects'].concat(
+              curr.data.buildersProjects,
+            )
+            acc['userAccountBuildersProjects'] = acc[
+              'userAccountBuildersProjects'
+            ].concat(curr.data.buildersUsers.map(el => el.buildersProject))
+
+            acc['buildersCounters'] = {
+              id: '',
+              totalBuildersProjects: acc.buildersProjects.length,
+              totalSubnets: 0,
+            }
+
+            return acc
+          },
+          {
+            buildersProjects: [],
+            userAccountBuildersProjects: [],
+            buildersCounters: {
+              totalBuildersProjects: 0,
+              totalSubnets: 0,
+            } as LoadBuildersResponse['buildersCounters'],
+          } as LoadBuildersResponse,
+        )
+
+        return result
+      }
+
+      const { data } = await loadFn(
+        clients.value[selectedChain.value],
+        selectedChain.value,
+      )
 
       return {
-        data: {
-          buildersProjects: data.buildersProjects.map(el => ({ ...el, chain })),
-          buildersUsers: data.buildersUsers.map(el => {
-            return {
-              ...el,
-              buildersProject: {
-                ...el.buildersProject,
-                chain,
-              },
-            }
-          }),
-          buildersCounters: {
-            id: '',
-            totalBuildersProjects: data.buildersProjects.length,
-            totalSubnets: 0,
-          },
+        buildersProjects: data.buildersProjects,
+        userAccountBuildersProjects: data.buildersUsers.map(
+          el => el.buildersProject,
+        ),
+        buildersCounters: {
+          id: '',
+          totalBuildersProjects: data.buildersProjects.length,
+          totalSubnets: 0,
         },
       }
-    }
-
-    if (!selectedChain.value) {
-      const response = await Promise.all(
-        Object.entries(clients.value).map(([chain, client]) => {
-          return loadFn(client, chain as EthereumChains)
-        }),
-      )
-
-      const result = response.reduce(
-        (acc, curr) => {
-          acc['buildersProjects'] = acc['buildersProjects'].concat(
-            curr.data.buildersProjects,
-          )
-          acc['userAccountBuildersProjects'] = acc[
-            'userAccountBuildersProjects'
-          ].concat(curr.data.buildersUsers.map(el => el.buildersProject))
-
-          acc['buildersCounters'] = {
-            id: '',
-            totalBuildersProjects: acc.buildersProjects.length,
-            totalSubnets: 0,
-          }
-
-          return acc
-        },
-        {
-          buildersProjects: [],
-          userAccountBuildersProjects: [],
-          buildersCounters: {
-            totalBuildersProjects: 0,
-            totalSubnets: 0,
-          } as LoadBuildersResponse['buildersCounters'],
-        } as LoadBuildersResponse,
-      )
-
-      return result
-    }
-
-    const { data } = await loadFn(
-      clients.value[selectedChain.value],
-      selectedChain.value,
-    )
-
-    return {
-      buildersProjects: data.buildersProjects,
-      userAccountBuildersProjects: data.buildersUsers.map(
-        el => el.buildersProject,
-      ),
-      buildersCounters: {
-        id: '',
-        totalBuildersProjects: data.buildersProjects.length,
-        totalSubnets: 0,
-      },
-    }
-  },
-  {
-    isLoadOnMount: networkType.value === NetworkTypes.Mainnet,
-    reloadArgs: [
-      orderBy,
-      orderDirection,
-      mapperUsersBuildersOrderBy,
-      usersOrderDirection,
-      () => route.query.user,
-      () => route.query.network,
-      () => provider.value.chainId,
-      selectedChain,
-      searchQuery,
-    ],
-    updateArgs: [[orderBy, orderDirection]],
-  },
-)
+    },
+    {
+      isLoadOnMount: networkType.value === NetworkTypes.Mainnet,
+      reloadArgs: [
+        orderBy,
+        orderDirection,
+        mapperUsersBuildersOrderBy,
+        usersOrderDirection,
+        () => route.query.user,
+        () => route.query.network,
+        () => provider.value.chainId,
+        selectedChain,
+        searchQuery,
+      ],
+      updateArgs: [[orderBy, orderDirection]],
+    },
+  )
 
 const paginateThroughAllPredefinedBuilders = async (args: {
   skip: number
