@@ -332,36 +332,6 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     async () => {
       if (!provider.chainId) return
 
-      const allAllowedChains = Object.values(EthereumChains)
-
-      if (!allAllowedChains.includes(provider.chainId as EthereumChains)) return
-
-      const networkTypeKey = Object.keys(config.ethereumChainsTypes).find(
-        key =>
-          config.ethereumChainsTypes[key as NetworkTypes].includes(
-            provider.chainId as EthereumChains,
-          ),
-      )
-
-      const isChangingNetworkType = networkTypeKey && networkTypeKey !== networkType.value
-
-      if (isChangingNetworkType) {
-        await _router.push({
-          query: {
-            ..._route.query,
-            network: networkTypeKey,
-          },
-        })
-      }
-
-      if (isChangingNetworkType && allowedForCurrentRouteChains.value?.includes(
-        provider.chainId as EthereumChains
-      )) return
-
-      await provider.selectChain(
-        allowedForCurrentRouteChainsLimitedByNetworkType.value[0] as EthereumChains,
-      )
-
       await updateBalances()
     },
     { immediate: true },
