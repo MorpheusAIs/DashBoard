@@ -70,8 +70,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   ): EthereumChains[] => {
     if (!allowedForCurrentRouteChains.value) return []
 
-    return config.ethereumChainsTypes[networkType].filter(el =>
-      allowedForCurrentRouteChains.value.includes(el),
+    return allowedForCurrentRouteChains.value.filter(el =>
+      config.ethereumChainsTypes[networkType].includes(el),
     )
   }
 
