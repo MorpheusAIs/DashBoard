@@ -23,7 +23,7 @@
       <div class="change-lock-modal__fields-wrapper">
         <datetime-field
           v-model="form.lockPeriod"
-          position="top"
+          position="center"
           :placeholder="$t(`change-lock-modal.lock-period-placeholder`)"
           :error-message="getFieldErrorMessage('lockPeriod')"
           :disabled="isSubmitting"
@@ -186,7 +186,10 @@ watch(
 watch(
   () => [props.isShown, userPoolData.value?.claimLockEnd],
   () => {
-    form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber() || '')
+    form.lockPeriod = String(
+      userPoolData.value?.claimLockEnd?.toNumber() ||
+        new Time().add(1, 'minute').timestamp,
+    )
   },
 )
 </script>
