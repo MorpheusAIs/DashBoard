@@ -11,9 +11,9 @@
     <div class="builders-table-item__col">
       <div class="builders-table-item__col-content">
         <img
-          v-if="builderMeta?.localImage"
-          :src="builderMeta?.localImage"
-          class="aspect-square size-10 min-w-10"
+          v-if="logo"
+          :src="logo"
+          class="aspect-square size-10 min-w-10 object-cover object-center"
         />
         <div
           v-else
@@ -179,6 +179,7 @@ import { BuilderProject } from '@/types'
 import { cn } from '@/theme/utils'
 import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { getEthereumChainsName } from '@config'
+import { computed } from 'vue'
 
 const props = defineProps<{
   builderProject: BuilderProject
@@ -187,6 +188,10 @@ const props = defineProps<{
 const builderMeta = predefinedBuildersMeta.find(
   el => el.name.toLowerCase() === props.builderProject.name.toLowerCase(),
 )
+
+const logo = computed(() => {
+  return props.builderProject.image || builderMeta?.localImage || ''
+})
 </script>
 
 <style scoped lang="scss">
