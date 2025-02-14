@@ -820,8 +820,10 @@
     "section-2-title": "Stake and Claim",
     "start-at-plh": "Stake start timestamp",
     "start-at-note": "Example: “01.01.2030 01:00 PM”",
+    "min-start-time-validation": "should be more than {time}",
     "lock-period-after-stake-plh": "Withdraw lock period after the stake",
     "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time. It should be longer than 1 day",
+    "min-lock-period-after-stake": "Should be more than {amount}s",
     "min-deposit-plh": "Minimal stake",
     "min-deposit-note": "Example: “0.001 MOR”",
     "claim-lock-end-plh": "Subnet claim lock end timestamp",
@@ -957,6 +959,7 @@
     "stakers-lbl": "Stakers",
     "stake-btn": "Stake",
     "staker-addr-name-th": "Name / Address",
+    "staked-th": "Staked",
     "date-th": "Claim Lock End",
 
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",

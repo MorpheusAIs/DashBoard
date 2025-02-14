@@ -28,6 +28,7 @@
             </template>
           </input-field>
 
+          <!--TODO: change to file field-->
           <input-field
             v-model="form.claimLockEnd"
             :placeholder="$t('builders-stake-modal.claim-lock-end-plh')"

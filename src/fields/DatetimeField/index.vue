@@ -50,24 +50,24 @@ import { AppIcon, AppModal } from '@/common'
 import { useViewportSizes } from '@/composables'
 import { DEFAULT_TIME_FORMAT } from '@/const'
 import { InputField } from '@/fields'
-import { Time } from '@/utils'
 import { onClickOutside } from '@vueuse/core'
 import { default as createFlatpickr } from 'flatpickr'
 import type { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance'
 import type { Options } from 'flatpickr/dist/types/options'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import arrowIconHTML from '@/assets/icons/chevron-down-icon.svg?raw'
+import { time } from '@distributedlab/tools'
 
 type POSITION = 'bottom' | 'bottom-left' | 'bottom-right' | 'top' | 'center'
 
 const emit = defineEmits<{
-  (event: 'update:model-value', value: string): void
+  (event: 'update:model-value', value: number | ''): void
 }>()
 
 const props = withDefaults(
   defineProps<{
     /** Unix timestamp (seconds) */
-    modelValue: string
+    modelValue: number | ''
     disabled?: boolean
     position?: POSITION
   }>(),
@@ -85,9 +85,7 @@ const flatpickrInstance = ref<FlatpickrInstance | null>(null)
 const isOpen = ref(false)
 
 const modelValueFormatted = computed<string>(() =>
-  props.modelValue
-    ? new Time(props.modelValue, 'X').format(DEFAULT_TIME_FORMAT)
-    : '',
+  props.modelValue ? time(+props.modelValue).format(DEFAULT_TIME_FORMAT) : '',
 )
 
 const initFlatpickr = (): void => {
@@ -105,14 +103,15 @@ const initFlatpickr = (): void => {
     defaultHour: 0,
     monthSelectorType: 'static',
     minuteIncrement: 1,
-    defaultDate: Number(props.modelValue) * 1000,
+    defaultDate: time(props.modelValue).toDate(),
     clickOpens: false,
     appendTo: flatpickrWrpElement.value,
     prevArrow: arrowIconHTML,
     nextArrow: arrowIconHTML,
     onChange: dates => {
       if (!dates.length) return
-      emit('update:model-value', String(dates[0].getTime() / 1000))
+
+      emit('update:model-value', time(dates[0]).timestamp)
       isOpen.value = false
     },
   }
@@ -126,8 +125,12 @@ const initFlatpickr = (): void => {
   })
 }
 
-const updateFlatpickrDate = (timestamp: string): void => {
-  flatpickrInstance.value?.setDate(timestamp, false, 'U')
+const updateFlatpickrDate = (timestamp: number | ''): void => {
+  flatpickrInstance.value?.setDate(
+    time(+timestamp).timestamp * 1000,
+    false,
+    'U',
+  )
 }
 
 const scrollToFlatpickr = (): void => {

@@ -83,6 +83,7 @@
         />
         <input-field
           v-model="form.minStake"
+          type="number"
           :placeholder="$t('builders-form.min-deposit-plh')"
           :note="$t('builders-form.min-deposit-note')"
           :error-message="getFieldErrorMessage('minStake')"
@@ -106,6 +107,9 @@
 
         <input-field
           v-model="form.emissionsFee"
+          type="number"
+          :min="0"
+          :max="100"
           :placeholder="$t('builders-form.emissions-fee-plh')"
           :note="$t('builders-form.emissions-fee-note')"
           :error-message="getFieldErrorMessage('emissionsFee')"
@@ -191,10 +195,10 @@ import {
 } from '@/helpers'
 import { computed, reactive, ref, watch } from 'vue'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
-import { maxLength, minValue, required, validUrl } from '@/validators'
+import { address, maxLength, minValue, required, validUrl } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
 import { helpers } from '@vuelidate/validators'
-import { time } from '@distributedlab/tools'
+import { BN, time } from '@distributedlab/tools'
 import { DOT_TIME_FORMAT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
@@ -222,10 +226,12 @@ const currentClient = computed(() => {
   return client || buildersApolloClient.value
 })
 
-const { data: loadedData } = useLoad<{
+type LoadedData = {
   minimalWithdrawLockPeriod: number
   buildersProject: BuilderSubnetDefaultFragment | null
-}>(
+}
+
+const { data: loadedData } = useLoad<LoadedData>(
   {
     minimalWithdrawLockPeriod: 0,
     buildersProject: null,
@@ -259,56 +265,80 @@ const { data: loadedData } = useLoad<{
 
 const isSubmitting = ref(false)
 
-const form = reactive<{
+type BuilderSubnetFormData = {
   name: string
   address: string
   website: string
   imageUrl: string
 
-  startAt: string
-  lockPeriodAfterStake: string
+  startAt: number
+  lockPeriodAfterStake: number
   minStake: string
-  minClaimLockEnd: string
+  minClaimLockEnd: number
 
   emissionsFee: string
   treasuryFee: string
 
   slug: string
   description: string
-}>({
-  name: loadedData.value.buildersProject?.name ?? '',
-  address: loadedData.value.buildersProject?.owner ?? '',
-  website: loadedData.value.buildersProject?.website ?? '',
-  imageUrl: loadedData.value.buildersProject?.image ?? '',
+}
 
-  startAt: loadedData.value.buildersProject?.startsAt ?? '',
-  lockPeriodAfterStake:
-    loadedData.value.buildersProject?.withdrawLockPeriodAfterStake ?? '',
-  minStake: formatEther(loadedData.value.buildersProject?.minStake ?? 0),
-  minClaimLockEnd: +loadedData.value.buildersProject?.minClaimLockEnd
-    ? loadedData.value.buildersProject?.minClaimLockEnd
-    : '',
+const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
+  const name = val.buildersProject?.name ?? ''
+  const address =
+    val.buildersProject?.owner ?? provider.value.selectedAddress ?? ''
+  const website = val.buildersProject?.website ?? ''
+  const imageUrl = val.buildersProject?.image ?? ''
 
-  emissionsFee: '',
-  treasuryFee: '',
+  const startAt = val.buildersProject?.startsAt
+    ? time(+val.buildersProject?.startsAt)
+    : time().add(1, 'minute')
+  const lockPeriodAfterStake =
+    val.buildersProject?.withdrawLockPeriodAfterStake ??
+    loadedData.value.minimalWithdrawLockPeriod ??
+    ''
+  const minStake = formatEther(val.buildersProject?.minStake ?? 0)
+  const minClaimLockEnd = val.buildersProject?.minClaimLockEnd
+    ? time(+val.buildersProject?.minClaimLockEnd)
+    : time(startAt).add(1, 'day')
 
-  slug: '',
-  description: '',
-})
+  const emissionsFee = val.buildersProject?.fee
+    ? BN.fromBigInt(val.buildersProject?.fee, 23).toString()
+    : ''
+  const treasuryFee =
+    val.buildersProject?.feeTreasury ?? provider.value.selectedAddress ?? ''
+
+  const slug = val.buildersProject?.slug ?? ''
+  const description = val.buildersProject?.description ?? ''
+
+  return {
+    name,
+    address,
+    website,
+    imageUrl,
+    startAt: startAt.timestamp,
+    lockPeriodAfterStake: lockPeriodAfterStake,
+    minStake,
+    minClaimLockEnd: minClaimLockEnd.timestamp,
+    emissionsFee,
+    treasuryFee,
+    slug,
+    description,
+  }
+}
+
+const form = reactive<BuilderSubnetFormData>(
+  getDefaultFormData(loadedData.value),
+)
 
 watch(loadedData, val => {
-  form.name = val.buildersProject?.name ?? ''
-  form.address = val.buildersProject?.owner ?? ''
-  form.website = val.buildersProject?.website ?? ''
-  form.imageUrl = val.buildersProject?.image ?? ''
+  const updatedData = getDefaultFormData(val)
 
-  form.startAt = val.buildersProject?.startsAt ?? ''
-  form.lockPeriodAfterStake =
-    val.buildersProject?.withdrawLockPeriodAfterStake ?? ''
-  form.minStake = formatEther(val.buildersProject?.minStake ?? 0)
-  form.minClaimLockEnd = +val.buildersProject?.minClaimLockEnd
-    ? val.buildersProject?.minClaimLockEnd
-    : ''
+  Object.entries(updatedData).forEach(([key, value]) => {
+    /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+    // @ts-ignore
+    form[key as keyof BuilderSubnetFormData] = value
+  })
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -317,13 +347,28 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     computed(() => ({
       name: { required },
       address: { required },
-      website: { validUrl },
-      imageUrl: { validUrl },
+      website: { ...(form.website && { validUrl }) },
+      imageUrl: { ...(form.imageUrl && { validUrl }) },
 
-      startAt: { required },
+      startAt: {
+        ...(!loadedData.value.buildersProject && {
+          required,
+          minValue: helpers.withMessage(
+            t('builders-form.min-start-time-validation', {
+              time: time().add(1, 'minute').format(DOT_TIME_FORMAT),
+            }),
+            minValue(time().add(1, 'minute').timestamp),
+          ),
+        }),
+      },
       lockPeriodAfterStake: {
         required,
-        minValue: minValue(loadedData.value.minimalWithdrawLockPeriod),
+        minValue: helpers.withMessage(
+          t('builders-form.min-lock-period-after-stake', {
+            amount: loadedData.value.minimalWithdrawLockPeriod,
+          }),
+          minValue(loadedData.value.minimalWithdrawLockPeriod),
+        ),
       },
       minStake: { required },
       minClaimLockEnd: {
@@ -339,7 +384,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       },
 
       emissionsFee: { required },
-      treasuryFee: { required },
+      treasuryFee: { required, address },
 
       slug: { maxLength: maxLength(120) },
       description: { maxLength: maxLength(800) },
@@ -375,9 +420,9 @@ const submit = async () => {
       : await builderSubnetsContract.value?.signerBased.value.createSubnet(
           {
             name: form.name,
-            owner: provider.value.selectedAddress,
+            owner: form.address,
             minStake: parseUnits(form.minStake),
-            fee: form.emissionsFee,
+            fee: BN.fromRaw(form.emissionsFee, 23).value,
             feeTreasury: form.treasuryFee,
             startsAt: form.startAt,
             withdrawLockPeriodAfterStake: form.lockPeriodAfterStake,
@@ -419,6 +464,7 @@ const submit = async () => {
       params: {
         id: loadedData.value.buildersProject?.id ?? poolId,
       },
+      query: { chain: provider.value.chainId },
     })
   } catch (error) {
     ErrorHandler.process(error)

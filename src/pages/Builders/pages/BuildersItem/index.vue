@@ -48,14 +48,7 @@
           {{ $t('builders-item.your-builder-lbl') }}
         </span>
         <template v-if="isLoaded">
-          <div
-            :class="
-              cn(
-                'flex flex-col items-start gap-8',
-                'md:flex-row md:items-center',
-              )
-            "
-          >
+          <div :class="cn('flex flex-col items-start gap-8', 'md:flex-row')">
             <div class="flex items-center gap-4">
               <template v-if="buildersData.builderSubnet?.image">
                 <img
@@ -80,7 +73,7 @@
 
             <button
               v-if="isOwner"
-              class="flex items-center gap-2"
+              class="ml-auto flex items-center gap-2"
               @click="
                 $router.push({
                   name: $routes.appBuildersFormUpdate,
@@ -229,7 +222,7 @@
             <div class="flex flex-col gap-8 p-6">
               <span class="whitespace-pre text-textSecondaryMain typography-h2">
                 {{
-                  `${formatAmount(buildersData.builderSubnet?.fee ?? 0, 25)}%`
+                  `${formatAmount(buildersData.builderSubnet?.fee ?? 0, 23)}%`
                 }}
               </span>
               <span class="text-textTertiaryMain typography-body3">
@@ -397,13 +390,21 @@
             <template v-if="isStakersLoaded">
               <template v-if="stakers?.length">
                 <div
-                  class="mb-2 grid grid-cols-2 items-center justify-between gap-2 px-10"
+                  class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
                 >
                   <div class="">
                     <span class="text-textTertiaryMain">
                       {{ $t('builders-item.staker-addr-name-th') }}
                     </span>
                   </div>
+
+                  <sorting-icon-button
+                    class="justify-self-end"
+                    :label="$t('builders-item.staked-th')"
+                    :order-by="BuilderUser_OrderBy.Staked"
+                    v-model:order-by-model="stakersOrderBy"
+                    v-model:order-direction-model="stakersOrderDirection"
+                  />
 
                   <sorting-icon-button
                     class="justify-self-end"
@@ -416,7 +417,7 @@
 
                 <div class="flex flex-col gap-2">
                   <app-gradient-border-card v-for="el in stakers" :key="el.id">
-                    <div class="grid grid-cols-2 gap-2 px-10">
+                    <div class="grid grid-cols-3 gap-2 px-10">
                       <div class="flex items-center gap-2 py-8">
                         <span class="text-textSecondaryMain">
                           {{ abbrCenter(el.address) }}
@@ -425,6 +426,11 @@
                           :content="el.address"
                           :message="'copied'"
                         />
+                      </div>
+                      <div class="flex items-center justify-end gap-2 py-8">
+                        <span class="text-textSecondaryMain">
+                          {{ formatEther(el.staked ?? 0) }}
+                        </span>
                       </div>
                       <div class="py-8 text-end">
                         <span class="text-textSecondaryMain">

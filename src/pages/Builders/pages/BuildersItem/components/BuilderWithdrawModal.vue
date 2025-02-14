@@ -112,6 +112,8 @@ const emit = defineEmits<{
   (e: 'submitted'): void
 }>()
 
+// TODO: add flag for max btn and populate submit with buildersSubnetUserAccount.staked property
+
 const { t } = useI18n()
 
 const { provider, builderSubnetsContractDetails, builderSubnetsContract } =
