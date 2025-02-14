@@ -33,42 +33,79 @@ export type Block_Height = {
   number_gte?: InputMaybe<Scalars['Int']>;
 };
 
-export type BuildersProject = {
-  __typename?: 'BuildersProject';
-  admin: Scalars['Bytes'];
-  claimLockEnd: Scalars['BigInt'];
+export type BuilderSubnet = {
+  __typename?: 'BuilderSubnet';
+  builderUsers: Array<BuilderUser>;
+  description: Scalars['String'];
+  fee: Scalars['BigInt'];
+  feeTreasury: Scalars['Bytes'];
   id: Scalars['Bytes'];
-  minimalDeposit: Scalars['BigInt'];
+  image: Scalars['String'];
+  minClaimLockEnd: Scalars['BigInt'];
+  minStake: Scalars['BigInt'];
   name: Scalars['String'];
+  owner: Scalars['Bytes'];
+  slug: Scalars['String'];
   startsAt: Scalars['BigInt'];
   totalClaimed: Scalars['BigInt'];
   totalStaked: Scalars['BigInt'];
   totalUsers: Scalars['BigInt'];
-  withdrawLockPeriodAfterDeposit: Scalars['BigInt'];
+  website: Scalars['String'];
+  withdrawLockPeriodAfterStake: Scalars['BigInt'];
 };
 
-export type BuildersProject_Filter = {
+
+export type BuilderSubnetBuilderUsersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<BuilderUser_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<BuilderUser_Filter>;
+};
+
+export type BuilderSubnet_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  admin?: InputMaybe<Scalars['Bytes']>;
-  admin_contains?: InputMaybe<Scalars['Bytes']>;
-  admin_gt?: InputMaybe<Scalars['Bytes']>;
-  admin_gte?: InputMaybe<Scalars['Bytes']>;
-  admin_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  admin_lt?: InputMaybe<Scalars['Bytes']>;
-  admin_lte?: InputMaybe<Scalars['Bytes']>;
-  admin_not?: InputMaybe<Scalars['Bytes']>;
-  admin_not_contains?: InputMaybe<Scalars['Bytes']>;
-  admin_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  and?: InputMaybe<Array<InputMaybe<BuildersProject_Filter>>>;
-  claimLockEnd?: InputMaybe<Scalars['BigInt']>;
-  claimLockEnd_gt?: InputMaybe<Scalars['BigInt']>;
-  claimLockEnd_gte?: InputMaybe<Scalars['BigInt']>;
-  claimLockEnd_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  claimLockEnd_lt?: InputMaybe<Scalars['BigInt']>;
-  claimLockEnd_lte?: InputMaybe<Scalars['BigInt']>;
-  claimLockEnd_not?: InputMaybe<Scalars['BigInt']>;
-  claimLockEnd_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  and?: InputMaybe<Array<InputMaybe<BuilderSubnet_Filter>>>;
+  builderUsers_?: InputMaybe<BuilderUser_Filter>;
+  description?: InputMaybe<Scalars['String']>;
+  description_contains?: InputMaybe<Scalars['String']>;
+  description_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_ends_with?: InputMaybe<Scalars['String']>;
+  description_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description_gt?: InputMaybe<Scalars['String']>;
+  description_gte?: InputMaybe<Scalars['String']>;
+  description_in?: InputMaybe<Array<Scalars['String']>>;
+  description_lt?: InputMaybe<Scalars['String']>;
+  description_lte?: InputMaybe<Scalars['String']>;
+  description_not?: InputMaybe<Scalars['String']>;
+  description_not_contains?: InputMaybe<Scalars['String']>;
+  description_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  description_not_ends_with?: InputMaybe<Scalars['String']>;
+  description_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  description_not_in?: InputMaybe<Array<Scalars['String']>>;
+  description_not_starts_with?: InputMaybe<Scalars['String']>;
+  description_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  description_starts_with?: InputMaybe<Scalars['String']>;
+  description_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  fee?: InputMaybe<Scalars['BigInt']>;
+  feeTreasury?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_contains?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_gt?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_gte?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  feeTreasury_lt?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_lte?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_not?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_not_contains?: InputMaybe<Scalars['Bytes']>;
+  feeTreasury_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  fee_gt?: InputMaybe<Scalars['BigInt']>;
+  fee_gte?: InputMaybe<Scalars['BigInt']>;
+  fee_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  fee_lt?: InputMaybe<Scalars['BigInt']>;
+  fee_lte?: InputMaybe<Scalars['BigInt']>;
+  fee_not?: InputMaybe<Scalars['BigInt']>;
+  fee_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   id?: InputMaybe<Scalars['Bytes']>;
   id_contains?: InputMaybe<Scalars['Bytes']>;
   id_gt?: InputMaybe<Scalars['Bytes']>;
@@ -79,14 +116,42 @@ export type BuildersProject_Filter = {
   id_not?: InputMaybe<Scalars['Bytes']>;
   id_not_contains?: InputMaybe<Scalars['Bytes']>;
   id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  minimalDeposit?: InputMaybe<Scalars['BigInt']>;
-  minimalDeposit_gt?: InputMaybe<Scalars['BigInt']>;
-  minimalDeposit_gte?: InputMaybe<Scalars['BigInt']>;
-  minimalDeposit_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  minimalDeposit_lt?: InputMaybe<Scalars['BigInt']>;
-  minimalDeposit_lte?: InputMaybe<Scalars['BigInt']>;
-  minimalDeposit_not?: InputMaybe<Scalars['BigInt']>;
-  minimalDeposit_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  image?: InputMaybe<Scalars['String']>;
+  image_contains?: InputMaybe<Scalars['String']>;
+  image_contains_nocase?: InputMaybe<Scalars['String']>;
+  image_ends_with?: InputMaybe<Scalars['String']>;
+  image_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  image_gt?: InputMaybe<Scalars['String']>;
+  image_gte?: InputMaybe<Scalars['String']>;
+  image_in?: InputMaybe<Array<Scalars['String']>>;
+  image_lt?: InputMaybe<Scalars['String']>;
+  image_lte?: InputMaybe<Scalars['String']>;
+  image_not?: InputMaybe<Scalars['String']>;
+  image_not_contains?: InputMaybe<Scalars['String']>;
+  image_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  image_not_ends_with?: InputMaybe<Scalars['String']>;
+  image_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  image_not_in?: InputMaybe<Array<Scalars['String']>>;
+  image_not_starts_with?: InputMaybe<Scalars['String']>;
+  image_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  image_starts_with?: InputMaybe<Scalars['String']>;
+  image_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  minClaimLockEnd?: InputMaybe<Scalars['BigInt']>;
+  minClaimLockEnd_gt?: InputMaybe<Scalars['BigInt']>;
+  minClaimLockEnd_gte?: InputMaybe<Scalars['BigInt']>;
+  minClaimLockEnd_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  minClaimLockEnd_lt?: InputMaybe<Scalars['BigInt']>;
+  minClaimLockEnd_lte?: InputMaybe<Scalars['BigInt']>;
+  minClaimLockEnd_not?: InputMaybe<Scalars['BigInt']>;
+  minClaimLockEnd_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  minStake?: InputMaybe<Scalars['BigInt']>;
+  minStake_gt?: InputMaybe<Scalars['BigInt']>;
+  minStake_gte?: InputMaybe<Scalars['BigInt']>;
+  minStake_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  minStake_lt?: InputMaybe<Scalars['BigInt']>;
+  minStake_lte?: InputMaybe<Scalars['BigInt']>;
+  minStake_not?: InputMaybe<Scalars['BigInt']>;
+  minStake_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   name?: InputMaybe<Scalars['String']>;
   name_contains?: InputMaybe<Scalars['String']>;
   name_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -107,7 +172,37 @@ export type BuildersProject_Filter = {
   name_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   name_starts_with?: InputMaybe<Scalars['String']>;
   name_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  or?: InputMaybe<Array<InputMaybe<BuildersProject_Filter>>>;
+  or?: InputMaybe<Array<InputMaybe<BuilderSubnet_Filter>>>;
+  owner?: InputMaybe<Scalars['Bytes']>;
+  owner_contains?: InputMaybe<Scalars['Bytes']>;
+  owner_gt?: InputMaybe<Scalars['Bytes']>;
+  owner_gte?: InputMaybe<Scalars['Bytes']>;
+  owner_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  owner_lt?: InputMaybe<Scalars['Bytes']>;
+  owner_lte?: InputMaybe<Scalars['Bytes']>;
+  owner_not?: InputMaybe<Scalars['Bytes']>;
+  owner_not_contains?: InputMaybe<Scalars['Bytes']>;
+  owner_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  slug?: InputMaybe<Scalars['String']>;
+  slug_contains?: InputMaybe<Scalars['String']>;
+  slug_contains_nocase?: InputMaybe<Scalars['String']>;
+  slug_ends_with?: InputMaybe<Scalars['String']>;
+  slug_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  slug_gt?: InputMaybe<Scalars['String']>;
+  slug_gte?: InputMaybe<Scalars['String']>;
+  slug_in?: InputMaybe<Array<Scalars['String']>>;
+  slug_lt?: InputMaybe<Scalars['String']>;
+  slug_lte?: InputMaybe<Scalars['String']>;
+  slug_not?: InputMaybe<Scalars['String']>;
+  slug_not_contains?: InputMaybe<Scalars['String']>;
+  slug_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  slug_not_ends_with?: InputMaybe<Scalars['String']>;
+  slug_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  slug_not_in?: InputMaybe<Array<Scalars['String']>>;
+  slug_not_starts_with?: InputMaybe<Scalars['String']>;
+  slug_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  slug_starts_with?: InputMaybe<Scalars['String']>;
+  slug_starts_with_nocase?: InputMaybe<Scalars['String']>;
   startsAt?: InputMaybe<Scalars['BigInt']>;
   startsAt_gt?: InputMaybe<Scalars['BigInt']>;
   startsAt_gte?: InputMaybe<Scalars['BigInt']>;
@@ -140,39 +235,68 @@ export type BuildersProject_Filter = {
   totalUsers_lte?: InputMaybe<Scalars['BigInt']>;
   totalUsers_not?: InputMaybe<Scalars['BigInt']>;
   totalUsers_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  withdrawLockPeriodAfterDeposit?: InputMaybe<Scalars['BigInt']>;
-  withdrawLockPeriodAfterDeposit_gt?: InputMaybe<Scalars['BigInt']>;
-  withdrawLockPeriodAfterDeposit_gte?: InputMaybe<Scalars['BigInt']>;
-  withdrawLockPeriodAfterDeposit_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  withdrawLockPeriodAfterDeposit_lt?: InputMaybe<Scalars['BigInt']>;
-  withdrawLockPeriodAfterDeposit_lte?: InputMaybe<Scalars['BigInt']>;
-  withdrawLockPeriodAfterDeposit_not?: InputMaybe<Scalars['BigInt']>;
-  withdrawLockPeriodAfterDeposit_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  website?: InputMaybe<Scalars['String']>;
+  website_contains?: InputMaybe<Scalars['String']>;
+  website_contains_nocase?: InputMaybe<Scalars['String']>;
+  website_ends_with?: InputMaybe<Scalars['String']>;
+  website_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  website_gt?: InputMaybe<Scalars['String']>;
+  website_gte?: InputMaybe<Scalars['String']>;
+  website_in?: InputMaybe<Array<Scalars['String']>>;
+  website_lt?: InputMaybe<Scalars['String']>;
+  website_lte?: InputMaybe<Scalars['String']>;
+  website_not?: InputMaybe<Scalars['String']>;
+  website_not_contains?: InputMaybe<Scalars['String']>;
+  website_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  website_not_ends_with?: InputMaybe<Scalars['String']>;
+  website_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  website_not_in?: InputMaybe<Array<Scalars['String']>>;
+  website_not_starts_with?: InputMaybe<Scalars['String']>;
+  website_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  website_starts_with?: InputMaybe<Scalars['String']>;
+  website_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  withdrawLockPeriodAfterStake?: InputMaybe<Scalars['BigInt']>;
+  withdrawLockPeriodAfterStake_gt?: InputMaybe<Scalars['BigInt']>;
+  withdrawLockPeriodAfterStake_gte?: InputMaybe<Scalars['BigInt']>;
+  withdrawLockPeriodAfterStake_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  withdrawLockPeriodAfterStake_lt?: InputMaybe<Scalars['BigInt']>;
+  withdrawLockPeriodAfterStake_lte?: InputMaybe<Scalars['BigInt']>;
+  withdrawLockPeriodAfterStake_not?: InputMaybe<Scalars['BigInt']>;
+  withdrawLockPeriodAfterStake_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
-export enum BuildersProject_OrderBy {
-  Admin = 'admin',
-  ClaimLockEnd = 'claimLockEnd',
+export enum BuilderSubnet_OrderBy {
+  BuilderUsers = 'builderUsers',
+  Description = 'description',
+  Fee = 'fee',
+  FeeTreasury = 'feeTreasury',
   Id = 'id',
-  MinimalDeposit = 'minimalDeposit',
+  Image = 'image',
+  MinClaimLockEnd = 'minClaimLockEnd',
+  MinStake = 'minStake',
   Name = 'name',
+  Owner = 'owner',
+  Slug = 'slug',
   StartsAt = 'startsAt',
   TotalClaimed = 'totalClaimed',
   TotalStaked = 'totalStaked',
   TotalUsers = 'totalUsers',
-  WithdrawLockPeriodAfterDeposit = 'withdrawLockPeriodAfterDeposit'
+  Website = 'website',
+  WithdrawLockPeriodAfterStake = 'withdrawLockPeriodAfterStake'
 }
 
-export type BuildersUser = {
-  __typename?: 'BuildersUser';
+export type BuilderUser = {
+  __typename?: 'BuilderUser';
   address: Scalars['Bytes'];
-  buildersProject: BuildersProject;
+  builderSubnet: BuilderSubnet;
+  claimLockEnd: Scalars['BigInt'];
+  claimed: Scalars['BigInt'];
   id: Scalars['Bytes'];
   lastStake: Scalars['BigInt'];
   staked: Scalars['BigInt'];
 };
 
-export type BuildersUser_Filter = {
+export type BuilderUser_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   address?: InputMaybe<Scalars['Bytes']>;
@@ -185,28 +309,44 @@ export type BuildersUser_Filter = {
   address_not?: InputMaybe<Scalars['Bytes']>;
   address_not_contains?: InputMaybe<Scalars['Bytes']>;
   address_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  and?: InputMaybe<Array<InputMaybe<BuildersUser_Filter>>>;
-  buildersProject?: InputMaybe<Scalars['String']>;
-  buildersProject_?: InputMaybe<BuildersProject_Filter>;
-  buildersProject_contains?: InputMaybe<Scalars['String']>;
-  buildersProject_contains_nocase?: InputMaybe<Scalars['String']>;
-  buildersProject_ends_with?: InputMaybe<Scalars['String']>;
-  buildersProject_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  buildersProject_gt?: InputMaybe<Scalars['String']>;
-  buildersProject_gte?: InputMaybe<Scalars['String']>;
-  buildersProject_in?: InputMaybe<Array<Scalars['String']>>;
-  buildersProject_lt?: InputMaybe<Scalars['String']>;
-  buildersProject_lte?: InputMaybe<Scalars['String']>;
-  buildersProject_not?: InputMaybe<Scalars['String']>;
-  buildersProject_not_contains?: InputMaybe<Scalars['String']>;
-  buildersProject_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  buildersProject_not_ends_with?: InputMaybe<Scalars['String']>;
-  buildersProject_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  buildersProject_not_in?: InputMaybe<Array<Scalars['String']>>;
-  buildersProject_not_starts_with?: InputMaybe<Scalars['String']>;
-  buildersProject_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  buildersProject_starts_with?: InputMaybe<Scalars['String']>;
-  buildersProject_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  and?: InputMaybe<Array<InputMaybe<BuilderUser_Filter>>>;
+  builderSubnet?: InputMaybe<Scalars['String']>;
+  builderSubnet_?: InputMaybe<BuilderSubnet_Filter>;
+  builderSubnet_contains?: InputMaybe<Scalars['String']>;
+  builderSubnet_contains_nocase?: InputMaybe<Scalars['String']>;
+  builderSubnet_ends_with?: InputMaybe<Scalars['String']>;
+  builderSubnet_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  builderSubnet_gt?: InputMaybe<Scalars['String']>;
+  builderSubnet_gte?: InputMaybe<Scalars['String']>;
+  builderSubnet_in?: InputMaybe<Array<Scalars['String']>>;
+  builderSubnet_lt?: InputMaybe<Scalars['String']>;
+  builderSubnet_lte?: InputMaybe<Scalars['String']>;
+  builderSubnet_not?: InputMaybe<Scalars['String']>;
+  builderSubnet_not_contains?: InputMaybe<Scalars['String']>;
+  builderSubnet_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  builderSubnet_not_ends_with?: InputMaybe<Scalars['String']>;
+  builderSubnet_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  builderSubnet_not_in?: InputMaybe<Array<Scalars['String']>>;
+  builderSubnet_not_starts_with?: InputMaybe<Scalars['String']>;
+  builderSubnet_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  builderSubnet_starts_with?: InputMaybe<Scalars['String']>;
+  builderSubnet_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  claimLockEnd?: InputMaybe<Scalars['BigInt']>;
+  claimLockEnd_gt?: InputMaybe<Scalars['BigInt']>;
+  claimLockEnd_gte?: InputMaybe<Scalars['BigInt']>;
+  claimLockEnd_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  claimLockEnd_lt?: InputMaybe<Scalars['BigInt']>;
+  claimLockEnd_lte?: InputMaybe<Scalars['BigInt']>;
+  claimLockEnd_not?: InputMaybe<Scalars['BigInt']>;
+  claimLockEnd_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  claimed?: InputMaybe<Scalars['BigInt']>;
+  claimed_gt?: InputMaybe<Scalars['BigInt']>;
+  claimed_gte?: InputMaybe<Scalars['BigInt']>;
+  claimed_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  claimed_lt?: InputMaybe<Scalars['BigInt']>;
+  claimed_lte?: InputMaybe<Scalars['BigInt']>;
+  claimed_not?: InputMaybe<Scalars['BigInt']>;
+  claimed_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   id?: InputMaybe<Scalars['Bytes']>;
   id_contains?: InputMaybe<Scalars['Bytes']>;
   id_gt?: InputMaybe<Scalars['Bytes']>;
@@ -225,7 +365,7 @@ export type BuildersUser_Filter = {
   lastStake_lte?: InputMaybe<Scalars['BigInt']>;
   lastStake_not?: InputMaybe<Scalars['BigInt']>;
   lastStake_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  or?: InputMaybe<Array<InputMaybe<BuildersUser_Filter>>>;
+  or?: InputMaybe<Array<InputMaybe<BuilderUser_Filter>>>;
   staked?: InputMaybe<Scalars['BigInt']>;
   staked_gt?: InputMaybe<Scalars['BigInt']>;
   staked_gte?: InputMaybe<Scalars['BigInt']>;
@@ -236,19 +376,27 @@ export type BuildersUser_Filter = {
   staked_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
-export enum BuildersUser_OrderBy {
+export enum BuilderUser_OrderBy {
   Address = 'address',
-  BuildersProject = 'buildersProject',
-  BuildersProjectAdmin = 'buildersProject__admin',
-  BuildersProjectClaimLockEnd = 'buildersProject__claimLockEnd',
-  BuildersProjectId = 'buildersProject__id',
-  BuildersProjectMinimalDeposit = 'buildersProject__minimalDeposit',
-  BuildersProjectName = 'buildersProject__name',
-  BuildersProjectStartsAt = 'buildersProject__startsAt',
-  BuildersProjectTotalClaimed = 'buildersProject__totalClaimed',
-  BuildersProjectTotalStaked = 'buildersProject__totalStaked',
-  BuildersProjectTotalUsers = 'buildersProject__totalUsers',
-  BuildersProjectWithdrawLockPeriodAfterDeposit = 'buildersProject__withdrawLockPeriodAfterDeposit',
+  BuilderSubnet = 'builderSubnet',
+  BuilderSubnetDescription = 'builderSubnet__description',
+  BuilderSubnetFee = 'builderSubnet__fee',
+  BuilderSubnetFeeTreasury = 'builderSubnet__feeTreasury',
+  BuilderSubnetId = 'builderSubnet__id',
+  BuilderSubnetImage = 'builderSubnet__image',
+  BuilderSubnetMinClaimLockEnd = 'builderSubnet__minClaimLockEnd',
+  BuilderSubnetMinStake = 'builderSubnet__minStake',
+  BuilderSubnetName = 'builderSubnet__name',
+  BuilderSubnetOwner = 'builderSubnet__owner',
+  BuilderSubnetSlug = 'builderSubnet__slug',
+  BuilderSubnetStartsAt = 'builderSubnet__startsAt',
+  BuilderSubnetTotalClaimed = 'builderSubnet__totalClaimed',
+  BuilderSubnetTotalStaked = 'builderSubnet__totalStaked',
+  BuilderSubnetTotalUsers = 'builderSubnet__totalUsers',
+  BuilderSubnetWebsite = 'builderSubnet__website',
+  BuilderSubnetWithdrawLockPeriodAfterStake = 'builderSubnet__withdrawLockPeriodAfterStake',
+  ClaimLockEnd = 'claimLockEnd',
+  Claimed = 'claimed',
   Id = 'id',
   LastStake = 'lastStake',
   Staked = 'staked'
@@ -257,7 +405,7 @@ export enum BuildersUser_OrderBy {
 export type Counter = {
   __typename?: 'Counter';
   id: Scalars['Bytes'];
-  totalBuildersProjects: Scalars['BigInt'];
+  totalBuilderProjects: Scalars['BigInt'];
   totalSubnets: Scalars['BigInt'];
 };
 
@@ -276,14 +424,14 @@ export type Counter_Filter = {
   id_not_contains?: InputMaybe<Scalars['Bytes']>;
   id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
   or?: InputMaybe<Array<InputMaybe<Counter_Filter>>>;
-  totalBuildersProjects?: InputMaybe<Scalars['BigInt']>;
-  totalBuildersProjects_gt?: InputMaybe<Scalars['BigInt']>;
-  totalBuildersProjects_gte?: InputMaybe<Scalars['BigInt']>;
-  totalBuildersProjects_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalBuildersProjects_lt?: InputMaybe<Scalars['BigInt']>;
-  totalBuildersProjects_lte?: InputMaybe<Scalars['BigInt']>;
-  totalBuildersProjects_not?: InputMaybe<Scalars['BigInt']>;
-  totalBuildersProjects_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalBuilderProjects?: InputMaybe<Scalars['BigInt']>;
+  totalBuilderProjects_gt?: InputMaybe<Scalars['BigInt']>;
+  totalBuilderProjects_gte?: InputMaybe<Scalars['BigInt']>;
+  totalBuilderProjects_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalBuilderProjects_lt?: InputMaybe<Scalars['BigInt']>;
+  totalBuilderProjects_lte?: InputMaybe<Scalars['BigInt']>;
+  totalBuilderProjects_not?: InputMaybe<Scalars['BigInt']>;
+  totalBuilderProjects_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   totalSubnets?: InputMaybe<Scalars['BigInt']>;
   totalSubnets_gt?: InputMaybe<Scalars['BigInt']>;
   totalSubnets_gte?: InputMaybe<Scalars['BigInt']>;
@@ -296,7 +444,7 @@ export type Counter_Filter = {
 
 export enum Counter_OrderBy {
   Id = 'id',
-  TotalBuildersProjects = 'totalBuildersProjects',
+  TotalBuilderProjects = 'totalBuilderProjects',
   TotalSubnets = 'totalSubnets'
 }
 
@@ -368,10 +516,10 @@ export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
-  buildersProject?: Maybe<BuildersProject>;
-  buildersProjects: Array<BuildersProject>;
-  buildersUser?: Maybe<BuildersUser>;
-  buildersUsers: Array<BuildersUser>;
+  builderSubnet?: Maybe<BuilderSubnet>;
+  builderSubnets: Array<BuilderSubnet>;
+  builderUser?: Maybe<BuilderUser>;
+  builderUsers: Array<BuilderUser>;
   counter?: Maybe<Counter>;
   counters: Array<Counter>;
   provider?: Maybe<Provider>;
@@ -388,39 +536,39 @@ export type Query_MetaArgs = {
 };
 
 
-export type QueryBuildersProjectArgs = {
+export type QueryBuilderSubnetArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type QueryBuildersProjectsArgs = {
+export type QueryBuilderSubnetsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderBy?: InputMaybe<BuilderSubnet_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<BuildersProject_Filter>;
+  where?: InputMaybe<BuilderSubnet_Filter>;
 };
 
 
-export type QueryBuildersUserArgs = {
+export type QueryBuilderUserArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type QueryBuildersUsersArgs = {
+export type QueryBuilderUsersArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BuildersUser_OrderBy>;
+  orderBy?: InputMaybe<BuilderUser_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<BuildersUser_Filter>;
+  where?: InputMaybe<BuilderUser_Filter>;
 };
 
 
@@ -739,10 +887,10 @@ export type Subscription = {
   __typename?: 'Subscription';
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
-  buildersProject?: Maybe<BuildersProject>;
-  buildersProjects: Array<BuildersProject>;
-  buildersUser?: Maybe<BuildersUser>;
-  buildersUsers: Array<BuildersUser>;
+  builderSubnet?: Maybe<BuilderSubnet>;
+  builderSubnets: Array<BuilderSubnet>;
+  builderUser?: Maybe<BuilderUser>;
+  builderUsers: Array<BuilderUser>;
   counter?: Maybe<Counter>;
   counters: Array<Counter>;
   provider?: Maybe<Provider>;
@@ -759,39 +907,39 @@ export type Subscription_MetaArgs = {
 };
 
 
-export type SubscriptionBuildersProjectArgs = {
+export type SubscriptionBuilderSubnetArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type SubscriptionBuildersProjectsArgs = {
+export type SubscriptionBuilderSubnetsArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderBy?: InputMaybe<BuilderSubnet_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<BuildersProject_Filter>;
+  where?: InputMaybe<BuilderSubnet_Filter>;
 };
 
 
-export type SubscriptionBuildersUserArgs = {
+export type SubscriptionBuilderUserArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type SubscriptionBuildersUsersArgs = {
+export type SubscriptionBuilderUsersArgs = {
   block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BuildersUser_OrderBy>;
+  orderBy?: InputMaybe<BuilderUser_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<BuildersUser_Filter>;
+  where?: InputMaybe<BuilderUser_Filter>;
 };
 
 
@@ -902,77 +1050,52 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny'
 }
 
-export type BuilderProjectFragment = { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any };
+export type BuilderUserDefaultFragment = { __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any };
 
-export type GetBuildersProjectsQueryVariables = Exact<{
+export type BuilderSubnetDefaultFragment = { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> };
+
+export type GetBuilderSubnetQueryVariables = Exact<{
+  id?: Scalars['ID'];
+}>;
+
+
+export type GetBuilderSubnetQuery = { __typename?: 'Query', builderSubnet?: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } | null };
+
+export type GetBuilderSubnetUsersQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderBy?: InputMaybe<BuilderUser_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
+  builderSubnetId?: InputMaybe<Scalars['Bytes']>;
 }>;
 
 
-export type GetBuildersProjectsQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }> };
+export type GetBuilderSubnetUsersQuery = { __typename?: 'Query', builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> };
 
-export type GetBuildersProjectsByIdsQueryVariables = Exact<{
-  id_in?: InputMaybe<Array<Scalars['Bytes']> | Scalars['Bytes']>;
-}>;
-
-
-export type GetBuildersProjectsByIdsQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }> };
-
-export type GetBuildersProjectQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['ID']>;
-}>;
-
-
-export type GetBuildersProjectQuery = { __typename?: 'Query', buildersProject?: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } | null };
-
-export type GetAccountUserBuildersProjectsQueryVariables = Exact<{
+export type GetUserAccountBuilderSubnetsQueryVariables = Exact<{
   address?: InputMaybe<Scalars['Bytes']>;
+  builder_subnet_id?: InputMaybe<Scalars['Bytes']>;
 }>;
 
 
-export type GetAccountUserBuildersProjectsQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }> };
+export type GetUserAccountBuilderSubnetsQuery = { __typename?: 'Query', builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }> };
 
-export type GetBuildersProjectUsersQueryVariables = Exact<{
+export type CombinedBuilderSubnetsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   skip?: InputMaybe<Scalars['Int']>;
-  buildersProjectId?: InputMaybe<Scalars['Bytes']>;
-}>;
-
-
-export type GetBuildersProjectUsersQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, staked: any, lastStake: any }> };
-
-export type GetUserAccountBuildersProjectQueryVariables = Exact<{
-  address?: InputMaybe<Scalars['Bytes']>;
-  project_id?: InputMaybe<Scalars['Bytes']>;
-}>;
-
-
-export type GetUserAccountBuildersProjectQuery = { __typename?: 'Query', buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }> };
-
-export type GetBuildersCountersQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetBuildersCountersQuery = { __typename?: 'Query', counters: Array<{ __typename?: 'Counter', id: any, totalBuildersProjects: any, totalSubnets: any }> };
-
-export type CombinedBuildersListQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']>;
-  skip?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BuildersProject_OrderBy>;
+  orderBy?: InputMaybe<BuilderSubnet_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
-  usersOrderBy?: InputMaybe<BuildersUser_OrderBy>;
+  usersOrderBy?: InputMaybe<BuilderUser_OrderBy>;
   usersDirection?: InputMaybe<OrderDirection>;
   address?: InputMaybe<Scalars['Bytes']>;
 }>;
 
 
-export type CombinedBuildersListQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }>, buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }>, counters: Array<{ __typename?: 'Counter', id: any, totalBuildersProjects: any, totalSubnets: any }> };
+export type CombinedBuilderSubnetsQuery = { __typename?: 'Query', builderSubnets: Array<{ __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> }>, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }>, counters: Array<{ __typename?: 'Counter', id: any, totalSubnets: any, totalBuilderProjects: any }> };
 
-export type CombinedBuildersListFilteredByPredefinedBuildersQueryVariables = Exact<{
-  orderBy?: InputMaybe<BuildersProject_OrderBy>;
-  usersOrderBy?: InputMaybe<BuildersUser_OrderBy>;
+export type CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables = Exact<{
+  orderBy?: InputMaybe<BuilderSubnet_OrderBy>;
+  usersOrderBy?: InputMaybe<BuilderUser_OrderBy>;
   usersDirection?: InputMaybe<OrderDirection>;
   orderDirection?: InputMaybe<OrderDirection>;
   name_in?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -980,166 +1103,121 @@ export type CombinedBuildersListFilteredByPredefinedBuildersQueryVariables = Exa
 }>;
 
 
-export type CombinedBuildersListFilteredByPredefinedBuildersQuery = { __typename?: 'Query', buildersProjects: Array<{ __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any }>, buildersUsers: Array<{ __typename?: 'BuildersUser', address: any, id: any, lastStake: any, staked: any, buildersProject: { __typename?: 'BuildersProject', admin: any, claimLockEnd: any, id: any, minimalDeposit: any, name: string, startsAt: any, totalClaimed: any, totalStaked: any, totalUsers: any, withdrawLockPeriodAfterDeposit: any } }> };
+export type CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery = { __typename?: 'Query', builderSubnets: Array<{ __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> }>, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }> };
 
-export const BuilderProject = gql`
-    fragment BuilderProject on BuildersProject {
-  admin
-  claimLockEnd
+export const BuilderUserDefault = gql`
+    fragment BuilderUserDefault on BuilderUser {
   id
-  minimalDeposit
+  address
+  staked
+  claimed
+  claimLockEnd
+  lastStake
+}
+    `;
+export const BuilderSubnetDefault = gql`
+    fragment BuilderSubnetDefault on BuilderSubnet {
+  id
   name
+  owner
+  minStake
+  fee
+  feeTreasury
   startsAt
-  totalClaimed
+  withdrawLockPeriodAfterStake
+  minClaimLockEnd
+  slug
+  description
+  website
+  image
   totalStaked
+  totalClaimed
   totalUsers
-  withdrawLockPeriodAfterDeposit
+  builderUsers {
+    ...BuilderUserDefault
+  }
 }
-    `;
-export const GetBuildersProjects = gql`
-    query getBuildersProjects($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection) {
-  buildersProjects(
+    ${BuilderUserDefault}`;
+export const GetBuilderSubnet = gql`
+    query getBuilderSubnet($id: ID! = "") {
+  builderSubnet(id: $id) {
+    ...BuilderSubnetDefault
+  }
+}
+    ${BuilderSubnetDefault}`;
+export const GetBuilderSubnetUsers = gql`
+    query getBuilderSubnetUsers($first: Int = 10, $skip: Int = 10, $orderBy: BuilderUser_orderBy, $orderDirection: OrderDirection, $builderSubnetId: Bytes = "") {
+  builderUsers(
+    first: $first
+    skip: $skip
+    orderBy: $orderBy
+    orderDirection: $orderDirection
+    where: {builderSubnet_: {id: $builderSubnetId}}
+  ) {
+    ...BuilderUserDefault
+  }
+}
+    ${BuilderUserDefault}`;
+export const GetUserAccountBuilderSubnets = gql`
+    query getUserAccountBuilderSubnets($address: Bytes = "", $builder_subnet_id: Bytes = "") {
+  builderUsers(
+    where: {address: $address, builderSubnet_: {id: $builder_subnet_id}}
+  ) {
+    ...BuilderUserDefault
+    builderSubnet {
+      ...BuilderSubnetDefault
+    }
+  }
+}
+    ${BuilderUserDefault}
+${BuilderSubnetDefault}`;
+export const CombinedBuilderSubnets = gql`
+    query combinedBuilderSubnets($first: Int = 10, $skip: Int = 10, $orderBy: BuilderSubnet_orderBy, $orderDirection: OrderDirection, $usersOrderBy: BuilderUser_orderBy, $usersDirection: OrderDirection, $address: Bytes = "") {
+  builderSubnets(
     first: $first
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
   ) {
-    ...BuilderProject
+    ...BuilderSubnetDefault
   }
-}
-    ${BuilderProject}`;
-export const GetBuildersProjectsByIds = gql`
-    query getBuildersProjectsByIds($id_in: [Bytes!] = "") {
-  buildersProjects(where: {id_in: $id_in}) {
-    ...BuilderProject
-  }
-}
-    ${BuilderProject}`;
-export const GetBuildersProject = gql`
-    query getBuildersProject($id: ID = "") {
-  buildersProject(id: $id) {
-    ...BuilderProject
-  }
-}
-    ${BuilderProject}`;
-export const GetAccountUserBuildersProjects = gql`
-    query getAccountUserBuildersProjects($address: Bytes = "") {
-  buildersUsers(where: {address: $address}) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      ...BuilderProject
-    }
-  }
-}
-    ${BuilderProject}`;
-export const GetBuildersProjectUsers = gql`
-    query getBuildersProjectUsers($first: Int = 10, $skip: Int = 10, $buildersProjectId: Bytes = "") {
-  buildersUsers(
-    first: $first
-    skip: $skip
-    where: {buildersProject_: {id: $buildersProjectId}}
-  ) {
-    address
-    id
-    staked
-    lastStake
-  }
-}
-    `;
-export const GetUserAccountBuildersProject = gql`
-    query getUserAccountBuildersProject($address: Bytes = "", $project_id: Bytes = "") {
-  buildersUsers(where: {address: $address, buildersProject_: {id: $project_id}}) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      admin
-      claimLockEnd
-      id
-      minimalDeposit
-      name
-      startsAt
-      totalClaimed
-      totalStaked
-      totalUsers
-      withdrawLockPeriodAfterDeposit
-    }
-  }
-}
-    `;
-export const GetBuildersCounters = gql`
-    query GetBuildersCounters {
-  counters {
-    id
-    totalBuildersProjects
-    totalSubnets
-  }
-}
-    `;
-export const CombinedBuildersList = gql`
-    query combinedBuildersList($first: Int = 10, $skip: Int = 10, $orderBy: BuildersProject_orderBy, $orderDirection: OrderDirection, $usersOrderBy: BuildersUser_orderBy, $usersDirection: OrderDirection, $address: Bytes = "") {
-  buildersProjects(
-    first: $first
-    skip: $skip
-    orderBy: $orderBy
-    orderDirection: $orderDirection
-  ) {
-    ...BuilderProject
-  }
-  buildersUsers(
+  builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
     where: {address: $address}
   ) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      admin
-      claimLockEnd
-      id
-      minimalDeposit
-      name
-      startsAt
-      totalClaimed
-      totalStaked
-      totalUsers
-      withdrawLockPeriodAfterDeposit
+    ...BuilderUserDefault
+    builderSubnet {
+      ...BuilderSubnetDefault
     }
   }
   counters {
     id
-    totalBuildersProjects
     totalSubnets
+    totalBuilderProjects
   }
 }
-    ${BuilderProject}`;
-export const CombinedBuildersListFilteredByPredefinedBuilders = gql`
-    query combinedBuildersListFilteredByPredefinedBuilders($orderBy: BuildersProject_orderBy, $usersOrderBy: BuildersUser_orderBy, $usersDirection: OrderDirection, $orderDirection: OrderDirection, $name_in: [String!] = "", $address: Bytes = "") {
-  buildersProjects(
+    ${BuilderSubnetDefault}
+${BuilderUserDefault}`;
+export const CombinedBuilderSubnetsFilteredByPredefinedBuilders = gql`
+    query combinedBuilderSubnetsFilteredByPredefinedBuilders($orderBy: BuilderSubnet_orderBy, $usersOrderBy: BuilderUser_orderBy, $usersDirection: OrderDirection, $orderDirection: OrderDirection, $name_in: [String!] = "", $address: Bytes = "") {
+  builderSubnets(
     orderBy: $orderBy
     orderDirection: $orderDirection
     where: {name_in: $name_in}
   ) {
-    ...BuilderProject
+    ...BuilderSubnetDefault
   }
-  buildersUsers(
+  builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
-    where: {address: $address, buildersProject_: {name_in: $name_in}}
+    where: {address: $address, builderSubnet_: {name_in: $name_in}}
   ) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      ...BuilderProject
+    ...BuilderUserDefault
+    builderSubnet {
+      ...BuilderSubnetDefault
     }
   }
 }
-    ${BuilderProject}`;
+    ${BuilderSubnetDefault}
+${BuilderUserDefault}`;

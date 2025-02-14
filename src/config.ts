@@ -214,6 +214,7 @@ export enum ContractIds {
   l2Factory = 'l2-factory',
   subnetFactory = 'subnet-factory',
   builders = 'builders',
+  feeConfig = 'fee-config',
 }
 
 export const layerZeroEndpointIds: Record<EthereumChains, string> = {
@@ -312,8 +313,13 @@ export const perChainDeployedContracts: Record<
     ..._emptyContracts,
     [EthereumChains.Arbitrum]: '0xC0eD68f163d44B6e9985F0041fDf6f67c6BCFF3f',
     [EthereumChains.ArbitrumSepolia]:
-      '0x649B24D0b6F5A4c3852fD4C0dD91308902E5fe8a',
+      '0xCB27aC872bfF99b643c9276041FA4b3CCC713759',
     [EthereumChains.Base]: '0x42BB446eAE6dca7723a9eBdb81EA88aFe77eF4B9',
+  },
+  [ContractIds.feeConfig]: {
+    ..._emptyContracts,
+    [EthereumChains.ArbitrumSepolia]:
+      '0x300aEB39b9bd45b375b918f398e2fB9E25eb7287',
   },
 }
 
@@ -366,7 +372,7 @@ const perChainSecondApolloClients: Record<
   [EthereumChains.Ethereum]: null,
   [EthereumChains.Arbitrum]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node/version/latest',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,
@@ -379,8 +385,7 @@ const perChainSecondApolloClients: Record<
   [EthereumChains.Sepolia]: null,
   [EthereumChains.ArbitrumSepolia]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/lumerin-node-testnet/version/latest',
-      // uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,
@@ -392,7 +397,7 @@ const perChainSecondApolloClients: Record<
   }),
   [EthereumChains.Base]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-mainnet-base/api',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,

@@ -28,6 +28,21 @@
             </template>
           </input-field>
 
+          <datetime-field
+            v-model="form.claimLockEnd"
+            :placeholder="$t('builders-stake-modal.claim-lock-end-plh')"
+            :note="
+              currentClaimLockEnd.isAfter(time())
+                ? $t('builders-stake-modal.claim-lock-end-note', {
+                    date: currentClaimLockEnd.format(DOT_TIME_FORMAT),
+                  })
+                : ''
+            "
+            :error-message="getFieldErrorMessage('claimLockEnd')"
+            @blur="touchField('claimLockEnd')"
+            :disabled="isSubmitting"
+          />
+
           <div class="flex items-center justify-between gap-2">
             <span class="stake-modal__details-label">
               {{ $t('builders-stake-modal.available-to-stake-balance') }}
@@ -43,11 +58,48 @@
         </div>
       </div>
 
-      <div
-        v-if="chainDetails?.chainName"
-        class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4"
-      >
-        <div class="flex items-center justify-between">
+      <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
+        <div
+          v-if="chainDetails?.chainName"
+          class="flex items-center justify-between"
+        >
+          <div class="flex items-center gap-2">
+            <span class="text-textSecondaryMain typography-body3">
+              {{ $t('builders-stake-modal.power-factor-lbl') }}
+            </span>
+            <v-dropdown class="size-6">
+              <!-- This will be the popover target (for the events and position) -->
+              <button type="button" class="text-textSecondaryMain">
+                <app-icon
+                  :name="$icons.info"
+                  class="color-textSecondaryMain size-4"
+                />
+              </button>
+              <!-- This will be the content of the popover -->
+              <template #popper>
+                <span class="typography-body3">
+                  {{ $t('builders-stake-modal.power-factor-tooltip') }}
+                </span>
+              </template>
+            </v-dropdown>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-textSecondaryMain typography-body3">
+              {{
+                $t('builders-stake-modal.power-factor-value', {
+                  powerFactor: formatAmount(powerFactor, 25),
+                })
+              }}
+            </span>
+          </div>
+        </div>
+
+        <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
+
+        <div
+          v-if="chainDetails?.chainName"
+          class="flex items-center justify-between"
+        >
           <span class="text-textSecondaryMain typography-body3">
             {{ $t('builders-stake-modal.network-lbl') }}
           </span>
@@ -63,8 +115,6 @@
             </span>
           </div>
         </div>
-
-        <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
 
         <div
           class="flex items-center justify-between"
@@ -113,35 +163,37 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton, BasicModal } from '@/common'
-import { InputField } from '@/fields'
+import { AppButton, AppIcon, BasicModal } from '@/common'
+import { InputField, DatetimeField } from '@/fields'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, reactive, ref } from 'vue'
-import { maxValue, numeric, required } from '@/validators'
+import { maxValue, minValue, numeric, required } from '@/validators'
 import {
   bus,
   BUS_EVENTS,
   ErrorHandler,
+  formatAmount,
   getEthExplorerTxUrl,
   humanizeTime,
   sleep,
 } from '@/helpers'
 import { formatEther, parseUnits } from '@/utils'
 import {
-  GetBuildersProjectQuery,
-  GetUserAccountBuildersProject,
-  GetUserAccountBuildersProjectQuery,
-  GetUserAccountBuildersProjectQueryVariables,
+  BuilderSubnetDefaultFragment,
+  GetUserAccountBuilderSubnets,
+  GetUserAccountBuilderSubnetsQuery,
+  GetUserAccountBuilderSubnetsQueryVariables,
 } from '@/types/graphql'
 import { duration, time } from '@distributedlab/tools'
-import { DEFAULT_TIME_FORMAT } from '@/const'
+import { DEFAULT_TIME_FORMAT, DOT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { config, getEthereumChainsName } from '@config'
+import { helpers } from '@vuelidate/validators'
 
 const props = withDefaults(
   defineProps<{
-    builderProject: GetBuildersProjectQuery['buildersProject']
+    builderSubnet: BuilderSubnetDefaultFragment
     isShown?: boolean
     chain?: string
   }>(),
@@ -161,40 +213,63 @@ const { t } = useI18n()
 const {
   provider,
   rewardsContract,
-  buildersContract,
-  buildersContractDetails,
+  builderSubnetsContract,
+  builderSubnetsContractDetails,
   balances,
 } = storeToRefs(useWeb3ProvidersStore())
 
 const { client: buildersApolloClient } = useSecondApolloClient()
 
-const { data: buildersProjectUserAccount } = useLoad<
-  GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+const { data: buildersSubnetUserAccount } = useLoad<
+  GetUserAccountBuilderSubnetsQuery['builderUsers'][0]
 >(
-  {} as GetUserAccountBuildersProjectQuery['buildersUsers'][0],
+  {} as GetUserAccountBuilderSubnetsQuery['builderUsers'][0],
   async () => {
     if (!props.isShown)
-      return {} as GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+      return {} as GetUserAccountBuilderSubnetsQuery['builderUsers'][0]
 
-    const { data: userAccountInProject } =
+    const { data: userAccountInSubnet } =
       await buildersApolloClient.value.query<
-        GetUserAccountBuildersProjectQuery,
-        GetUserAccountBuildersProjectQueryVariables
+        GetUserAccountBuilderSubnetsQuery,
+        GetUserAccountBuilderSubnetsQueryVariables
       >({
-        query: GetUserAccountBuildersProject,
+        query: GetUserAccountBuilderSubnets,
         fetchPolicy: 'network-only',
         variables: {
           address: provider.value.selectedAddress,
-          project_id: props.builderProject?.id,
+          builder_subnet_id: props.builderSubnet?.id,
         },
       })
 
-    return userAccountInProject.buildersUsers?.[0]
+    return userAccountInSubnet.builderUsers?.[0]
   },
   {
     reloadArgs: [() => props.isShown, () => provider.value.selectedAddress],
   },
 )
+
+const { data: powerFactor } = useLoad(
+  '',
+  async () => {
+    const pfBN =
+      await builderSubnetsContract.value.providerBased.value.getStakerPowerFactor(
+        props.builderSubnet.id,
+        provider.value.selectedAddress,
+      )
+
+    return pfBN.toString()
+  },
+  {
+    reloadArgs: [buildersSubnetUserAccount],
+  },
+)
+
+const currentClaimLockEnd = computed(() => {
+  return time(
+    +buildersSubnetUserAccount.value?.claimLockEnd ||
+      +props.builderSubnet.minClaimLockEnd,
+  )
+})
 
 const chainDetails = computed(() => {
   if (!props.chain) return undefined
@@ -206,6 +281,7 @@ const isSubmitting = ref(false)
 
 const form = reactive({
   stakeAmount: '',
+  claimLockEnd: '' as number | '',
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -215,7 +291,21 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       stakeAmount: {
         required,
         numeric,
+        minValue: minValue(+formatEther(props.builderSubnet.minStake) || 0),
         maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
+      },
+      claimLockEnd: {
+        minValue: helpers.withMessage(
+          t('builders-stake-modal.claim-lock-end-validation-msg', {
+            data: currentClaimLockEnd.value.format(DOT_TIME_FORMAT),
+          }),
+          minValue(
+            Number(
+              buildersSubnetUserAccount.value.claimLockEnd ||
+                props.builderSubnet.minClaimLockEnd,
+            ),
+          ),
+        ),
       },
     })),
   )
@@ -223,27 +313,27 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 const builderDetails = computed(() => [
   {
     label: t('builders-stake-modal.builder-lbl'),
-    value: props.builderProject?.name,
+    value: props.builderSubnet?.name,
   },
   {
     label: t('builders-stake-modal.min-deposit-lbl'),
-    value: `${formatEther(props.builderProject?.minimalDeposit)} MOR`,
+    value: `${formatEther(props.builderSubnet?.minStake)} MOR`,
   },
   {
     label: t('builders-stake-modal.lock-period-lbl'),
-    value: humanizeTime(+props.builderProject?.withdrawLockPeriodAfterDeposit),
+    value: humanizeTime(+props.builderSubnet?.withdrawLockPeriodAfterStake),
   },
   {
     label: t('builders-stake-modal.new-stake-amount-lbl'),
-    value: `${+formatEther(buildersProjectUserAccount.value?.staked || 0) + +form.stakeAmount} MOR`,
+    value: `${+formatEther(buildersSubnetUserAccount.value?.staked || 0) + +form.stakeAmount} MOR`,
   },
   {
     label: t('builders-stake-modal.new-unlock-date-lbl'),
-    value: props.builderProject
+    value: props.builderSubnet
       ? time()
           .add(
             duration(
-              +props.builderProject?.withdrawLockPeriodAfterDeposit,
+              +props.builderSubnet?.withdrawLockPeriodAfterStake,
               'seconds',
             ).asSeconds,
             'seconds',
@@ -269,31 +359,33 @@ const submit = async () => {
   try {
     if (
       provider.value.chainId !==
-      (props.chain ?? buildersContractDetails.value.targetChainId)
+      (props.chain ?? builderSubnetsContractDetails.value.targetChainId)
     ) {
       provider.value.selectChain(
-        props.chain ?? buildersContractDetails.value.targetChainId,
+        props.chain ?? builderSubnetsContractDetails.value.targetChainId,
       )
       await sleep(1_500)
     }
 
     const allowance = await rewardsContract.value.providerBased.value.allowance(
       provider.value.selectedAddress,
-      buildersContract.value.signerBased.value.address,
+      builderSubnetsContract.value.signerBased.value.address,
     )
 
     if (allowance.lt(parseUnits(form.stakeAmount))) {
       const approveTx = await rewardsContract.value.signerBased.value.approve(
-        buildersContract.value.signerBased.value.address,
+        builderSubnetsContract.value.signerBased.value.address,
         parseUnits(form.stakeAmount),
       )
 
       await approveTx.wait()
     }
 
-    const tx = await buildersContract.value.signerBased.value.deposit(
-      props.builderProject?.id,
+    const tx = await builderSubnetsContract.value.signerBased.value.stake(
+      props.builderSubnet?.id,
+      provider.value.selectedAddress,
       parseUnits(form.stakeAmount),
+      form.claimLockEnd ? Number(form.claimLockEnd) : 0,
     )
 
     const txReceipt = await tx.wait()
@@ -301,7 +393,7 @@ const submit = async () => {
     if (!txReceipt) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      buildersContractDetails.value.explorerUrl,
+      builderSubnetsContractDetails.value.explorerUrl,
       txReceipt.transactionHash,
     )
 
@@ -320,7 +412,7 @@ const submit = async () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .stake-modal__details-label {
   font-size: toRem(16);
   line-height: toRem(24);
@@ -344,5 +436,9 @@ const submit = async () => {
   line-height: toRem(24);
 
   @include square(48);
+}
+
+.v-popper--theme-dropdown .v-popper__inner {
+  @apply max-w-[270px] border-none bg-[#030807] p-4;
 }
 </style>

@@ -17,6 +17,11 @@ export const typography: CSSRuleObject = {
     fontWeight: '700',
     lineHeight: '46px',
   },
+  '.typography-h3': {
+    fontSize: '28px',
+    lineHeight: '40px',
+    fontWeight: '700',
+  },
   '.typography-h4': {
     fontSize: '24px',
     fontWeight: '600',

@@ -27,8 +27,7 @@
     <div class="z-30 mt-16 flex w-full items-center justify-between">
       <h2
         v-if="
-          !buildersProjectsState.isLoaded.value ||
-          listData.buildersProjects.length
+          !builderSubnetsState.isLoaded.value || listData.builderSubnets.length
         "
         class="self-start text-textSecondaryMain"
       >
@@ -94,16 +93,16 @@
       </div>
     </div>
 
-    <template v-if="buildersProjectsState.isLoaded.value">
-      <template v-if="buildersProjectsState.isLoadFailed.value">
+    <template v-if="builderSubnetsState.isLoaded.value">
+      <template v-if="builderSubnetsState.isLoadFailed.value">
         <error-message
           :message="$t('builders-list.loading-projects-error-msg')"
         />
       </template>
-      <template v-else-if="listData.buildersProjects.length">
+      <template v-else-if="listData.builderSubnets.length">
         <builders-table
           class="z-10 mt-8"
-          :builders-projects="listData.buildersProjects"
+          :builder-subnets="listData.builderSubnets"
           v-model:order-by-model="orderBy"
           v-model:order-direction-model="orderDirection"
         />
@@ -124,21 +123,21 @@
 
     <pagination
       v-if="
-        listData.buildersCounters?.totalBuildersProjects &&
-        buildersProjectsState.isLoaded.value &&
-        listData.buildersCounters?.totalBuildersProjects >
+        listData.buildersCounters?.totalBuilderProjects &&
+        builderSubnetsState.isLoaded.value &&
+        listData.buildersCounters?.totalBuilderProjects >
           DEFAULT_BUILDERS_PAGE_LIMIT
       "
       v-model:current-page="currentPage"
       :page-limit="DEFAULT_BUILDERS_PAGE_LIMIT"
-      :total-items="+listData.buildersCounters?.totalBuildersProjects"
+      :total-items="+listData.buildersCounters?.totalBuilderProjects"
       class="mt-6"
     />
 
     <h2
       v-if="
-        !buildersProjectsState.isLoaded.value ||
-        listData.userAccountBuildersProjects.length
+        !builderSubnetsState.isLoaded.value ||
+        listData.userAccountBuilderSubnets.length
       "
       class="mt-16 self-start text-textSecondaryMain"
     >
@@ -146,16 +145,16 @@
     </h2>
 
     <div class="mt-8 w-full">
-      <template v-if="buildersProjectsState.isLoaded.value">
-        <template v-if="buildersProjectsState.isLoadFailed.value">
+      <template v-if="builderSubnetsState.isLoaded.value">
+        <template v-if="builderSubnetsState.isLoadFailed.value">
           <error-message
             :message="$t('builders-list.loading-account-projects-error-msg')"
           />
         </template>
-        <template v-else-if="listData.userAccountBuildersProjects.length">
+        <template v-else-if="listData.userAccountBuilderSubnets.length">
           <builders-table
             class="w-full"
-            :builders-projects="listData.userAccountBuildersProjects"
+            :builder-subnets="listData.userAccountBuilderSubnets"
             v-model:order-by-model="usersBuildersOrderBy"
             v-model:order-direction-model="usersOrderDirection"
           />
@@ -183,17 +182,18 @@ import {
 } from '@/common'
 import BuildersTable from '@/pages/Builders/pages/BuildersList/components/BuildersTable/index.vue'
 import {
-  BuildersProject_OrderBy,
-  BuildersUser_OrderBy,
-  CombinedBuildersList,
-  CombinedBuildersListFilteredByPredefinedBuilders,
-  CombinedBuildersListFilteredByPredefinedBuildersQuery,
-  CombinedBuildersListFilteredByPredefinedBuildersQueryVariables,
-  CombinedBuildersListQuery,
-  CombinedBuildersListQueryVariables,
+  BuilderSubnet_OrderBy,
+  BuilderSubnetDefaultFragment,
+  BuilderUser_OrderBy,
+  CombinedBuilderSubnets,
+  CombinedBuilderSubnetsFilteredByPredefinedBuilders,
+  CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery,
+  CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables,
+  CombinedBuilderSubnetsQuery,
+  CombinedBuilderSubnetsQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { provide, ref, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -214,9 +214,9 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { InputField } from '@/fields'
 
 type LoadBuildersResponse = {
-  buildersProjects: CombinedBuildersListQuery['buildersProjects']
-  userAccountBuildersProjects: CombinedBuildersListQuery['buildersProjects']
-  buildersCounters: CombinedBuildersListQuery['counters'][0]
+  builderSubnets: BuilderSubnetDefaultFragment[]
+  userAccountBuilderSubnets: BuilderSubnetDefaultFragment[]
+  buildersCounters: CombinedBuilderSubnetsQuery['counters'][0]
 }
 
 defineOptions({
@@ -236,14 +236,14 @@ const {
 const currentPage = ref(1)
 const searchQuery = ref('')
 
-const orderBy = ref<BuildersProject_OrderBy | AdditionalBuildersOrderBy>(
-  BuildersProject_OrderBy.TotalStaked,
+const orderBy = ref<BuilderSubnet_OrderBy | AdditionalBuildersOrderBy>(
+  BuilderSubnet_OrderBy.TotalStaked,
 )
 const orderDirection = ref(OrderDirection.Desc)
 
 const usersBuildersOrderBy = ref<
-  BuildersProject_OrderBy | AdditionalBuildersOrderBy
->(BuildersProject_OrderBy.TotalStaked)
+  BuilderSubnet_OrderBy | AdditionalBuildersOrderBy
+>(BuilderSubnet_OrderBy.TotalStaked)
 const usersOrderDirection = ref(OrderDirection.Asc)
 
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
@@ -278,28 +278,37 @@ watch(
 )
 
 const mapUsersOrderFilter = (
-  orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy,
-): BuildersUser_OrderBy => {
+  orderBy: BuilderSubnet_OrderBy | AdditionalBuildersOrderBy,
+): BuilderUser_OrderBy => {
+  if (orderBy === 'RewardType') {
+    return BuilderUser_OrderBy.BuilderSubnetId
+  }
+
   return {
-    [BuildersProject_OrderBy.Admin]: BuildersUser_OrderBy.BuildersProjectAdmin,
-    [BuildersProject_OrderBy.ClaimLockEnd]:
-      BuildersUser_OrderBy.BuildersProjectClaimLockEnd,
-    [BuildersProject_OrderBy.Id]: BuildersUser_OrderBy.BuildersProjectId,
-    [BuildersProject_OrderBy.MinimalDeposit]:
-      BuildersUser_OrderBy.BuildersProjectMinimalDeposit,
-    [BuildersProject_OrderBy.Name]: BuildersUser_OrderBy.BuildersProjectName,
-    [BuildersProject_OrderBy.StartsAt]:
-      BuildersUser_OrderBy.BuildersProjectStartsAt,
-    [BuildersProject_OrderBy.TotalClaimed]:
-      BuildersUser_OrderBy.BuildersProjectTotalClaimed,
-    [BuildersProject_OrderBy.TotalStaked]:
-      BuildersUser_OrderBy.BuildersProjectTotalStaked,
-    [BuildersProject_OrderBy.TotalUsers]:
-      BuildersUser_OrderBy.BuildersProjectTotalUsers,
-    [BuildersProject_OrderBy.WithdrawLockPeriodAfterDeposit]:
-      BuildersUser_OrderBy.BuildersProjectWithdrawLockPeriodAfterDeposit,
-    [AdditionalBuildersOrderBy.RewardType]:
-      BuildersUser_OrderBy.BuildersProjectId,
+    [BuilderSubnet_OrderBy.BuilderUsers]: BuilderUser_OrderBy.Id,
+    [BuilderSubnet_OrderBy.Description]:
+      BuilderUser_OrderBy.BuilderSubnetDescription,
+    [BuilderSubnet_OrderBy.Fee]: BuilderUser_OrderBy.BuilderSubnetFee,
+    [BuilderSubnet_OrderBy.FeeTreasury]:
+      BuilderUser_OrderBy.BuilderSubnetFeeTreasury,
+    [BuilderSubnet_OrderBy.Id]: BuilderUser_OrderBy.BuilderSubnetId,
+    [BuilderSubnet_OrderBy.Image]: BuilderUser_OrderBy.BuilderSubnetImage,
+    [BuilderSubnet_OrderBy.MinClaimLockEnd]:
+      BuilderUser_OrderBy.BuilderSubnetMinClaimLockEnd,
+    [BuilderSubnet_OrderBy.MinStake]: BuilderUser_OrderBy.BuilderSubnetMinStake,
+    [BuilderSubnet_OrderBy.Name]: BuilderUser_OrderBy.BuilderSubnetName,
+    [BuilderSubnet_OrderBy.Owner]: BuilderUser_OrderBy.BuilderSubnetOwner,
+    [BuilderSubnet_OrderBy.Slug]: BuilderUser_OrderBy.BuilderSubnetSlug,
+    [BuilderSubnet_OrderBy.StartsAt]: BuilderUser_OrderBy.BuilderSubnetStartsAt,
+    [BuilderSubnet_OrderBy.TotalClaimed]:
+      BuilderUser_OrderBy.BuilderSubnetTotalClaimed,
+    [BuilderSubnet_OrderBy.TotalStaked]:
+      BuilderUser_OrderBy.BuilderSubnetTotalStaked,
+    [BuilderSubnet_OrderBy.TotalUsers]:
+      BuilderUser_OrderBy.BuilderSubnetTotalUsers,
+    [BuilderSubnet_OrderBy.Website]: BuilderUser_OrderBy.BuilderSubnetWebsite,
+    [BuilderSubnet_OrderBy.WithdrawLockPeriodAfterStake]:
+      BuilderUser_OrderBy.BuilderSubnetWithdrawLockPeriodAfterStake,
   }[orderBy]
 }
 
@@ -309,9 +318,9 @@ const mapperUsersBuildersOrderBy = computed(() =>
 
 const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
   {
-    buildersProjects: [],
-    userAccountBuildersProjects: [],
-    buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
+    builderSubnets: [],
+    userAccountBuilderSubnets: [],
+    buildersCounters: {} as CombinedBuilderSubnetsQuery['counters'][0],
   },
   async (): Promise<LoadBuildersResponse> => {
     const loadFn = async (
@@ -319,17 +328,17 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       chain: EthereumChains,
     ) => {
       const { data } = await client.query<
-        CombinedBuildersListFilteredByPredefinedBuildersQuery,
-        CombinedBuildersListFilteredByPredefinedBuildersQueryVariables
+        CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery,
+        CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables
       >({
-        query: CombinedBuildersListFilteredByPredefinedBuilders,
+        query: CombinedBuilderSubnetsFilteredByPredefinedBuilders,
         fetchPolicy: 'network-only',
         variables: {
-          orderBy: Object.values(BuildersProject_OrderBy).includes(
-            orderBy.value as BuildersProject_OrderBy,
+          orderBy: Object.values(BuilderSubnet_OrderBy).includes(
+            orderBy.value as BuilderSubnet_OrderBy,
           )
-            ? (orderBy.value as BuildersProject_OrderBy)
-            : BuildersProject_OrderBy.TotalStaked,
+            ? (orderBy.value as BuilderSubnet_OrderBy)
+            : BuilderSubnet_OrderBy.TotalStaked,
           usersOrderBy: mapperUsersBuildersOrderBy.value,
           usersDirection: usersOrderDirection.value,
           orderDirection: orderDirection.value,
@@ -345,19 +354,19 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
 
       return {
         data: {
-          buildersProjects: data.buildersProjects.map(el => ({ ...el, chain })),
-          buildersUsers: data.buildersUsers.map(el => {
+          builderSubnets: data.builderSubnets.map(el => ({ ...el, chain })),
+          buildersUsers: data.builderUsers.map(el => {
             return {
               ...el,
-              buildersProject: {
-                ...el.buildersProject,
+              builderSubnet: {
+                ...el.builderSubnet,
                 chain,
               },
             }
           }),
           buildersCounters: {
             id: '',
-            totalBuildersProjects: data.buildersProjects.length,
+            totalBuilderProjects: data.builderSubnets.length,
             totalSubnets: 0,
           },
         },
@@ -373,26 +382,27 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
 
       const result = response.reduce(
         (acc, curr) => {
-          acc['buildersProjects'] = acc['buildersProjects'].concat(
-            curr.data.buildersProjects,
+          acc['builderSubnets'] = acc['builderSubnets'].concat(
+            curr.data.builderSubnets,
           )
-          acc['userAccountBuildersProjects'] = acc[
-            'userAccountBuildersProjects'
-          ].concat(curr.data.buildersUsers.map(el => el.buildersProject))
+          acc['userAccountBuilderSubnets'] = acc[
+            'userAccountBuilderSubnets'
+          ].concat(curr.data.buildersUsers.map(el => el.builderSubnet))
 
           acc['buildersCounters'] = {
             id: '',
-            totalBuildersProjects: acc.buildersProjects.length,
+            totalBuilderProjects: acc.builderSubnets.length,
             totalSubnets: 0,
           }
 
           return acc
         },
         {
-          buildersProjects: [],
-          userAccountBuildersProjects: [],
+          builderSubnets: [],
+          userAccountBuilderSubnets: [],
           buildersCounters: {
-            totalBuildersProjects: 0,
+            id: '',
+            totalBuilderProjects: 0,
             totalSubnets: 0,
           } as LoadBuildersResponse['buildersCounters'],
         } as LoadBuildersResponse,
@@ -407,13 +417,11 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
     )
 
     return {
-      buildersProjects: data.buildersProjects,
-      userAccountBuildersProjects: data.buildersUsers.map(
-        el => el.buildersProject,
-      ),
+      builderSubnets: data.builderSubnets,
+      userAccountBuilderSubnets: data.buildersUsers.map(el => el.builderSubnet),
       buildersCounters: {
         id: '',
-        totalBuildersProjects: data.buildersProjects.length,
+        totalBuilderProjects: data.builderSubnets.length,
         totalSubnets: 0,
       },
     }
@@ -438,21 +446,21 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
 const paginateThroughAllPredefinedBuilders = async (args: {
   skip: number
   first: number
-  orderBy: BuildersProject_OrderBy | AdditionalBuildersOrderBy
+  orderBy: BuilderSubnet_OrderBy | AdditionalBuildersOrderBy
   orderDirection: OrderDirection
 }): Promise<LoadBuildersResponse> => {
-  let buildersProjects = allPredefinedBuilders.value.buildersProjects.slice(
+  let builderSubnets = allPredefinedBuilders.value.builderSubnets.slice(
     args.skip,
     args.skip + args.first,
   )
   if (!selectedChain.value) {
-    buildersProjects = localSortBuilders(
-      buildersProjects,
-      Object.values(BuildersProject_OrderBy).includes(
-        args.orderBy as BuildersProject_OrderBy,
+    builderSubnets = localSortBuilders(
+      builderSubnets,
+      Object.values(BuilderSubnet_OrderBy).includes(
+        args.orderBy as BuilderSubnet_OrderBy,
       )
-        ? (args.orderBy as BuildersProject_OrderBy)
-        : BuildersProject_OrderBy.TotalStaked,
+        ? (args.orderBy as BuilderSubnet_OrderBy)
+        : BuilderSubnet_OrderBy.TotalStaked,
       args.orderDirection,
     )
   }
@@ -461,24 +469,24 @@ const paginateThroughAllPredefinedBuilders = async (args: {
     orderBy.value,
   )
   if (isCustomSorting) {
-    buildersProjects = sortByCustomType(
-      buildersProjects,
+    builderSubnets = sortByCustomType(
+      builderSubnets,
       orderBy.value as AdditionalBuildersOrderBy,
       orderDirection.value,
     )
   }
 
-  let userAccountBuildersProjects =
-    allPredefinedBuilders.value.userAccountBuildersProjects
+  let userAccountBuilderSubnets =
+    allPredefinedBuilders.value.userAccountBuilderSubnets
 
   if (!selectedChain.value) {
-    userAccountBuildersProjects = localSortBuilders(
-      userAccountBuildersProjects,
-      Object.values(BuildersProject_OrderBy).includes(
-        args.orderBy as BuildersProject_OrderBy,
+    userAccountBuilderSubnets = localSortBuilders(
+      userAccountBuilderSubnets,
+      Object.values(BuilderSubnet_OrderBy).includes(
+        args.orderBy as BuilderSubnet_OrderBy,
       )
-        ? (args.orderBy as BuildersProject_OrderBy)
-        : BuildersProject_OrderBy.TotalStaked,
+        ? (args.orderBy as BuilderSubnet_OrderBy)
+        : BuilderSubnet_OrderBy.TotalStaked,
       args.orderDirection,
     )
   }
@@ -487,8 +495,8 @@ const paginateThroughAllPredefinedBuilders = async (args: {
     usersBuildersOrderBy.value,
   )
   if (isUsersCustomSorting) {
-    userAccountBuildersProjects = sortByCustomType(
-      userAccountBuildersProjects,
+    userAccountBuilderSubnets = sortByCustomType(
+      userAccountBuilderSubnets,
       usersBuildersOrderBy.value as AdditionalBuildersOrderBy,
       usersOrderDirection.value,
     )
@@ -497,97 +505,96 @@ const paginateThroughAllPredefinedBuilders = async (args: {
   const buildersCounters = allPredefinedBuilders.value.buildersCounters
 
   return {
-    buildersProjects,
-    userAccountBuildersProjects,
+    builderSubnets,
+    userAccountBuilderSubnets,
     buildersCounters,
   }
 }
 
-const {
-  data: listData,
-  reload: reloadList,
-  update: updateList,
-  ...buildersProjectsState
-} = useLoad<LoadBuildersResponse>(
-  {
-    buildersProjects: [],
-    userAccountBuildersProjects: [],
-    buildersCounters: {} as CombinedBuildersListQuery['counters'][0],
-  },
-  async () => {
-    if (networkType.value === NetworkTypes.Mainnet) {
-      return paginateThroughAllPredefinedBuilders({
-        first: DEFAULT_BUILDERS_PAGE_LIMIT,
-        skip:
-          currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
-          DEFAULT_BUILDERS_PAGE_LIMIT,
-        orderBy: orderBy.value,
-        orderDirection: orderDirection.value,
+const { data: listData, ...builderSubnetsState } =
+  useLoad<LoadBuildersResponse>(
+    {
+      builderSubnets: [],
+      userAccountBuilderSubnets: [],
+      buildersCounters: {} as CombinedBuilderSubnetsQuery['counters'][0],
+    },
+    async () => {
+      if (networkType.value === NetworkTypes.Mainnet) {
+        return paginateThroughAllPredefinedBuilders({
+          first: DEFAULT_BUILDERS_PAGE_LIMIT,
+          skip:
+            currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
+            DEFAULT_BUILDERS_PAGE_LIMIT,
+          orderBy: orderBy.value,
+          orderDirection: orderDirection.value,
+        })
+      }
+
+      const { data } = await buildersApolloClient.value.query<
+        CombinedBuilderSubnetsQuery,
+        CombinedBuilderSubnetsQueryVariables
+      >({
+        query: CombinedBuilderSubnets,
+        fetchPolicy: 'network-only',
+        variables: {
+          first: DEFAULT_BUILDERS_PAGE_LIMIT,
+          skip:
+            currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
+            DEFAULT_BUILDERS_PAGE_LIMIT,
+          orderBy: Object.values(BuilderSubnet_OrderBy).includes(
+            orderBy.value as BuilderSubnet_OrderBy,
+          )
+            ? (orderBy.value as BuilderSubnet_OrderBy)
+            : BuilderSubnet_OrderBy.TotalStaked,
+          usersOrderBy: mapperUsersBuildersOrderBy.value,
+          usersDirection: usersOrderDirection.value,
+          orderDirection: orderDirection.value,
+
+          address: provider.value.selectedAddress,
+        },
       })
-    }
 
-    const { data } = await buildersApolloClient.value.query<
-      CombinedBuildersListQuery,
-      CombinedBuildersListQueryVariables
-    >({
-      query: CombinedBuildersList,
-      fetchPolicy: 'network-only',
-      variables: {
-        first: DEFAULT_BUILDERS_PAGE_LIMIT,
-        skip:
-          currentPage.value * DEFAULT_BUILDERS_PAGE_LIMIT -
-          DEFAULT_BUILDERS_PAGE_LIMIT,
-        orderBy: Object.values(BuildersProject_OrderBy).includes(
-          orderBy.value as BuildersProject_OrderBy,
-        )
-          ? (orderBy.value as BuildersProject_OrderBy)
-          : BuildersProject_OrderBy.TotalStaked,
-        usersOrderBy: mapperUsersBuildersOrderBy.value,
-        usersDirection: usersOrderDirection.value,
-        orderDirection: orderDirection.value,
+      const builderSubnets = data.builderSubnets.map(el => ({
+        ...el,
+        chain: selectedChain.value,
+      }))
+      const userAccountBuilderSubnets = data.builderUsers.map(
+        el => el.builderSubnet,
+      )
+      const buildersCounters = data.counters[0]
 
-        address: provider.value.selectedAddress,
-      },
-    })
-
-    const buildersProjects = data.buildersProjects
-    const userAccountBuildersProjects = data.buildersUsers.map(
-      el => el.buildersProject,
-    )
-    const buildersCounters = data.counters[0]
-
-    return {
-      buildersProjects,
-      userAccountBuildersProjects,
-      buildersCounters,
-    }
-  },
-  {
-    isLoadOnMount: networkType.value === NetworkTypes.Testnet,
-    reloadArgs: [
-      currentPage,
-      () => route.query.user,
-      () => route.query.network,
-      () => provider.value.chainId,
-      networkType.value === NetworkTypes.Mainnet
-        ? () => allPredefinedBuilders.value
-        : undefined,
-    ],
-    updateArgs:
-      networkType.value === NetworkTypes.Testnet
-        ? [
-            orderBy,
-            orderDirection,
-            mapperUsersBuildersOrderBy,
-            usersOrderDirection,
-          ]
-        : [],
-  },
-)
+      return {
+        builderSubnets,
+        userAccountBuilderSubnets,
+        buildersCounters,
+      }
+    },
+    {
+      isLoadOnMount: networkType.value === NetworkTypes.Testnet,
+      reloadArgs: [
+        currentPage,
+        () => route.query.user,
+        () => route.query.network,
+        () => provider.value.chainId,
+        networkType.value === NetworkTypes.Mainnet
+          ? () => allPredefinedBuilders.value
+          : undefined,
+      ],
+      updateArgs:
+        networkType.value === NetworkTypes.Testnet
+          ? [
+              orderBy,
+              orderDirection,
+              mapperUsersBuildersOrderBy,
+              usersOrderDirection,
+            ]
+          : [],
+    },
+  )
 
 const localSortBuilders = (
-  data: CombinedBuildersListQuery['buildersProjects'],
-  orderBy: BuildersProject_OrderBy,
+  data: CombinedBuilderSubnetsQuery['builderSubnets'],
+  orderBy: BuilderSubnet_OrderBy,
   orderDirection: OrderDirection,
 ) => {
   if (!data || data.length === 0) return data
@@ -621,14 +628,14 @@ const localSortBuilders = (
 }
 
 const sortByCustomType = (
-  data: CombinedBuildersListQuery['buildersProjects'],
+  data: CombinedBuilderSubnetsQuery['builderSubnets'],
   orderBy: AdditionalBuildersOrderBy,
   orderDirection: OrderDirection,
-): CombinedBuildersListQuery['buildersProjects'] => {
+): CombinedBuilderSubnetsQuery['builderSubnets'] => {
   const mappedSortingHandler = {
     [AdditionalBuildersOrderBy.RewardType]: (
-      a: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
-      b: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
+      a: CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery['builderSubnets'][number],
+      b: CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery['builderSubnets'][number],
     ) => {
       const aType = predefinedBuildersMeta.find(
         el => el.name === a.name,
@@ -661,11 +668,6 @@ const localizeChainSelection = (chainId: string | undefined) => {
 
   return config.chainsMap[getEthereumChainsName(chainId)].chainName
 }
-
-provide('reloadBuildersProjects', reloadList)
-provide('updateBuildersProjects', updateList)
-provide('reloadUserAccountBuildersProjects', reloadList)
-provide('updateUserAccountBuildersProjects', updateList)
 </script>
 
 <style scoped lang="scss">
