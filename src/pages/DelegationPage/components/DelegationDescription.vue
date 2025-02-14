@@ -43,6 +43,9 @@ import DelegateSubnetModal from './DelegateSubnetModal.vue'
 
 import { ref } from 'vue'
 import { AppButton } from '@/common'
+import { useWeb3ProvidersStore } from '@/store'
+
+const web3ProvidersStore = useWeb3ProvidersStore()
 
 const isDelegationModalOpened = ref(false)
 const isSubnetModalOpened = ref(false)
@@ -53,6 +56,10 @@ const openDelegateModal = () => {
 
 const openSubnetModal = () => {
   isSubnetModalOpened.value = true
+
+  web3ProvidersStore.provider.selectChain(
+    web3ProvidersStore.allowedForCurrentRouteChainsLimitedByNetworkType[0],
+  )
 }
 </script>
 

@@ -79,8 +79,8 @@ import { computed, reactive, ref } from 'vue'
 import { useFormValidation, useI18n } from '@/composables'
 import { address, required, maxValue, minValue } from '@/validators'
 import { useWeb3ProvidersStore } from '@/store'
-import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
-import { BigNumber } from '@/utils'
+import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl, trimStringNumber } from '@/helpers'
+import { BN } from '@distributedlab/tools'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -139,7 +139,7 @@ const submit = async (): Promise<void> => {
     const tx =
       await web3ProvidersStore.subnetFactoryContract.signerBased.value.deployProxy(
         form.address,
-        BigNumber.from(form.fee).mul(BigNumber.from(10).pow(23)).toString(),
+        trimStringNumber(BN.fromRaw(form.fee).mul(BN.fromRaw(10).pow(23)).toString()),
         form.name,
         form.link,
         form.deregistrationDate,
