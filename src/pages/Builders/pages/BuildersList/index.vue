@@ -95,11 +95,11 @@
 
     <template
       v-if="
-        buildersProjectsState.isLoaded.value &&
+        builderSubnetsState.isLoaded.value &&
         allPredefinedBuildersState.isLoaded.value
       "
     >
-      <template v-if="buildersProjectsState.isLoadFailed.value">
+      <template v-if="builderSubnetsState.isLoadFailed.value">
         <error-message
           :message="$t('builders-list.loading-projects-error-msg')"
         />
@@ -313,62 +313,63 @@ const mapperUsersBuildersOrderBy = computed(() =>
   mapUsersOrderFilter(usersBuildersOrderBy.value),
 )
 
-const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
-  {
-    builderSubnets: [],
-    userAccountBuilderSubnets: [],
-    buildersCounters: {} as CombinedBuilderSubnetsQuery['counters'][0],
-  },
-  async (): Promise<LoadBuildersResponse> => {
-    const loadFn = async (
-      client: ApolloClient<NormalizedCacheObject>,
-      chain: EthereumChains,
-    ) => {
-      const { data } = await client.query<
-        CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery,
-        CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables
-      >({
-        query: CombinedBuilderSubnetsFilteredByPredefinedBuilders,
-        fetchPolicy: 'network-only',
-        variables: {
-          orderBy: Object.values(BuilderSubnet_OrderBy).includes(
-            orderBy.value as BuilderSubnet_OrderBy,
-          )
-            ? (orderBy.value as BuilderSubnet_OrderBy)
-            : BuilderSubnet_OrderBy.TotalStaked,
-          usersOrderBy: mapperUsersBuildersOrderBy.value,
-          usersDirection: usersOrderDirection.value,
-          orderDirection: orderDirection.value,
-          name_in: predefinedBuildersMeta
-            .map(el => el.name)
-            .filter(el =>
-              el.toLowerCase().includes(searchQuery.value.toLowerCase()),
-            ),
+const { data: allPredefinedBuilders, ...allPredefinedBuildersState } =
+  useLoad<LoadBuildersResponse>(
+    {
+      builderSubnets: [],
+      userAccountBuilderSubnets: [],
+      buildersCounters: {} as CombinedBuilderSubnetsQuery['counters'][0],
+    },
+    async (): Promise<LoadBuildersResponse> => {
+      const loadFn = async (
+        client: ApolloClient<NormalizedCacheObject>,
+        chain: EthereumChains,
+      ) => {
+        const { data } = await client.query<
+          CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery,
+          CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables
+        >({
+          query: CombinedBuilderSubnetsFilteredByPredefinedBuilders,
+          fetchPolicy: 'network-only',
+          variables: {
+            orderBy: Object.values(BuilderSubnet_OrderBy).includes(
+              orderBy.value as BuilderSubnet_OrderBy,
+            )
+              ? (orderBy.value as BuilderSubnet_OrderBy)
+              : BuilderSubnet_OrderBy.TotalStaked,
+            usersOrderBy: mapperUsersBuildersOrderBy.value,
+            usersDirection: usersOrderDirection.value,
+            orderDirection: orderDirection.value,
+            name_in: predefinedBuildersMeta
+              .map(el => el.name)
+              .filter(el =>
+                el.toLowerCase().includes(searchQuery.value.toLowerCase()),
+              ),
 
             address: provider.value.selectedAddress,
           },
         })
 
-      return {
-        data: {
-          builderSubnets: data.builderSubnets.map(el => ({ ...el, chain })),
-          buildersUsers: data.builderUsers.map(el => {
-            return {
-              ...el,
-              builderSubnet: {
-                ...el.builderSubnet,
-                chain,
-              },
-            }
-          }),
-          buildersCounters: {
-            id: '',
-            totalBuilderProjects: data.builderSubnets.length,
-            totalSubnets: 0,
+        return {
+          data: {
+            builderSubnets: data.builderSubnets.map(el => ({ ...el, chain })),
+            buildersUsers: data.builderUsers.map(el => {
+              return {
+                ...el,
+                builderSubnet: {
+                  ...el.builderSubnet,
+                  chain,
+                },
+              }
+            }),
+            buildersCounters: {
+              id: '',
+              totalBuilderProjects: data.builderSubnets.length,
+              totalSubnets: 0,
+            },
           },
-        },
+        }
       }
-    }
 
       if (!selectedChain.value) {
         const response = await Promise.all(
@@ -377,33 +378,33 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
           }),
         )
 
-      const result = response.reduce(
-        (acc, curr) => {
-          acc['builderSubnets'] = acc['builderSubnets'].concat(
-            curr.data.builderSubnets,
-          )
-          acc['userAccountBuilderSubnets'] = acc[
-            'userAccountBuilderSubnets'
-          ].concat(curr.data.buildersUsers.map(el => el.builderSubnet))
+        const result = response.reduce(
+          (acc, curr) => {
+            acc['builderSubnets'] = acc['builderSubnets'].concat(
+              curr.data.builderSubnets,
+            )
+            acc['userAccountBuilderSubnets'] = acc[
+              'userAccountBuilderSubnets'
+            ].concat(curr.data.buildersUsers.map(el => el.builderSubnet))
 
-          acc['buildersCounters'] = {
-            id: '',
-            totalBuilderProjects: acc.builderSubnets.length,
-            totalSubnets: 0,
-          }
+            acc['buildersCounters'] = {
+              id: '',
+              totalBuilderProjects: acc.builderSubnets.length,
+              totalSubnets: 0,
+            }
 
-          return acc
-        },
-        {
-          builderSubnets: [],
-          userAccountBuilderSubnets: [],
-          buildersCounters: {
-            id: '',
-            totalBuilderProjects: 0,
-            totalSubnets: 0,
-          } as LoadBuildersResponse['buildersCounters'],
-        } as LoadBuildersResponse,
-      )
+            return acc
+          },
+          {
+            builderSubnets: [],
+            userAccountBuilderSubnets: [],
+            buildersCounters: {
+              id: '',
+              totalBuilderProjects: 0,
+              totalSubnets: 0,
+            } as LoadBuildersResponse['buildersCounters'],
+          } as LoadBuildersResponse,
+        )
 
         return result
       }
@@ -413,32 +414,34 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
         selectedChain.value,
       )
 
-    return {
-      builderSubnets: data.builderSubnets,
-      userAccountBuilderSubnets: data.buildersUsers.map(el => el.builderSubnet),
-      buildersCounters: {
-        id: '',
-        totalBuilderProjects: data.builderSubnets.length,
-        totalSubnets: 0,
-      },
-    }
-  },
-  {
-    isLoadOnMount: networkType.value === NetworkTypes.Mainnet,
-    reloadArgs: [
-      orderBy,
-      orderDirection,
-      mapperUsersBuildersOrderBy,
-      usersOrderDirection,
-      () => route.query.user,
-      () => route.query.network,
-      () => provider.value.chainId,
-      selectedChain,
-      searchQuery,
-    ],
-    updateArgs: [[orderBy, orderDirection]],
-  },
-)
+      return {
+        builderSubnets: data.builderSubnets,
+        userAccountBuilderSubnets: data.buildersUsers.map(
+          el => el.builderSubnet,
+        ),
+        buildersCounters: {
+          id: '',
+          totalBuilderProjects: data.builderSubnets.length,
+          totalSubnets: 0,
+        },
+      }
+    },
+    {
+      isLoadOnMount: networkType.value === NetworkTypes.Mainnet,
+      reloadArgs: [
+        orderBy,
+        orderDirection,
+        mapperUsersBuildersOrderBy,
+        usersOrderDirection,
+        () => route.query.user,
+        () => route.query.network,
+        () => provider.value.chainId,
+        selectedChain,
+        searchQuery,
+      ],
+      updateArgs: [[orderBy, orderDirection]],
+    },
+  )
 
 const paginateThroughAllPredefinedBuilders = async (args: {
   skip: number

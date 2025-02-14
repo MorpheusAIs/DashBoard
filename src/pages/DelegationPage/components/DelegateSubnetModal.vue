@@ -109,7 +109,7 @@ const form = reactive({
   link: '',
   fee: '',
   address: '',
-  deregistrationDate: '',
+  deregistrationDate: '' as number | '',
 })
 
 const validationRules = computed(() => ({

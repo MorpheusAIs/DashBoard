@@ -89,7 +89,7 @@ const web3ProvidersStore = useWeb3ProvidersStore()
 const isSubmitting = ref(false)
 
 const form = reactive({
-  lockPeriod: '',
+  lockPeriod: '' as number | '',
 })
 
 const userMultiplier = computed(() =>
@@ -179,7 +179,7 @@ watch(
     web3ProvidersStore.provider.chainId,
     userPoolData.value?.claimLockEnd,
   ],
-  () => fetchExpectedMultiplier(form.lockPeriod),
+  () => fetchExpectedMultiplier(String(form.lockPeriod)),
   { immediate: true },
 )
 
@@ -191,12 +191,12 @@ watch(
     const usersLockEnd = time(userPoolData.value?.claimLockEnd?.toNumber())
 
     if (usersLockEnd.isAfter(time())) {
-      form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber())
+      form.lockPeriod = userPoolData.value?.claimLockEnd?.toNumber() ?? ''
 
       return
     }
 
-    form.lockPeriod = String(time().add(1, 'minute').timestamp)
+    form.lockPeriod = time().add(1, 'minute').timestamp
   },
 )
 </script>
