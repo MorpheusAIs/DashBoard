@@ -8,24 +8,11 @@
   >
     <div class="max-h-[80dvh] overflow-auto">
       <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
-        <div
-          v-if="chainDetails?.chainName"
-          class="flex items-center justify-between"
-        >
+        <div v-if="props.chain" class="flex items-center justify-between">
           <span class="text-textSecondaryMain typography-body3">
             {{ $t('builders-claim-modal.network-lbl') }}
           </span>
-          <div class="flex items-center gap-2">
-            <img
-              class="size-5"
-              :src="chainDetails.iconUrls?.[0]"
-              :alt="chainDetails?.chainName"
-            />
-
-            <span class="font-bold text-textSecondaryMain typography-body3">
-              {{ chainDetails?.chainName }}
-            </span>
-          </div>
+          <chain-network-badge :chain="chain" />
         </div>
 
         <div
@@ -92,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton, BasicModal } from '@/common'
+import { AppButton, BasicModal, ChainNetworkBadge } from '@/common'
 import { useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, ref } from 'vue'
@@ -110,7 +97,6 @@ import {
   BuilderSubnetDefaultFragment,
   BuilderUserDefaultFragment,
 } from '@/types/graphql'
-import { config, getEthereumChainsName } from '@config'
 import { BN } from '@distributedlab/tools'
 
 const props = withDefaults(
@@ -162,12 +148,6 @@ const { data: protocolFee } = useLoad(
   },
 )
 
-const chainDetails = computed(() => {
-  if (!props.chain) return undefined
-
-  return config.chainsMap[getEthereumChainsName(props.chain)]
-})
-
 const builderDetails = computed(() => [
   {
     label: t('builders-claim-modal.subnet-lbl'),
@@ -183,7 +163,7 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-claim-modal.protocol-fee-lbl'),
-    value: formatAmount(protocolFee.value, 25, {
+    value: formatAmount(protocolFee.value, 23, {
       decimals: 4,
       suffix: '%',
     }),
@@ -193,7 +173,7 @@ const builderDetails = computed(() => [
     value: formatAmount(
       props.builderSubnet.fee,
       {
-        decimals: 25,
+        decimals: 23,
       },
       {
         decimals: 4,
@@ -203,8 +183,17 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-claim-modal.final-claim-lbl'),
-    value: `${BN.fromBigInt(props.stakerRewards ?? 0, 18)
-      .mul(BN.fromBigInt(protocolFee.value, 25))
+    value: `${BN.fromBigInt(props.stakerRewards ?? 0)
+      .sub(
+        BN.fromBigInt(props.stakerRewards ?? 0)
+          .div(BN.fromRaw(100))
+          .mul(BN.fromBigInt(protocolFee.value || 0, 23)),
+      )
+      .sub(
+        BN.fromBigInt(props.stakerRewards ?? 0)
+          .div(BN.fromRaw(100))
+          .mul(BN.fromBigInt(props.builderSubnet.fee || 0, 23)),
+      )
       .format({
         decimals: 4,
       })} MOR`,

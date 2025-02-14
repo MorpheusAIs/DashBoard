@@ -813,23 +813,21 @@
     "address-plh": "Builder address",
     "address-note": "This address will be able to edit information about the Subnet",
     "website-plh": "Builder Website (optional)",
-    "website-note": "Add a link to a website or other external location where stakers can access your project, learn more information, etc.",
+    "website-note": "Link to the Subnet website.  Example: “https://…”",
     "image-url-plh": "Image URL (optional)",
     "image-url-note": "Link to the Subnet image.  Example: “https://…”",
 
     "section-2-title": "Stake and Claim",
     "start-at-plh": "Stake start timestamp",
     "start-at-note": "Example: “01.01.2030 01:00 PM”",
-    "min-start-time-validation": "should be more than {time}",
     "lock-period-after-stake-plh": "Withdraw lock period after the stake",
     "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time. It should be longer than 1 day",
-    "min-lock-period-after-stake": "Should be more than {amount}s",
     "min-deposit-plh": "Minimal stake",
     "min-deposit-note": "Example: “0.001 MOR”",
     "claim-lock-end-plh": "Subnet claim lock end timestamp",
     "claim-lock-end-note": "At this point, the claim will open. Example: “05.05.2030 02:00 PM”",
 
-    "section-3-title": "Fee",
+    "section-3-title": "Subnet Emission",
     "emissions-fee-plh": "% of the MOR Emissions the Subnet receives",
     "emissions-fee-note": "Example: “100%”",
     "treasury-fee-plh": "Subnet emission treasury",
@@ -848,6 +846,8 @@
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
 
+    "min-start-time-validation": "should be more than {time}",
+    "min-lock-period-after-stake": "Should be more than {amount}s",
     "min-end-time-validation-err-msg": "Should be more than {time}",
     "min-end-time-validation-need-start-time-msg": "Enter start time first"
   },
@@ -880,7 +880,7 @@
     "subnet-lbl": "Subnet",
     "claim-receiver-lbl": "Claim Receiver",
     "amount-lbl": "Amount",
-    "protocol-fee-lbl": "Protocol fee",
+    "protocol-fee-lbl": "Protocol emission",
     "emissions-lbl": "% of the MOR Emissions \n the Subnet receives",
     "final-claim-lbl": "Final Claim",
 

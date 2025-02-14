@@ -254,7 +254,11 @@ const usersBuildersOrderBy = ref<
 >(BuilderSubnet_OrderBy.TotalStaked)
 const usersOrderDirection = ref(OrderDirection.Asc)
 
-const { client: buildersApolloClient, clients } = useSecondApolloClient()
+const {
+  client: buildersApolloClient,
+  targetNetworkForSelectedClient: targetNetworkForSelectedBuildersApolloClient,
+  clients,
+} = useSecondApolloClient()
 
 const chainOptions = computed(() => [
   undefined,
@@ -315,6 +319,56 @@ const mapperUsersBuildersOrderBy = computed(() =>
   mapUsersOrderFilter(usersBuildersOrderBy.value),
 )
 
+const loadFn = async (
+  client: ApolloClient<NormalizedCacheObject>,
+  chain: EthereumChains,
+) => {
+  const { data } = await client.query<
+    CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery,
+    CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables
+  >({
+    query: CombinedBuilderSubnetsFilteredByPredefinedBuilders,
+    fetchPolicy: 'network-only',
+    variables: {
+      orderBy: Object.values(BuilderSubnet_OrderBy).includes(
+        orderBy.value as BuilderSubnet_OrderBy,
+      )
+        ? (orderBy.value as BuilderSubnet_OrderBy)
+        : BuilderSubnet_OrderBy.TotalStaked,
+      usersOrderBy: mapperUsersBuildersOrderBy.value,
+      usersDirection: usersOrderDirection.value,
+      orderDirection: orderDirection.value,
+      name_in: predefinedBuildersMeta
+        .map(el => el.name)
+        .filter(el =>
+          el.toLowerCase().includes(searchQuery.value.toLowerCase()),
+        ),
+
+      address: provider.value.selectedAddress,
+    },
+  })
+
+  return {
+    data: {
+      builderSubnets: data.builderSubnets.map(el => ({ ...el, chain })),
+      buildersUsers: data.builderUsers.map(el => {
+        return {
+          ...el,
+          builderSubnet: {
+            ...el.builderSubnet,
+            chain,
+          },
+        }
+      }),
+      buildersCounters: {
+        id: '',
+        totalBuilderProjects: data.builderSubnets.length,
+        totalSubnets: 0,
+      },
+    },
+  }
+}
+
 const { data: allPredefinedBuilders, ...allPredefinedBuildersState } =
   useLoad<LoadBuildersResponse>(
     {
@@ -323,56 +377,6 @@ const { data: allPredefinedBuilders, ...allPredefinedBuildersState } =
       buildersCounters: {} as CombinedBuilderSubnetsQuery['counters'][0],
     },
     async (): Promise<LoadBuildersResponse> => {
-      const loadFn = async (
-        client: ApolloClient<NormalizedCacheObject>,
-        chain: EthereumChains,
-      ) => {
-        const { data } = await client.query<
-          CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery,
-          CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables
-        >({
-          query: CombinedBuilderSubnetsFilteredByPredefinedBuilders,
-          fetchPolicy: 'network-only',
-          variables: {
-            orderBy: Object.values(BuilderSubnet_OrderBy).includes(
-              orderBy.value as BuilderSubnet_OrderBy,
-            )
-              ? (orderBy.value as BuilderSubnet_OrderBy)
-              : BuilderSubnet_OrderBy.TotalStaked,
-            usersOrderBy: mapperUsersBuildersOrderBy.value,
-            usersDirection: usersOrderDirection.value,
-            orderDirection: orderDirection.value,
-            name_in: predefinedBuildersMeta
-              .map(el => el.name)
-              .filter(el =>
-                el.toLowerCase().includes(searchQuery.value.toLowerCase()),
-              ),
-
-            address: provider.value.selectedAddress,
-          },
-        })
-
-        return {
-          data: {
-            builderSubnets: data.builderSubnets.map(el => ({ ...el, chain })),
-            buildersUsers: data.builderUsers.map(el => {
-              return {
-                ...el,
-                builderSubnet: {
-                  ...el.builderSubnet,
-                  chain,
-                },
-              }
-            }),
-            buildersCounters: {
-              id: '',
-              totalBuilderProjects: data.builderSubnets.length,
-              totalSubnets: 0,
-            },
-          },
-        }
-      }
-
       if (!selectedChain.value) {
         const response = await Promise.all(
           Object.entries(clients.value).map(([chain, client]) => {
@@ -558,7 +562,7 @@ const { data: listData, ...builderSubnetsState } =
 
       const builderSubnets = data.builderSubnets.map(el => ({
         ...el,
-        chain: selectedChain.value,
+        chain: targetNetworkForSelectedBuildersApolloClient.value,
       }))
       const userAccountBuilderSubnets = data.builderUsers.map(
         el => el.builderSubnet,

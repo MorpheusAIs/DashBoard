@@ -25,16 +25,10 @@
       </button>
 
       <div class="mt-14 flex flex-col">
-        <div class="flex items-center gap-2">
-          <img
-            class="size-5"
-            :src="chainDetails?.iconUrls?.[0]"
-            :alt="chainDetails?.chainName"
-          />
-          <span class="text-textTertiaryMain typography-body3">
-            {{ chainDetails?.chainName }}
-          </span>
-        </div>
+        <chain-network-badge
+          v-if="route.query.chain"
+          :chain="route.query.chain"
+        />
 
         <span
           v-if="!!buildersData.builderSubnetUserAccount?.staked"
@@ -311,7 +305,11 @@
                   <span
                     class="whitespace-pre text-textSecondaryMain typography-h2"
                   >
-                    {{ formatEther(stakerRewards ?? 0) }}
+                    {{
+                      formatAmount(stakerRewards.toString(), 18, {
+                        decimals: 4,
+                      })
+                    }}
                   </span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -490,11 +488,15 @@
     @staked="handleStaked"
   />
   <builders-claim-modal
-    v-if="buildersData.builderSubnet && buildersData.builderSubnetUserAccount"
+    v-if="
+      buildersData.builderSubnet &&
+      buildersData.builderSubnetUserAccount &&
+      stakerRewards
+    "
     v-model:is-shown="isClaimModalShown"
     :builder-subnet="buildersData.builderSubnet"
     :builder-user="buildersData.builderSubnetUserAccount"
-    :chain="chainDetails?.chainId"
+    :chain="route.query.chain as EthereumChains"
     :staker-rewards="stakerRewards"
     @claimed="handleClaimed"
   />
@@ -505,6 +507,7 @@ import {
   AppButton,
   AppGradientBorderCard,
   AppIcon,
+  ChainNetworkBadge,
   CopyButton,
   ErrorMessage,
   NoDataMessage,
@@ -545,7 +548,7 @@ import { useLoad } from '@/composables'
 import BuildersStakeModal from '@/pages/Builders/components/BuildersStakeModal.vue'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
-import { config, getEthereumChainsName } from '@config'
+import { EthereumChains } from '@config'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
 import BuildersClaimModal from './components/BuildersClaimModal.vue'
 
@@ -567,16 +570,6 @@ const isClaimModalShown = ref(false)
 const isClaimSubmitting = ref(false)
 
 const stakersCurrentPage = ref(1)
-
-const chainDetails = computed(() => {
-  if (!route.query.chain || !provider.value.chainId) return undefined
-
-  return config.chainsMap[
-    getEthereumChainsName(
-      (route.query.chain as string) ?? provider.value.chainId,
-    )
-  ]
-})
 
 const currentClient = computed(() => {
   const client = Object.entries(clients.value).find(
@@ -679,6 +672,12 @@ const {
 const { data: stakerRewards } = useLoad(
   '',
   async () => {
+    if (
+      !buildersData.value.builderSubnet?.id ||
+      !provider.value.selectedAddress
+    )
+      return ''
+
     const res =
       await builderSubnetsContract.value.providerBased.value.getStakerRewards(
         buildersData.value.builderSubnet?.id ?? '',

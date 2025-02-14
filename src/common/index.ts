@@ -23,6 +23,7 @@ export { default as InfoIndicator } from './InfoIndicator.vue'
 export { default as Pagination } from './Pagination.vue'
 export { default as TableSortingHeaderColumn } from './TableSortingHeaderColumn.vue'
 export { default as AppGradientBorderCard } from './AppGradientBorderCard.vue'
+export { default as ChainNetworkBadge } from './ChainNetworkBadge.vue'
 
 export * from './modals'
 export * from './toasts'

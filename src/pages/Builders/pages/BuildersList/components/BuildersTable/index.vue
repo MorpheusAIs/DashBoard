@@ -50,7 +50,7 @@
     <builders-table-item
       v-for="el in builderSubnets"
       :key="el.id"
-      :builder-project="el"
+      :builder-subnet="el"
     />
   </div>
 </template>
@@ -60,15 +60,20 @@ import BuildersTableItem from './components/BuildersTableItem.vue'
 import { cn } from '@/theme/utils'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
 import { AdditionalBuildersOrderBy } from '@/enums'
-import { BuilderProject } from '@/types'
-import { BuilderSubnet_OrderBy } from '@/types/graphql'
+import {
+  BuilderSubnet_OrderBy,
+  BuilderSubnetDefaultFragment,
+} from '@/types/graphql'
+import { EthereumChains } from '@config'
 
 const orderByModel = defineModel<string>('orderByModel')
 const orderDirectionModel = defineModel<string>('orderDirectionModel')
 
 withDefaults(
   defineProps<{
-    builderSubnets: BuilderProject[]
+    builderSubnets: (BuilderSubnetDefaultFragment & {
+      chain?: EthereumChains
+    })[]
   }>(),
   {},
 )

@@ -59,10 +59,7 @@
       </div>
 
       <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
-        <div
-          v-if="chainDetails?.chainName"
-          class="flex items-center justify-between"
-        >
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-textSecondaryMain typography-body3">
               {{ $t('builders-stake-modal.power-factor-lbl') }}
@@ -96,24 +93,11 @@
 
         <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
 
-        <div
-          v-if="chainDetails?.chainName"
-          class="flex items-center justify-between"
-        >
+        <div v-if="chain" class="flex items-center justify-between">
           <span class="text-textSecondaryMain typography-body3">
             {{ $t('builders-stake-modal.network-lbl') }}
           </span>
-          <div class="flex items-center gap-2">
-            <img
-              class="size-5"
-              :src="chainDetails.iconUrls?.[0]"
-              :alt="chainDetails?.chainName"
-            />
-
-            <span class="font-bold text-textSecondaryMain typography-body3">
-              {{ chainDetails?.chainName }}
-            </span>
-          </div>
+          <chain-network-badge :chain="chain" />
         </div>
 
         <div
@@ -163,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { AppButton, AppIcon, BasicModal } from '@/common'
+import { AppButton, AppIcon, BasicModal, ChainNetworkBadge } from '@/common'
 import { InputField, DatetimeField } from '@/fields'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
@@ -188,7 +172,6 @@ import {
 import { duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT, DOT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
-import { config, getEthereumChainsName } from '@config'
 import { helpers } from '@vuelidate/validators'
 
 const props = withDefaults(
@@ -269,12 +252,6 @@ const currentClaimLockEnd = computed(() => {
     +buildersSubnetUserAccount.value?.claimLockEnd ||
       +props.builderSubnet.minClaimLockEnd,
   )
-})
-
-const chainDetails = computed(() => {
-  if (!props.chain) return undefined
-
-  return config.chainsMap[getEthereumChainsName(props.chain)]
 })
 
 const isSubmitting = ref(false)
