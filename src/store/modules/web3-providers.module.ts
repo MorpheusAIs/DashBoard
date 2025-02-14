@@ -70,8 +70,8 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
   ): EthereumChains[] => {
     if (!allowedForCurrentRouteChains.value) return []
 
-    return config.ethereumChainsTypes[networkType].filter(el =>
-      allowedForCurrentRouteChains.value.includes(el),
+    return allowedForCurrentRouteChains.value.filter(el =>
+      config.ethereumChainsTypes[networkType].includes(el),
     )
   }
 
@@ -343,6 +343,16 @@ export const useWeb3ProvidersStore = defineStore(STORE_NAME, () => {
     // store requires time for sync with vue-router
     await sleep(1000)
   }
+
+  watch(
+    () => provider.chainId,
+    async () => {
+      if (!provider.chainId) return
+
+      await updateBalances()
+    },
+    { immediate: true },
+  )
 
   watch(
     () => _route.query,

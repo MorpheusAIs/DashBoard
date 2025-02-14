@@ -69,6 +69,7 @@ import {
 } from '@config'
 import { useRoute, useRouter } from 'vue-router'
 import { cn } from '@/theme/utils'
+import { bus, BUS_EVENTS } from '@/helpers'
 
 type Link = {
   chainId: string
@@ -109,6 +110,10 @@ const mainnetItems = computed<Link[]>(() => {
             router.push(route)
           }
 
+          bus.emit(
+            BUS_EVENTS.navbarChainSwitched,
+            forCurrentRouteChainsLimitedByMainnet[0] as EthereumChains,
+          )
           safeSelectNetwork(forCurrentRouteChainsLimitedByMainnet[0])
         },
       },
@@ -126,6 +131,7 @@ const mainnetItems = computed<Link[]>(() => {
           router.push(route)
         }
 
+        bus.emit(BUS_EVENTS.navbarChainSwitched, el)
         safeSelectNetwork(el)
       },
     }
@@ -150,6 +156,10 @@ const testnetItems = computed<Link[]>(() => {
             router.push(route)
           }
 
+          bus.emit(
+            BUS_EVENTS.navbarChainSwitched,
+            forCurrentRouteChainsLimitedByTestnet[0],
+          )
           safeSelectNetwork(forCurrentRouteChainsLimitedByTestnet[0])
         },
       },
@@ -167,6 +177,7 @@ const testnetItems = computed<Link[]>(() => {
           router.push(route)
         }
 
+        bus.emit(BUS_EVENTS.navbarChainSwitched, el)
         safeSelectNetwork(el)
       },
     }

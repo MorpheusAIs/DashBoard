@@ -1,4 +1,5 @@
 import { EventEmitter } from '@distributedlab/tools'
+import { EthereumChains } from '@config'
 
 export enum BUS_EVENTS {
   error = 'error',
@@ -10,6 +11,7 @@ export enum BUS_EVENTS {
   changedCurrentUserReward = 'changed-current-user-reward',
   changedCurrentUserRefReward = 'changed-current-user-ref-reward',
   changedDelegation = 'changed-delegation',
+  navbarChainSwitched = 'navbar-chain-switched',
 }
 
 export type DefaultBusEventMap = {
@@ -22,6 +24,7 @@ export type DefaultBusEventMap = {
   [BUS_EVENTS.changedCurrentUserReward]: unknown
   [BUS_EVENTS.changedCurrentUserRefReward]: unknown
   [BUS_EVENTS.changedDelegation]: unknown
+  [BUS_EVENTS.navbarChainSwitched]: EthereumChains
 }
 
 export const bus = new EventEmitter<DefaultBusEventMap>()

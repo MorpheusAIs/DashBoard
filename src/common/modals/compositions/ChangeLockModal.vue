@@ -23,7 +23,7 @@
       <div class="change-lock-modal__fields-wrapper">
         <datetime-field
           v-model="form.lockPeriod"
-          position="top"
+          position="center"
           :placeholder="$t(`change-lock-modal.lock-period-placeholder`)"
           :error-message="getFieldErrorMessage('lockPeriod')"
           :disabled="isSubmitting"
@@ -54,12 +54,12 @@ import BasicModal from '../BasicModal.vue'
 import { DatetimeField } from '@/fields'
 import { computed, reactive, ref, toRef, watch } from 'vue'
 import { minValue } from '@/validators'
-import { Time } from '@/utils'
 import { useFormValidation, useI18n, usePool } from '@/composables'
 import { AppButton } from '@/common'
 import { useWeb3ProvidersStore } from '@/store'
 import { bus, BUS_EVENTS, ErrorHandler, getEthExplorerTxUrl } from '@/helpers'
 import { sleep } from '@/helpers'
+import { time } from '@distributedlab/tools'
 
 const emit = defineEmits<{
   (e: 'update:is-shown', v: boolean): void
@@ -100,7 +100,7 @@ const userMultiplier = computed(() =>
 
 const minLockTime = computed(() => {
   const claimLockTimestamp = userPoolData.value?.claimLockEnd?.toNumber() ?? 0
-  const timeNow = new Time().timestamp
+  const timeNow = time().timestamp
   return claimLockTimestamp > timeNow ? claimLockTimestamp : timeNow
 })
 
@@ -186,7 +186,17 @@ watch(
 watch(
   () => [props.isShown, userPoolData.value?.claimLockEnd],
   () => {
-    form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber() || '')
+    if (!props.isShown) return
+
+    const usersLockEnd = time(userPoolData.value?.claimLockEnd?.toNumber())
+
+    if (usersLockEnd.isAfter(time())) {
+      form.lockPeriod = String(userPoolData.value?.claimLockEnd?.toNumber())
+
+      return
+    }
+
+    form.lockPeriod = String(time().add(1, 'minute').timestamp)
   },
 )
 </script>

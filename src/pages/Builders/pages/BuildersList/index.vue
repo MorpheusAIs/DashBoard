@@ -93,8 +93,13 @@
       </div>
     </div>
 
-    <template v-if="builderSubnetsState.isLoaded.value">
-      <template v-if="builderSubnetsState.isLoadFailed.value">
+    <template
+      v-if="
+        buildersProjectsState.isLoaded.value &&
+        allPredefinedBuildersState.isLoaded.value
+      "
+    >
+      <template v-if="buildersProjectsState.isLoadFailed.value">
         <error-message
           :message="$t('builders-list.loading-projects-error-msg')"
         />
@@ -193,7 +198,7 @@ import {
   CombinedBuilderSubnetsQueryVariables,
   OrderDirection,
 } from '@/types/graphql'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, onBeforeMount, onBeforeUnmount } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
@@ -212,6 +217,7 @@ import DropMenu from '@/common/DropMenu.vue'
 import { cn } from '@/theme/utils'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { InputField } from '@/fields'
+import { bus, BUS_EVENTS } from '@/helpers'
 
 type LoadBuildersResponse = {
   builderSubnets: BuilderSubnetDefaultFragment[]
@@ -254,28 +260,19 @@ const chainOptions = computed(() => [
 ])
 const selectedChain = ref<EthereumChains | undefined>(chainOptions.value[0])
 
-// FIXME: remove once provider multiple chain selecting is done
-watch(
-  selectedChain,
-  val => {
-    if (!val) return
+const onNavbarSwitchChain = (chain: EthereumChains | undefined) => {
+  if (!chainOptions.value.includes(chain)) return
 
-    provider.value.switchChain(val)
-  },
-  {
-    immediate: true,
-  },
-)
+  selectedChain.value = chain
+}
 
-watch(
-  () => provider.value.chainId,
-  val => {
-    selectedChain.value = val as EthereumChains
-  },
-  {
-    immediate: true,
-  },
-)
+onBeforeMount(() => {
+  bus.on(BUS_EVENTS.navbarChainSwitched, onNavbarSwitchChain)
+})
+
+onBeforeUnmount(() => {
+  bus.off(BUS_EVENTS.navbarChainSwitched, onNavbarSwitchChain)
+})
 
 const mapUsersOrderFilter = (
   orderBy: BuilderSubnet_OrderBy | AdditionalBuildersOrderBy,
@@ -348,9 +345,9 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
               el.toLowerCase().includes(searchQuery.value.toLowerCase()),
             ),
 
-          address: provider.value.selectedAddress,
-        },
-      })
+            address: provider.value.selectedAddress,
+          },
+        })
 
       return {
         data: {
@@ -373,12 +370,12 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
       }
     }
 
-    if (!selectedChain.value) {
-      const response = await Promise.all(
-        Object.entries(clients.value).map(([chain, client]) => {
-          return loadFn(client, chain as EthereumChains)
-        }),
-      )
+      if (!selectedChain.value) {
+        const response = await Promise.all(
+          Object.entries(clients.value).map(([chain, client]) => {
+            return loadFn(client, chain as EthereumChains)
+          }),
+        )
 
       const result = response.reduce(
         (acc, curr) => {
@@ -408,13 +405,13 @@ const { data: allPredefinedBuilders } = useLoad<LoadBuildersResponse>(
         } as LoadBuildersResponse,
       )
 
-      return result
-    }
+        return result
+      }
 
-    const { data } = await loadFn(
-      clients.value[selectedChain.value],
-      selectedChain.value,
-    )
+      const { data } = await loadFn(
+        clients.value[selectedChain.value],
+        selectedChain.value,
+      )
 
     return {
       builderSubnets: data.builderSubnets,
