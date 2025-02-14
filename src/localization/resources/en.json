@@ -890,6 +890,7 @@
   "builder-withdraw-modal": {
     "modal-title": "Withdraw MOR",
     "builder-lbl": "Builder",
+    "power-factor-lbl": "Power factor",
     "current-withdraw-lbl": "Current Stake",
     "balance-after-withdrawal-lbl": "Stake After Withdrawal",
     "balance-after-withdrawal-value": "{amount} MOR",
@@ -899,7 +900,8 @@
     "available-to-withdraw-amount": "{amount} MOR",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
-    "withdraw-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "withdraw-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "not-empty-validation-msg": "This field is required"
   },
   "builders-list": {
     "title": "Create or Stake in a Builder",

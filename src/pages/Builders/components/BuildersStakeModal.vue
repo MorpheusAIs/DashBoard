@@ -28,8 +28,7 @@
             </template>
           </input-field>
 
-          <!--TODO: change to file field-->
-          <input-field
+          <datetime-field
             v-model="form.claimLockEnd"
             :placeholder="$t('builders-stake-modal.claim-lock-end-plh')"
             :note="
@@ -165,7 +164,7 @@
 
 <script setup lang="ts">
 import { AppButton, AppIcon, BasicModal } from '@/common'
-import { InputField } from '@/fields'
+import { InputField, DatetimeField } from '@/fields'
 import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, reactive, ref } from 'vue'
@@ -282,7 +281,7 @@ const isSubmitting = ref(false)
 
 const form = reactive({
   stakeAmount: '',
-  claimLockEnd: '',
+  claimLockEnd: '' as number | '',
 })
 
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
@@ -292,6 +291,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
       stakeAmount: {
         required,
         numeric,
+        minValue: minValue(+formatEther(props.builderSubnet.minStake) || 0),
         maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
       },
       claimLockEnd: {
