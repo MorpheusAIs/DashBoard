@@ -96,7 +96,9 @@
     <template
       v-if="
         builderSubnetsState.isLoaded.value &&
-        allPredefinedBuildersState.isLoaded.value
+        ((networkType === 'mainnet' &&
+          allPredefinedBuildersState.isLoaded.value) ||
+          networkType === 'testnet')
       "
     >
       <template v-if="builderSubnetsState.isLoadFailed.value">
