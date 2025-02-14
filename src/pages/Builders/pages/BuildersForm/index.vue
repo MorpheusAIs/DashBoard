@@ -391,6 +391,148 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     })),
   )
 
+const createSubnetBuilder = async () => {
+  const tx = await builderSubnetsContract.value?.signerBased.value.createSubnet(
+    {
+      name: form.name,
+      owner: form.address,
+      minStake: parseUnits(form.minStake),
+      fee: BN.fromRaw(form.emissionsFee, 23).value,
+      feeTreasury: form.treasuryFee,
+      startsAt: form.startAt,
+      withdrawLockPeriodAfterStake: form.lockPeriodAfterStake,
+      minClaimLockEnd: form.minClaimLockEnd,
+    },
+    {
+      slug: form.slug,
+      description: form.description,
+      website: form.website,
+      image: form.imageUrl,
+    },
+  )
+
+  const txReceipt = await tx.wait()
+
+  if (!txReceipt) throw new TypeError('Transaction is not defined')
+
+  const explorerTxUrl = getEthExplorerTxUrl(
+    builderSubnetsContractDetails.value.explorerUrl,
+    txReceipt.transactionHash,
+  )
+
+  await sleep(1000)
+
+  const poolId =
+    await builderSubnetsContract.value?.signerBased.value.getSubnetId(form.name)
+
+  await sleep(2000)
+
+  bus.emit(
+    BUS_EVENTS.success,
+    t('builders-form.confirm-success-msg', { explorerTxUrl }),
+  )
+
+  await router.push({
+    name: ROUTE_NAMES.appBuildersItem,
+    params: {
+      id: loadedData.value.buildersProject?.id ?? poolId,
+    },
+    query: { chain: provider.value.chainId },
+  })
+}
+
+const updateSubnetBuilder = async () => {
+  if (!loadedData.value.buildersProject) return
+
+  const formToMetadataPropertiesMap = {
+    slug: 'slug',
+    description: 'description',
+    website: 'website',
+    imageUrl: 'image',
+  }
+
+  const isMetadataChanged = Object.entries(formToMetadataPropertiesMap).some(
+    ([key, value]) => {
+      return (
+        form[key as keyof BuilderSubnetFormData] !==
+        loadedData.value.buildersProject?.[
+          value as keyof BuilderSubnetDefaultFragment
+        ]
+      )
+    },
+  )
+
+  const isOwnerChanged =
+    form.address !== loadedData.value.buildersProject?.owner
+
+  const isMinStake =
+    form.minStake !==
+    formatEther(loadedData.value.buildersProject?.minStake ?? 0)
+
+  const isFeeTreasuryChanged =
+    form.treasuryFee !== loadedData.value.buildersProject?.feeTreasury
+
+  const tsx = await Promise.all([
+    ...(isMetadataChanged
+      ? [
+          await builderSubnetsContract.value?.signerBased.value.editSubnetMetadata(
+            loadedData.value.buildersProject.id,
+            {
+              slug: form.slug,
+              description: form.description,
+              website: form.website,
+              image: form.imageUrl,
+            },
+          ),
+        ]
+      : []),
+    ...(isOwnerChanged
+      ? [
+          await builderSubnetsContract.value?.signerBased.value.setSubnetOwnership(
+            loadedData.value.buildersProject.id,
+            form.address,
+          ),
+        ]
+      : []),
+    ...(isMinStake
+      ? [
+          await builderSubnetsContract.value?.signerBased.value.setSubnetMinStake(
+            loadedData.value.buildersProject.id,
+            parseUnits(form.minStake),
+          ),
+        ]
+      : []),
+    ...(isFeeTreasuryChanged
+      ? [
+          await builderSubnetsContract.value?.signerBased.value.setSubnetFeeTreasury(
+            loadedData.value.buildersProject.id,
+            form.treasuryFee,
+          ),
+        ]
+      : []),
+  ])
+
+  const receipts = await Promise.all(tsx.map(el => el.wait()))
+
+  if (!receipts.length) throw new TypeError('Transaction is not defined')
+
+  const explorerTxUrls = receipts.map(el =>
+    getEthExplorerTxUrl(
+      builderSubnetsContractDetails.value.explorerUrl,
+      el.transactionHash,
+    ),
+  )
+
+  explorerTxUrls.forEach(el => {
+    bus.emit(
+      BUS_EVENTS.success,
+      t('builders-form.confirm-success-msg', { explorerTxUrl: el }),
+    )
+  })
+
+  await sleep(1000)
+}
+
 const submit = async () => {
   if (!isFormValid()) return
 
@@ -407,65 +549,11 @@ const submit = async () => {
       await sleep(1_000)
     }
 
-    const tx = loadedData.value.buildersProject
-      ? await builderSubnetsContract.value?.signerBased.value.editSubnetMetadata(
-          loadedData.value.buildersProject.id,
-          {
-            slug: form.slug,
-            description: form.description,
-            website: form.website,
-            image: form.imageUrl,
-          },
-        )
-      : await builderSubnetsContract.value?.signerBased.value.createSubnet(
-          {
-            name: form.name,
-            owner: form.address,
-            minStake: parseUnits(form.minStake),
-            fee: BN.fromRaw(form.emissionsFee, 23).value,
-            feeTreasury: form.treasuryFee,
-            startsAt: form.startAt,
-            withdrawLockPeriodAfterStake: form.lockPeriodAfterStake,
-            minClaimLockEnd: form.minClaimLockEnd,
-          },
-          {
-            slug: form.slug,
-            description: form.description,
-            website: form.website,
-            image: form.imageUrl,
-          },
-        )
-
-    const txReceipt = await tx.wait()
-
-    if (!txReceipt) throw new TypeError('Transaction is not defined')
-
-    const explorerTxUrl = getEthExplorerTxUrl(
-      builderSubnetsContractDetails.value.explorerUrl,
-      txReceipt.transactionHash,
-    )
-
-    await sleep(1000)
-
-    const poolId =
-      await builderSubnetsContract.value?.signerBased.value.getSubnetId(
-        form.name,
-      )
-
-    await sleep(2000)
-
-    bus.emit(
-      BUS_EVENTS.success,
-      t('builders-form.confirm-success-msg', { explorerTxUrl }),
-    )
-
-    await router.push({
-      name: ROUTE_NAMES.appBuildersItem,
-      params: {
-        id: loadedData.value.buildersProject?.id ?? poolId,
-      },
-      query: { chain: provider.value.chainId },
-    })
+    if (loadedData.value.buildersProject) {
+      await updateSubnetBuilder()
+    } else {
+      await createSubnetBuilder()
+    }
   } catch (error) {
     ErrorHandler.process(error)
   }
