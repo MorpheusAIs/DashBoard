@@ -694,7 +694,7 @@
     "githubStars": 0,
     "totalStaked": 0,
     "rewardType": "To Be Announced",
-    "website": "https://docs.hemi.xyz/"
+    "website": "https://hemi.xyz/"
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
@@ -1056,7 +1056,7 @@
   {
     "id": "",
     "name": "Katara",
-    "description": "",
+    "description": "Katara is a cutting-edge agentic workflow automation platform for DevX Teams",
     "longDescription": "",
     "image": "",
     "localImage": "images/new_katara_icon_128x128.png",
@@ -1067,7 +1067,7 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0,
-    "rewardType": "To Be Announced",
+    "rewardType": "Access to Agents",
     "website": "https://katara.ai"
   },
   {
@@ -1103,5 +1103,22 @@
     "totalStaked": 0,
     "rewardType": "To Be Announced",
     "website": "https://dais.global/"
+  },
+  {
+    "id": "",
+    "name": "Frostbyte",
+    "description": "Decentralized, local, peer-to-peer password management—your data, your control.",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/FrostByte.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://www.frostbyte.app/"
   }
 ]
