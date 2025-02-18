@@ -7,11 +7,27 @@
     :has-close-button="!isSubmitting"
   >
     <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto">
+      <div class="mt-8 flex items-center justify-between">
+        <span class="text-textSecondaryMain typography-body3">
+          {{ $t('builder-withdraw-modal.available-to-withdraw-balance') }}
+        </span>
+        <span class="!font-bold text-textSecondaryMain typography-body3">
+          {{
+            $t('builder-withdraw-modal.available-to-withdraw-amount', {
+              amount: formatAmount(buildersSubnetUserAccount?.staked ?? 0, 18, {
+                decimals: 18,
+              }),
+            })
+          }}
+        </span>
+      </div>
+
       <div class="mt-8 flex flex-col gap-5">
         <div class="flex flex-col items-end gap-3">
           <input-field
             v-model="form.withdrawAmount"
             :placeholder="$t('builder-withdraw-modal.withdraw-amount-plh')"
+            :note="$t('builder-withdraw-modal.withdraw-amount-note')"
             :error-message="getFieldErrorMessage('withdrawAmount')"
             @blur="touchField('withdrawAmount')"
             :disabled="isSubmitting"
@@ -27,25 +43,6 @@
               </button>
             </template>
           </input-field>
-
-          <div class="flex items-center justify-between gap-2">
-            <span class="stake-modal__details-label">
-              {{ $t('builder-withdraw-modal.available-to-withdraw-balance') }}
-            </span>
-            <span class="stake-modal__details-value">
-              {{
-                $t('builder-withdraw-modal.available-to-withdraw-amount', {
-                  amount: formatAmount(
-                    buildersSubnetUserAccount?.staked ?? 0,
-                    18,
-                    {
-                      decimals: 18,
-                    },
-                  ),
-                })
-              }}
-            </span>
-          </div>
         </div>
       </div>
 
@@ -58,7 +55,7 @@
           <span class="text-textSecondaryMain typography-body3">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>
@@ -73,7 +70,7 @@
           <span class="text-textSecondaryMain typography-body3">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>

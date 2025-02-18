@@ -601,7 +601,7 @@ const stakersOrderBy = ref<BuilderUser_OrderBy>(
 )
 const stakersOrderDirection = ref<OrderDirection>(OrderDirection.Asc)
 
-const selectedClaimReceiver = ref('')
+const selectedClaimReceiver = ref(provider.value.selectedAddress)
 
 const {
   data: buildersData,

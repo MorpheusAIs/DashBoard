@@ -64,11 +64,11 @@
             <span class="text-textSecondaryMain typography-body3">
               {{ $t('builders-stake-modal.power-factor-lbl') }}
             </span>
-            <v-dropdown class="size-6">
+            <v-dropdown class="flex size-6 items-center justify-center">
               <!-- This will be the popover target (for the events and position) -->
               <button type="button" class="text-textSecondaryMain">
                 <app-icon
-                  :name="$icons.info"
+                  :name="$icons.materialSymbolsInfo"
                   class="color-textSecondaryMain size-4"
                 />
               </button>
@@ -81,7 +81,7 @@
             </v-dropdown>
           </div>
           <div class="flex items-center gap-2">
-            <span class="font-bold text-textSecondaryMain typography-body3">
+            <span class="!font-bold text-textSecondaryMain typography-body3">
               {{
                 $t('builders-stake-modal.power-factor-value', {
                   powerFactor: formatAmount(potentialPowerFactor, 25),
@@ -108,7 +108,7 @@
           <span class="text-textSecondaryMain typography-body3">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>
@@ -123,7 +123,7 @@
           <span class="text-textSecondaryMain typography-body3">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>
@@ -275,7 +275,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 const { data: potentialPowerFactor } = useLoad(
   '',
   async () => {
-    if (!buildersSubnetUserAccount.value) return ''
+    if (!buildersSubnetUserAccount.value || !props.isShown) return ''
 
     let to = 1
 

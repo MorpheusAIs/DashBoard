@@ -537,9 +537,10 @@ const { data: listData, ...builderSubnetsState } =
         ...el,
         chain: targetNetworkForSelectedBuildersApolloClient.value,
       }))
-      const userAccountBuilderSubnets = data.builderUsers.map(
-        el => el.builderSubnet,
-      )
+      const userAccountBuilderSubnets = data.builderUsers.map(el => ({
+        ...el.builderSubnet,
+        chain: targetNetworkForSelectedBuildersApolloClient.value,
+      }))
       const buildersCounters = data.counters[0]
 
       return {

@@ -23,7 +23,7 @@
           <span class="text-textSecondaryMain typography-body3">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>
@@ -40,7 +40,7 @@
           >
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>
@@ -48,14 +48,16 @@
         <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
 
         <div
-          class="flex items-center justify-between"
+          class="flex items-start justify-between"
           v-for="(el, i) in builderDetails.slice(5)"
           :key="i"
         >
-          <span class="text-textSecondaryMain typography-body3">
+          <span class="whitespace-nowrap text-textSecondaryMain typography-h4">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span
+            class="text-right !font-bold text-textSecondaryMain typography-h4"
+          >
             {{ el.value }}
           </span>
         </div>

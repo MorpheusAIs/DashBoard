@@ -6,7 +6,7 @@
       :alt="chainDetails?.chainName"
     />
 
-    <span class="font-bold text-textSecondaryMain typography-body3">
+    <span class="!font-bold text-textSecondaryMain typography-body3">
       {{ chainDetails?.chainName }}
     </span>
   </div>

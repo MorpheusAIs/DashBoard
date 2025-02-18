@@ -895,6 +895,7 @@
     "balance-after-withdrawal-lbl": "Stake After Withdrawal",
     "balance-after-withdrawal-value": "{amount} MOR",
     "withdraw-amount-plh": "MOR amount",
+    "withdraw-amount-note": "Enter the number of tokens you want to withdraw",
     "withdraw-amount-max-btn": "max",
     "available-to-withdraw-balance": "Available to Withdraw",
     "available-to-withdraw-amount": "{amount} MOR",
