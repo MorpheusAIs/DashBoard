@@ -136,7 +136,7 @@ export const useProvider = (): IUseProvider => {
       metadata: config.metadata,
       projectId: config.WALLET_CONNECT_PROJECT_ID,
       featuredWalletIds: [
-        '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f'
+        '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
       ],
       features: {
         analytics: true,
