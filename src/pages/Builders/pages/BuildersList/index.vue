@@ -24,13 +24,8 @@
       </div>
     </div>
 
-    <div class="z-30 mt-16 flex w-full items-center justify-between">
-      <h2
-        v-if="
-          !builderSubnetsState.isLoaded.value || listData.builderSubnets.length
-        "
-        class="self-start text-textSecondaryMain"
-      >
+    <div class="z-30 mb-8 mt-16 flex w-full items-center justify-between">
+      <h2 class="self-start text-textSecondaryMain">
         {{ $t('builders-list.main-table-title') }}
       </h2>
 
@@ -109,7 +104,7 @@
       </template>
       <template v-else-if="listData.builderSubnets.length">
         <builders-table
-          class="z-10 mt-8"
+          class="z-10"
           :builder-subnets="listData.builderSubnets"
           v-model:order-by-model="orderBy"
           v-model:order-direction-model="orderDirection"
@@ -123,7 +118,7 @@
     </template>
     <skeleton-table
       v-else
-      :rows="DEFAULT_BUILDERS_PAGE_LIMIT"
+      :rows="1"
       sizing="1fr"
       :schemes="['medium']"
       common-skeleton-class-names="min-h-[72px]"
@@ -170,7 +165,7 @@
       </template>
       <skeleton-table
         v-else
-        :rows="DEFAULT_BUILDERS_PAGE_LIMIT"
+        :rows="1"
         sizing="1fr"
         :schemes="['medium']"
         common-skeleton-class-names="min-h-[72px]"
