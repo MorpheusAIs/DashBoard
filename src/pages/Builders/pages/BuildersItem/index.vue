@@ -27,7 +27,7 @@
       <div class="mt-14 flex flex-col">
         <chain-network-badge
           v-if="route.query.chain"
-          :chain="route.query.chain"
+          :chain="route.query.chain as EthereumChains"
         />
 
         <span
@@ -265,7 +265,7 @@
                   </span>
                 </div>
                 <div
-                  v-if="withdrawalUnlockTime"
+                  v-if="withdrawalUnlockTime?.isAfter(time())"
                   class="flex items-center gap-2"
                 >
                   <span class="text-textSecondary">
@@ -292,10 +292,7 @@
                     :disabled="
                       isClaimSubmitting ||
                       !+buildersData.builderSubnetUserAccount?.staked ||
-                      time(
-                        +buildersData.builderSubnetUserAccount?.claimLockEnd ||
-                          +buildersData.builderSubnet?.minClaimLockEnd,
-                      ).isAfter(time())
+                      claimLockUntil.isAfter(time())
                     "
                   >
                     {{ $t('builders-item.claim-btn') }}
@@ -312,19 +309,16 @@
                     }}
                   </span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div
+                  v-if="claimLockUntil.isAfter(time())"
+                  class="flex items-center gap-2"
+                >
                   <span class="text-textSecondary">
                     {{ $t('builders-item.claim-unlock-time-lbl') }}
                   </span>
                   <div class="flex items-center gap-2">
                     <span class="text-textSecondaryMain">
-                      {{
-                        time(
-                          +buildersData.builderSubnetUserAccount
-                            ?.claimLockEnd ||
-                            +buildersData.builderSubnet?.minClaimLockEnd,
-                        )?.format(DOT_TIME_FORMAT)
-                      }}
+                      {{ claimLockUntil?.format(DOT_TIME_FORMAT) }}
                     </span>
                   </div>
                 </div>
@@ -388,7 +382,12 @@
             <template v-if="isStakersLoaded">
               <template v-if="stakers?.length">
                 <div
-                  class="mb-2 grid grid-cols-3 items-center justify-between gap-2 px-10"
+                  :class="
+                    cn(
+                      'mb-2 grid grid-cols-[1fr,1fr,1fr,100px]',
+                      'items-center justify-between gap-2 px-10',
+                    )
+                  "
                 >
                   <div class="">
                     <span class="text-textTertiaryMain">
@@ -415,7 +414,7 @@
 
                 <div class="flex flex-col gap-2">
                   <app-gradient-border-card v-for="el in stakers" :key="el.id">
-                    <div class="grid grid-cols-3 gap-2 px-10">
+                    <div class="grid grid-cols-[1fr,1fr,1fr,100px] gap-2 px-10">
                       <div class="flex items-center gap-2 py-8">
                         <span class="text-textSecondaryMain">
                           {{ abbrCenter(el.address) }}
@@ -434,6 +433,21 @@
                         <span class="text-textSecondaryMain">
                           {{ time(+el.lastStake).format(DOT_TIME_FORMAT) }}
                         </span>
+                      </div>
+                      <div class="flex items-center justify-end">
+                        <app-button
+                          color="primary"
+                          size="small"
+                          @click="
+                            () => {
+                              selectedClaimReceiver = el.address
+                              isClaimModalShown = true
+                            }
+                          "
+                          :disabled="!el.availableToClaim"
+                        >
+                          {{ $t('builders-item.claim-btn') }}
+                        </app-button>
                       </div>
                     </div>
                   </app-gradient-border-card>
@@ -491,13 +505,13 @@
     v-if="
       buildersData.builderSubnet &&
       buildersData.builderSubnetUserAccount &&
-      stakerRewards
+      selectedClaimReceiverRewards
     "
     v-model:is-shown="isClaimModalShown"
     :builder-subnet="buildersData.builderSubnet"
-    :builder-user="buildersData.builderSubnetUserAccount"
     :chain="route.query.chain as EthereumChains"
-    :staker-rewards="stakerRewards"
+    :claim-receiver="selectedClaimReceiver"
+    :staker-rewards="selectedClaimReceiverRewards"
     @claimed="handleClaimed"
   />
 </template>
@@ -551,6 +565,7 @@ import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { EthereumChains } from '@config'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
 import BuildersClaimModal from './components/BuildersClaimModal.vue'
+import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 
 defineOptions({
   inheritAttrs: true,
@@ -585,6 +600,8 @@ const stakersOrderBy = ref<BuilderUser_OrderBy>(
   BuilderUser_OrderBy.ClaimLockEnd,
 )
 const stakersOrderDirection = ref<OrderDirection>(OrderDirection.Asc)
+
+const selectedClaimReceiver = ref('')
 
 const {
   data: buildersData,
@@ -623,8 +640,29 @@ const {
         },
       })
 
+    const predefinedBuilderSubnet = predefinedBuildersMeta.find(
+      item =>
+        item.name?.toLowerCase() ===
+        builderSubnetsResponse.builderSubnet?.name.toLowerCase(),
+    )
+
     return {
-      builderSubnet: builderSubnetsResponse.builderSubnet ?? null,
+      builderSubnet: {
+        ...builderSubnetsResponse.builderSubnet,
+        description:
+          builderSubnetsResponse.builderSubnet?.description ||
+          predefinedBuilderSubnet?.description ||
+          '',
+        website:
+          builderSubnetsResponse.builderSubnet?.website ||
+          predefinedBuilderSubnet?.website ||
+          '',
+        image:
+          builderSubnetsResponse.builderSubnet?.image ||
+          predefinedBuilderSubnet?.localImage ||
+          predefinedBuilderSubnet?.image ||
+          '',
+      } as BuilderSubnetDefaultFragment,
       builderSubnetUserAccount:
         userAccountInBuilderSubnet.builderUsers[0] ?? null,
     }
@@ -657,7 +695,23 @@ const {
       },
     })
 
-    return data.builderUsers
+    const stakersWithRewards = await Promise.all(
+      data.builderUsers.map(async user => {
+        const res =
+          await builderSubnetsContract.value.providerBased.value.getStakerRewards(
+            buildersData.value.builderSubnet?.id ?? '',
+            user.address,
+            time().timestamp,
+          )
+
+        return {
+          ...user,
+          availableToClaim: res.toString(),
+        }
+      }),
+    )
+
+    return stakersWithRewards
   },
   {
     reloadArgs: [
@@ -692,6 +746,20 @@ const { data: stakerRewards } = useLoad(
   },
 )
 
+const selectedClaimReceiverRewards = computed(() => {
+  if (
+    selectedClaimReceiver.value.toLowerCase() ===
+    provider.value.selectedAddress.toLowerCase()
+  ) {
+    return stakerRewards.value
+  }
+
+  return stakers.value.find(
+    el =>
+      el.address.toLowerCase() === selectedClaimReceiver.value.toLowerCase(),
+  )?.availableToClaim
+})
+
 const isOwner = computed(
   () =>
     provider.value.selectedAddress?.toLowerCase() ===
@@ -710,6 +778,15 @@ const withdrawalUnlockTime = computed(() => {
   return time(+buildersData.value.builderSubnetUserAccount.lastStake).add(
     buildersData.value.builderSubnet.withdrawLockPeriodAfterStake,
     'seconds',
+  )
+})
+
+const claimLockUntil = computed(() => {
+  if (!buildersData.value) return time()
+
+  return time(
+    +buildersData.value?.builderSubnetUserAccount?.claimLockEnd ||
+      +buildersData.value?.builderSubnet?.minClaimLockEnd,
   )
 })
 

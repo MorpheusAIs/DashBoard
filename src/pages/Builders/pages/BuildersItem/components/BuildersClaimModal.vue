@@ -8,11 +8,11 @@
   >
     <div class="max-h-[80dvh] overflow-auto">
       <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
-        <div v-if="props.chain" class="flex items-center justify-between">
+        <div v-if="chain" class="flex items-center justify-between">
           <span class="text-textSecondaryMain typography-body3">
             {{ $t('builders-claim-modal.network-lbl') }}
           </span>
-          <chain-network-badge :chain="chain" />
+          <chain-network-badge :chain="chain as EthereumChains" />
         </div>
 
         <div
@@ -93,16 +93,14 @@ import {
   sleep,
 } from '@/helpers'
 import { formatEther } from '@/utils'
-import {
-  BuilderSubnetDefaultFragment,
-  BuilderUserDefaultFragment,
-} from '@/types/graphql'
+import { BuilderSubnetDefaultFragment } from '@/types/graphql'
 import { BN } from '@distributedlab/tools'
+import { EthereumChains } from '@config'
 
 const props = withDefaults(
   defineProps<{
     builderSubnet: BuilderSubnetDefaultFragment
-    builderUser: BuilderUserDefaultFragment
+    claimReceiver: string
     stakerRewards: string
     isShown?: boolean
     chain?: string
@@ -134,7 +132,7 @@ const { data: protocolFee } = useLoad(
   async () => {
     const res =
       await feeConfigContract.value.providerBased.value.getFeeAndTreasuryForOperation(
-        provider.value.selectedAddress,
+        props.claimReceiver,
         '0x0e619df840e43eeee4aeaa3968c0faee58f09a7a73123ecda6e02d944995c90e',
       )
 
@@ -142,7 +140,7 @@ const { data: protocolFee } = useLoad(
   },
   {
     reloadArgs: [
-      () => provider.value.selectedAddress,
+      () => props.claimReceiver,
       () => props.builderSubnet.feeTreasury,
     ],
   },
@@ -155,7 +153,7 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-claim-modal.claim-receiver-lbl'),
-    value: abbrCenter(provider.value.selectedAddress),
+    value: abbrCenter(props.claimReceiver),
   },
   {
     label: t('builders-claim-modal.amount-lbl'),
@@ -163,23 +161,15 @@ const builderDetails = computed(() => [
   },
   {
     label: t('builders-claim-modal.protocol-fee-lbl'),
-    value: formatAmount(protocolFee.value, 23, {
-      decimals: 4,
-      suffix: '%',
-    }),
+    value: `${formatAmount(protocolFee.value, 23, {
+      decimals: 23,
+    })}%`,
   },
   {
     label: t('builders-claim-modal.emissions-lbl'),
-    value: formatAmount(
-      props.builderSubnet.fee,
-      {
-        decimals: 23,
-      },
-      {
-        decimals: 4,
-        suffix: '%',
-      },
-    ),
+    value: `${formatAmount(props.builderSubnet.fee, 23, {
+      decimals: 23,
+    })}%`,
   },
   {
     label: t('builders-claim-modal.final-claim-lbl'),
@@ -195,7 +185,7 @@ const builderDetails = computed(() => [
           .mul(BN.fromBigInt(props.builderSubnet.fee || 0, 23)),
       )
       .format({
-        decimals: 4,
+        decimals: 18,
       })} MOR`,
   },
 ])
@@ -215,7 +205,7 @@ const claim = async () => {
 
     const tx = await builderSubnetsContract.value.signerBased.value.claim(
       props.builderSubnet?.id,
-      provider.value.selectedAddress,
+      props.claimReceiver,
     )
 
     const txReceipt = await tx.wait()

@@ -84,7 +84,7 @@
             <span class="font-bold text-textSecondaryMain typography-body3">
               {{
                 $t('builders-stake-modal.power-factor-value', {
-                  powerFactor: formatAmount(powerFactor, 25),
+                  powerFactor: formatAmount(potentialPowerFactor, 25),
                 })
               }}
             </span>
@@ -97,7 +97,7 @@
           <span class="text-textSecondaryMain typography-body3">
             {{ $t('builders-stake-modal.network-lbl') }}
           </span>
-          <chain-network-badge :chain="chain" />
+          <chain-network-badge :chain="chain as EthereumChains" />
         </div>
 
         <div
@@ -169,10 +169,11 @@ import {
   GetUserAccountBuilderSubnetsQuery,
   GetUserAccountBuilderSubnetsQueryVariables,
 } from '@/types/graphql'
-import { duration, time } from '@distributedlab/tools'
+import { BN, duration, time } from '@distributedlab/tools'
 import { DEFAULT_TIME_FORMAT, DOT_TIME_FORMAT } from '@/const'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { helpers } from '@vuelidate/validators'
+import { EthereumChains } from '@config'
 
 const props = withDefaults(
   defineProps<{
@@ -231,22 +232,6 @@ const { data: buildersSubnetUserAccount } = useLoad<
   },
 )
 
-const { data: powerFactor } = useLoad(
-  '',
-  async () => {
-    const pfBN =
-      await builderSubnetsContract.value.providerBased.value.getStakerPowerFactor(
-        props.builderSubnet.id,
-        provider.value.selectedAddress,
-      )
-
-    return pfBN.toString()
-  },
-  {
-    reloadArgs: [buildersSubnetUserAccount],
-  },
-)
-
 const currentClaimLockEnd = computed(() => {
   return time(
     +buildersSubnetUserAccount.value?.claimLockEnd ||
@@ -287,38 +272,87 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     })),
   )
 
-const builderDetails = computed(() => [
-  {
-    label: t('builders-stake-modal.builder-lbl'),
-    value: props.builderSubnet?.name,
+const { data: potentialPowerFactor } = useLoad(
+  '',
+  async () => {
+    if (!buildersSubnetUserAccount.value) return ''
+
+    let to = 1
+
+    if (form.claimLockEnd) {
+      to = time(+form.claimLockEnd).timestamp
+    } else if (+buildersSubnetUserAccount.value.claimLockEnd) {
+      const usersClaimLockEnd = time(
+        +buildersSubnetUserAccount.value.claimLockEnd,
+      )
+
+      if (usersClaimLockEnd.isAfter(time())) {
+        to = usersClaimLockEnd.timestamp
+      }
+    } else {
+      to = time(props.builderSubnet.minClaimLockEnd).timestamp
+    }
+
+    const pfBN =
+      await builderSubnetsContract.value.providerBased.value.getPowerFactor(
+        time().timestamp,
+        to,
+      )
+
+    return pfBN.toString()
   },
   {
-    label: t('builders-stake-modal.min-deposit-lbl'),
-    value: `${formatEther(props.builderSubnet?.minStake)} MOR`,
+    reloadArgs: [buildersSubnetUserAccount, () => form.claimLockEnd],
   },
-  {
-    label: t('builders-stake-modal.lock-period-lbl'),
-    value: humanizeTime(+props.builderSubnet?.withdrawLockPeriodAfterStake),
-  },
-  {
-    label: t('builders-stake-modal.new-stake-amount-lbl'),
-    value: `${+formatEther(buildersSubnetUserAccount.value?.staked || 0) + +form.stakeAmount} MOR`,
-  },
-  {
-    label: t('builders-stake-modal.new-unlock-date-lbl'),
-    value: props.builderSubnet
-      ? time()
-          .add(
-            duration(
-              +props.builderSubnet?.withdrawLockPeriodAfterStake,
+)
+
+const builderDetails = computed(() => {
+  let newStakeAmount = ''
+  try {
+    newStakeAmount = BN.fromBigInt(buildersSubnetUserAccount.value?.staked || 0)
+      .add(
+        BN.fromRaw(form.stakeAmount || 0, 18).mul(
+          BN.fromBigInt(potentialPowerFactor.value || 0, 25),
+        ),
+      )
+      .toString()
+  } catch (error) {
+    newStakeAmount = ''
+  }
+
+  return [
+    {
+      label: t('builders-stake-modal.builder-lbl'),
+      value: props.builderSubnet?.name,
+    },
+    {
+      label: t('builders-stake-modal.min-deposit-lbl'),
+      value: `${formatEther(props.builderSubnet?.minStake)} MOR`,
+    },
+    {
+      label: t('builders-stake-modal.lock-period-lbl'),
+      value: humanizeTime(+props.builderSubnet?.withdrawLockPeriodAfterStake),
+    },
+    {
+      label: t('builders-stake-modal.new-stake-amount-lbl'),
+      value: `${newStakeAmount} MOR`,
+    },
+    {
+      label: t('builders-stake-modal.new-unlock-date-lbl'),
+      value: props.builderSubnet
+        ? time()
+            .add(
+              duration(
+                +props.builderSubnet?.withdrawLockPeriodAfterStake,
+                'seconds',
+              ).asSeconds,
               'seconds',
-            ).asSeconds,
-            'seconds',
-          )
-          .format(DEFAULT_TIME_FORMAT)
-      : '',
-  },
-])
+            )
+            .format(DEFAULT_TIME_FORMAT)
+        : '',
+    },
+  ]
+})
 
 const setMaxAmount = () => {
   form.stakeAmount = formatEther(balances.value.rewardsToken ?? 0)

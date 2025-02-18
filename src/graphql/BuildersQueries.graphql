@@ -69,6 +69,7 @@ query combinedBuilderSubnets(
   $orderDirection: OrderDirection
   $usersOrderBy: BuilderUser_orderBy
   $usersDirection: OrderDirection
+  $builderSubnetName: String! = ""
 
   $address: Bytes = ""
 ) {
@@ -77,6 +78,7 @@ query combinedBuilderSubnets(
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
+    where: { name_contains_nocase: $builderSubnetName }
   ) {
     ...BuilderSubnetDefault
   }

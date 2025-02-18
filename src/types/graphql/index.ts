@@ -1087,6 +1087,7 @@ export type CombinedBuilderSubnetsQueryVariables = Exact<{
   orderDirection?: InputMaybe<OrderDirection>;
   usersOrderBy?: InputMaybe<BuilderUser_OrderBy>;
   usersDirection?: InputMaybe<OrderDirection>;
+  builderSubnetName?: Scalars['String'];
   address?: InputMaybe<Scalars['Bytes']>;
 }>;
 
@@ -1172,12 +1173,13 @@ export const GetUserAccountBuilderSubnets = gql`
     ${BuilderUserDefault}
 ${BuilderSubnetDefault}`;
 export const CombinedBuilderSubnets = gql`
-    query combinedBuilderSubnets($first: Int = 10, $skip: Int = 10, $orderBy: BuilderSubnet_orderBy, $orderDirection: OrderDirection, $usersOrderBy: BuilderUser_orderBy, $usersDirection: OrderDirection, $address: Bytes = "") {
+    query combinedBuilderSubnets($first: Int = 10, $skip: Int = 10, $orderBy: BuilderSubnet_orderBy, $orderDirection: OrderDirection, $usersOrderBy: BuilderUser_orderBy, $usersDirection: OrderDirection, $builderSubnetName: String! = "", $address: Bytes = "") {
   builderSubnets(
     first: $first
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
+    where: {name_contains_nocase: $builderSubnetName}
   ) {
     ...BuilderSubnetDefault
   }

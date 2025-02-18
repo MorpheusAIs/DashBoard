@@ -190,6 +190,7 @@ import {
   bus,
   BUS_EVENTS,
   ErrorHandler,
+  formatAmount,
   getEthExplorerTxUrl,
   sleep,
 } from '@/helpers'
@@ -203,6 +204,7 @@ import { DOT_TIME_FORMAT } from '@/const'
 import { useRoute, useRouter } from 'vue-router'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
 import { ROUTE_NAMES } from '@/enums'
+import { useIntervalFn } from '@vueuse/core'
 
 defineOptions({
   inheritAttrs: false,
@@ -303,7 +305,9 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
     : time(startAt).add(1, 'day')
 
   const emissionsFee = val.buildersProject?.fee
-    ? BN.fromBigInt(val.buildersProject?.fee, 23).toString()
+    ? formatAmount(val.buildersProject.fee, 23, {
+        decimals: 23,
+      })
     : ''
   const treasuryFee =
     val.buildersProject?.feeTreasury ?? provider.value.selectedAddress ?? ''
@@ -341,6 +345,19 @@ watch(loadedData, val => {
   })
 })
 
+const currentTime = ref(time().timestamp)
+
+const { pause } = useIntervalFn(
+  () => {
+    currentTime.value = time().timestamp
+  },
+  1_000,
+  {
+    immediate: true,
+    immediateCallback: true,
+  },
+)
+
 const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
   useFormValidation(
     form,
@@ -355,9 +372,11 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
           required,
           minValue: helpers.withMessage(
             t('builders-form.min-start-time-validation', {
-              time: time().add(1, 'minute').format(DOT_TIME_FORMAT),
+              time: time(currentTime.value)
+                .add(1, 'minute')
+                .format(DOT_TIME_FORMAT),
             }),
-            minValue(time().add(1, 'minute').timestamp),
+            minValue(time(currentTime.value).add(1, 'minute').timestamp),
           ),
         }),
       },
@@ -530,11 +549,19 @@ const updateSubnetBuilder = async () => {
     )
   })
 
-  await sleep(1000)
+  await router.push({
+    name: ROUTE_NAMES.appBuildersItem,
+    params: {
+      id: loadedData.value.buildersProject?.id,
+    },
+    query: { chain: provider.value.chainId },
+  })
 }
 
 const submit = async () => {
   if (!isFormValid()) return
+
+  pause()
 
   isSubmitting.value = true
 

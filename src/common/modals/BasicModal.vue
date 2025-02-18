@@ -93,7 +93,10 @@ watch(
 
   @include respond-to(medium) {
     padding: toRem(36) toRem(20) toRem(24);
-    width: toRem(344);
+  }
+
+  @include respond-to(small) {
+    width: 100%;
   }
 }
 

@@ -42,7 +42,8 @@
           }"
         >
           <input-field
-            v-model="searchQuery"
+            :model-value="searchQuery"
+            @input="debouncedAssertSearchQuery($event.target.value)"
             :placeholder="$t('builders-list.search-placeholder')"
           />
           <app-icon :name="$icons.search" />
@@ -204,7 +205,6 @@ import { ref, computed, onBeforeMount, onBeforeUnmount } from 'vue'
 import { DEFAULT_BUILDERS_PAGE_LIMIT } from '@/const'
 import { useRoute } from 'vue-router'
 import { useWeb3ProvidersStore } from '@/store'
-import { AdditionalBuildersOrderBy } from '@/enums'
 import { useLoad } from '@/composables'
 import { storeToRefs } from 'pinia'
 import { useSecondApolloClient } from '@/composables/use-second-apollo-client'
@@ -220,6 +220,7 @@ import { cn } from '@/theme/utils'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { InputField } from '@/fields'
 import { bus, BUS_EVENTS } from '@/helpers'
+import { useDebounceFn } from '@vueuse/core'
 
 type LoadBuildersResponse = {
   builderSubnets: BuilderSubnetDefaultFragment[]
@@ -244,14 +245,16 @@ const {
 const currentPage = ref(1)
 const searchQuery = ref('')
 
-const orderBy = ref<BuilderSubnet_OrderBy | AdditionalBuildersOrderBy>(
-  BuilderSubnet_OrderBy.TotalStaked,
-)
+const debouncedAssertSearchQuery = useDebounceFn((val: string) => {
+  searchQuery.value = val
+}, 500)
+
+const orderBy = ref<BuilderSubnet_OrderBy>(BuilderSubnet_OrderBy.TotalStaked)
 const orderDirection = ref(OrderDirection.Desc)
 
-const usersBuildersOrderBy = ref<
-  BuilderSubnet_OrderBy | AdditionalBuildersOrderBy
->(BuilderSubnet_OrderBy.TotalStaked)
+const usersBuildersOrderBy = ref<BuilderSubnet_OrderBy>(
+  BuilderSubnet_OrderBy.TotalStaked,
+)
 const usersOrderDirection = ref(OrderDirection.Asc)
 
 const {
@@ -281,12 +284,8 @@ onBeforeUnmount(() => {
 })
 
 const mapUsersOrderFilter = (
-  orderBy: BuilderSubnet_OrderBy | AdditionalBuildersOrderBy,
+  orderBy: BuilderSubnet_OrderBy,
 ): BuilderUser_OrderBy => {
-  if (orderBy === 'RewardType') {
-    return BuilderUser_OrderBy.BuilderSubnetId
-  }
-
   return {
     [BuilderSubnet_OrderBy.BuilderUsers]: BuilderUser_OrderBy.Id,
     [BuilderSubnet_OrderBy.Description]:
@@ -452,7 +451,7 @@ const { data: allPredefinedBuilders, ...allPredefinedBuildersState } =
 const paginateThroughAllPredefinedBuilders = async (args: {
   skip: number
   first: number
-  orderBy: BuilderSubnet_OrderBy | AdditionalBuildersOrderBy
+  orderBy: BuilderSubnet_OrderBy
   orderDirection: OrderDirection
 }): Promise<LoadBuildersResponse> => {
   let builderSubnets = allPredefinedBuilders.value.builderSubnets.slice(
@@ -471,17 +470,6 @@ const paginateThroughAllPredefinedBuilders = async (args: {
     )
   }
 
-  const isCustomSorting = Object.keys(AdditionalBuildersOrderBy).includes(
-    orderBy.value,
-  )
-  if (isCustomSorting) {
-    builderSubnets = sortByCustomType(
-      builderSubnets,
-      orderBy.value as AdditionalBuildersOrderBy,
-      orderDirection.value,
-    )
-  }
-
   let userAccountBuilderSubnets =
     allPredefinedBuilders.value.userAccountBuilderSubnets
 
@@ -494,17 +482,6 @@ const paginateThroughAllPredefinedBuilders = async (args: {
         ? (args.orderBy as BuilderSubnet_OrderBy)
         : BuilderSubnet_OrderBy.TotalStaked,
       args.orderDirection,
-    )
-  }
-
-  const isUsersCustomSorting = Object.keys(AdditionalBuildersOrderBy).includes(
-    usersBuildersOrderBy.value,
-  )
-  if (isUsersCustomSorting) {
-    userAccountBuilderSubnets = sortByCustomType(
-      userAccountBuilderSubnets,
-      usersBuildersOrderBy.value as AdditionalBuildersOrderBy,
-      usersOrderDirection.value,
     )
   }
 
@@ -555,6 +532,7 @@ const { data: listData, ...builderSubnetsState } =
           usersOrderBy: mapperUsersBuildersOrderBy.value,
           usersDirection: usersOrderDirection.value,
           orderDirection: orderDirection.value,
+          builderSubnetName: searchQuery.value ?? '',
 
           address: provider.value.selectedAddress,
         },
@@ -585,6 +563,7 @@ const { data: listData, ...builderSubnetsState } =
         networkType.value === NetworkTypes.Mainnet
           ? () => allPredefinedBuilders.value
           : undefined,
+        searchQuery,
       ],
       updateArgs:
         networkType.value === NetworkTypes.Testnet
@@ -627,42 +606,6 @@ const localSortBuilders = (
       }
 
       return keyB.localeCompare(keyA)
-    }
-
-    return 0
-  })
-}
-
-const sortByCustomType = (
-  data: CombinedBuilderSubnetsQuery['builderSubnets'],
-  orderBy: AdditionalBuildersOrderBy,
-  orderDirection: OrderDirection,
-): CombinedBuilderSubnetsQuery['builderSubnets'] => {
-  const mappedSortingHandler = {
-    [AdditionalBuildersOrderBy.RewardType]: (
-      a: CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery['builderSubnets'][number],
-      b: CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery['builderSubnets'][number],
-    ) => {
-      const aType = predefinedBuildersMeta.find(
-        el => el.name === a.name,
-      )?.rewardType
-      const bType = predefinedBuildersMeta.find(
-        el => el.name === b.name,
-      )?.rewardType
-
-      if (aType && bType) {
-        return orderDirection === OrderDirection.Asc
-          ? aType.localeCompare(bType)
-          : bType.localeCompare(aType)
-      }
-
-      return 0
-    },
-  }
-
-  return data.sort((a, b) => {
-    if (mappedSortingHandler[orderBy]) {
-      return mappedSortingHandler[orderBy](a, b)
     }
 
     return 0

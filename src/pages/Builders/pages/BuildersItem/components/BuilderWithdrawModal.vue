@@ -151,7 +151,7 @@ const { provider, builderSubnetsContractDetails, builderSubnetsContract } =
 
 const isSubmitting = ref(false)
 
-const { data: potentialPowerFactor } = useLoad(
+const { data: powerFactor } = useLoad(
   '',
   async () => {
     if (!props.buildersSubnetUserAccount) return ''
@@ -207,7 +207,7 @@ const builderDetails = computed(() => {
   return [
     {
       label: t('builder-withdraw-modal.power-factor-lbl'),
-      value: `${formatAmount(potentialPowerFactor.value, 25, {
+      value: `${formatAmount(powerFactor.value, 25, {
         decimals: 25,
       })}x`,
     },

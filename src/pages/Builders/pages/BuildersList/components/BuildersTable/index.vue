@@ -17,13 +17,13 @@
         </span>
       </div>
       <div class=""></div>
-      <sorting-icon-button
-        class="justify-self-end"
-        :label="$t('builders-table.reward-type-th')"
-        :order-by="AdditionalBuildersOrderBy.RewardType"
-        v-model:order-by-model="orderByModel"
-        v-model:order-direction-model="orderDirectionModel"
-      />
+      <div class="flex items-center gap-2">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.reward-type-th') }}
+        </span>
+      </div>
       <sorting-icon-button
         class="justify-self-end"
         :label="$t('builders-table.min-deposit-th')"
@@ -59,7 +59,6 @@
 import BuildersTableItem from './components/BuildersTableItem.vue'
 import { cn } from '@/theme/utils'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
-import { AdditionalBuildersOrderBy } from '@/enums'
 import {
   BuilderSubnet_OrderBy,
   BuilderSubnetDefaultFragment,

@@ -821,7 +821,7 @@
     "start-at-plh": "Stake start timestamp",
     "start-at-note": "Example: “01.01.2030 01:00 PM”",
     "lock-period-after-stake-plh": "Withdraw lock period after the stake",
-    "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time. It should be longer than 1 day",
+    "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time",
     "min-deposit-plh": "Minimal stake",
     "min-deposit-note": "Example: “0.001 MOR”",
     "claim-lock-end-plh": "Subnet claim lock end timestamp",
@@ -836,7 +836,7 @@
     "section-4-title": "Subnet Description",
     "slug-plh": "Slug",
     "slug-note": "Short Subnet description (max 120 characters)",
-    "description-plh": "Builder Description",
+    "description-plh": "Description",
     "description-note": "Detailed Subnet description (up to 800 characters)",
 
     "optional-mark": "(Optional)",
@@ -846,8 +846,8 @@
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
 
-    "min-start-time-validation": "should be more than {time}",
-    "min-lock-period-after-stake": "Should be more than {amount}s",
+    "min-start-time-validation": "Should be more than {time}",
+    "min-lock-period-after-stake": "Should be more than {amount} seconds",
     "min-end-time-validation-err-msg": "Should be more than {time}",
     "min-end-time-validation-need-start-time-msg": "Enter start time first"
   },
@@ -878,7 +878,7 @@
 
     "network-lbl": "Network",
     "subnet-lbl": "Subnet",
-    "claim-receiver-lbl": "Claim Receiver",
+    "claim-receiver-lbl": "Receiver",
     "amount-lbl": "Amount",
     "protocol-fee-lbl": "Protocol emission",
     "emissions-lbl": "% of the MOR Emissions \n the Subnet receives",
