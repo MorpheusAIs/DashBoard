@@ -10,6 +10,7 @@
           </transition>
         </router-view>
       </div>
+      <featurebase-widget />
     </div>
   </transition>
 </template>
