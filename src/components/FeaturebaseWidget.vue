@@ -6,11 +6,23 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
+type FeaturebaseConfig = {
+  organization: string
+  theme: 'light' | 'dark'
+  placement: 'right' | 'left'
+  locale: string
+  metadata?: Record<string, string>
+}
+
+type FeaturebaseFunction = {
+  (command: 'initialize_feedback_widget', config: FeaturebaseConfig): void
+  (command: string, ...args: unknown[]): void
+}
+
 declare global {
   interface Window {
-    Featurebase?: {
-      (...args: any[]): void
-      q?: any[]
+    Featurebase?: FeaturebaseFunction & {
+      q?: Array<[string, ...unknown[]]>
     }
   }
 }
