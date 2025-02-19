@@ -1120,5 +1120,22 @@
     "totalStaked": 0,
     "rewardType": "To Be Announced",
     "website": "https://www.frostbyte.app/"
+  },
+  {
+    "id": "",
+    "name": "Unocoin",
+    "description": "India's Trusted Bitcoin & Crypto Trading Platform",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/unocoin-logo-vector.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://unocoin.com/in/"
   }
 ]
