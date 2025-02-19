@@ -56,30 +56,6 @@ export const ethereumChainsTypes = {
  * Simple metadata for each network
  */
 const chainsMap: Record<keyof typeof EthereumChains, EthereumType.Chain> = {
-  Arbitrum: {
-    chainId: utils.hexValue(Number(EthereumChains.Arbitrum)),
-    chainName: 'Arbitrum One',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: ['https://arbitrum-one.publicnode.com'],
-    blockExplorerUrls: ['https://arbiscan.io'],
-    iconUrls: ['/images/arbitrum-alt-icon.svg'],
-  },
-  ArbitrumSepolia: {
-    chainId: utils.hexValue(Number(EthereumChains.ArbitrumSepolia)),
-    chainName: 'Arbitrum Sepolia (Testnet)',
-    nativeCurrency: {
-      name: 'ETH',
-      symbol: 'ETH',
-      decimals: 18,
-    },
-    rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
-    blockExplorerUrls: ['https://sepolia.arbiscan.io'],
-    iconUrls: ['/images/arbitrum-alt-icon.svg'],
-  },
   Ethereum: {
     chainId: utils.hexValue(Number(EthereumChains.Ethereum)),
     chainName: 'Ethereum',
@@ -103,6 +79,30 @@ const chainsMap: Record<keyof typeof EthereumChains, EthereumType.Chain> = {
     rpcUrls: ['https://ethereum-sepolia.publicnode.com'],
     blockExplorerUrls: ['https://sepolia.etherscan.io'],
     iconUrls: ['/images/ethereum-icon.svg'],
+  },
+  Arbitrum: {
+    chainId: utils.hexValue(Number(EthereumChains.Arbitrum)),
+    chainName: 'Arbitrum One',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: ['https://arbitrum-one.publicnode.com'],
+    blockExplorerUrls: ['https://arbiscan.io'],
+    iconUrls: ['/images/arbitrum-alt-icon.svg'],
+  },
+  ArbitrumSepolia: {
+    chainId: utils.hexValue(Number(EthereumChains.ArbitrumSepolia)),
+    chainName: 'Arbitrum Sepolia (Testnet)',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://sepolia.arbiscan.io'],
+    iconUrls: ['/images/arbitrum-alt-icon.svg'],
   },
   Base: {
     chainId: utils.hexValue(Number(EthereumChains.Base)),
