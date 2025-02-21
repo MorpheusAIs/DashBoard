@@ -347,7 +347,7 @@ watch(loadedData, val => {
 
 const currentTime = ref(time().timestamp)
 
-const { pause } = useIntervalFn(
+const { pause, resume } = useIntervalFn(
   () => {
     currentTime.value = time().timestamp
   },
@@ -585,6 +585,8 @@ const submit = async () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
+
+  resume()
 
   isSubmitting.value = false
 }
