@@ -160,13 +160,25 @@ export const useProvider = (): IUseProvider => {
         }
       } | null
 
-      _providerReactiveState.selectedAddress = provider?.selectedAddress || ''
+      const chainId =
+        _web3Modal?.getCaipNetworkId()
+        || provider?.chainId
+        || ''
+
+      _providerReactiveState.selectedAddress =
+        provider?.selectedAddress
+        || _web3Modal?.getAddress('eip155')
+        || _web3Modal?.getAddress('solana')
+        || _web3Modal?.getAddress('polkadot')
+        || _web3Modal?.getAddress('bip122')
+        || ''
+
       _providerReactiveState.rawProvider = provider
-      _providerReactiveState.chainId = provider?.chainId
-        ? String(Number(provider.chainId))
-        : ''
+
+      _providerReactiveState.chainId = chainId ? String(Number(chainId)) : ''
+
       _providerReactiveState.isConnected = Boolean(
-        provider?._state?.isConnected,
+        provider?._state?.isConnected || _web3Modal?.getIsConnectedState(),
       )
     })
   }
