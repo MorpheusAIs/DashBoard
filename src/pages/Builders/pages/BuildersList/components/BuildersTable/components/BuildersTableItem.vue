@@ -113,8 +113,8 @@
       }"
     >
       <img
-        v-if="builderMeta?.localImage"
-        :src="builderMeta?.localImage"
+        v-if="logo"
+        :src="logo"
         class="aspect-square size-[75px] min-w-[75px]"
       />
       <div

@@ -16,8 +16,8 @@
         <app-button
           scheme="filled"
           color="secondary"
-          :route="{ name: $routes.appBuildersForm }"
           :disabled="!provider.isConnected"
+          @click="handleCreateBuilder"
         >
           {{ $t('builders-list.create-builder-btn') }}
         </app-button>
@@ -216,6 +216,8 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client/core'
 import { InputField } from '@/fields'
 import { bus, BUS_EVENTS } from '@/helpers'
 import { useDebounceFn } from '@vueuse/core'
+import { useRouter } from 'vue-router'
+import { ROUTE_NAMES } from '@/enums'
 
 type LoadBuildersResponse = {
   builderSubnets: BuilderSubnetDefaultFragment[]
@@ -227,6 +229,7 @@ defineOptions({
   inheritAttrs: false,
 })
 
+const router = useRouter()
 const route = useRoute()
 
 const isDropMenuShown = ref(false)
@@ -442,6 +445,14 @@ const { data: allPredefinedBuilders, ...allPredefinedBuildersState } =
       updateArgs: [[orderBy, orderDirection]],
     },
   )
+
+const handleCreateBuilder = () => {
+  if (!provider.value.isConnected) return
+
+  router.push({
+    name: ROUTE_NAMES.appBuildersForm
+  })
+}
 
 const paginateThroughAllPredefinedBuilders = async (args: {
   skip: number

@@ -236,8 +236,7 @@ const { data: buildersSubnetUserAccount } = useLoad<
 
 const currentClaimLockEnd = computed(() => {
   return time(
-    +buildersSubnetUserAccount.value?.claimLockEnd ||
-      +props.builderSubnet.maxClaimLockEnd,
+    +props.builderSubnet.maxClaimLockEnd,
   )
 })
 

@@ -83,7 +83,7 @@
           </div>
 
           <span class="max-w-[715px] text-textTertiaryMain">
-            {{ buildersData.builderSubnet?.description }}
+            {{ buildersData.builderSubnet?.slug }}
           </span>
         </template>
 
@@ -310,7 +310,10 @@
                   </span>
                 </div>
                 <div
-                  v-if="claimLockUntil.isAfter(time())"
+                  v-if="
+                    !+buildersData.builderSubnetUserAccount?.staked
+                      || claimLockUntil.isAfter(time())
+                  "
                   class="flex items-center gap-2"
                 >
                   <span class="text-textSecondary">

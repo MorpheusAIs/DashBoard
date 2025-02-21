@@ -866,7 +866,7 @@
     "new-unlock-date-lbl": "New Unlock Date",
     "stake-amount-plh": "MOR amount",
     "claim-lock-end-plh": "Lock your claim until (optional)",
-    "claim-lock-end-note": "Claim will be locked until {date}",
+    "claim-lock-end-note": "Claim can be locked until {date}",
     "stake-amount-max-btn": "max",
     "available-to-stake-balance": "Available to Stake",
     "cancel-btn": "Cancel",
