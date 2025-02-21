@@ -173,7 +173,7 @@
               <div class="flex items-center gap-2">
                 <span class="text-textSecondaryMain typography-h2">
                   {{
-                    time(+buildersData.builderSubnet?.minClaimLockEnd).format(
+                    time(+buildersData.builderSubnet?.maxClaimLockEnd).format(
                       DOT_TIME_FORMAT,
                     )
                   }}
@@ -502,11 +502,6 @@
     @staked="handleStaked"
   />
   <builders-claim-modal
-    v-if="
-      buildersData.builderSubnet &&
-      buildersData.builderSubnetUserAccount &&
-      selectedClaimReceiverRewards
-    "
     v-model:is-shown="isClaimModalShown"
     :builder-subnet="buildersData.builderSubnet"
     :chain="route.query.chain as EthereumChains"
@@ -786,7 +781,7 @@ const claimLockUntil = computed(() => {
 
   return time(
     +buildersData.value?.builderSubnetUserAccount?.claimLockEnd ||
-      +buildersData.value?.builderSubnet?.minClaimLockEnd,
+      +buildersData.value?.builderSubnet?.maxClaimLockEnd,
   )
 })
 

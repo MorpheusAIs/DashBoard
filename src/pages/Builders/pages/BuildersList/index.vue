@@ -290,8 +290,8 @@ const mapUsersOrderFilter = (
       BuilderUser_OrderBy.BuilderSubnetFeeTreasury,
     [BuilderSubnet_OrderBy.Id]: BuilderUser_OrderBy.BuilderSubnetId,
     [BuilderSubnet_OrderBy.Image]: BuilderUser_OrderBy.BuilderSubnetImage,
-    [BuilderSubnet_OrderBy.MinClaimLockEnd]:
-      BuilderUser_OrderBy.BuilderSubnetMinClaimLockEnd,
+    [BuilderSubnet_OrderBy.MaxClaimLockEnd]:
+      BuilderUser_OrderBy.BuilderSubnetMaxClaimLockEnd,
     [BuilderSubnet_OrderBy.MinStake]: BuilderUser_OrderBy.BuilderSubnetMinStake,
     [BuilderSubnet_OrderBy.Name]: BuilderUser_OrderBy.BuilderSubnetName,
     [BuilderSubnet_OrderBy.Owner]: BuilderUser_OrderBy.BuilderSubnetOwner,

@@ -391,6 +391,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "treasury",
+        type: "address",
+      },
+    ],
+    name: "SubnetCreationFeeSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "bytes32",
         name: "subnetId",
@@ -435,7 +454,7 @@ const _abi = [
           },
           {
             internalType: "uint128",
-            name: "minClaimLockEnd",
+            name: "maxClaimLockEnd",
             type: "uint128",
           },
         ],
@@ -471,6 +490,31 @@ const _abi = [
       },
     ],
     name: "SubnetFeeTreasurySet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "subnetId",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "oldValue",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "newValue",
+        type: "uint128",
+      },
+    ],
+    name: "SubnetMaxClaimLockEndSet",
     type: "event",
   },
   {
@@ -782,7 +826,7 @@ const _abi = [
       },
       {
         internalType: "uint128",
-        name: "minClaimLockEnd",
+        name: "maxClaimLockEnd",
         type: "uint128",
       },
     ],
@@ -929,7 +973,7 @@ const _abi = [
           },
           {
             internalType: "uint128",
-            name: "minClaimLockEnd",
+            name: "maxClaimLockEnd",
             type: "uint128",
           },
         ],
@@ -1379,6 +1423,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "subnetCreationFeeAmount_",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "subnetCreationFeeTreasury_",
+        type: "address",
+      },
+    ],
+    name: "setSubnetCreationFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes32",
         name: "subnetId_",
         type: "bytes32",
@@ -1390,6 +1452,24 @@ const _abi = [
       },
     ],
     name: "setSubnetFeeTreasury",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "subnetId_",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint128",
+        name: "newValue_",
+        type: "uint128",
+      },
+    ],
+    name: "setSubnetMaxClaimLockEnd",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1515,6 +1595,32 @@ const _abi = [
         internalType: "uint256",
         name: "pendingRewards",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "subnetCreationFeeAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "subnetCreationFeeTreasury",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",

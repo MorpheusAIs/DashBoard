@@ -854,7 +854,7 @@
   "builders-stake-modal": {
     "modal-title": "Stake MOR",
     "available-to-stake-balance-value": "{amount} MOR",
-    "claim-lock-end-validation-msg": "Should be more that {date}",
+    "claim-lock-end-validation-msg": "Should be more than {date}",
     "power-factor-lbl": "Power Factor",
     "power-factor-tooltip": "The power factor depends on the claim lock timestamp, the longer the claim lock, the larger the power factor.",
     "power-factor-value": "x{powerFactor}",
@@ -880,10 +880,9 @@
     "subnet-lbl": "Subnet",
     "claim-receiver-lbl": "Receiver",
     "amount-lbl": "Amount",
-    "protocol-fee-lbl": "Protocol emission",
-    "emissions-lbl": "% of the MOR Emissions \n the Subnet receives",
+    "protocol-fee-lbl": "% of the MOR emission \n the Protocol receives",
+    "emissions-lbl": "% of the MOR emissions \n the Subnet receives",
     "final-claim-lbl": "Final Claim",
-
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm"
   },

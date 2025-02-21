@@ -91,11 +91,11 @@
           :disabled="isSubmitting"
         />
         <datetime-field
-          v-model="form.minClaimLockEnd"
+          v-model="form.maxClaimLockEnd"
           :placeholder="$t('builders-form.claim-lock-end-plh')"
           :note="$t('builders-form.claim-lock-end-note')"
-          :error-message="getFieldErrorMessage('minClaimLockEnd')"
-          @blur="touchField('minClaimLockEnd')"
+          :error-message="getFieldErrorMessage('maxClaimLockEnd')"
+          @blur="touchField('maxClaimLockEnd')"
           :disabled="isSubmitting || !!loadedData.buildersProject"
         />
       </app-gradient-border-card>
@@ -168,7 +168,7 @@
       >
         {{ $t('builders-form.cancel-btn') }}
       </app-button>
-      <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
+      <app-button type="submit" :disabled="isSubmitting">
         {{ $t('builders-form.submit-btn') }}
       </app-button>
     </div>
@@ -276,7 +276,7 @@ type BuilderSubnetFormData = {
   startAt: number
   lockPeriodAfterStake: number
   minStake: string
-  minClaimLockEnd: number
+  maxClaimLockEnd: number
 
   emissionsFee: string
   treasuryFee: string
@@ -300,8 +300,8 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
     loadedData.value.minimalWithdrawLockPeriod ??
     ''
   const minStake = formatEther(val.buildersProject?.minStake ?? 0)
-  const minClaimLockEnd = val.buildersProject?.minClaimLockEnd
-    ? time(+val.buildersProject?.minClaimLockEnd)
+  const maxClaimLockEnd = val.buildersProject?.maxClaimLockEnd
+    ? time(+val.buildersProject?.maxClaimLockEnd)
     : time(startAt).add(1, 'day')
 
   const emissionsFee = val.buildersProject?.fee
@@ -323,7 +323,7 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
     startAt: startAt.timestamp,
     lockPeriodAfterStake: lockPeriodAfterStake,
     minStake,
-    minClaimLockEnd: minClaimLockEnd.timestamp,
+    maxClaimLockEnd: maxClaimLockEnd.timestamp,
     emissionsFee,
     treasuryFee,
     slug,
@@ -358,7 +358,7 @@ const { pause } = useIntervalFn(
   },
 )
 
-const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
+const { getFieldErrorMessage, isFormValid, touchField } =
   useFormValidation(
     form,
     computed(() => ({
@@ -384,13 +384,13 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
         required,
         minValue: helpers.withMessage(
           t('builders-form.min-lock-period-after-stake', {
-            amount: loadedData.value.minimalWithdrawLockPeriod,
+            amount: loadedData.value.minimalWithdrawLockPeriod || 300,
           }),
-          minValue(loadedData.value.minimalWithdrawLockPeriod),
+          minValue(loadedData.value.minimalWithdrawLockPeriod || 300),
         ),
       },
       minStake: { required },
-      minClaimLockEnd: {
+      maxClaimLockEnd: {
         required,
         minValue: helpers.withMessage(
           form.startAt
@@ -398,7 +398,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
                 time: time(+form.startAt).format(DOT_TIME_FORMAT),
               })
             : t('builders-form.min-end-time-validation-need-start-time-msg'),
-          minValue(Number(form.startAt)),
+          minValue(+form.startAt),
         ),
       },
 
@@ -420,7 +420,7 @@ const createSubnetBuilder = async () => {
       feeTreasury: form.treasuryFee,
       startsAt: form.startAt,
       withdrawLockPeriodAfterStake: form.lockPeriodAfterStake,
-      minClaimLockEnd: form.minClaimLockEnd,
+      maxClaimLockEnd: form.maxClaimLockEnd,
     },
     {
       slug: form.slug,

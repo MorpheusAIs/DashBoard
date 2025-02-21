@@ -80,7 +80,7 @@ export declare namespace IBuilderSubnets {
     feeTreasury: string;
     startsAt: BigNumberish;
     withdrawLockPeriodAfterStake: BigNumberish;
-    minClaimLockEnd: BigNumberish;
+    maxClaimLockEnd: BigNumberish;
   };
 
   export type BuildersSubnetStructOutput = [
@@ -100,7 +100,7 @@ export declare namespace IBuilderSubnets {
     feeTreasury: string;
     startsAt: BigNumber;
     withdrawLockPeriodAfterStake: BigNumber;
-    minClaimLockEnd: BigNumber;
+    maxClaimLockEnd: BigNumber;
   };
 
   export type BuildersSubnetMetadataStruct = {
@@ -152,12 +152,16 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "setMaxStakedShareForBuildersPool(uint256)": FunctionFragment;
     "setMinWithdrawLockPeriodAfterStake(uint256)": FunctionFragment;
     "setRewardCalculationStartsAt(uint128)": FunctionFragment;
+    "setSubnetCreationFee(uint256,address)": FunctionFragment;
     "setSubnetFeeTreasury(bytes32,address)": FunctionFragment;
+    "setSubnetMaxClaimLockEnd(bytes32,uint128)": FunctionFragment;
     "setSubnetMinStake(bytes32,uint256)": FunctionFragment;
     "setSubnetOwnership(bytes32,address)": FunctionFragment;
     "setTreasury(address)": FunctionFragment;
     "stake(bytes32,address,uint256,uint128)": FunctionFragment;
     "stakers(bytes32,address)": FunctionFragment;
+    "subnetCreationFeeAmount()": FunctionFragment;
+    "subnetCreationFeeTreasury()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "token()": FunctionFragment;
     "totalStaked()": FunctionFragment;
@@ -204,12 +208,16 @@ export interface BuilderSubnetsInterface extends utils.Interface {
       | "setMaxStakedShareForBuildersPool"
       | "setMinWithdrawLockPeriodAfterStake"
       | "setRewardCalculationStartsAt"
+      | "setSubnetCreationFee"
       | "setSubnetFeeTreasury"
+      | "setSubnetMaxClaimLockEnd"
       | "setSubnetMinStake"
       | "setSubnetOwnership"
       | "setTreasury"
       | "stake"
       | "stakers"
+      | "subnetCreationFeeAmount"
+      | "subnetCreationFeeTreasury"
       | "supportsInterface"
       | "token"
       | "totalStaked"
@@ -345,8 +353,16 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setSubnetCreationFee",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSubnetFeeTreasury",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSubnetMaxClaimLockEnd",
+    values: [BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setSubnetMinStake",
@@ -364,6 +380,14 @@ export interface BuilderSubnetsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "stakers",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "subnetCreationFeeAmount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "subnetCreationFeeTreasury",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -514,7 +538,15 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setSubnetCreationFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setSubnetFeeTreasury",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSubnetMaxClaimLockEnd",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -531,6 +563,14 @@ export interface BuilderSubnetsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stakers", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "subnetCreationFeeAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "subnetCreationFeeTreasury",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -572,8 +612,10 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "PendingRewardsCollected(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256))": EventFragment;
     "RewardCalculationStartsAtSet(uint128)": EventFragment;
     "Staked(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256))": EventFragment;
+    "SubnetCreationFeeSet(uint256,address)": EventFragment;
     "SubnetEdited(bytes32,(string,address,uint256,uint256,address,uint128,uint128,uint128))": EventFragment;
     "SubnetFeeTreasurySet(bytes32,address,address)": EventFragment;
+    "SubnetMaxClaimLockEndSet(bytes32,uint128,uint128)": EventFragment;
     "SubnetMetadataEdited(bytes32,(string,string,string,string))": EventFragment;
     "SubnetMinStakeSet(bytes32,uint256,uint256)": EventFragment;
     "SubnetOwnerSet(bytes32,address,address)": EventFragment;
@@ -602,8 +644,10 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     nameOrSignatureOrTopic: "RewardCalculationStartsAtSet"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SubnetCreationFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetEdited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetFeeTreasurySet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SubnetMaxClaimLockEndSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetMetadataEdited"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetMinStakeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetOwnerSet"): EventFragment;
@@ -765,6 +809,18 @@ export type StakedEvent = TypedEvent<
 
 export type StakedEventFilter = TypedEventFilter<StakedEvent>;
 
+export interface SubnetCreationFeeSetEventObject {
+  amount: BigNumber;
+  treasury: string;
+}
+export type SubnetCreationFeeSetEvent = TypedEvent<
+  [BigNumber, string],
+  SubnetCreationFeeSetEventObject
+>;
+
+export type SubnetCreationFeeSetEventFilter =
+  TypedEventFilter<SubnetCreationFeeSetEvent>;
+
 export interface SubnetEditedEventObject {
   subnetId: string;
   subnet: IBuilderSubnets.BuildersSubnetStructOutput;
@@ -788,6 +844,19 @@ export type SubnetFeeTreasurySetEvent = TypedEvent<
 
 export type SubnetFeeTreasurySetEventFilter =
   TypedEventFilter<SubnetFeeTreasurySetEvent>;
+
+export interface SubnetMaxClaimLockEndSetEventObject {
+  subnetId: string;
+  oldValue: BigNumber;
+  newValue: BigNumber;
+}
+export type SubnetMaxClaimLockEndSetEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  SubnetMaxClaimLockEndSetEventObject
+>;
+
+export type SubnetMaxClaimLockEndSetEventFilter =
+  TypedEventFilter<SubnetMaxClaimLockEndSetEvent>;
 
 export interface SubnetMetadataEditedEventObject {
   subnetId: string;
@@ -924,7 +993,7 @@ export interface BuilderSubnets extends BaseContract {
         feeTreasury: string;
         startsAt: BigNumber;
         withdrawLockPeriodAfterStake: BigNumber;
-        minClaimLockEnd: BigNumber;
+        maxClaimLockEnd: BigNumber;
       }
     >;
 
@@ -1063,9 +1132,21 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    setSubnetCreationFee(
+      subnetCreationFeeAmount_: BigNumberish,
+      subnetCreationFeeTreasury_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     setSubnetFeeTreasury(
       subnetId_: BytesLike,
       newValue_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSubnetMaxClaimLockEnd(
+      subnetId_: BytesLike,
+      newValue_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -1108,6 +1189,10 @@ export interface BuilderSubnets extends BaseContract {
         pendingRewards: BigNumber;
       }
     >;
+
+    subnetCreationFeeAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<[string]>;
 
     supportsInterface(
       interfaceId_: BytesLike,
@@ -1191,7 +1276,7 @@ export interface BuilderSubnets extends BaseContract {
       feeTreasury: string;
       startsAt: BigNumber;
       withdrawLockPeriodAfterStake: BigNumber;
-      minClaimLockEnd: BigNumber;
+      maxClaimLockEnd: BigNumber;
     }
   >;
 
@@ -1328,9 +1413,21 @@ export interface BuilderSubnets extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  setSubnetCreationFee(
+    subnetCreationFeeAmount_: BigNumberish,
+    subnetCreationFeeTreasury_: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   setSubnetFeeTreasury(
     subnetId_: BytesLike,
     newValue_: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSubnetMaxClaimLockEnd(
+    subnetId_: BytesLike,
+    newValue_: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1373,6 +1470,10 @@ export interface BuilderSubnets extends BaseContract {
       pendingRewards: BigNumber;
     }
   >;
+
+  subnetCreationFeeAmount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<string>;
 
   supportsInterface(
     interfaceId_: BytesLike,
@@ -1456,7 +1557,7 @@ export interface BuilderSubnets extends BaseContract {
         feeTreasury: string;
         startsAt: BigNumber;
         withdrawLockPeriodAfterStake: BigNumber;
-        minClaimLockEnd: BigNumber;
+        maxClaimLockEnd: BigNumber;
       }
     >;
 
@@ -1590,9 +1691,21 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setSubnetCreationFee(
+      subnetCreationFeeAmount_: BigNumberish,
+      subnetCreationFeeTreasury_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setSubnetFeeTreasury(
       subnetId_: BytesLike,
       newValue_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSubnetMaxClaimLockEnd(
+      subnetId_: BytesLike,
+      newValue_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1632,6 +1745,10 @@ export interface BuilderSubnets extends BaseContract {
         pendingRewards: BigNumber;
       }
     >;
+
+    subnetCreationFeeAmount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<string>;
 
     supportsInterface(
       interfaceId_: BytesLike,
@@ -1782,6 +1899,15 @@ export interface BuilderSubnets extends BaseContract {
       staker?: null
     ): StakedEventFilter;
 
+    "SubnetCreationFeeSet(uint256,address)"(
+      amount?: null,
+      treasury?: null
+    ): SubnetCreationFeeSetEventFilter;
+    SubnetCreationFeeSet(
+      amount?: null,
+      treasury?: null
+    ): SubnetCreationFeeSetEventFilter;
+
     "SubnetEdited(bytes32,(string,address,uint256,uint256,address,uint128,uint128,uint128))"(
       subnetId?: BytesLike | null,
       subnet?: null
@@ -1801,6 +1927,17 @@ export interface BuilderSubnets extends BaseContract {
       oldValue?: null,
       newValue?: null
     ): SubnetFeeTreasurySetEventFilter;
+
+    "SubnetMaxClaimLockEndSet(bytes32,uint128,uint128)"(
+      subnetId?: null,
+      oldValue?: null,
+      newValue?: null
+    ): SubnetMaxClaimLockEndSetEventFilter;
+    SubnetMaxClaimLockEndSet(
+      subnetId?: null,
+      oldValue?: null,
+      newValue?: null
+    ): SubnetMaxClaimLockEndSetEventFilter;
 
     "SubnetMetadataEdited(bytes32,(string,string,string,string))"(
       subnetId?: BytesLike | null,
@@ -1999,9 +2136,21 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    setSubnetCreationFee(
+      subnetCreationFeeAmount_: BigNumberish,
+      subnetCreationFeeTreasury_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     setSubnetFeeTreasury(
       subnetId_: BytesLike,
       newValue_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSubnetMaxClaimLockEnd(
+      subnetId_: BytesLike,
+      newValue_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -2035,6 +2184,10 @@ export interface BuilderSubnets extends BaseContract {
       stakerAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    subnetCreationFeeAmount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId_: BytesLike,
@@ -2229,9 +2382,21 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    setSubnetCreationFee(
+      subnetCreationFeeAmount_: BigNumberish,
+      subnetCreationFeeTreasury_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     setSubnetFeeTreasury(
       subnetId_: BytesLike,
       newValue_: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSubnetMaxClaimLockEnd(
+      subnetId_: BytesLike,
+      newValue_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -2263,6 +2428,14 @@ export interface BuilderSubnets extends BaseContract {
     stakers(
       subnetId: BytesLike,
       stakerAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    subnetCreationFeeAmount(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    subnetCreationFeeTreasury(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

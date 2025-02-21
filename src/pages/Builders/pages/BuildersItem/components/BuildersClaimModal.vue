@@ -187,7 +187,7 @@ const builderDetails = computed(() => [
           .mul(BN.fromBigInt(props.builderSubnet.fee || 0, 23)),
       )
       .format({
-        decimals: 18,
+        decimals: 4,
       })} MOR`,
   },
 ])
