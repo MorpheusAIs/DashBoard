@@ -372,7 +372,7 @@ const perChainSecondApolloClients: Record<
   [EthereumChains.Ethereum]: null,
   [EthereumChains.Arbitrum]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-arbitrum-sepolia/version/latest',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,
@@ -385,7 +385,7 @@ const perChainSecondApolloClients: Record<
   [EthereumChains.Sepolia]: null,
   [EthereumChains.ArbitrumSepolia]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-arbitrum-sepolia/version/latest',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,
@@ -397,7 +397,7 @@ const perChainSecondApolloClients: Record<
   }),
   [EthereumChains.Base]: new ApolloClient({
     link: createHttpLink({
-      uri: 'https://api.studio.thegraph.com/query/73688/morpheus-arbitrum-sepolia/version/latest',
+      uri: 'https://subgraph.satsuma-prod.com/8675f21b07ed/9iqb9f4qcmhosiruyg763--465704/morpheus-arbitrum-sepolia/api',
     }),
     cache: new InMemoryCache(),
     queryDeduplication: false,

@@ -410,6 +410,8 @@ const { getFieldErrorMessage, isFormValid, touchField } = useFormValidation(
 )
 
 const createSubnetBuilder = async () => {
+  // TODO: check approve if creation cost > 0, add approve to builder creation conrtact for mor
+
   const tx = await builderSubnetsContract.value?.signerBased.value.createSubnet(
     {
       name: form.name,
@@ -532,7 +534,7 @@ const updateSubnetBuilder = async () => {
 
   const receipts = await Promise.all(tsx.map(el => el.wait()))
 
-  if (!receipts.length) throw new TypeError('Transaction is not defined')
+  if (!receipts.length) return
 
   const explorerTxUrls = receipts.map(el =>
     getEthExplorerTxUrl(

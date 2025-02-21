@@ -277,7 +277,7 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
 const { data: potentialPowerFactor } = useLoad(
   '',
   async () => {
-    // if (!buildersSubnetUserAccount.value || !props.isShown) return ''
+    if (!buildersSubnetUserAccount.value || !props.isShown) return ''
 
     let to = 1
 
