@@ -29,7 +29,7 @@
           :note="$t('builders-form.name-note')"
           :error-message="getFieldErrorMessage('name')"
           @blur="touchField('name')"
-          :disabled="isSubmitting || !!loadedData.buildersProject"
+          :disabled="isDisabledByAction || !!loadedData.buildersProject"
         />
         <input-field
           v-model="form.address"
@@ -37,7 +37,7 @@
           :note="$t('builders-form.address-note')"
           :error-message="getFieldErrorMessage('address')"
           @blur="touchField('address')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
 
         <input-field
@@ -46,7 +46,7 @@
           :note="$t('builders-form.website-note')"
           :error-message="getFieldErrorMessage('website')"
           @blur="touchField('website')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
 
         <input-field
@@ -55,7 +55,7 @@
           :note="$t('builders-form.image-url-note')"
           :error-message="getFieldErrorMessage('imageUrl')"
           @blur="touchField('imageUrl')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
       </app-gradient-border-card>
 
@@ -70,7 +70,7 @@
           :note="$t('builders-form.start-at-note')"
           :error-message="getFieldErrorMessage('startAt')"
           @blur="touchField('startAt')"
-          :disabled="isSubmitting || !!loadedData.buildersProject"
+          :disabled="isDisabledByAction || !!loadedData.buildersProject"
         />
         <input-field
           v-model="form.lockPeriodAfterStake"
@@ -78,7 +78,7 @@
           :note="$t('builders-form.lock-period-after-stake-note')"
           :error-message="getFieldErrorMessage('lockPeriodAfterStake')"
           @blur="touchField('lockPeriodAfterStake')"
-          :disabled="isSubmitting || !!loadedData.buildersProject"
+          :disabled="isDisabledByAction || !!loadedData.buildersProject"
           type="number"
         />
         <input-field
@@ -88,15 +88,15 @@
           :note="$t('builders-form.min-deposit-note')"
           :error-message="getFieldErrorMessage('minStake')"
           @blur="touchField('minStake')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
         <datetime-field
-          v-model="form.minClaimLockEnd"
+          v-model="form.maxClaimLockEnd"
           :placeholder="$t('builders-form.claim-lock-end-plh')"
           :note="$t('builders-form.claim-lock-end-note')"
-          :error-message="getFieldErrorMessage('minClaimLockEnd')"
-          @blur="touchField('minClaimLockEnd')"
-          :disabled="isSubmitting || !!loadedData.buildersProject"
+          :error-message="getFieldErrorMessage('maxClaimLockEnd')"
+          @blur="touchField('maxClaimLockEnd')"
+          :disabled="isDisabledByAction"
         />
       </app-gradient-border-card>
 
@@ -114,7 +114,7 @@
           :note="$t('builders-form.emissions-fee-note')"
           :error-message="getFieldErrorMessage('emissionsFee')"
           @blur="touchField('emissionsFee')"
-          :disabled="isSubmitting || !!loadedData.buildersProject"
+          :disabled="isDisabledByAction || !!loadedData.buildersProject"
         />
         <input-field
           v-model="form.treasuryFee"
@@ -122,7 +122,7 @@
           :note="$t('builders-form.treasury-fee-note')"
           :error-message="getFieldErrorMessage('treasuryFee')"
           @blur="touchField('treasuryFee')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
       </app-gradient-border-card>
 
@@ -145,7 +145,7 @@
           :note="$t('builders-form.slug-note')"
           :error-message="getFieldErrorMessage('slug')"
           @blur="touchField('slug')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
         <textarea-field
           class="col-span-2"
@@ -154,7 +154,7 @@
           :note="$t('builders-form.description-note')"
           :error-message="getFieldErrorMessage('description')"
           @blur="touchField('description')"
-          :disabled="isSubmitting"
+          :disabled="isDisabledByAction"
         />
       </app-gradient-border-card>
     </div>
@@ -163,19 +163,28 @@
       <app-button
         scheme="filled"
         color="secondary"
-        :disabled="isSubmitting"
+        :disabled="isDisabledByAction"
         @click="$router.back()"
       >
         {{ $t('builders-form.cancel-btn') }}
       </app-button>
-      <app-button type="submit" :disabled="!isFieldsValid || isSubmitting">
+      <app-button type="submit" :disabled="isDisabledByAction">
         {{ $t('builders-form.submit-btn') }}
       </app-button>
     </div>
+
+    <builders-creation-cost-modal
+      v-model:is-shown="isModalShown"
+      :chain="provider.chainId"
+      :name="form.name"
+      :admin="form.address"
+      @create-subnet="handleModalSubmit"
+    />
   </form>
 </template>
 
 <script setup lang="ts">
+import BuildersCreationCostModal from './components/BuildersCreationCostModal.vue'
 import { AppGradientBorderCard, AppButton } from '@/common'
 import {
   BuilderSubnetDefaultFragment,
@@ -215,8 +224,12 @@ const router = useRouter()
 
 const { t } = useI18n()
 
-const { provider, builderSubnetsContract, builderSubnetsContractDetails } =
-  storeToRefs(useWeb3ProvidersStore())
+const {
+  provider,
+  builderSubnetsContract,
+  builderSubnetsContractDetails,
+  rewardsContract,
+} = storeToRefs(useWeb3ProvidersStore())
 
 const { client: buildersApolloClient, clients } = useSecondApolloClient()
 
@@ -226,6 +239,10 @@ const currentClient = computed(() => {
   )?.[1]
 
   return client || buildersApolloClient.value
+})
+
+const isDisabledByAction = computed(() => {
+  return isSubmitting.value || isModalShown.value
 })
 
 type LoadedData = {
@@ -266,6 +283,7 @@ const { data: loadedData } = useLoad<LoadedData>(
 )
 
 const isSubmitting = ref(false)
+const isModalShown = ref(false)
 
 type BuilderSubnetFormData = {
   name: string
@@ -276,7 +294,7 @@ type BuilderSubnetFormData = {
   startAt: number
   lockPeriodAfterStake: number
   minStake: string
-  minClaimLockEnd: number
+  maxClaimLockEnd: number
 
   emissionsFee: string
   treasuryFee: string
@@ -300,8 +318,8 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
     loadedData.value.minimalWithdrawLockPeriod ??
     ''
   const minStake = formatEther(val.buildersProject?.minStake ?? 0)
-  const minClaimLockEnd = val.buildersProject?.minClaimLockEnd
-    ? time(+val.buildersProject?.minClaimLockEnd)
+  const maxClaimLockEnd = val.buildersProject?.maxClaimLockEnd
+    ? time(+val.buildersProject?.maxClaimLockEnd)
     : time(startAt).add(1, 'day')
 
   const emissionsFee = val.buildersProject?.fee
@@ -323,7 +341,7 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
     startAt: startAt.timestamp,
     lockPeriodAfterStake: lockPeriodAfterStake,
     minStake,
-    minClaimLockEnd: minClaimLockEnd.timestamp,
+    maxClaimLockEnd: maxClaimLockEnd.timestamp,
     emissionsFee,
     treasuryFee,
     slug,
@@ -347,7 +365,7 @@ watch(loadedData, val => {
 
 const currentTime = ref(time().timestamp)
 
-const { pause } = useIntervalFn(
+useIntervalFn(
   () => {
     currentTime.value = time().timestamp
   },
@@ -358,59 +376,90 @@ const { pause } = useIntervalFn(
   },
 )
 
-const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
-  useFormValidation(
-    form,
-    computed(() => ({
-      name: { required },
-      address: { required },
-      website: { ...(form.website && { validUrl }) },
-      imageUrl: { ...(form.imageUrl && { validUrl }) },
+const { getFieldErrorMessage, isFormValid, touchField } = useFormValidation(
+  form,
+  computed(() => ({
+    name: { required },
+    address: { required },
+    website: { ...(form.website && { validUrl }) },
+    imageUrl: { ...(form.imageUrl && { validUrl }) },
 
-      startAt: {
-        ...(!loadedData.value.buildersProject && {
-          required,
-          minValue: helpers.withMessage(
-            t('builders-form.min-start-time-validation', {
-              time: time(currentTime.value)
-                .add(1, 'minute')
-                .format(DOT_TIME_FORMAT),
-            }),
-            minValue(time(currentTime.value).add(1, 'minute').timestamp),
-          ),
-        }),
-      },
-      lockPeriodAfterStake: {
+    startAt: {
+      ...(!loadedData.value.buildersProject && {
         required,
         minValue: helpers.withMessage(
-          t('builders-form.min-lock-period-after-stake', {
-            amount: loadedData.value.minimalWithdrawLockPeriod,
+          t('builders-form.min-start-time-validation', {
+            time: time(currentTime.value)
+              .add(1, 'minute')
+              .format(DOT_TIME_FORMAT),
           }),
-          minValue(loadedData.value.minimalWithdrawLockPeriod),
+          minValue(time(currentTime.value).add(1, 'minute').timestamp),
         ),
-      },
-      minStake: { required },
-      minClaimLockEnd: {
-        required,
-        minValue: helpers.withMessage(
-          form.startAt
-            ? t('builders-form.min-end-time-validation-err-msg', {
-                time: time(+form.startAt).format(DOT_TIME_FORMAT),
-              })
-            : t('builders-form.min-end-time-validation-need-start-time-msg'),
-          minValue(Number(form.startAt)),
-        ),
-      },
+      }),
+    },
+    lockPeriodAfterStake: {
+      required,
+      minValue: helpers.withMessage(
+        t('builders-form.min-lock-period-after-stake', {
+          amount: loadedData.value.minimalWithdrawLockPeriod || 300,
+        }),
+        minValue(loadedData.value.minimalWithdrawLockPeriod || 300),
+      ),
+    },
+    minStake: { required },
+    maxClaimLockEnd: {
+      required,
+      minValue: helpers.withMessage(
+        form.startAt
+          ? t('builders-form.min-end-time-validation-err-msg', {
+              time: time(+form.startAt).format(DOT_TIME_FORMAT),
+            })
+          : t('builders-form.min-end-time-validation-need-start-time-msg'),
+        minValue(+form.startAt),
+      ),
+    },
 
-      emissionsFee: { required },
-      treasuryFee: { required, address },
+    emissionsFee: { required },
+    treasuryFee: { required, address },
 
-      slug: { maxLength: maxLength(120) },
-      description: { maxLength: maxLength(800) },
-    })),
-  )
+    slug: { maxLength: maxLength(120) },
+    description: { maxLength: maxLength(800) },
+  })),
+)
+
+const handleModalSubmit = async () => {
+  if (!isFormValid()) return
+
+  isSubmitting.value = true
+  isModalShown.value = false
+
+  try {
+    await createSubnetBuilder()
+  } catch (error) {
+    ErrorHandler.process(error)
+  }
+
+  isSubmitting.value = false
+}
 
 const createSubnetBuilder = async () => {
+  const [subnetCost, allowance] = await Promise.all([
+    builderSubnetsContract.value?.providerBased.value.subnetCreationFeeAmount(),
+    rewardsContract.value?.providerBased.value.allowance(
+      provider.value.selectedAddress,
+      builderSubnetsContractDetails.value.address,
+    ),
+  ])
+
+  if (Number(subnetCost) && allowance.lt(subnetCost)) {
+    const tx = await rewardsContract.value?.signerBased.value.approve(
+      builderSubnetsContractDetails.value.address,
+      subnetCost,
+    )
+
+    await tx.wait()
+  }
+
   const tx = await builderSubnetsContract.value?.signerBased.value.createSubnet(
     {
       name: form.name,
@@ -420,7 +469,7 @@ const createSubnetBuilder = async () => {
       feeTreasury: form.treasuryFee,
       startsAt: form.startAt,
       withdrawLockPeriodAfterStake: form.lockPeriodAfterStake,
-      minClaimLockEnd: form.minClaimLockEnd,
+      maxClaimLockEnd: form.maxClaimLockEnd,
     },
     {
       slug: form.slug,
@@ -432,7 +481,7 @@ const createSubnetBuilder = async () => {
 
   const txReceipt = await tx.wait()
 
-  if (!txReceipt) throw new TypeError('Transaction is not defined')
+  if (!txReceipt) return
 
   const explorerTxUrl = getEthExplorerTxUrl(
     builderSubnetsContractDetails.value.explorerUrl,
@@ -491,6 +540,10 @@ const updateSubnetBuilder = async () => {
   const isFeeTreasuryChanged =
     form.treasuryFee !== loadedData.value.buildersProject?.feeTreasury
 
+  const isMaxClaimLockEndChanged =
+    String(form.maxClaimLockEnd) !==
+    String(loadedData.value.buildersProject?.maxClaimLockEnd)
+
   const tsx = await Promise.all([
     ...(isMetadataChanged
       ? [
@@ -529,11 +582,19 @@ const updateSubnetBuilder = async () => {
           ),
         ]
       : []),
+    ...(isMaxClaimLockEndChanged
+      ? [
+          await builderSubnetsContract.value?.signerBased.value.setSubnetMaxClaimLockEnd(
+            loadedData.value.buildersProject.id,
+            form.maxClaimLockEnd,
+          ),
+        ]
+      : []),
   ])
 
   const receipts = await Promise.all(tsx.map(el => el.wait()))
 
-  if (!receipts.length) throw new TypeError('Transaction is not defined')
+  if (!receipts.length) return
 
   const explorerTxUrls = receipts.map(el =>
     getEthExplorerTxUrl(
@@ -561,8 +622,6 @@ const updateSubnetBuilder = async () => {
 const submit = async () => {
   if (!isFormValid()) return
 
-  pause()
-
   isSubmitting.value = true
 
   try {
@@ -579,7 +638,7 @@ const submit = async () => {
     if (loadedData.value.buildersProject) {
       await updateSubnetBuilder()
     } else {
-      await createSubnetBuilder()
+      isModalShown.value = true
     }
   } catch (error) {
     ErrorHandler.process(error)

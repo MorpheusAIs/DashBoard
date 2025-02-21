@@ -16,7 +16,7 @@ fragment BuilderSubnetDefault on BuilderSubnet {
   feeTreasury
   startsAt
   withdrawLockPeriodAfterStake
-  minClaimLockEnd
+  maxClaimLockEnd
   slug
   description
   website
@@ -47,14 +47,19 @@ query getBuilderSubnetUsers(
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: { builderSubnet_: {id: $builderSubnetId} }
+    where: { builderSubnet_: { id: $builderSubnetId } }
   ) {
     ...BuilderUserDefault
   }
 }
 
-query getUserAccountBuilderSubnets($address: Bytes = "", $builder_subnet_id: Bytes = "") {
-  builderUsers(where: {address: $address, builderSubnet_: {id: $builder_subnet_id}}) {
+query getUserAccountBuilderSubnets(
+  $address: Bytes = ""
+  $builder_subnet_id: Bytes = ""
+) {
+  builderUsers(
+    where: { address: $address, builderSubnet_: { id: $builder_subnet_id } }
+  ) {
     ...BuilderUserDefault
     builderSubnet {
       ...BuilderSubnetDefault
@@ -70,7 +75,6 @@ query combinedBuilderSubnets(
   $usersOrderBy: BuilderUser_orderBy
   $usersDirection: OrderDirection
   $builderSubnetName: String! = ""
-
   $address: Bytes = ""
 ) {
   builderSubnets(
@@ -83,11 +87,10 @@ query combinedBuilderSubnets(
     ...BuilderSubnetDefault
   }
 
-
   builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
-    where: {address: $address}
+    where: { address: $address }
   ) {
     ...BuilderUserDefault
     builderSubnet {
@@ -114,19 +117,15 @@ query combinedBuilderSubnetsFilteredByPredefinedBuilders(
   builderSubnets(
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: {name_in: $name_in}
+    where: { name_in: $name_in }
   ) {
     ...BuilderSubnetDefault
   }
 
-
   builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
-    where: {
-      address: $address
-      builderSubnet_: {name_in: $name_in}
-    }
+    where: { address: $address, builderSubnet_: { name_in: $name_in } }
   ) {
     ...BuilderUserDefault
     builderSubnet {

@@ -41,7 +41,7 @@ export type BuilderSubnet = {
   feeTreasury: Scalars['Bytes'];
   id: Scalars['Bytes'];
   image: Scalars['String'];
-  minClaimLockEnd: Scalars['BigInt'];
+  maxClaimLockEnd: Scalars['BigInt'];
   minStake: Scalars['BigInt'];
   name: Scalars['String'];
   owner: Scalars['Bytes'];
@@ -136,14 +136,14 @@ export type BuilderSubnet_Filter = {
   image_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   image_starts_with?: InputMaybe<Scalars['String']>;
   image_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  minClaimLockEnd?: InputMaybe<Scalars['BigInt']>;
-  minClaimLockEnd_gt?: InputMaybe<Scalars['BigInt']>;
-  minClaimLockEnd_gte?: InputMaybe<Scalars['BigInt']>;
-  minClaimLockEnd_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  minClaimLockEnd_lt?: InputMaybe<Scalars['BigInt']>;
-  minClaimLockEnd_lte?: InputMaybe<Scalars['BigInt']>;
-  minClaimLockEnd_not?: InputMaybe<Scalars['BigInt']>;
-  minClaimLockEnd_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  maxClaimLockEnd?: InputMaybe<Scalars['BigInt']>;
+  maxClaimLockEnd_gt?: InputMaybe<Scalars['BigInt']>;
+  maxClaimLockEnd_gte?: InputMaybe<Scalars['BigInt']>;
+  maxClaimLockEnd_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  maxClaimLockEnd_lt?: InputMaybe<Scalars['BigInt']>;
+  maxClaimLockEnd_lte?: InputMaybe<Scalars['BigInt']>;
+  maxClaimLockEnd_not?: InputMaybe<Scalars['BigInt']>;
+  maxClaimLockEnd_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   minStake?: InputMaybe<Scalars['BigInt']>;
   minStake_gt?: InputMaybe<Scalars['BigInt']>;
   minStake_gte?: InputMaybe<Scalars['BigInt']>;
@@ -272,7 +272,7 @@ export enum BuilderSubnet_OrderBy {
   FeeTreasury = 'feeTreasury',
   Id = 'id',
   Image = 'image',
-  MinClaimLockEnd = 'minClaimLockEnd',
+  MaxClaimLockEnd = 'maxClaimLockEnd',
   MinStake = 'minStake',
   Name = 'name',
   Owner = 'owner',
@@ -384,7 +384,7 @@ export enum BuilderUser_OrderBy {
   BuilderSubnetFeeTreasury = 'builderSubnet__feeTreasury',
   BuilderSubnetId = 'builderSubnet__id',
   BuilderSubnetImage = 'builderSubnet__image',
-  BuilderSubnetMinClaimLockEnd = 'builderSubnet__minClaimLockEnd',
+  BuilderSubnetMaxClaimLockEnd = 'builderSubnet__maxClaimLockEnd',
   BuilderSubnetMinStake = 'builderSubnet__minStake',
   BuilderSubnetName = 'builderSubnet__name',
   BuilderSubnetOwner = 'builderSubnet__owner',
@@ -1052,14 +1052,14 @@ export enum _SubgraphErrorPolicy_ {
 
 export type BuilderUserDefaultFragment = { __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any };
 
-export type BuilderSubnetDefaultFragment = { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> };
+export type BuilderSubnetDefaultFragment = { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> };
 
 export type GetBuilderSubnetQueryVariables = Exact<{
   id?: Scalars['ID'];
 }>;
 
 
-export type GetBuilderSubnetQuery = { __typename?: 'Query', builderSubnet?: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } | null };
+export type GetBuilderSubnetQuery = { __typename?: 'Query', builderSubnet?: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } | null };
 
 export type GetBuilderSubnetUsersQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1078,7 +1078,7 @@ export type GetUserAccountBuilderSubnetsQueryVariables = Exact<{
 }>;
 
 
-export type GetUserAccountBuilderSubnetsQuery = { __typename?: 'Query', builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }> };
+export type GetUserAccountBuilderSubnetsQuery = { __typename?: 'Query', builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }> };
 
 export type CombinedBuilderSubnetsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -1092,7 +1092,7 @@ export type CombinedBuilderSubnetsQueryVariables = Exact<{
 }>;
 
 
-export type CombinedBuilderSubnetsQuery = { __typename?: 'Query', builderSubnets: Array<{ __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> }>, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }>, counters: Array<{ __typename?: 'Counter', id: any, totalSubnets: any, totalBuilderProjects: any }> };
+export type CombinedBuilderSubnetsQuery = { __typename?: 'Query', builderSubnets: Array<{ __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> }>, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }>, counters: Array<{ __typename?: 'Counter', id: any, totalSubnets: any, totalBuilderProjects: any }> };
 
 export type CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables = Exact<{
   orderBy?: InputMaybe<BuilderSubnet_OrderBy>;
@@ -1104,7 +1104,7 @@ export type CombinedBuilderSubnetsFilteredByPredefinedBuildersQueryVariables = E
 }>;
 
 
-export type CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery = { __typename?: 'Query', builderSubnets: Array<{ __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> }>, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, minClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }> };
+export type CombinedBuilderSubnetsFilteredByPredefinedBuildersQuery = { __typename?: 'Query', builderSubnets: Array<{ __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> }>, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any, builderSubnet: { __typename?: 'BuilderSubnet', id: any, name: string, owner: any, minStake: any, fee: any, feeTreasury: any, startsAt: any, withdrawLockPeriodAfterStake: any, maxClaimLockEnd: any, slug: string, description: string, website: string, image: string, totalStaked: any, totalClaimed: any, totalUsers: any, builderUsers: Array<{ __typename?: 'BuilderUser', id: any, address: any, staked: any, claimed: any, claimLockEnd: any, lastStake: any }> } }> };
 
 export const BuilderUserDefault = gql`
     fragment BuilderUserDefault on BuilderUser {
@@ -1126,7 +1126,7 @@ export const BuilderSubnetDefault = gql`
   feeTreasury
   startsAt
   withdrawLockPeriodAfterStake
-  minClaimLockEnd
+  maxClaimLockEnd
   slug
   description
   website

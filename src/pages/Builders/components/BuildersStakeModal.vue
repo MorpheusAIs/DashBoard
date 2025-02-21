@@ -28,6 +28,19 @@
             </template>
           </input-field>
 
+          <div class="flex items-center justify-between gap-2">
+            <span class="stake-modal__details-label">
+              {{ $t('builders-stake-modal.available-to-stake-balance') }}
+            </span>
+            <span class="stake-modal__details-value">
+              {{
+                $t('builders-stake-modal.available-to-stake-balance-value', {
+                  amount: formatEther(balances.rewardsToken ?? 0),
+                })
+              }}
+            </span>
+          </div>
+
           <datetime-field
             v-model="form.claimLockEnd"
             :placeholder="$t('builders-stake-modal.claim-lock-end-plh')"
@@ -42,19 +55,6 @@
             @blur="touchField('claimLockEnd')"
             :disabled="isSubmitting"
           />
-
-          <div class="flex items-center justify-between gap-2">
-            <span class="stake-modal__details-label">
-              {{ $t('builders-stake-modal.available-to-stake-balance') }}
-            </span>
-            <span class="stake-modal__details-value">
-              {{
-                $t('builders-stake-modal.available-to-stake-balance-value', {
-                  amount: formatEther(balances.rewardsToken ?? 0),
-                })
-              }}
-            </span>
-          </div>
         </div>
       </div>
 
@@ -84,7 +84,9 @@
             <span class="!font-bold text-textSecondaryMain typography-body3">
               {{
                 $t('builders-stake-modal.power-factor-value', {
-                  powerFactor: formatAmount(potentialPowerFactor, 25),
+                  powerFactor: formatAmount(potentialPowerFactor, 25, {
+                    decimals: 4,
+                  }),
                 })
               }}
             </span>
@@ -235,7 +237,7 @@ const { data: buildersSubnetUserAccount } = useLoad<
 const currentClaimLockEnd = computed(() => {
   return time(
     +buildersSubnetUserAccount.value?.claimLockEnd ||
-      +props.builderSubnet.minClaimLockEnd,
+      +props.builderSubnet.maxClaimLockEnd,
   )
 })
 
@@ -257,14 +259,14 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
         maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
       },
       claimLockEnd: {
-        minValue: helpers.withMessage(
+        maxValue: helpers.withMessage(
           t('builders-stake-modal.claim-lock-end-validation-msg', {
-            data: currentClaimLockEnd.value.format(DOT_TIME_FORMAT),
+            date: currentClaimLockEnd.value.format(DOT_TIME_FORMAT),
           }),
-          minValue(
+          maxValue(
             Number(
               buildersSubnetUserAccount.value.claimLockEnd ||
-                props.builderSubnet.minClaimLockEnd,
+                props.builderSubnet.maxClaimLockEnd,
             ),
           ),
         ),
@@ -290,7 +292,7 @@ const { data: potentialPowerFactor } = useLoad(
         to = usersClaimLockEnd.timestamp
       }
     } else {
-      to = time(props.builderSubnet.minClaimLockEnd).timestamp
+      to = time(props.builderSubnet.maxClaimLockEnd).timestamp
     }
 
     const pfBN =
@@ -315,7 +317,9 @@ const builderDetails = computed(() => {
           BN.fromBigInt(potentialPowerFactor.value || 0, 25),
         ),
       )
-      .toString()
+      .format({
+        decimals: 4,
+      })
   } catch (error) {
     newStakeAmount = ''
   }
