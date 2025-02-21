@@ -135,6 +135,9 @@ export const useProvider = (): IUseProvider => {
       ) as [AppKitNetwork, ...AppKitNetwork[]],
       metadata: config.metadata,
       projectId: config.WALLET_CONNECT_PROJECT_ID,
+      featuredWalletIds: [
+        '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
+      ],
       features: {
         analytics: true,
         email: false,
@@ -157,13 +160,22 @@ export const useProvider = (): IUseProvider => {
         }
       } | null
 
-      _providerReactiveState.selectedAddress = provider?.selectedAddress || ''
+      const chainId = _web3Modal?.getCaipNetworkId() || provider?.chainId || ''
+
+      _providerReactiveState.selectedAddress =
+        provider?.selectedAddress ||
+        _web3Modal?.getAddress('eip155') ||
+        _web3Modal?.getAddress('solana') ||
+        _web3Modal?.getAddress('polkadot') ||
+        _web3Modal?.getAddress('bip122') ||
+        ''
+
       _providerReactiveState.rawProvider = provider
-      _providerReactiveState.chainId = provider?.chainId
-        ? String(Number(provider.chainId))
-        : ''
+
+      _providerReactiveState.chainId = chainId ? String(Number(chainId)) : ''
+
       _providerReactiveState.isConnected = Boolean(
-        provider?._state?.isConnected,
+        provider?._state?.isConnected || _web3Modal?.getIsConnectedState(),
       )
     })
   }
