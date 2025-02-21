@@ -358,57 +358,56 @@ const { pause } = useIntervalFn(
   },
 )
 
-const { getFieldErrorMessage, isFormValid, touchField } =
-  useFormValidation(
-    form,
-    computed(() => ({
-      name: { required },
-      address: { required },
-      website: { ...(form.website && { validUrl }) },
-      imageUrl: { ...(form.imageUrl && { validUrl }) },
+const { getFieldErrorMessage, isFormValid, touchField } = useFormValidation(
+  form,
+  computed(() => ({
+    name: { required },
+    address: { required },
+    website: { ...(form.website && { validUrl }) },
+    imageUrl: { ...(form.imageUrl && { validUrl }) },
 
-      startAt: {
-        ...(!loadedData.value.buildersProject && {
-          required,
-          minValue: helpers.withMessage(
-            t('builders-form.min-start-time-validation', {
-              time: time(currentTime.value)
-                .add(1, 'minute')
-                .format(DOT_TIME_FORMAT),
-            }),
-            minValue(time(currentTime.value).add(1, 'minute').timestamp),
-          ),
-        }),
-      },
-      lockPeriodAfterStake: {
+    startAt: {
+      ...(!loadedData.value.buildersProject && {
         required,
         minValue: helpers.withMessage(
-          t('builders-form.min-lock-period-after-stake', {
-            amount: loadedData.value.minimalWithdrawLockPeriod || 300,
+          t('builders-form.min-start-time-validation', {
+            time: time(currentTime.value)
+              .add(1, 'minute')
+              .format(DOT_TIME_FORMAT),
           }),
-          minValue(loadedData.value.minimalWithdrawLockPeriod || 300),
+          minValue(time(currentTime.value).add(1, 'minute').timestamp),
         ),
-      },
-      minStake: { required },
-      maxClaimLockEnd: {
-        required,
-        minValue: helpers.withMessage(
-          form.startAt
-            ? t('builders-form.min-end-time-validation-err-msg', {
-                time: time(+form.startAt).format(DOT_TIME_FORMAT),
-              })
-            : t('builders-form.min-end-time-validation-need-start-time-msg'),
-          minValue(+form.startAt),
-        ),
-      },
+      }),
+    },
+    lockPeriodAfterStake: {
+      required,
+      minValue: helpers.withMessage(
+        t('builders-form.min-lock-period-after-stake', {
+          amount: loadedData.value.minimalWithdrawLockPeriod || 300,
+        }),
+        minValue(loadedData.value.minimalWithdrawLockPeriod || 300),
+      ),
+    },
+    minStake: { required },
+    maxClaimLockEnd: {
+      required,
+      minValue: helpers.withMessage(
+        form.startAt
+          ? t('builders-form.min-end-time-validation-err-msg', {
+              time: time(+form.startAt).format(DOT_TIME_FORMAT),
+            })
+          : t('builders-form.min-end-time-validation-need-start-time-msg'),
+        minValue(+form.startAt),
+      ),
+    },
 
-      emissionsFee: { required },
-      treasuryFee: { required, address },
+    emissionsFee: { required },
+    treasuryFee: { required, address },
 
-      slug: { maxLength: maxLength(120) },
-      description: { maxLength: maxLength(800) },
-    })),
-  )
+    slug: { maxLength: maxLength(120) },
+    description: { maxLength: maxLength(800) },
+  })),
+)
 
 const createSubnetBuilder = async () => {
   const tx = await builderSubnetsContract.value?.signerBased.value.createSubnet(
