@@ -173,18 +173,18 @@
       </app-button>
     </div>
 
-    <builders-creation-modal
+    <builders-creation-cost-modal
       v-model:is-shown="isModalShown"
       :chain="provider.chainId"
       :name="form.name"
       :admin="form.address"
-      @create-subnet="tryCreateSubnetBuilder"
+      @create-subnet="handleModalSubmit"
     />
   </form>
 </template>
 
 <script setup lang="ts">
-import BuildersCreationModal from './components/BuildersCreationModal.vue'
+import BuildersCreationCostModal from './components/BuildersCreationCostModal.vue'
 import { AppGradientBorderCard, AppButton } from '@/common'
 import {
   BuilderSubnetDefaultFragment,
@@ -365,7 +365,7 @@ watch(loadedData, val => {
 
 const currentTime = ref(time().timestamp)
 
-const { pause, resume } = useIntervalFn(
+useIntervalFn(
   () => {
     currentTime.value = time().timestamp
   },
@@ -427,7 +427,7 @@ const { getFieldErrorMessage, isFormValid, touchField } = useFormValidation(
   })),
 )
 
-const tryCreateSubnetBuilder = async () => {
+const handleModalSubmit = async () => {
   if (!isFormValid()) return
 
   isSubmitting.value = true
@@ -622,8 +622,6 @@ const updateSubnetBuilder = async () => {
 const submit = async () => {
   if (!isFormValid()) return
 
-  pause()
-
   isSubmitting.value = true
 
   try {
@@ -645,8 +643,6 @@ const submit = async () => {
   } catch (error) {
     ErrorHandler.process(error)
   }
-
-  resume()
 
   isSubmitting.value = false
 }

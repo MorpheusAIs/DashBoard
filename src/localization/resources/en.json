@@ -967,7 +967,7 @@
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "empty-dash": "-"
   },
-  "builders-creation-modal": {
+  "builders-creation-cost-modal": {
     "modal-title": "Create Your Subnet",
     "modal-description": "Creating a subnet costs {price} MOR, the funds will be taken from your connected wallet.",
     "network-lbl": "Network",
