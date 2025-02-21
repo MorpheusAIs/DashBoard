@@ -304,7 +304,7 @@ type BuilderSubnetFormData = {
 }
 
 const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
-  const name = val.buildersProject?.name ?? '12'
+  const name = val.buildersProject?.name ?? ''
   const address =
     val.buildersProject?.owner ?? provider.value.selectedAddress ?? ''
   const website = val.buildersProject?.website ?? ''
@@ -312,7 +312,7 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
 
   const startAt = val.buildersProject?.startsAt
     ? time(+val.buildersProject?.startsAt)
-    : time().add(1, 'day')
+    : time().add(1, 'minute')
   const lockPeriodAfterStake =
     val.buildersProject?.withdrawLockPeriodAfterStake ??
     loadedData.value.minimalWithdrawLockPeriod ??
@@ -320,13 +320,13 @@ const getDefaultFormData = (val: LoadedData): BuilderSubnetFormData => {
   const minStake = formatEther(val.buildersProject?.minStake ?? 0)
   const maxClaimLockEnd = val.buildersProject?.maxClaimLockEnd
     ? time(+val.buildersProject?.maxClaimLockEnd)
-    : time(startAt).add(1, 'week')
+    : time(startAt).add(1, 'day')
 
   const emissionsFee = val.buildersProject?.fee
     ? formatAmount(val.buildersProject.fee, 23, {
         decimals: 23,
       })
-    : '12'
+    : ''
   const treasuryFee =
     val.buildersProject?.feeTreasury ?? provider.value.selectedAddress ?? ''
 
