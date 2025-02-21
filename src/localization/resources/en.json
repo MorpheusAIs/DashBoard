@@ -824,8 +824,8 @@
     "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time",
     "min-deposit-plh": "Minimal stake",
     "min-deposit-note": "Example: “0.001 MOR”",
-    "claim-lock-end-plh": "Subnet claim lock end timestamp",
-    "claim-lock-end-note": "At this point, the claim will open. Example: “05.05.2030 02:00 PM”",
+    "claim-lock-end-plh": "Max Stakers claim lock end timestamp",
+    "claim-lock-end-note": "Stakers will be able to lock their claim until this timestamp. Affects the Power Factor. Example: \"05 Jul 2030 02:00 PM\"",
 
     "section-3-title": "Subnet Emission",
     "emissions-fee-plh": "% of the MOR Emissions the Subnet receives",
@@ -854,7 +854,7 @@
   "builders-stake-modal": {
     "modal-title": "Stake MOR",
     "available-to-stake-balance-value": "{amount} MOR",
-    "claim-lock-end-validation-msg": "Should be more than {date}",
+    "claim-lock-end-validation-msg": "Should be less than {date}",
     "power-factor-lbl": "Power Factor",
     "power-factor-tooltip": "The power factor depends on the claim lock timestamp, the longer the claim lock, the larger the power factor.",
     "power-factor-value": "x{powerFactor}",
@@ -966,6 +966,17 @@
 
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "empty-dash": "-"
+  },
+  "builders-creation-modal": {
+    "modal-title": "Create Your Subnet",
+    "modal-description": "Creating a subnet costs {price} MOR, the funds will be taken from your connected wallet.",
+    "network-lbl": "Network",
+    "subnet-lbl": "Subnet name",
+    "admin-lbl": "Admin address",
+    "balance-lbl": "Your MOR balance",
+    "balance-after-lbl": "MOR balance after the Subnet creation",
+    "cancel-btn": "Cancel",
+    "create-btn": "Create"
   },
   "file-field": {
     "drag-n-drop-lbl": "Drag & drop",

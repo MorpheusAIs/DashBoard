@@ -259,11 +259,11 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
         maxValue: maxValue(+formatEther(balances.value.rewardsToken || 0)),
       },
       claimLockEnd: {
-        minValue: helpers.withMessage(
+        maxValue: helpers.withMessage(
           t('builders-stake-modal.claim-lock-end-validation-msg', {
             date: currentClaimLockEnd.value.format(DOT_TIME_FORMAT),
           }),
-          minValue(
+          maxValue(
             Number(
               buildersSubnetUserAccount.value.claimLockEnd ||
                 props.builderSubnet.maxClaimLockEnd,
