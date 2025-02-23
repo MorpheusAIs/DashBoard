@@ -235,9 +235,7 @@ const { data: buildersSubnetUserAccount } = useLoad<
 )
 
 const currentClaimLockEnd = computed(() => {
-  return time(
-    +props.builderSubnet.maxClaimLockEnd,
-  )
+  return time(+props.builderSubnet.maxClaimLockEnd)
 })
 
 const isSubmitting = ref(false)
