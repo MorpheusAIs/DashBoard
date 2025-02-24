@@ -42,14 +42,13 @@
           </div>
 
           <datetime-field
+            v-if="currentClaimLockEnd.isAfter(time())"
             v-model="form.claimLockEnd"
             :placeholder="$t('builders-stake-modal.claim-lock-end-plh')"
             :note="
-              currentClaimLockEnd.isAfter(time())
-                ? $t('builders-stake-modal.claim-lock-end-note', {
-                    date: currentClaimLockEnd.format(DOT_TIME_FORMAT),
-                  })
-                : ''
+              $t('builders-stake-modal.claim-lock-end-note', {
+                date: currentClaimLockEnd.format(DOT_TIME_FORMAT),
+              })
             "
             :error-message="getFieldErrorMessage('claimLockEnd')"
             @blur="touchField('claimLockEnd')"
@@ -59,41 +58,45 @@
       </div>
 
       <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="text-textSecondaryMain typography-body3">
-              {{ $t('builders-stake-modal.power-factor-lbl') }}
-            </span>
-            <v-dropdown class="flex size-6 items-center justify-center">
-              <!-- This will be the popover target (for the events and position) -->
-              <button type="button" class="text-textSecondaryMain">
-                <app-icon
-                  :name="$icons.materialSymbolsInfo"
-                  class="color-textSecondaryMain size-4"
-                />
-              </button>
-              <!-- This will be the content of the popover -->
-              <template #popper>
-                <span class="typography-body3">
-                  {{ $t('builders-stake-modal.power-factor-tooltip') }}
-                </span>
-              </template>
-            </v-dropdown>
+        <template v-if="currentClaimLockEnd.isAfter(time())">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-textSecondaryMain typography-body3">
+                {{ $t('builders-stake-modal.power-factor-lbl') }}
+              </span>
+              <v-dropdown class="flex size-6 items-center justify-center">
+                <!-- This will be the popover target (for the events and position) -->
+                <button type="button" class="text-textSecondaryMain">
+                  <app-icon
+                    :name="$icons.materialSymbolsInfo"
+                    class="color-textSecondaryMain size-4"
+                  />
+                </button>
+                <!-- This will be the content of the popover -->
+                <template #popper>
+                  <span class="typography-body3">
+                    {{ $t('builders-stake-modal.power-factor-tooltip') }}
+                  </span>
+                </template>
+              </v-dropdown>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="!font-bold text-textSecondaryMain typography-body3">
+                {{
+                  $t('builders-stake-modal.power-factor-value', {
+                    powerFactor: formatAmount(potentialPowerFactor, 25, {
+                      decimals: 4,
+                    }),
+                  })
+                }}
+              </span>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="!font-bold text-textSecondaryMain typography-body3">
-              {{
-                $t('builders-stake-modal.power-factor-value', {
-                  powerFactor: formatAmount(potentialPowerFactor, 25, {
-                    decimals: 4,
-                  }),
-                })
-              }}
-            </span>
-          </div>
-        </div>
 
-        <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
+          <div
+            class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20"
+          />
+        </template>
 
         <div v-if="chain" class="flex items-center justify-between">
           <span class="text-textSecondaryMain typography-body3">
@@ -235,9 +238,7 @@ const { data: buildersSubnetUserAccount } = useLoad<
 )
 
 const currentClaimLockEnd = computed(() => {
-  return time(
-    +props.builderSubnet.maxClaimLockEnd,
-  )
+  return time(+props.builderSubnet.maxClaimLockEnd)
 })
 
 const isSubmitting = ref(false)
