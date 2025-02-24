@@ -314,7 +314,9 @@ const builderDetails = computed(() => {
     newStakeAmount = BN.fromBigInt(buildersSubnetUserAccount.value?.staked || 0)
       .add(
         BN.fromRaw(form.stakeAmount || 0, 18).mul(
-          BN.fromBigInt(potentialPowerFactor.value || 0, 25),
+          Number(potentialPowerFactor.value.toString())
+            ? BN.fromBigInt(potentialPowerFactor.value || 1, 25)
+            : BN.fromRaw(1)
         ),
       )
       .format({
