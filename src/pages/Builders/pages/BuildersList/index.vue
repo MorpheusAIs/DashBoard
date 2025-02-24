@@ -450,7 +450,7 @@ const handleCreateBuilder = () => {
   if (!provider.value.isConnected) return
 
   router.push({
-    name: ROUTE_NAMES.appBuildersForm
+    name: ROUTE_NAMES.appBuildersForm,
   })
 }
 

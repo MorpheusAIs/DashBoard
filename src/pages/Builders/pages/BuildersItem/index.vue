@@ -311,8 +311,8 @@
                 </div>
                 <div
                   v-if="
-                    !+buildersData.builderSubnetUserAccount?.staked
-                      || claimLockUntil.isAfter(time())
+                    !+buildersData.builderSubnetUserAccount?.staked ||
+                    claimLockUntil.isAfter(time())
                   "
                   class="flex items-center gap-2"
                 >

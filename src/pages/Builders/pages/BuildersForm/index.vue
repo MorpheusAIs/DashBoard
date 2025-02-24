@@ -25,37 +25,41 @@
 
         <input-field
           v-model="form.name"
+          name="name"
           :placeholder="$t('builders-form.name-plh')"
           :note="$t('builders-form.name-note')"
           :error-message="getFieldErrorMessage('name')"
-          @blur="touchField('name')"
           :disabled="isDisabledByAction || !!loadedData.buildersProject"
+          @blur="touchField('name')"
         />
         <input-field
           v-model="form.address"
+          name="address"
           :placeholder="$t('builders-form.address-plh')"
           :note="$t('builders-form.address-note')"
           :error-message="getFieldErrorMessage('address')"
-          @blur="touchField('address')"
           :disabled="isDisabledByAction"
+          @blur="touchField('address')"
         />
 
         <input-field
           v-model="form.website"
+          name="website"
           :placeholder="$t('builders-form.website-plh')"
           :note="$t('builders-form.website-note')"
           :error-message="getFieldErrorMessage('website')"
-          @blur="touchField('website')"
           :disabled="isDisabledByAction"
+          @blur="touchField('website')"
         />
 
         <input-field
           v-model="form.imageUrl"
+          name="imageUrl"
           :placeholder="$t('builders-form.image-url-plh')"
           :note="$t('builders-form.image-url-note')"
           :error-message="getFieldErrorMessage('imageUrl')"
-          @blur="touchField('imageUrl')"
           :disabled="isDisabledByAction"
+          @blur="touchField('imageUrl')"
         />
       </app-gradient-border-card>
 
@@ -66,37 +70,41 @@
 
         <datetime-field
           v-model="form.startAt"
+          name="startAt"
           :placeholder="$t('builders-form.start-at-plh')"
           :note="$t('builders-form.start-at-note')"
           :error-message="getFieldErrorMessage('startAt')"
-          @blur="touchField('startAt')"
           :disabled="isDisabledByAction || !!loadedData.buildersProject"
+          @blur="touchField('startAt')"
         />
         <input-field
           v-model="form.lockPeriodAfterStake"
+          name="lockPeriodAfterStake"
+          type="number"
           :placeholder="$t('builders-form.lock-period-after-stake-plh')"
           :note="$t('builders-form.lock-period-after-stake-note')"
           :error-message="getFieldErrorMessage('lockPeriodAfterStake')"
-          @blur="touchField('lockPeriodAfterStake')"
           :disabled="isDisabledByAction || !!loadedData.buildersProject"
-          type="number"
+          @blur="touchField('lockPeriodAfterStake')"
         />
         <input-field
           v-model="form.minStake"
+          name="minStake"
           type="number"
           :placeholder="$t('builders-form.min-deposit-plh')"
           :note="$t('builders-form.min-deposit-note')"
           :error-message="getFieldErrorMessage('minStake')"
-          @blur="touchField('minStake')"
           :disabled="isDisabledByAction"
+          @blur="touchField('minStake')"
         />
         <datetime-field
           v-model="form.maxClaimLockEnd"
+          name="maxClaimLockEnd"
           :placeholder="$t('builders-form.claim-lock-end-plh')"
           :note="$t('builders-form.claim-lock-end-note')"
           :error-message="getFieldErrorMessage('maxClaimLockEnd')"
-          @blur="touchField('maxClaimLockEnd')"
           :disabled="isDisabledByAction"
+          @blur="touchField('maxClaimLockEnd')"
         />
       </app-gradient-border-card>
 
@@ -107,22 +115,24 @@
 
         <input-field
           v-model="form.emissionsFee"
+          name="emissionsFee"
           type="number"
           :min="0"
           :max="100"
           :placeholder="$t('builders-form.emissions-fee-plh')"
           :note="$t('builders-form.emissions-fee-note')"
           :error-message="getFieldErrorMessage('emissionsFee')"
-          @blur="touchField('emissionsFee')"
           :disabled="isDisabledByAction || !!loadedData.buildersProject"
+          @blur="touchField('emissionsFee')"
         />
         <input-field
           v-model="form.treasuryFee"
+          name="treasuryFee"
           :placeholder="$t('builders-form.treasury-fee-plh')"
           :note="$t('builders-form.treasury-fee-note')"
           :error-message="getFieldErrorMessage('treasuryFee')"
-          @blur="touchField('treasuryFee')"
           :disabled="isDisabledByAction"
+          @blur="touchField('treasuryFee')"
         />
       </app-gradient-border-card>
 
@@ -144,8 +154,8 @@
           :placeholder="$t('builders-form.slug-plh')"
           :note="$t('builders-form.slug-note')"
           :error-message="getFieldErrorMessage('slug')"
-          @blur="touchField('slug')"
           :disabled="isDisabledByAction"
+          @blur="touchField('slug')"
         />
         <textarea-field
           class="col-span-2"
@@ -153,8 +163,8 @@
           :placeholder="$t('builders-form.description-plh')"
           :note="$t('builders-form.description-note')"
           :error-message="getFieldErrorMessage('description')"
-          @blur="touchField('description')"
           :disabled="isDisabledByAction"
+          @blur="touchField('description')"
         />
       </app-gradient-border-card>
     </div>
@@ -619,8 +629,27 @@ const updateSubnetBuilder = async () => {
   })
 }
 
+const scrollToField = (fieldName: keyof BuilderSubnetFormData) => {
+  const field = document.querySelector(`[name="${fieldName}"]`)
+
+  if (field) {
+    field.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
+}
+
 const submit = async () => {
-  if (!isFormValid()) return
+  if (!isFormValid()) {
+    const errorNames = Object.keys(form).filter(key =>
+      getFieldErrorMessage(key),
+    )
+
+    scrollToField(errorNames[0] as keyof BuilderSubnetFormData)
+
+    return
+  }
 
   isSubmitting.value = true
 
