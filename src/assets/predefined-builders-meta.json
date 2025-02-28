@@ -1137,5 +1137,39 @@
     "totalStaked": 0,
     "rewardType": "To Be Announced",
     "website": "https://unocoin.com/in/"
+  },
+  {
+    "id": "",
+    "name": "GrowMOR",
+    "description": "Independent organisation dedicated to contribute to growth of MOR token and Morpheus ecosystem.",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/grow-mor-logo.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "MOR development",
+    "website": "https://growmor.org/"
+  },
+  {
+    "id": "",
+    "name": "Satori",
+    "description": "Decentralized AI prediction of live realworld data.",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/satori-logo.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "API Access",
+    "website": "https://www.satorinet.io/"
   }
 ]
