@@ -23,7 +23,7 @@
       <div class="change-lock-modal__fields-wrapper">
         <datetime-field
           v-model="form.lockPeriod"
-          position="center"
+          position="center-higher"
           :placeholder="$t(`change-lock-modal.lock-period-placeholder`)"
           :error-message="getFieldErrorMessage('lockPeriod')"
           :disabled="isSubmitting"
