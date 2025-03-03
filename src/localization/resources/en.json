@@ -206,7 +206,9 @@
     "header-earned-subtitle": "Number of earned MOR tokens in relation to time",
     "connection-msg": "Your personal deposits, withdrawals and rewards will be displayed here after connecting your MetaMask wallet",
     "referee-bonus-text": "Referee Bonus",
-    "your-referrer-text": "Your Referrer"
+    "your-referrer-text": "Your Referrer",
+    "empty-chart-message": "No earned MOR data available. This could be because you haven't staked any stETH yet, or because rewards haven't been distributed yet.",
+    "switch-to-supply": "View Deposited stETH"
   },
   "info-bar": {
     "status--public": "Automated",

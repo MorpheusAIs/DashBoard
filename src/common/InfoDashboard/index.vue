@@ -53,11 +53,30 @@
                 />
               </div>
             </div>
-            <app-chart
-              class="info-dashboard__app-chart"
-              :config="chartConfig"
-              :is-loading="isLoading || isChartDataUpdating"
-            />
+            <div class="info-dashboard__chart-container">
+              <app-chart
+                class="info-dashboard__app-chart"
+                :config="chartConfig"
+                :is-loading="isLoading || isChartDataUpdating"
+              />
+              <div
+                v-if="isChartEmpty && chartType === CHART_TYPE.earnedMor"
+                class="info-dashboard__empty-chart-overlay"
+              >
+                <div class="info-dashboard__empty-chart-content">
+                  <p>{{ $t('info-dashboard.empty-chart-message') }}</p>
+                  <app-button
+                    class="info-dashboard__switch-chart-btn"
+                    scheme="filled"
+                    color="primary"
+                    size="small"
+                    @click="changeChartType(CHART_TYPE.circulingSupply)"
+                  >
+                    {{ $t('info-dashboard.switch-to-supply') }}
+                  </app-button>
+                </div>
+              </div>
+            </div>
           </div>
         </template>
         <ul
@@ -168,7 +187,8 @@ const { userPoolData } = usePool(toRef(props.poolId))
 
 const web3ProvidersStore = useWeb3ProvidersStore()
 
-const chartType = ref(CHART_TYPE.earnedMor)
+const chartType = ref(CHART_TYPE.circulingSupply)
+const isChartEmpty = ref(false)
 
 const isChartDataUpdating = ref(false)
 
@@ -290,6 +310,9 @@ const updateEarnedMorChartData = async (month: number, year: number) => {
     apolloClient.value,
   )
 
+  // Check if chart data is empty
+  isChartEmpty.value = Object.keys(chartData).length === 0
+
   chartConfig.data.labels = Object.keys(chartData).map(timestamp => {
     return new Time(Number(timestamp)).format('DD MMMM')
   })
@@ -321,6 +344,8 @@ const updateChartData = async (month: number, year: number) => {
 
 const changeChartType = (chartToSet: CHART_TYPE) => {
   chartType.value = chartToSet
+  // Reset empty state when changing chart type
+  isChartEmpty.value = false
 }
 
 onMounted(() => {
@@ -449,8 +474,15 @@ watch(
   align-items: center;
 }
 
-.info-dashboard .info-dashboard__app-chart {
+.info-dashboard__chart-container {
+  position: relative;
+  width: 100%;
   height: toRem(242);
+}
+
+.info-dashboard .info-dashboard__app-chart {
+  height: 100%;
+  width: 100%;
 }
 
 .info-dashboard__indicators {
@@ -516,5 +548,39 @@ watch(
   height: toRem(2);
   width: 100%;
   background: var(--border-tertiary-main);
+}
+
+.info-dashboard__empty-chart-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(38, 57, 57, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  border-radius: toRem(8);
+}
+
+.info-dashboard__empty-chart-content {
+  text-align: center;
+  padding: toRem(20);
+  max-width: 90%;
+
+  p {
+    @include body-4-regular;
+    margin-bottom: toRem(20);
+    color: white;
+  }
+
+  .info-dashboard__switch-chart-btn {
+    margin-top: toRem(20);
+    min-width: toRem(220);
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 </style>
