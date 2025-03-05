@@ -183,7 +183,7 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0,
-    "rewardType": "API Access",
+    "rewardType": "20% APR / API Access",
     "website": "https://coincap.io/"
   },
   {
@@ -608,7 +608,7 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0,
-    "rewardType": "Pro Account",
+    "rewardType": "To Be Announced",
     "website": "https://venice.ai/chat"
   },
   {
@@ -711,7 +711,7 @@
     "githubStars": 0,
     "totalStaked": 0,
     "rewardType": "To Be Announced",
-    "website": "https://app.virtuals.io/"
+    "website": "https://app.virtuals.io/"  
   },
   {
     "id": "d9bc2735-4579-4f73-a0c9-f4b1afa076cb",
@@ -829,7 +829,7 @@
     "contributors": 0,
     "githubStars": 0,
     "totalStaked": 0,
-    "rewardType": "Pro Account",
+    "rewardType": "To Be Announced",
     "website": "https://venice.ai/chat"
   },
   {
@@ -1172,4 +1172,5 @@
     "rewardType": "API Access",
     "website": "https://www.satorinet.io/"
   }
+
 ]
