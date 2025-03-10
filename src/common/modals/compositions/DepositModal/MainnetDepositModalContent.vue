@@ -1,5 +1,16 @@
 <template>
   <div class="mainnet-deposit-modal-content">
+    <button
+      v-if="currentStep !== STEPS.chooseAssetStep"
+      class="mainnet-deposit-modal-content__back-btn"
+      @click="goBack"
+      aria-label="Back to asset selection"
+    >
+      <app-icon
+        class="mainnet-deposit-modal-content__back-btn-icon"
+        :name="$icons.arrowLeft"
+      />
+    </button>
     <p
       v-if="currentStep !== STEPS.chooseAssetStep"
       class="mainnet-deposit-modal-content__lbl"
@@ -40,6 +51,7 @@ import { DepositForm } from '@/forms'
 import { BigNumber } from '@/utils'
 import { useI18n } from '@/composables'
 import { mergeClasses } from '@/helpers'
+import AppIcon from '@/common/AppIcon.vue'
 
 enum STEPS {
   chooseAssetStep,
@@ -102,6 +114,10 @@ const increaseStep = () => {
 const moveToDepositTab = () => {
   currentStep.value = STEPS.deposit
 }
+
+const goBack = () => {
+  currentStep.value = STEPS.chooseAssetStep
+}
 </script>
 
 <style scoped lang="scss">
@@ -116,6 +132,32 @@ const moveToDepositTab = () => {
 
   @include respond-to(medium) {
     text-align: center;
+  }
+}
+
+.mainnet-deposit-modal-content__back-btn {
+  position: absolute;
+  top: toRem(36);
+  left: toRem(48);
+
+  @include respond-to(medium) {
+    top: toRem(16);
+    left: toRem(16);
+  }
+}
+
+.mainnet-deposit-modal-content__back-btn-icon {
+  height: toRem(24);
+  width: toRem(24);
+  color: var(--text-secondary-light);
+  transition: var(--transition-duration-fast) var(--transition-timing-default);
+
+  .mainnet-deposit-modal-content__back-btn:not([disabled]):hover &,
+  .mainnet-deposit-modal-content__back-btn:not([disabled]):focus &,
+  .mainnet-deposit-modal-content__back-btn:not([disabled]):active & {
+    $color: #1ab479;
+
+    color: $color;
   }
 }
 </style>
