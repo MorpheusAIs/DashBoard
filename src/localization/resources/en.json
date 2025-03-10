@@ -632,6 +632,10 @@
   },
   "choose-asset-step": {
     "title": "Please select the token for deposit:",
+    "direct-deposit": "Direct Deposit",
+    "direct-deposit-description": "This token can be deposited directly without swapping.",
+    "swap-first": "Swap First",
+    "swap-first-description": "These tokens need to be swapped to stETH before depositing.",
     "cancel-btn": "Cancel",
     "next-btn": "Next"
   },
