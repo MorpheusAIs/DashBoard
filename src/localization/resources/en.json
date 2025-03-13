@@ -137,7 +137,7 @@
     "public-pool-view": {
       "info-bar": {
         "title--0": "Capital",
-        "subtitle--0": "Group 1"
+        "subtitle--0": ""
       },
       "change-lock-btn": "Stake MOR Rewards",
       "multiplier-title": "Your Power Factor",
