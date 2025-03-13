@@ -1171,6 +1171,56 @@
     "totalStaked": 0,
     "rewardType": "API Access",
     "website": "https://www.satorinet.io/"
+  },
+  {
+    "id": "",
+    "name": "Airvey Advisory",
+    "description": "Supporting Contributors in Building on MOR's Open-Source AI Infrastructure.",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/AirVeyBlackLogo.jpg",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "http://www.airvey.io"
+  },
+  {
+    "id": "",
+    "name": "TacoBytes",
+    "description": "Media and Content, helping give a voice to the builders and talking about what they are doing from a different perspective.",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/tacobytes.jpg",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "Marketing",
+    "website": "https://x.com/Player1Taco"
+  },
+  {
+    "id": "",
+    "name": "MOR API Access",
+    "description": "Access Morpheus compute with a Rest API key and a few lines of code.",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/morlord-faba9889-7550-41fe-8af3-81bf696bd412.jpg",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "API Access",
+    "website": "https://x.com/Player1Taco"
   }
-
 ]
