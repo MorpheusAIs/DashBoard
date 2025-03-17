@@ -813,23 +813,23 @@
     "address-plh": "Builder address",
     "address-note": "This address will be able to edit information about the Subnet",
     "website-plh": "Builder Website (optional)",
-    "website-note": "Link to the Subnet website.  Example: “https://…”",
+    "website-note": "Link to the Subnet website.  Example: \"https://…\"",
     "image-url-plh": "Image URL (optional)",
-    "image-url-note": "Link to the Subnet image.  Example: “https://…”",
+    "image-url-note": "Link to the Subnet image.  Example: \"https://…\"",
 
     "section-2-title": "Stake and Claim",
     "start-at-plh": "Stake start timestamp",
-    "start-at-note": "Example: “01.01.2030 01:00 PM”",
+    "start-at-note": "Example: \"01.01.2030 01:00 PM\"",
     "lock-period-after-stake-plh": "Withdraw lock period after the stake",
     "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time",
     "min-deposit-plh": "Minimal stake",
-    "min-deposit-note": "Example: “0.001 MOR”",
+    "min-deposit-note": "Example: \"0.001 MOR\"",
     "claim-lock-end-plh": "Max Stakers claim lock end timestamp",
     "claim-lock-end-note": "Stakers will be able to lock their claim until this timestamp. Affects the Power Factor. Example: \"05 Jul 2030 02:00 PM\"",
 
     "section-3-title": "Subnet Emission",
     "emissions-fee-plh": "% of the MOR Emissions the Subnet receives",
-    "emissions-fee-note": "Example: “100%”",
+    "emissions-fee-note": "Example: \"100%\"",
     "treasury-fee-plh": "Subnet emission treasury",
     "treasury-fee-note": "% of the MOR emissions that the Subnet receives will be transferred to the current address. Example: '0xabc…123'",
 
@@ -910,6 +910,7 @@
     "search-placeholder": "Search",
     "create-builder-btn": "Become a Builder",
     "main-table-title": "Explore Morpheus Builders",
+    "your-builder-subnets": "Your Builder Subnets",
     "account-projects-table-title": "Builders I Have Staked To",
     "loading-projects-error-msg": "Something bad happened",
     "builders-projects-empty-msg": "There are no projects yet",
@@ -922,12 +923,20 @@
     "total-staked-th": "Total MOR Staked",
     "total-users-th": "Total Stakers",
     "withdraw-lock-period-th": "Withdraw lock period",
-    "lock-period-th": "Lock period"
+    "lock-period-th": "Lock period",
+    "can-edit-th": "Can Edit",
+    "can-claim-th": "Can Claim"
   },
   "builders-table-item": {
-    "mobile-min-deposit-lbl": "Min Deposit: {amount} MOR",
-    "mobile-withdraw-lock-period-lbl": "Lock Period: {period}",
-    "stake-btn": "Stake"
+    "mobile-min-deposit-lbl": "Min. deposit: {amount} MOR",
+    "mobile-withdraw-lock-period-lbl": "Withdraw lock: {period}",
+    "stake-btn": "Stake",
+    "claim-now-btn": "Claim now",
+    "in-days-lbl": "in {days} days",
+    "in-day-lbl": "in 1 day",
+    "in-hours-lbl": "in {hours} hours",
+    "in-hour-lbl": "in 1 hour",
+    "in-minutes-lbl": "in {minutes} min"
   },
   "builders-item": {
     "page-err-msg": "Look's like the builder subnet you are looking for is not exists",
