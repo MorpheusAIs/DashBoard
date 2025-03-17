@@ -1,184 +1,135 @@
-fragment BuilderProject on BuildersProject {
-  admin
-  claimLockEnd
+fragment BuilderUserDefault on BuilderUser {
   id
-  minimalDeposit
-  name
-  startsAt
-  totalClaimed
-  totalStaked
-  totalUsers
-  withdrawLockPeriodAfterDeposit
+  address
+  staked
+  claimed
+  claimLockEnd
+  lastStake
 }
 
-query getBuildersProjects(
+fragment BuilderSubnetDefault on BuilderSubnet {
+  id
+  name
+  owner
+  minStake
+  fee
+  feeTreasury
+  startsAt
+  withdrawLockPeriodAfterStake
+  maxClaimLockEnd
+  slug
+  description
+  website
+  image
+  totalStaked
+  totalClaimed
+  totalUsers
+  builderUsers {
+    ...BuilderUserDefault
+  }
+}
+
+query getBuilderSubnet($id: ID! = "") {
+  builderSubnet(id: $id) {
+    ...BuilderSubnetDefault
+  }
+}
+
+query getBuilderSubnetUsers(
   $first: Int = 10
   $skip: Int = 10
-  $orderBy: BuildersProject_orderBy
+  $orderBy: BuilderUser_orderBy
   $orderDirection: OrderDirection
+  $builderSubnetId: Bytes = ""
 ) {
-  buildersProjects(
+  builderUsers(
     first: $first
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
+    where: { builderSubnet_: { id: $builderSubnetId } }
   ) {
-    ...BuilderProject
+    ...BuilderUserDefault
   }
 }
 
-query getBuildersProjectsByIds($id_in: [Bytes!] = "") {
-  buildersProjects(where: { id_in: $id_in }) {
-    ...BuilderProject
-  }
-}
-
-query getBuildersProject($id: ID = "") {
-  buildersProject(id: $id) {
-    ...BuilderProject
-  }
-}
-
-query getAccountUserBuildersProjects($address: Bytes = "") {
-  buildersUsers(where: { address: $address }) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      ...BuilderProject
-    }
-  }
-}
-
-query getBuildersProjectUsers(
-  $first: Int = 10
-  $skip: Int = 10
-  $buildersProjectId: Bytes = ""
+query getUserAccountBuilderSubnets(
+  $address: Bytes = ""
+  $builder_subnet_id: Bytes = ""
 ) {
-  buildersUsers(
-    first: $first
-    skip: $skip
-    where: { buildersProject_: {id: $buildersProjectId} }
+  builderUsers(
+    where: { address: $address, builderSubnet_: { id: $builder_subnet_id } }
   ) {
-    address
-    id
-    staked
-    lastStake
-  }
-}
-
-query getUserAccountBuildersProject($address: Bytes = "", $project_id: Bytes = "") {
-  buildersUsers(where: {address: $address, buildersProject_: {id: $project_id}}) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      admin
-      claimLockEnd
-      id
-      minimalDeposit
-      name
-      startsAt
-      totalClaimed
-      totalStaked
-      totalUsers
-      withdrawLockPeriodAfterDeposit
+    ...BuilderUserDefault
+    builderSubnet {
+      ...BuilderSubnetDefault
     }
   }
 }
 
-query GetBuildersCounters {
-  counters {
-    id
-    totalBuildersProjects
-    totalSubnets
-  }
-}
-
-query combinedBuildersList(
+query combinedBuilderSubnets(
   $first: Int = 10
   $skip: Int = 10
-  $orderBy: BuildersProject_orderBy
+  $orderBy: BuilderSubnet_orderBy
   $orderDirection: OrderDirection
-  $usersOrderBy: BuildersUser_orderBy
+  $usersOrderBy: BuilderUser_orderBy
   $usersDirection: OrderDirection
-
+  $builderSubnetName: String! = ""
   $address: Bytes = ""
 ) {
-  buildersProjects(
+  builderSubnets(
     first: $first
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
+    where: { name_contains_nocase: $builderSubnetName }
   ) {
-    ...BuilderProject
+    ...BuilderSubnetDefault
   }
 
-
-  buildersUsers(
+  builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
-    where: {address: $address}
+    where: { address: $address }
   ) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      admin
-      claimLockEnd
-      id
-      minimalDeposit
-      name
-      startsAt
-      totalClaimed
-      totalStaked
-      totalUsers
-      withdrawLockPeriodAfterDeposit
+    ...BuilderUserDefault
+    builderSubnet {
+      ...BuilderSubnetDefault
     }
   }
 
   counters {
     id
-    totalBuildersProjects
     totalSubnets
+    totalBuilderProjects
   }
 }
 
 # TEMP: To filter by name
-query combinedBuildersListFilteredByPredefinedBuilders(
-  $orderBy: BuildersProject_orderBy
-  $usersOrderBy: BuildersUser_orderBy
+query combinedBuilderSubnetsFilteredByPredefinedBuilders(
+  $orderBy: BuilderSubnet_orderBy
+  $usersOrderBy: BuilderUser_orderBy
   $usersDirection: OrderDirection
   $orderDirection: OrderDirection
   $name_in: [String!] = ""
   $address: Bytes = ""
 ) {
-  buildersProjects(
+  builderSubnets(
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: {name_in: $name_in}
+    where: { name_in: $name_in }
   ) {
-    ...BuilderProject
+    ...BuilderSubnetDefault
   }
 
-
-  buildersUsers(
+  builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
-    where: {
-      address: $address
-      buildersProject_: {name_in: $name_in}
-    }
+    where: { address: $address, builderSubnet_: { name_in: $name_in } }
   ) {
-    address
-    id
-    lastStake
-    staked
-    buildersProject {
-      ...BuilderProject
+    ...BuilderUserDefault
+    builderSubnet {
+      ...BuilderSubnetDefault
     }
   }
 }

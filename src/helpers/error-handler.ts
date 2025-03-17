@@ -97,7 +97,7 @@ export class ErrorHandler {
 
           errorMessage =
             typeof reason === 'string' && reason.length
-              ? capitalize(reason)
+              ? capitalize(reason).replaceAll('BS: ', '')
               : t('errors.default')
         }
       }

@@ -7,7 +7,7 @@
     />
     <div class="group-builder__fields">
       <datetime-field
-        v-model="group.payoutStartAt"
+        v-model="group.payoutStartAt as ''"
         :placeholder="$t(`${I18N_KEY_PREFIX}.payout-start-placeholder`)"
         :error-message="getFieldErrorMessage('payoutStartAt')"
         :disabled="disabled"

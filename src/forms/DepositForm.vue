@@ -178,7 +178,7 @@ const getLockPeriodMinValue = () => {
 
 const form = reactive({
   amount: '',
-  lockPeriod: getLockPeriodMinValue().timestamp.toString() || '',
+  lockPeriod: getLockPeriodMinValue().timestamp || ('' as number | ''),
   referrer: '',
 })
 
@@ -318,10 +318,10 @@ watch(
   ],
   async () => {
     if (!form.lockPeriod) {
-      form.lockPeriod = getLockPeriodMinValue().timestamp.toString()
+      form.lockPeriod = getLockPeriodMinValue().timestamp
     }
     if (isMultiplierShown.value) {
-      await fetchExpectedMultiplier(form.lockPeriod)
+      await fetchExpectedMultiplier(String(form.lockPeriod))
     }
   },
 )

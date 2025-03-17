@@ -40,7 +40,7 @@
     "detect-browser": "^5.3.0",
     "ethers": "^5.7.2",
     "flatpickr": "^4.6.13",
-    "floating-vue": "^5.0.3",
+    "floating-vue": "^5.2.2",
     "fs": "^0.0.1-security",
     "graphql": "^16.8.1",
     "jazzicon": "^1.5.0",

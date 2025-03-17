@@ -7,11 +7,27 @@
     :has-close-button="!isSubmitting"
   >
     <form @submit.prevent="submit" class="max-h-[80dvh] overflow-auto">
+      <div class="mt-8 flex items-center justify-between">
+        <span class="text-textSecondaryMain typography-body3">
+          {{ $t('builder-withdraw-modal.available-to-withdraw-balance') }}
+        </span>
+        <span class="!font-bold text-textSecondaryMain typography-body3">
+          {{
+            $t('builder-withdraw-modal.available-to-withdraw-amount', {
+              amount: formatAmount(buildersSubnetUserAccount?.staked ?? 0, 18, {
+                decimals: 18,
+              }),
+            })
+          }}
+        </span>
+      </div>
+
       <div class="mt-8 flex flex-col gap-5">
         <div class="flex flex-col items-end gap-3">
           <input-field
             v-model="form.withdrawAmount"
             :placeholder="$t('builder-withdraw-modal.withdraw-amount-plh')"
+            :note="$t('builder-withdraw-modal.withdraw-amount-note')"
             :error-message="getFieldErrorMessage('withdrawAmount')"
             @blur="touchField('withdrawAmount')"
             :disabled="isSubmitting"
@@ -27,32 +43,34 @@
               </button>
             </template>
           </input-field>
-
-          <div class="flex items-center justify-between gap-2">
-            <span class="stake-modal__details-label">
-              {{ $t('builder-withdraw-modal.available-to-withdraw-balance') }}
-            </span>
-            <span class="stake-modal__details-value">
-              {{
-                $t('builder-withdraw-modal.available-to-withdraw-amount', {
-                  amount: formatEther(buildersProjectUserAccount?.staked ?? 0),
-                })
-              }}
-            </span>
-          </div>
         </div>
       </div>
 
       <div class="mt-8 flex flex-col gap-3 bg-backdropModal px-6 py-4">
         <div
           class="flex items-center justify-between"
-          v-for="(el, i) in builderDetails"
+          v-for="(el, i) in builderDetails.slice(0, 1)"
           :key="i"
         >
           <span class="text-textSecondaryMain typography-body3">
             {{ el.label }}
           </span>
-          <span class="font-bold text-textSecondaryMain typography-body3">
+          <span class="!font-bold text-textSecondaryMain typography-body3">
+            {{ el.value }}
+          </span>
+        </div>
+
+        <div class="my-2 h-[1px] w-full bg-backgroundPrimaryMain opacity-20" />
+
+        <div
+          class="flex items-center justify-between"
+          v-for="(el, i) in builderDetails.slice(1)"
+          :key="i"
+        >
+          <span class="text-textSecondaryMain typography-body3">
+            {{ el.label }}
+          </span>
+          <span class="!font-bold text-textSecondaryMain typography-body3">
             {{ el.value }}
           </span>
         </div>
@@ -78,12 +96,12 @@
 <script setup lang="ts">
 import { AppButton, BasicModal } from '@/common'
 import { InputField } from '@/fields'
-import { useFormValidation, useI18n } from '@/composables'
+import { useFormValidation, useI18n, useLoad } from '@/composables'
 import { storeToRefs, useWeb3ProvidersStore } from '@/store'
 import { computed, reactive, ref } from 'vue'
 import {
-  GetBuildersProjectQuery,
-  GetUserAccountBuildersProjectQuery,
+  BuilderSubnetDefaultFragment,
+  BuilderUserDefaultFragment,
 } from '@/types/graphql'
 import { maxValue, numeric, required } from '@/validators'
 import { formatEther, parseUnits } from '@/utils'
@@ -91,15 +109,18 @@ import {
   bus,
   BUS_EVENTS,
   ErrorHandler,
+  formatAmount,
   getEthExplorerTxUrl,
   sleep,
 } from '@/helpers'
 import { BigNumber } from 'ethers'
+import { helpers } from '@vuelidate/validators'
+import { time } from '@distributedlab/tools'
 
 const props = withDefaults(
   defineProps<{
-    builderProject: GetBuildersProjectQuery['buildersProject']
-    buildersProjectUserAccount: GetUserAccountBuildersProjectQuery['buildersUsers'][0]
+    builderSubnet: BuilderSubnetDefaultFragment
+    buildersSubnetUserAccount: BuilderUserDefaultFragment
     isShown?: boolean
   }>(),
   {
@@ -112,13 +133,49 @@ const emit = defineEmits<{
   (e: 'submitted'): void
 }>()
 
+const maxAmountToWithdraw = computed(() => {
+  if (!props.buildersSubnetUserAccount.staked) return '0'
+
+  return formatAmount(props.buildersSubnetUserAccount.staked, 18, {
+    decimals: 18,
+  })
+})
+
 const { t } = useI18n()
 
-const { provider, buildersContractDetails, buildersContract } = storeToRefs(
-  useWeb3ProvidersStore(),
-)
+const { provider, builderSubnetsContractDetails, builderSubnetsContract } =
+  storeToRefs(useWeb3ProvidersStore())
 
 const isSubmitting = ref(false)
+
+const { data: powerFactor } = useLoad(
+  '',
+  async () => {
+    if (!props.buildersSubnetUserAccount) return ''
+
+    let to = 1
+    if (+props.buildersSubnetUserAccount.claimLockEnd) {
+      const usersClaimLockEnd = time(
+        +props.buildersSubnetUserAccount.claimLockEnd,
+      )
+
+      if (usersClaimLockEnd.isAfter(time())) {
+        to = usersClaimLockEnd.timestamp
+      }
+    }
+
+    const pfBN =
+      await builderSubnetsContract.value.providerBased.value.getPowerFactor(
+        time().timestamp,
+        to,
+      )
+
+    return pfBN.toString()
+  },
+  {
+    reloadArgs: [() => props.buildersSubnetUserAccount],
+  },
+)
 
 const form = reactive({
   withdrawAmount: '',
@@ -129,26 +186,36 @@ const { getFieldErrorMessage, isFieldsValid, isFormValid, touchField } =
     withdrawAmount: {
       required,
       numeric,
-      maxValue: maxValue(
-        +formatEther(props.buildersProjectUserAccount.staked || 0),
+      notEmpty: helpers.withMessage(
+        t('builder-withdraw-modal.not-empty-validation-msg'),
+        (val: string | number) => {
+          return Boolean(Number(val))
+        },
       ),
+      maxValue: maxValue(+maxAmountToWithdraw.value),
     },
   })
 
 const builderDetails = computed(() => {
   const balanceAfterWithdrawal = BigNumber.from(
-    props.buildersProjectUserAccount.staked ?? 0,
+    props.buildersSubnetUserAccount.staked ?? 0,
   ).sub(parseUnits(form.withdrawAmount || '0'))
 
   return [
     {
+      label: t('builder-withdraw-modal.power-factor-lbl'),
+      value: `${formatAmount(powerFactor.value, 25, {
+        decimals: 25,
+      })}x`,
+    },
+    {
       label: t('builder-withdraw-modal.builder-lbl'),
-      value: props.builderProject?.name,
+      value: props.builderSubnet?.name,
     },
     {
       label: t('builder-withdraw-modal.current-withdraw-lbl'),
       value: t('builder-withdraw-modal.available-to-withdraw-amount', {
-        amount: formatEther(props.buildersProjectUserAccount.staked || 0),
+        amount: formatEther(props.buildersSubnetUserAccount.staked || 0),
       }),
     },
     {
@@ -163,7 +230,7 @@ const builderDetails = computed(() => {
 })
 
 const setMaxAmount = () => {
-  form.withdrawAmount = formatEther(props.buildersProjectUserAccount.staked)
+  form.withdrawAmount = maxAmountToWithdraw.value
 }
 
 const clearForm = () => {
@@ -177,21 +244,24 @@ const submit = async () => {
 
   try {
     if (
-      provider.value.chainId !== buildersContractDetails.value.targetChainId
+      provider.value.chainId !==
+      builderSubnetsContractDetails.value.targetChainId
     ) {
-      provider.value.selectChain(buildersContractDetails.value.targetChainId)
+      provider.value.selectChain(
+        builderSubnetsContractDetails.value.targetChainId,
+      )
       await sleep(1_000)
     }
 
-    const tx = await buildersContract.value?.signerBased.value.withdraw(
-      props.builderProject?.id,
+    const tx = await builderSubnetsContract.value?.signerBased.value.withdraw(
+      props.builderSubnet?.id,
       parseUnits(form.withdrawAmount),
     )
 
     if (!tx) throw new TypeError('Transaction is not defined')
 
     const explorerTxUrl = getEthExplorerTxUrl(
-      buildersContractDetails.value.explorerUrl,
+      builderSubnetsContractDetails.value.explorerUrl,
       tx.hash,
     )
 

@@ -4,7 +4,10 @@
       :class="
         cn(
           'hidden',
-          'grid-cols-[max(216px),max(48px),max(160px),max(190px),1fr,1fr] items-center md:grid',
+          [
+            'grid-cols-[max(216px),max(48px),max(120px),max(210px),1fr,1fr,max(90px),1fr]',
+            'items-center md:grid',
+          ],
           'gap-2 px-8',
         )
       "
@@ -45,9 +48,24 @@
         v-model:order-by-model="orderByModel"
         v-model:order-direction-model="orderDirectionModel"
       />
+      <!-- New header column for Can Edit -->
+      <div class="flex items-center gap-2 justify-self-end">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.can-edit-th') }}
+        </span>
+      </div>
+      <!-- New header column for Can Claim -->
+      <div class="flex items-center gap-2 justify-self-end">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.can-claim-th') }}
+        </span>
+      </div>
     </div>
-    <!-- FIXME: el.chain: inserted in BuildersList.vue in loadFn -->
-    <builders-table-item
+    <owned-builders-table-item
       v-for="el in builderSubnets"
       :key="el.id"
       :builder-subnet="el"
@@ -56,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import BuildersTableItem from './components/BuildersTableItem.vue'
+import OwnedBuildersTableItem from './components/OwnedBuildersTableItem.vue'
 import { cn } from '@/theme/utils'
 import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
 import {

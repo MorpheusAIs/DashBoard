@@ -3,7 +3,7 @@
     :class="
       cn(
         'builders-table-item relative hidden w-full',
-        'md:grid md:grid-cols-[max(216px),max(48px),max(160px),max(190px),1fr,1fr]',
+        'md:grid md:grid-cols-[max(216px),max(48px),max(120px),max(210px),1fr,1fr,max(90px),1fr]',
         'md:h-[72px] md:items-center md:gap-2 md:px-8 md:py-4',
       )
     "
@@ -81,15 +81,105 @@
           {{ humanizeTime(+builderSubnet.withdrawLockPeriodAfterStake) }}
         </span>
       </div>
-      <RouterLink
-        class="absolute left-0 top-0 z-10 size-full"
-        :to="{
-          name: $routes.appBuildersItem,
-          params: { id: builderSubnet.id },
-          query: { chain: builderSubnet.chain },
-        }"
-      ></RouterLink>
     </div>
+
+    <!-- "Can edit" column -->
+    <div class="builders-table-item__col">
+      <div class="builders-table-item__col-content">
+        <template v-if="canEdit">
+          <router-link
+            :to="{
+              name: $routes.appBuildersFormUpdate,
+              params: { id: builderSubnet.id },
+              query: { chain: builderSubnet.chain },
+            }"
+            class="flex h-full w-full items-center justify-end"
+          >
+            <!-- Use edit icon instead of pencil -->
+            <span class="text-primaryMain">
+              <app-icon :name="$icons.edit" class="size-5" />
+            </span>
+          </router-link>
+        </template>
+        <template v-else>
+          <div
+            class="flex h-full w-full cursor-not-allowed items-center justify-end"
+          >
+            <span class="text-textTertiaryMain opacity-60">
+              <!-- Use x-circle instead of lock -->
+              <app-icon :name="$icons.xCircle" class="size-5" />
+            </span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- "Can claim" column -->
+    <div class="builders-table-item__col">
+      <div class="builders-table-item__col-content">
+        <template v-if="canClaim">
+          <router-link
+            :to="{
+              name: $routes.appBuildersItem,
+              params: { id: builderSubnet.id },
+              query: { chain: builderSubnet.chain },
+            }"
+            class="flex h-full w-full items-center justify-end text-primaryMain"
+          >
+            {{ $t('builders-table-item.claim-now-btn') }}
+          </router-link>
+        </template>
+        <template v-else>
+          <span
+            class="builders-table-item__col-text text-right text-textTertiaryMain"
+          >
+            <!-- Days format -->
+            <template v-if="timeRemainingData.unit === 'days'">
+              <template v-if="timeRemainingData.value === '1'">
+                {{ $t('builders-table-item.in-day-lbl') }}
+              </template>
+              <template v-else>
+                {{
+                  $t('builders-table-item.in-days-lbl', {
+                    days: timeRemainingData.value,
+                  })
+                }}
+              </template>
+            </template>
+            <!-- Hours format -->
+            <template v-else-if="timeRemainingData.unit === 'hours'">
+              <template v-if="timeRemainingData.value === '1'">
+                {{ $t('builders-table-item.in-hour-lbl') }}
+              </template>
+              <template v-else>
+                {{
+                  $t('builders-table-item.in-hours-lbl', {
+                    hours: timeRemainingData.value,
+                  })
+                }}
+              </template>
+            </template>
+            <!-- Minutes format -->
+            <template v-else>
+              {{
+                $t('builders-table-item.in-minutes-lbl', {
+                  minutes: timeRemainingData.value,
+                })
+              }}
+            </template>
+          </span>
+        </template>
+      </div>
+    </div>
+
+    <RouterLink
+      class="absolute left-0 top-0 z-10 size-full"
+      :to="{
+        name: $routes.appBuildersItem,
+        params: { id: builderSubnet.id },
+        query: { chain: builderSubnet.chain },
+      }"
+    ></RouterLink>
   </div>
 
   <div
@@ -178,6 +268,7 @@ import predefinedBuildersMeta from '@/assets/predefined-builders-meta.json'
 import { EthereumChains, getEthereumChainsName } from '@config'
 import { computed } from 'vue'
 import { BuilderSubnetDefaultFragment } from '@/types/graphql'
+import { AppIcon } from '@/common'
 
 const props = defineProps<{
   builderSubnet: BuilderSubnetDefaultFragment & {
@@ -191,6 +282,50 @@ const builderMeta = predefinedBuildersMeta.find(
 
 const logo = computed(() => {
   return props.builderSubnet.image || builderMeta?.localImage || ''
+})
+
+// Date utils for "Can edit" column
+const currentTimestamp = computed(() => Math.floor(Date.now() / 1000))
+
+// Can edit if current date is less than pool start date
+const canEdit = computed(() => {
+  return currentTimestamp.value < Number(props.builderSubnet.startsAt)
+})
+
+// Date utils for "Can claim" column
+const canClaim = computed(() => {
+  return currentTimestamp.value >= Number(props.builderSubnet.maxClaimLockEnd)
+})
+
+// Calculate time remaining in the most appropriate unit
+const timeRemainingData = computed(() => {
+  const secondsRemaining =
+    Number(props.builderSubnet.maxClaimLockEnd) - currentTimestamp.value
+
+  // If less than 1 hour (3600 seconds), show minutes
+  if (secondsRemaining < 3600) {
+    const minutes = Math.ceil(secondsRemaining / 60)
+    return {
+      unit: 'minutes',
+      value: minutes.toString(),
+    }
+  }
+
+  // If less than 1 day (86400 seconds), show hours
+  if (secondsRemaining < 86400) {
+    const hours = Math.ceil(secondsRemaining / 3600)
+    return {
+      unit: 'hours',
+      value: hours.toString(),
+    }
+  }
+
+  // Otherwise show days (default case)
+  const days = Math.ceil(secondsRemaining / (60 * 60 * 24))
+  return {
+    unit: 'days',
+    value: days.toString(),
+  }
 })
 </script>
 

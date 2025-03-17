@@ -1,4 +1,6 @@
 export { default as CheckboxField } from './CheckboxField.vue'
 export { default as DatetimeField } from './DatetimeField/index.vue'
 export { default as InputField } from './InputField.vue'
+export { default as TextareaField } from './TextareaField.vue'
+export { default as FileField } from './FileField.vue'
 export { default as SelectField } from './SelectField.vue'

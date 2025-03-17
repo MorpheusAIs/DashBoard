@@ -231,7 +231,9 @@
     "field-error_maxEther": "Insufficient amount of tokens",
     "field-error_minEther": "Field must be greater than or equal to {min}",
     "field-error_minValue": "The entered value is less than the minimum value {min}",
-    "field-error_maxValue": "Amount should be less than or equal to {max}"
+    "field-error_maxValue": "Amount should be less than or equal to {max}",
+    "field-error_maxLength": "Field should not exceed the maximum length {max}",
+    "field-error_validUrl": "Field must be a valid URL"
   },
   "wallet-dashboard": {
     "address-copied": "Address copied",
@@ -806,54 +808,106 @@
     "session-rights-lbl": "Session Rights",
     "marketplace-rights-lbl": "Marketplace Rights"
   },
-  "builder-form-modal": {
-    "create-title": "Become a Builder",
+  "builders-form": {
+    "create-title": "Create Your Subnet",
     "update-title": "Update {name}",
-    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
-    "name-plh": "Builder name",
+    "subtitle": "Complete this form to become a Morpheus builder and launch your Subnet.",
+
+    "section-1-title": "Subnet information",
+    "name-plh": "Subnet name",
     "name-note": "What is the name of your project? This is how users will find your project.",
-    "min-deposit-plh": "Minimum deposit",
-    "min-deposit-note": "This is the minimum amount of MOR users can deposit when staking to your project.",
-    "lock-period-after-stake-plh": "Withdraw lock period after stake, seconds",
-    "lock-period-after-stake-not": "After each stake, the user will not be able to withdraw their tokens for that period",
-    "start-at-plh": "Start time",
-    "start-at-note": "It will be possible to change the Builder settings up to this point. The stake will not be available until this time",
-    "claim-lock-end-plh": "Claim lock ends",
-    "claim-lock-end-note": "After this period, the creator (owner) of the Builder will be able to claim the rewards",
-    "lock-period-after-stake-note": "After a user stakes to your project, this is how long they will need to wait before they can unstake. NOTE: each time a user stakes to your project, this lock period will reset.",
+    "address-plh": "Builder address",
+    "address-note": "This address will be able to edit information about the Subnet",
+    "website-plh": "Builder Website (optional)",
+    "website-note": "Link to the Subnet website.  Example: \"https://…\"",
+    "image-url-plh": "Image URL (optional)",
+    "image-url-note": "Link to the Subnet image.  Example: \"https://…\"",
+
+    "section-2-title": "Stake and Claim",
+    "start-at-plh": "Stake start timestamp",
+    "start-at-note": "Example: \"01.01.2030 01:00 PM\"",
+    "lock-period-after-stake-plh": "Withdraw lock period after the stake",
+    "lock-period-after-stake-note": "After each stake, the user will not be able to withdraw his deposit this time",
+    "min-deposit-plh": "Minimal stake",
+    "min-deposit-note": "Example: \"0.001 MOR\"",
+    "claim-lock-end-plh": "Max Stakers claim lock end timestamp",
+    "claim-lock-end-note": "Stakers will be able to lock their claim until this timestamp. Affects the Power Factor. Example: \"05 Jul 2030 02:00 PM\"",
+
+    "section-3-title": "Subnet Emission",
+    "emissions-fee-plh": "% of the MOR Emissions the Subnet receives",
+    "emissions-fee-note": "Example: \"100%\"",
+    "treasury-fee-plh": "Subnet emission treasury",
+    "treasury-fee-note": "% of the MOR emissions that the Subnet receives will be transferred to the current address. Example: '0xabc…123'",
+
+    "section-4-title": "Subnet Description",
+    "slug-plh": "Slug",
+    "slug-note": "Short Subnet description (max 120 characters)",
+    "description-plh": "Description",
+    "description-note": "Detailed Subnet description (up to 800 characters)",
+
+    "optional-mark": "(Optional)",
+
+    "confirm-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
+
+    "min-start-time-validation": "Should be more than {time}",
+    "min-lock-period-after-stake": "Should be more than {amount} seconds",
     "min-end-time-validation-err-msg": "Should be more than {time}",
     "min-end-time-validation-need-start-time-msg": "Enter start time first"
   },
   "builders-stake-modal": {
     "modal-title": "Stake MOR",
     "available-to-stake-balance-value": "{amount} MOR",
+    "claim-lock-end-validation-msg": "Should be less than {date}",
+    "power-factor-lbl": "Power Factor",
+    "power-factor-tooltip": "The power factor depends on the claim lock timestamp, the longer the claim lock, the larger the power factor.",
+    "power-factor-value": "x{powerFactor}",
+    "network-lbl": "Network",
     "builder-lbl": "Builder",
     "min-deposit-lbl": "Min Deposit",
     "lock-period-lbl": "Lock Period",
     "new-stake-amount-lbl": "New Stake Amount",
     "new-unlock-date-lbl": "New Unlock Date",
     "stake-amount-plh": "MOR amount",
+    "claim-lock-end-plh": "Lock your claim until (optional)",
+    "claim-lock-end-note": "Claim can be locked until {date}",
     "stake-amount-max-btn": "max",
     "available-to-stake-balance": "Available to Stake",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
     "stake-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
   },
+  "builders-claim-modal": {
+    "modal-title": "Claim MOR",
+
+    "network-lbl": "Network",
+    "subnet-lbl": "Subnet",
+    "claim-receiver-lbl": "Receiver",
+    "amount-lbl": "Amount",
+    "protocol-fee-lbl": "% of the MOR emission \n the Protocol receives",
+    "emissions-lbl": "% of the MOR emissions \n the Subnet receives",
+    "final-claim-lbl": "Final Claim",
+    "cancel-btn": "Cancel",
+    "submit-btn": "Confirm"
+  },
   "builder-withdraw-modal": {
     "modal-title": "Withdraw MOR",
     "builder-lbl": "Builder",
+    "power-factor-lbl": "Power factor",
     "current-withdraw-lbl": "Current Stake",
     "balance-after-withdrawal-lbl": "Stake After Withdrawal",
     "balance-after-withdrawal-value": "{amount} MOR",
     "withdraw-amount-plh": "MOR amount",
+    "withdraw-amount-note": "Enter the number of tokens you want to withdraw",
     "withdraw-amount-max-btn": "max",
     "available-to-withdraw-balance": "Available to Withdraw",
     "available-to-withdraw-amount": "{amount} MOR",
     "cancel-btn": "Cancel",
     "submit-btn": "Confirm",
-    "withdraw-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>"
+    "withdraw-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
+    "not-empty-validation-msg": "This field is required"
   },
   "builders-list": {
     "title": "Create or Stake in a Builder",
@@ -862,6 +916,7 @@
     "search-placeholder": "Search",
     "create-builder-btn": "Become a Builder",
     "main-table-title": "Explore Morpheus Builders",
+    "your-builder-subnets": "Your Builder Subnets",
     "account-projects-table-title": "Builders I Have Staked To",
     "loading-projects-error-msg": "Something bad happened",
     "builders-projects-empty-msg": "There are no projects yet",
@@ -874,40 +929,74 @@
     "total-staked-th": "Total MOR Staked",
     "total-users-th": "Total Stakers",
     "withdraw-lock-period-th": "Withdraw lock period",
-    "lock-period-th": "Lock period"
+    "lock-period-th": "Lock period",
+    "can-edit-th": "Can Edit",
+    "can-claim-th": "Can Claim"
   },
   "builders-table-item": {
-    "mobile-min-deposit-lbl": "Min Deposit: {amount} MOR",
-    "mobile-withdraw-lock-period-lbl": "Lock Period: {period}",
-    "stake-btn": "Stake"
+    "mobile-min-deposit-lbl": "Min. deposit: {amount} MOR",
+    "mobile-withdraw-lock-period-lbl": "Withdraw lock: {period}",
+    "stake-btn": "Stake",
+    "claim-now-btn": "Claim now",
+    "in-days-lbl": "in {days} days",
+    "in-day-lbl": "in 1 day",
+    "in-hours-lbl": "in {hours} hours",
+    "in-hour-lbl": "in 1 hour",
+    "in-minutes-lbl": "in {minutes} min"
   },
   "builders-item": {
     "page-err-msg": "Look's like the builder subnet you are looking for is not exists",
     "page-err-btn": "Back to builders",
+
     "back-btn": "Back",
+
     "your-builder-lbl": "Your Builder",
+
     "edit-btn": "Edit",
-    "start-time-lbl": "Start time",
-    "min-deposit-lbl": "Min MOR Deposit",
-    "lock-period-lbl": "Lock Period After Stake",
-    "available-for-withdrawal-lbl": "Available MOR for Withdrawal",
-    "withdraw-btn": "Withdraw",
-    "unlock-time-lbl": "Unlock Time:",
+
+    "starts-at-lbl": "Stake Start",
     "total-claimed-lbl": "Total MOR Claimed",
     "total-staked-lbl": "Total MOR Staked",
-    "claim-lock-ends-lbl": "Claim lock ends",
+
+    "claim-lock-ends-lbl": "Subnet Claim Lock End",
+    "min-deposit-lbl": "Min MOR stake",
+    "lock-period-lbl": "Withdraw lock period after the stake",
+    "fee-emissions-lbl": "% of the MOR Emissions the Subnet receives",
+
+    "available-for-withdrawal-lbl": "Your MOR Staked",
+    "withdraw-btn": "Withdraw",
+    "withdraw-unlock-time-lbl": "Locked until:",
+
+    "available-to-claim-lbl": "Available to Claim",
     "claim-btn": "Claim",
-    "admin-addr-lbl": "Admin address",
+    "claim-unlock-time-lbl": "Locked until:",
+
+    "desc-title": "Subnet Description",
+
     "stakers-lbl": "Stakers",
-    "you-have-staked-lbl": "You have staked:",
-    "mor-currency": "MOR",
     "stake-btn": "Stake",
-    "stake-more-btn": "Stake More",
-    "withdrawal-locked-msg": "Withdrawal will be available in {time}",
     "staker-addr-name-th": "Name / Address",
-    "staked-th": "MOR Staked",
-    "date-th": "Date",
+    "staked-th": "Staked",
+    "date-th": "Claim Lock End",
+
     "claim-success-msg": "The transaction was confirmed, you can view it in the explorer <a class=\"link\" href={explorerTxUrl} target=\"blank\" rel=\"noopener noreferrer\">here</a>",
     "empty-dash": "-"
+  },
+  "builders-creation-cost-modal": {
+    "modal-title": "Create Your Subnet",
+    "modal-description": "Creating a subnet costs {price} MOR, the funds will be taken from your connected wallet.",
+    "network-lbl": "Network",
+    "subnet-lbl": "Subnet name",
+    "admin-lbl": "Admin address",
+    "balance-lbl": "Your MOR balance",
+    "balance-after-lbl": "MOR balance after the Subnet creation",
+    "cancel-btn": "Cancel",
+    "create-btn": "Create"
+  },
+  "file-field": {
+    "drag-n-drop-lbl": "Drag & drop",
+    "drag-n-drop-divider": "or",
+    "choose-file-lbl": "Upload",
+    "change-file-btn": "Change"
   }
 }

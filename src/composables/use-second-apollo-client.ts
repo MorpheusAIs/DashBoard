@@ -18,6 +18,7 @@ export const useSecondApolloClient = (
   initial?: keyof typeof config.perChainSecondApolloClients,
 ): {
   client: Ref<ApolloClient<NormalizedCacheObject>>
+  targetNetworkForSelectedClient: Ref<EthereumChains>
   clients: Ref<Record<EthereumChains, ApolloClient<NormalizedCacheObject>>>
 } => {
   const route = useRoute()
@@ -29,6 +30,9 @@ export const useSecondApolloClient = (
   const { networkType, provider } = storeToRefs(useWeb3ProvidersStore())
   const client = ref<ApolloClient<NormalizedCacheObject>>(
     getDefaultSecondApolloClient(networkType.value),
+  )
+  const targetNetworkForSelectedClient = ref<EthereumChains>(
+    initial || currentAllowedChainsForRoute.value[0],
   )
 
   const allowedChainsForRouteUnderNetworkType = computed(() =>
@@ -75,16 +79,21 @@ export const useSecondApolloClient = (
 
       if (clientForCurrentChain && isCurrentChainUnderAllowedList) {
         client.value = clientForCurrentChain
+        targetNetworkForSelectedClient.value = provider.value
+          .chainId as EthereumChains
 
         return
       }
 
-      const newClient = allowedChainsForRouteUnderNetworkType.value
-        .map(el => config.perChainSecondApolloClients[el])
-        .find(el => el !== null)
+      const targetChainForNewClient =
+        allowedChainsForRouteUnderNetworkType.value.find(
+          el => config.perChainSecondApolloClients[el] !== null,
+        )
 
-      if (newClient) {
-        client.value = newClient
+      if (targetChainForNewClient) {
+        client.value =
+          config.perChainSecondApolloClients[targetChainForNewClient]!
+        targetNetworkForSelectedClient.value = targetChainForNewClient
       }
     },
     {
@@ -94,6 +103,7 @@ export const useSecondApolloClient = (
 
   return {
     client: client as Ref<ApolloClient<NormalizedCacheObject>>,
+    targetNetworkForSelectedClient,
     clients: clients,
   }
 }

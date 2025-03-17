@@ -42,6 +42,12 @@ const routes: RouteRecordRaw[] = [
         props: { poolId: 0 },
       },
       {
+        path: 'builders/create',
+        name: ROUTE_NAMES.appBuildersForm,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersForm/index.vue'),
+      },
+      {
         path: 'builders',
         name: ROUTE_NAMES.appBuildersList,
         component: () =>
@@ -52,6 +58,12 @@ const routes: RouteRecordRaw[] = [
         name: ROUTE_NAMES.appBuildersItem,
         component: () =>
           import('@/pages/Builders/pages/BuildersItem/index.vue'),
+      },
+      {
+        path: 'builders/:id/update',
+        name: ROUTE_NAMES.appBuildersFormUpdate,
+        component: () =>
+          import('@/pages/Builders/pages/BuildersForm/index.vue'),
       },
     ],
   },
