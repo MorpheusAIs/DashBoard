@@ -1,0 +1,99 @@
+<template>
+  <div class="flex w-full flex-col gap-2">
+    <div
+      :class="
+        cn(
+          'hidden',
+          [
+            'grid-cols-[max(216px),max(48px),max(120px),max(210px),1fr,1fr,max(90px),1fr]',
+            'items-center md:grid',
+          ],
+          'gap-2 px-8',
+        )
+      "
+    >
+      <div class="flex items-center gap-2">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.name-th') }}
+        </span>
+      </div>
+      <div class=""></div>
+      <div class="flex items-center gap-2">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.reward-type-th') }}
+        </span>
+      </div>
+      <sorting-icon-button
+        class="justify-self-end"
+        :label="$t('builders-table.min-deposit-th')"
+        :order-by="BuilderSubnet_OrderBy.MinStake"
+        v-model:order-by-model="orderByModel"
+        v-model:order-direction-model="orderDirectionModel"
+      />
+      <sorting-icon-button
+        class="justify-self-end"
+        :label="$t('builders-table.total-staked-th')"
+        :order-by="BuilderSubnet_OrderBy.TotalStaked"
+        v-model:order-by-model="orderByModel"
+        v-model:order-direction-model="orderDirectionModel"
+      />
+      <sorting-icon-button
+        class="justify-self-end"
+        :label="$t('builders-table.withdraw-lock-period-th')"
+        :order-by="BuilderSubnet_OrderBy.WithdrawLockPeriodAfterStake"
+        v-model:order-by-model="orderByModel"
+        v-model:order-direction-model="orderDirectionModel"
+      />
+      <!-- New header column for Can Edit -->
+      <div class="flex items-center gap-2 justify-self-end">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.can-edit-th') }}
+        </span>
+      </div>
+      <!-- New header column for Can Claim -->
+      <div class="flex items-center gap-2 justify-self-end">
+        <span
+          class="line-clamp-1 text-[16px] leading-[24px] text-textTertiaryMain"
+        >
+          {{ $t('builders-table.can-claim-th') }}
+        </span>
+      </div>
+    </div>
+    <owned-builders-table-item
+      v-for="el in builderSubnets"
+      :key="el.id"
+      :builder-subnet="el"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import OwnedBuildersTableItem from './components/OwnedBuildersTableItem.vue'
+import { cn } from '@/theme/utils'
+import SortingIconButton from '@/pages/Builders/components/SortingIconButton.vue'
+import {
+  BuilderSubnet_OrderBy,
+  BuilderSubnetDefaultFragment,
+} from '@/types/graphql'
+import { EthereumChains } from '@config'
+
+const orderByModel = defineModel<string>('orderByModel')
+const orderDirectionModel = defineModel<string>('orderDirectionModel')
+
+withDefaults(
+  defineProps<{
+    builderSubnets: (BuilderSubnetDefaultFragment & {
+      chain?: EthereumChains
+    })[]
+  }>(),
+  {},
+)
+</script>
+
+<style scoped lang="scss"></style>
