@@ -316,7 +316,7 @@ const builderDetails = computed(() => {
         BN.fromRaw(form.stakeAmount || 0, 18).mul(
           Number(potentialPowerFactor.value.toString())
             ? BN.fromBigInt(potentialPowerFactor.value || 1, 25)
-            : BN.fromRaw(1)
+            : BN.fromRaw(1),
         ),
       )
       .format({

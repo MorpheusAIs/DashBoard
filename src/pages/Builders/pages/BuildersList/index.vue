@@ -646,29 +646,6 @@ const localizeChainSelection = (chainId: string | undefined) => {
 const userOwnedBuilderSubnets = computed(() => {
   const ownedSubnets = []
 
-  console.log('Debugging subnet owner check:')
-  console.log('Connected address:', provider.value.selectedAddress)
-  console.log(
-    'Data loaded (builder subnets):',
-    builderSubnetsState.isLoaded.value,
-  )
-  console.log(
-    'All predefined builders available:',
-    !!allPredefinedBuilders.value,
-  )
-  console.log('listData available:', !!listData.value)
-
-  if (listData.value) {
-    console.log(
-      'listData builder subnets:',
-      listData.value.builderSubnets.length,
-    )
-    console.log(
-      'listData user builder subnets:',
-      listData.value.userAccountBuilderSubnets.length,
-    )
-  }
-
   // First try: Check in allPredefinedBuilders (for mainnet)
   let subnetsToCheck: (BuilderSubnetDefaultFragment & {
     chain?: EthereumChains
@@ -681,7 +658,6 @@ const userOwnedBuilderSubnets = computed(() => {
     allPredefinedBuilders.value.builderSubnets &&
     allPredefinedBuilders.value.builderSubnets.length > 0
   ) {
-    console.log('Using allPredefinedBuilders.value.builderSubnets')
     subnetsToCheck = allPredefinedBuilders.value.builderSubnets
   }
   // Second try: Check in listData.builderSubnets (for testnet or if first try fails)
@@ -692,17 +668,11 @@ const userOwnedBuilderSubnets = computed(() => {
     listData.value.builderSubnets &&
     listData.value.builderSubnets.length > 0
   ) {
-    console.log('Using listData.value.builderSubnets')
     subnetsToCheck = listData.value.builderSubnets
   }
 
-  console.log('Total subnets to check:', subnetsToCheck.length)
-
   // If we have subnets to check, look for those owned by the user
   if (subnetsToCheck.length > 0) {
-    // Dump the first subnet to see its structure
-    console.log('First subnet object:', JSON.stringify(subnetsToCheck[0]))
-
     for (const subnet of subnetsToCheck) {
       // We need to do a case-insensitive comparison for Ethereum addresses
       if (subnet.owner && provider.value.selectedAddress) {
@@ -710,22 +680,11 @@ const userOwnedBuilderSubnets = computed(() => {
         const addressLower = provider.value.selectedAddress.toLowerCase()
         const isOwner = ownerLower === addressLower
 
-        console.log(`Checking subnet ${subnet.name}:`, {
-          owner: subnet.owner,
-          userAddress: provider.value.selectedAddress,
-          isOwner,
-        })
-
         if (isOwner) {
           ownedSubnets.push(subnet)
         }
       }
     }
-  }
-
-  console.log('Total owned subnets found:', ownedSubnets.length)
-  if (ownedSubnets.length > 0) {
-    console.log('First owned subnet:', ownedSubnets[0].name)
   }
 
   return ownedSubnets
