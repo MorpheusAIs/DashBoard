@@ -3,7 +3,7 @@
     :class="
       cn(
         'builders-table-item relative hidden w-full',
-        'md:grid md:grid-cols-[max(216px),max(160px),max(190px),1fr,1fr]',
+        'md:grid md:grid-cols-[max(216px),max(160px),max(190px),1fr,1fr,1fr]',
         'md:h-[72px] md:items-center md:gap-2 md:px-8 md:py-4',
       )
     "
@@ -76,6 +76,13 @@
       <div class="builders-table-item__col-content">
         <span class="builders-table-item__col-text text-right">
           {{ humanizeTime(+builderProject.withdrawLockPeriodAfterDeposit) }}
+        </span>
+      </div>
+    </div>
+    <div class="builders-table-item__col">
+      <div class="builders-table-item__col-content">
+        <span class="builders-table-item__col-text text-right">
+          {{ formatLaunchDate(+builderProject.startsAt) }}
         </span>
       </div>
       <RouterLink
@@ -205,6 +212,16 @@ const builderMeta = predefinedBuildersMeta.find(
 const handleStaked = async () => {
   isStakeModalShown.value = false
   reloadBuildersProjects?.()
+}
+
+const formatLaunchDate = (timestamp: number) => {
+  if (!timestamp) return '-'
+  const date = new Date(timestamp * 1000)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
 }
 </script>
 

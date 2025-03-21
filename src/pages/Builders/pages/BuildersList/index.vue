@@ -310,6 +310,8 @@ const mapUsersOrderFilter = (
       BuildersUser_OrderBy.BuildersProjectWithdrawLockPeriodAfterDeposit,
     [AdditionalBuildersOrderBy.RewardType]:
       BuildersUser_OrderBy.BuildersProjectId,
+    [AdditionalBuildersOrderBy.LaunchedOn]:
+      BuildersUser_OrderBy.BuildersProjectStartsAt,
   }[orderBy]
 }
 
@@ -658,6 +660,17 @@ const sortByCustomType = (
       }
 
       return 0
+    },
+    [AdditionalBuildersOrderBy.LaunchedOn]: (
+      a: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
+      b: CombinedBuildersListFilteredByPredefinedBuildersQuery['buildersProjects'][number],
+    ) => {
+      const aStartsAt = Number(a.startsAt) || 0
+      const bStartsAt = Number(b.startsAt) || 0
+
+      return orderDirection === OrderDirection.Asc
+        ? aStartsAt - bStartsAt
+        : bStartsAt - aStartsAt
     },
   }
 

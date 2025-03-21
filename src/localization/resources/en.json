@@ -874,7 +874,8 @@
     "total-staked-th": "Total MOR Staked",
     "total-users-th": "Total Stakers",
     "withdraw-lock-period-th": "Withdraw lock period",
-    "lock-period-th": "Lock period"
+    "lock-period-th": "Lock period",
+    "launched-on-th": "Launched on"
   },
   "builders-table-item": {
     "mobile-min-deposit-lbl": "Min Deposit: {amount} MOR",
