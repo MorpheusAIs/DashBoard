@@ -1749,5 +1749,22 @@
     "totalStaked": 0,
     "rewardType": "Product Access",
     "website": "https://www.youtube.com/playlist?list=PL3s-NHnCxOO6NoCuMJik2Jm0_p2FJzFBh"
+  },
+  {
+    "id": "",
+    "name": "Only Cats Fight Club",
+    "description": "Have your NFT warrior cat fight in the OnlyCats arena!",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/onlycats.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://cats.pr/"
   }
 ]
