@@ -1766,5 +1766,22 @@
     "totalStaked": 0,
     "rewardType": "To Be Announced",
     "website": "https://cats.pr/"
+  },
+  {
+    "id": "",
+    "name": "Snowball Money",
+    "description": "Hybrid smart agent that blends on-chain behavioral analysis and portfolio intelligence",
+    "longDescription": "",
+    "image": "",
+    "localImage": "images/snowball.png",
+    "tags": [],
+    "githubUrl": "",
+    "twitterUrl": "",
+    "discordUrl": "",
+    "contributors": 0,
+    "githubStars": 0,
+    "totalStaked": 0,
+    "rewardType": "To Be Announced",
+    "website": "https://snowball.money"
   }
 ]
