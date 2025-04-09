@@ -505,9 +505,10 @@
     @staked="handleStaked"
   />
   <builders-claim-modal
+    v-if="buildersData.builderSubnet && selectedClaimReceiverRewards"
     v-model:is-shown="isClaimModalShown"
     :builder-subnet="buildersData.builderSubnet"
-    :chain="route.query.chain as EthereumChains"
+    :chain="provider.chainId"
     :claim-receiver="selectedClaimReceiver"
     :staker-rewards="selectedClaimReceiverRewards"
     @claimed="handleClaimed"
@@ -699,7 +700,6 @@ const {
           await builderSubnetsContract.value.providerBased.value.getStakerRewards(
             buildersData.value.builderSubnet?.id ?? '',
             user.address,
-            time().timestamp,
           )
 
         return {
@@ -734,7 +734,6 @@ const { data: stakerRewards } = useLoad(
       await builderSubnetsContract.value.providerBased.value.getStakerRewards(
         buildersData.value.builderSubnet?.id ?? '',
         provider.value.selectedAddress,
-        time().timestamp,
       )
 
     return res.toString()

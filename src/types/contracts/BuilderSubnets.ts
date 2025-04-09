@@ -28,14 +28,14 @@ import type {
 } from "./common";
 
 export declare namespace IBuilderSubnets {
-  export type BuildersPoolDataStruct = {
+  export type BuildersRewardPoolDataStruct = {
     initialAmount: BigNumberish;
     decreaseAmount: BigNumberish;
     payoutStart: BigNumberish;
     interval: BigNumberish;
   };
 
-  export type BuildersPoolDataStructOutput = [
+  export type BuildersRewardPoolDataStructOutput = [
     BigNumber,
     BigNumber,
     BigNumber,
@@ -48,12 +48,12 @@ export declare namespace IBuilderSubnets {
   };
 
   export type StakerStruct = {
-    lastInteraction: BigNumberish;
-    lastStake: BigNumberish;
-    claimLockEnd: BigNumberish;
     staked: BigNumberish;
     virtualStaked: BigNumberish;
     pendingRewards: BigNumberish;
+    rate: BigNumberish;
+    lastStake: BigNumberish;
+    claimLockEnd: BigNumberish;
   };
 
   export type StakerStructOutput = [
@@ -64,15 +64,15 @@ export declare namespace IBuilderSubnets {
     BigNumber,
     BigNumber
   ] & {
-    lastInteraction: BigNumber;
-    lastStake: BigNumber;
-    claimLockEnd: BigNumber;
     staked: BigNumber;
     virtualStaked: BigNumber;
     pendingRewards: BigNumber;
+    rate: BigNumber;
+    lastStake: BigNumber;
+    claimLockEnd: BigNumber;
   };
 
-  export type BuildersSubnetStruct = {
+  export type SubnetStruct = {
     name: string;
     owner: string;
     minStake: BigNumberish;
@@ -83,7 +83,7 @@ export declare namespace IBuilderSubnets {
     maxClaimLockEnd: BigNumberish;
   };
 
-  export type BuildersSubnetStructOutput = [
+  export type SubnetStructOutput = [
     string,
     string,
     BigNumber,
@@ -103,32 +103,31 @@ export declare namespace IBuilderSubnets {
     maxClaimLockEnd: BigNumber;
   };
 
-  export type BuildersSubnetMetadataStruct = {
+  export type SubnetMetadataStruct = {
     slug: string;
     description: string;
     website: string;
     image: string;
   };
 
-  export type BuildersSubnetMetadataStructOutput = [
-    string,
-    string,
-    string,
-    string
-  ] & { slug: string; description: string; website: string; image: string };
+  export type SubnetMetadataStructOutput = [string, string, string, string] & {
+    slug: string;
+    description: string;
+    website: string;
+    image: string;
+  };
 }
 
 export interface BuilderSubnetsInterface extends utils.Interface {
   functions: {
-    "BuilderSubnets_init(address,address,address,uint256)": FunctionFragment;
+    "BuilderSubnets_init(address,address,address,uint256,address)": FunctionFragment;
     "FEE_CLAIM_OPERATION()": FunctionFragment;
     "FEE_WITHDRAW_OPERATION()": FunctionFragment;
-    "buildersPoolData()": FunctionFragment;
-    "buildersSubnets(bytes32)": FunctionFragment;
-    "buildersSubnetsData(bytes32)": FunctionFragment;
-    "buildersSubnetsMetadata(bytes32)": FunctionFragment;
+    "allSubnetsData()": FunctionFragment;
+    "buildersRewardPoolData()": FunctionFragment;
+    "buildersV3()": FunctionFragment;
     "claim(bytes32,address)": FunctionFragment;
-    "collectPendingRewards(bytes32,address,uint128)": FunctionFragment;
+    "collectPendingRewards(uint128)": FunctionFragment;
     "createSubnet((string,address,uint256,uint256,address,uint128,uint128,uint128),(string,string,string,string))": FunctionFragment;
     "editSubnetMetadata(bytes32,(string,string,string,string))": FunctionFragment;
     "feeConfig()": FunctionFragment;
@@ -137,7 +136,7 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "getPeriodRewardForStake(uint256,uint128,uint128)": FunctionFragment;
     "getPowerFactor(uint128,uint128)": FunctionFragment;
     "getStakerPowerFactor(bytes32,address)": FunctionFragment;
-    "getStakerRewards(bytes32,address,uint128)": FunctionFragment;
+    "getStakerRewards(bytes32,address)": FunctionFragment;
     "getSubnetId(string)": FunctionFragment;
     "isMigrationOver()": FunctionFragment;
     "maxStakedShareForBuildersPool()": FunctionFragment;
@@ -145,8 +144,9 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "resetPowerFactor(bytes32[],address[])": FunctionFragment;
     "rewardCalculationStartsAt()": FunctionFragment;
-    "setBuildersPoolData((uint256,uint256,uint128,uint128))": FunctionFragment;
+    "setBuildersRewardPoolData((uint256,uint256,uint128,uint128))": FunctionFragment;
     "setFeeConfig(address)": FunctionFragment;
     "setIsMigrationOver(bool)": FunctionFragment;
     "setMaxStakedShareForBuildersPool(uint256)": FunctionFragment;
@@ -162,10 +162,11 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "stakers(bytes32,address)": FunctionFragment;
     "subnetCreationFeeAmount()": FunctionFragment;
     "subnetCreationFeeTreasury()": FunctionFragment;
+    "subnets(bytes32)": FunctionFragment;
+    "subnetsData(bytes32)": FunctionFragment;
+    "subnetsMetadata(bytes32)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "token()": FunctionFragment;
-    "totalStaked()": FunctionFragment;
-    "totalVirtualStaked()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "treasury()": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
@@ -179,10 +180,9 @@ export interface BuilderSubnetsInterface extends utils.Interface {
       | "BuilderSubnets_init"
       | "FEE_CLAIM_OPERATION"
       | "FEE_WITHDRAW_OPERATION"
-      | "buildersPoolData"
-      | "buildersSubnets"
-      | "buildersSubnetsData"
-      | "buildersSubnetsMetadata"
+      | "allSubnetsData"
+      | "buildersRewardPoolData"
+      | "buildersV3"
       | "claim"
       | "collectPendingRewards"
       | "createSubnet"
@@ -201,8 +201,9 @@ export interface BuilderSubnetsInterface extends utils.Interface {
       | "owner"
       | "proxiableUUID"
       | "renounceOwnership"
+      | "resetPowerFactor"
       | "rewardCalculationStartsAt"
-      | "setBuildersPoolData"
+      | "setBuildersRewardPoolData"
       | "setFeeConfig"
       | "setIsMigrationOver"
       | "setMaxStakedShareForBuildersPool"
@@ -218,10 +219,11 @@ export interface BuilderSubnetsInterface extends utils.Interface {
       | "stakers"
       | "subnetCreationFeeAmount"
       | "subnetCreationFeeTreasury"
+      | "subnets"
+      | "subnetsData"
+      | "subnetsMetadata"
       | "supportsInterface"
       | "token"
-      | "totalStaked"
-      | "totalVirtualStaked"
       | "transferOwnership"
       | "treasury"
       | "upgradeTo"
@@ -232,7 +234,7 @@ export interface BuilderSubnetsInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "BuilderSubnets_init",
-    values: [string, string, string, BigNumberish]
+    values: [string, string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "FEE_CLAIM_OPERATION",
@@ -243,20 +245,16 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "buildersPoolData",
+    functionFragment: "allSubnetsData",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "buildersSubnets",
-    values: [BytesLike]
+    functionFragment: "buildersRewardPoolData",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "buildersSubnetsData",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "buildersSubnetsMetadata",
-    values: [BytesLike]
+    functionFragment: "buildersV3",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "claim",
@@ -264,18 +262,15 @@ export interface BuilderSubnetsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "collectPendingRewards",
-    values: [BytesLike, string, BigNumberish]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "createSubnet",
-    values: [
-      IBuilderSubnets.BuildersSubnetStruct,
-      IBuilderSubnets.BuildersSubnetMetadataStruct
-    ]
+    values: [IBuilderSubnets.SubnetStruct, IBuilderSubnets.SubnetMetadataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "editSubnetMetadata",
-    values: [BytesLike, IBuilderSubnets.BuildersSubnetMetadataStruct]
+    values: [BytesLike, IBuilderSubnets.SubnetMetadataStruct]
   ): string;
   encodeFunctionData(functionFragment: "feeConfig", values?: undefined): string;
   encodeFunctionData(
@@ -300,7 +295,7 @@ export interface BuilderSubnetsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getStakerRewards",
-    values: [BytesLike, string, BigNumberish]
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(functionFragment: "getSubnetId", values: [string]): string;
   encodeFunctionData(
@@ -325,12 +320,16 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "resetPowerFactor",
+    values: [BytesLike[], string[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "rewardCalculationStartsAt",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setBuildersPoolData",
-    values: [IBuilderSubnets.BuildersPoolDataStruct]
+    functionFragment: "setBuildersRewardPoolData",
+    values: [IBuilderSubnets.BuildersRewardPoolDataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setFeeConfig",
@@ -389,19 +388,20 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     functionFragment: "subnetCreationFeeTreasury",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "subnets", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "subnetsData",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "subnetsMetadata",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "totalStaked",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalVirtualStaked",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
@@ -431,21 +431,14 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "buildersPoolData",
+    functionFragment: "allSubnetsData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "buildersSubnets",
+    functionFragment: "buildersRewardPoolData",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "buildersSubnetsData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "buildersSubnetsMetadata",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "buildersV3", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "collectPendingRewards",
@@ -510,11 +503,15 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "resetPowerFactor",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "rewardCalculationStartsAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBuildersPoolData",
+    functionFragment: "setBuildersRewardPoolData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -571,19 +568,20 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     functionFragment: "subnetCreationFeeTreasury",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "subnets", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "subnetsData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "subnetsMetadata",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalStaked",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalVirtualStaked",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -600,8 +598,8 @@ export interface BuilderSubnetsInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
-    "BuildersPoolDataSet((uint256,uint256,uint128,uint128))": EventFragment;
-    "Claimed(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256),uint256)": EventFragment;
+    "BuildersRewardPoolDataSet((uint256,uint256,uint128,uint128))": EventFragment;
+    "Claimed(bytes32,address,(uint256,uint256,uint256,uint256,uint128,uint128),uint256)": EventFragment;
     "FeeConfigSet(address)": EventFragment;
     "FeePaid(bytes32,address,uint256,address)": EventFragment;
     "Initialized(uint8)": EventFragment;
@@ -609,9 +607,11 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "MaxStakedShareForBuildersPoolSet(uint256)": EventFragment;
     "MinimalWithdrawLockPeriodSet(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "PendingRewardsCollected(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256))": EventFragment;
+    "PowerFactorReset(bytes32,address)": EventFragment;
     "RewardCalculationStartsAtSet(uint128)": EventFragment;
-    "Staked(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256))": EventFragment;
+    "RewardsCollected(uint128)": EventFragment;
+    "RewardsNotDistributed(uint256)": EventFragment;
+    "Staked(bytes32,address,(uint256,uint256,uint256,uint256,uint128,uint128))": EventFragment;
     "SubnetCreationFeeSet(uint256,address)": EventFragment;
     "SubnetEdited(bytes32,(string,address,uint256,uint256,address,uint128,uint128,uint128))": EventFragment;
     "SubnetFeeTreasurySet(bytes32,address,address)": EventFragment;
@@ -621,12 +621,12 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     "SubnetOwnerSet(bytes32,address,address)": EventFragment;
     "TreasurySet(address)": EventFragment;
     "Upgraded(address)": EventFragment;
-    "Withdrawn(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256),uint256)": EventFragment;
+    "Withdrawn(bytes32,address,(uint256,uint256,uint256,uint256,uint128,uint128),uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BuildersPoolDataSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BuildersRewardPoolDataSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeeConfigSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeePaid"): EventFragment;
@@ -639,10 +639,12 @@ export interface BuilderSubnetsInterface extends utils.Interface {
     nameOrSignatureOrTopic: "MinimalWithdrawLockPeriodSet"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PendingRewardsCollected"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PowerFactorReset"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "RewardCalculationStartsAtSet"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardsCollected"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardsNotDistributed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetCreationFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubnetEdited"): EventFragment;
@@ -677,16 +679,16 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
-export interface BuildersPoolDataSetEventObject {
-  buildersPoolData: IBuilderSubnets.BuildersPoolDataStructOutput;
+export interface BuildersRewardPoolDataSetEventObject {
+  buildersRewardPoolData: IBuilderSubnets.BuildersRewardPoolDataStructOutput;
 }
-export type BuildersPoolDataSetEvent = TypedEvent<
-  [IBuilderSubnets.BuildersPoolDataStructOutput],
-  BuildersPoolDataSetEventObject
+export type BuildersRewardPoolDataSetEvent = TypedEvent<
+  [IBuilderSubnets.BuildersRewardPoolDataStructOutput],
+  BuildersRewardPoolDataSetEventObject
 >;
 
-export type BuildersPoolDataSetEventFilter =
-  TypedEventFilter<BuildersPoolDataSetEvent>;
+export type BuildersRewardPoolDataSetEventFilter =
+  TypedEventFilter<BuildersRewardPoolDataSetEvent>;
 
 export interface ClaimedEventObject {
   subnetId: string;
@@ -773,18 +775,17 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface PendingRewardsCollectedEventObject {
+export interface PowerFactorResetEventObject {
   subnetId: string;
   stakerAddress: string;
-  staker: IBuilderSubnets.StakerStructOutput;
 }
-export type PendingRewardsCollectedEvent = TypedEvent<
-  [string, string, IBuilderSubnets.StakerStructOutput],
-  PendingRewardsCollectedEventObject
+export type PowerFactorResetEvent = TypedEvent<
+  [string, string],
+  PowerFactorResetEventObject
 >;
 
-export type PendingRewardsCollectedEventFilter =
-  TypedEventFilter<PendingRewardsCollectedEvent>;
+export type PowerFactorResetEventFilter =
+  TypedEventFilter<PowerFactorResetEvent>;
 
 export interface RewardCalculationStartsAtSetEventObject {
   rewardCalculationStartsAt: BigNumber;
@@ -796,6 +797,28 @@ export type RewardCalculationStartsAtSetEvent = TypedEvent<
 
 export type RewardCalculationStartsAtSetEventFilter =
   TypedEventFilter<RewardCalculationStartsAtSetEvent>;
+
+export interface RewardsCollectedEventObject {
+  to: BigNumber;
+}
+export type RewardsCollectedEvent = TypedEvent<
+  [BigNumber],
+  RewardsCollectedEventObject
+>;
+
+export type RewardsCollectedEventFilter =
+  TypedEventFilter<RewardsCollectedEvent>;
+
+export interface RewardsNotDistributedEventObject {
+  rewards: BigNumber;
+}
+export type RewardsNotDistributedEvent = TypedEvent<
+  [BigNumber],
+  RewardsNotDistributedEventObject
+>;
+
+export type RewardsNotDistributedEventFilter =
+  TypedEventFilter<RewardsNotDistributedEvent>;
 
 export interface StakedEventObject {
   subnetId: string;
@@ -823,10 +846,10 @@ export type SubnetCreationFeeSetEventFilter =
 
 export interface SubnetEditedEventObject {
   subnetId: string;
-  subnet: IBuilderSubnets.BuildersSubnetStructOutput;
+  subnet: IBuilderSubnets.SubnetStructOutput;
 }
 export type SubnetEditedEvent = TypedEvent<
-  [string, IBuilderSubnets.BuildersSubnetStructOutput],
+  [string, IBuilderSubnets.SubnetStructOutput],
   SubnetEditedEventObject
 >;
 
@@ -860,10 +883,10 @@ export type SubnetMaxClaimLockEndSetEventFilter =
 
 export interface SubnetMetadataEditedEventObject {
   subnetId: string;
-  subnetMetadata: IBuilderSubnets.BuildersSubnetMetadataStructOutput;
+  subnetMetadata: IBuilderSubnets.SubnetMetadataStructOutput;
 }
 export type SubnetMetadataEditedEvent = TypedEvent<
-  [string, IBuilderSubnets.BuildersSubnetMetadataStructOutput],
+  [string, IBuilderSubnets.SubnetMetadataStructOutput],
   SubnetMetadataEditedEventObject
 >;
 
@@ -954,6 +977,7 @@ export interface BuilderSubnets extends BaseContract {
       feeConfig_: string,
       treasury_: string,
       minWithdrawLockPeriodAfterStake_: BigNumberish,
+      buildersV3_: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -961,7 +985,18 @@ export interface BuilderSubnets extends BaseContract {
 
     FEE_WITHDRAW_OPERATION(overrides?: CallOverrides): Promise<[string]>;
 
-    buildersPoolData(
+    allSubnetsData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        staked: BigNumber;
+        virtualStaked: BigNumber;
+        rate: BigNumber;
+        lastCalculatedTimestamp: BigNumber;
+      }
+    >;
+
+    buildersRewardPoolData(
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -972,49 +1007,7 @@ export interface BuilderSubnets extends BaseContract {
       }
     >;
 
-    buildersSubnets(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
-        name: string;
-        owner: string;
-        minStake: BigNumber;
-        fee: BigNumber;
-        feeTreasury: string;
-        startsAt: BigNumber;
-        withdrawLockPeriodAfterStake: BigNumber;
-        maxClaimLockEnd: BigNumber;
-      }
-    >;
-
-    buildersSubnetsData(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { staked: BigNumber; virtualStaked: BigNumber }
-    >;
-
-    buildersSubnetsMetadata(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string] & {
-        slug: string;
-        description: string;
-        website: string;
-        image: string;
-      }
-    >;
+    buildersV3(overrides?: CallOverrides): Promise<[string]>;
 
     claim(
       subnetId_: BytesLike,
@@ -1023,21 +1016,19 @@ export interface BuilderSubnets extends BaseContract {
     ): Promise<ContractTransaction>;
 
     collectPendingRewards(
-      subnetId_: BytesLike,
-      stakerAddress_: string,
       to_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     createSubnet(
-      subnet_: IBuilderSubnets.BuildersSubnetStruct,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      subnet_: IBuilderSubnets.SubnetStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     editSubnetMetadata(
       subnetId_: BytesLike,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -1076,7 +1067,6 @@ export interface BuilderSubnets extends BaseContract {
     getStakerRewards(
       subnetId_: BytesLike,
       stakerAddress_: string,
-      to_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1100,10 +1090,16 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    resetPowerFactor(
+      subnetIds_: BytesLike[],
+      stakerAddresses_: string[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     rewardCalculationStartsAt(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    setBuildersPoolData(
-      buildersPoolData_: IBuilderSubnets.BuildersPoolDataStruct,
+    setBuildersRewardPoolData(
+      buildersRewardPoolData_: IBuilderSubnets.BuildersRewardPoolDataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -1181,12 +1177,12 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lastInteraction: BigNumber;
-        lastStake: BigNumber;
-        claimLockEnd: BigNumber;
         staked: BigNumber;
         virtualStaked: BigNumber;
         pendingRewards: BigNumber;
+        rate: BigNumber;
+        lastStake: BigNumber;
+        claimLockEnd: BigNumber;
       }
     >;
 
@@ -1194,16 +1190,56 @@ export interface BuilderSubnets extends BaseContract {
 
     subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<[string]>;
 
+    subnets(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        name: string;
+        owner: string;
+        minStake: BigNumber;
+        fee: BigNumber;
+        feeTreasury: string;
+        startsAt: BigNumber;
+        withdrawLockPeriodAfterStake: BigNumber;
+        maxClaimLockEnd: BigNumber;
+      }
+    >;
+
+    subnetsData(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { staked: BigNumber; virtualStaked: BigNumber }
+    >;
+
+    subnetsMetadata(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, string] & {
+        slug: string;
+        description: string;
+        website: string;
+        image: string;
+      }
+    >;
+
     supportsInterface(
       interfaceId_: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
-
-    totalStaked(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    totalVirtualStaked(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferOwnership(
       newOwner: string,
@@ -1237,6 +1273,7 @@ export interface BuilderSubnets extends BaseContract {
     feeConfig_: string,
     treasury_: string,
     minWithdrawLockPeriodAfterStake_: BigNumberish,
+    buildersV3_: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1244,7 +1281,18 @@ export interface BuilderSubnets extends BaseContract {
 
   FEE_WITHDRAW_OPERATION(overrides?: CallOverrides): Promise<string>;
 
-  buildersPoolData(
+  allSubnetsData(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      staked: BigNumber;
+      virtualStaked: BigNumber;
+      rate: BigNumber;
+      lastCalculatedTimestamp: BigNumber;
+    }
+  >;
+
+  buildersRewardPoolData(
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -1255,49 +1303,7 @@ export interface BuilderSubnets extends BaseContract {
     }
   >;
 
-  buildersSubnets(
-    subnetId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      string,
-      string,
-      BigNumber,
-      BigNumber,
-      string,
-      BigNumber,
-      BigNumber,
-      BigNumber
-    ] & {
-      name: string;
-      owner: string;
-      minStake: BigNumber;
-      fee: BigNumber;
-      feeTreasury: string;
-      startsAt: BigNumber;
-      withdrawLockPeriodAfterStake: BigNumber;
-      maxClaimLockEnd: BigNumber;
-    }
-  >;
-
-  buildersSubnetsData(
-    subnetId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { staked: BigNumber; virtualStaked: BigNumber }
-  >;
-
-  buildersSubnetsMetadata(
-    subnetId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, string, string, string] & {
-      slug: string;
-      description: string;
-      website: string;
-      image: string;
-    }
-  >;
+  buildersV3(overrides?: CallOverrides): Promise<string>;
 
   claim(
     subnetId_: BytesLike,
@@ -1306,21 +1312,19 @@ export interface BuilderSubnets extends BaseContract {
   ): Promise<ContractTransaction>;
 
   collectPendingRewards(
-    subnetId_: BytesLike,
-    stakerAddress_: string,
     to_: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   createSubnet(
-    subnet_: IBuilderSubnets.BuildersSubnetStruct,
-    metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+    subnet_: IBuilderSubnets.SubnetStruct,
+    metadata_: IBuilderSubnets.SubnetMetadataStruct,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   editSubnetMetadata(
     subnetId_: BytesLike,
-    metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+    metadata_: IBuilderSubnets.SubnetMetadataStruct,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1359,7 +1363,6 @@ export interface BuilderSubnets extends BaseContract {
   getStakerRewards(
     subnetId_: BytesLike,
     stakerAddress_: string,
-    to_: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1381,10 +1384,16 @@ export interface BuilderSubnets extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  resetPowerFactor(
+    subnetIds_: BytesLike[],
+    stakerAddresses_: string[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   rewardCalculationStartsAt(overrides?: CallOverrides): Promise<BigNumber>;
 
-  setBuildersPoolData(
-    buildersPoolData_: IBuilderSubnets.BuildersPoolDataStruct,
+  setBuildersRewardPoolData(
+    buildersRewardPoolData_: IBuilderSubnets.BuildersRewardPoolDataStruct,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1462,12 +1471,12 @@ export interface BuilderSubnets extends BaseContract {
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      lastInteraction: BigNumber;
-      lastStake: BigNumber;
-      claimLockEnd: BigNumber;
       staked: BigNumber;
       virtualStaked: BigNumber;
       pendingRewards: BigNumber;
+      rate: BigNumber;
+      lastStake: BigNumber;
+      claimLockEnd: BigNumber;
     }
   >;
 
@@ -1475,16 +1484,56 @@ export interface BuilderSubnets extends BaseContract {
 
   subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<string>;
 
+  subnets(
+    subnetId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      string,
+      string,
+      BigNumber,
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      name: string;
+      owner: string;
+      minStake: BigNumber;
+      fee: BigNumber;
+      feeTreasury: string;
+      startsAt: BigNumber;
+      withdrawLockPeriodAfterStake: BigNumber;
+      maxClaimLockEnd: BigNumber;
+    }
+  >;
+
+  subnetsData(
+    subnetId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { staked: BigNumber; virtualStaked: BigNumber }
+  >;
+
+  subnetsMetadata(
+    subnetId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, string] & {
+      slug: string;
+      description: string;
+      website: string;
+      image: string;
+    }
+  >;
+
   supportsInterface(
     interfaceId_: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   token(overrides?: CallOverrides): Promise<string>;
-
-  totalStaked(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalVirtualStaked(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
@@ -1518,6 +1567,7 @@ export interface BuilderSubnets extends BaseContract {
       feeConfig_: string,
       treasury_: string,
       minWithdrawLockPeriodAfterStake_: BigNumberish,
+      buildersV3_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1525,7 +1575,18 @@ export interface BuilderSubnets extends BaseContract {
 
     FEE_WITHDRAW_OPERATION(overrides?: CallOverrides): Promise<string>;
 
-    buildersPoolData(
+    allSubnetsData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        staked: BigNumber;
+        virtualStaked: BigNumber;
+        rate: BigNumber;
+        lastCalculatedTimestamp: BigNumber;
+      }
+    >;
+
+    buildersRewardPoolData(
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
@@ -1536,49 +1597,7 @@ export interface BuilderSubnets extends BaseContract {
       }
     >;
 
-    buildersSubnets(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
-        name: string;
-        owner: string;
-        minStake: BigNumber;
-        fee: BigNumber;
-        feeTreasury: string;
-        startsAt: BigNumber;
-        withdrawLockPeriodAfterStake: BigNumber;
-        maxClaimLockEnd: BigNumber;
-      }
-    >;
-
-    buildersSubnetsData(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { staked: BigNumber; virtualStaked: BigNumber }
-    >;
-
-    buildersSubnetsMetadata(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string] & {
-        slug: string;
-        description: string;
-        website: string;
-        image: string;
-      }
-    >;
+    buildersV3(overrides?: CallOverrides): Promise<string>;
 
     claim(
       subnetId_: BytesLike,
@@ -1587,21 +1606,19 @@ export interface BuilderSubnets extends BaseContract {
     ): Promise<void>;
 
     collectPendingRewards(
-      subnetId_: BytesLike,
-      stakerAddress_: string,
       to_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     createSubnet(
-      subnet_: IBuilderSubnets.BuildersSubnetStruct,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      subnet_: IBuilderSubnets.SubnetStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     editSubnetMetadata(
       subnetId_: BytesLike,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1640,7 +1657,6 @@ export interface BuilderSubnets extends BaseContract {
     getStakerRewards(
       subnetId_: BytesLike,
       stakerAddress_: string,
-      to_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1662,10 +1678,16 @@ export interface BuilderSubnets extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
+    resetPowerFactor(
+      subnetIds_: BytesLike[],
+      stakerAddresses_: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     rewardCalculationStartsAt(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setBuildersPoolData(
-      buildersPoolData_: IBuilderSubnets.BuildersPoolDataStruct,
+    setBuildersRewardPoolData(
+      buildersRewardPoolData_: IBuilderSubnets.BuildersRewardPoolDataStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1737,12 +1759,12 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        lastInteraction: BigNumber;
-        lastStake: BigNumber;
-        claimLockEnd: BigNumber;
         staked: BigNumber;
         virtualStaked: BigNumber;
         pendingRewards: BigNumber;
+        rate: BigNumber;
+        lastStake: BigNumber;
+        claimLockEnd: BigNumber;
       }
     >;
 
@@ -1750,16 +1772,56 @@ export interface BuilderSubnets extends BaseContract {
 
     subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<string>;
 
+    subnets(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        name: string;
+        owner: string;
+        minStake: BigNumber;
+        fee: BigNumber;
+        feeTreasury: string;
+        startsAt: BigNumber;
+        withdrawLockPeriodAfterStake: BigNumber;
+        maxClaimLockEnd: BigNumber;
+      }
+    >;
+
+    subnetsData(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { staked: BigNumber; virtualStaked: BigNumber }
+    >;
+
+    subnetsMetadata(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, string] & {
+        slug: string;
+        description: string;
+        website: string;
+        image: string;
+      }
+    >;
+
     supportsInterface(
       interfaceId_: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     token(overrides?: CallOverrides): Promise<string>;
-
-    totalStaked(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalVirtualStaked(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -1803,14 +1865,14 @@ export interface BuilderSubnets extends BaseContract {
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
-    "BuildersPoolDataSet((uint256,uint256,uint128,uint128))"(
-      buildersPoolData?: null
-    ): BuildersPoolDataSetEventFilter;
-    BuildersPoolDataSet(
-      buildersPoolData?: null
-    ): BuildersPoolDataSetEventFilter;
+    "BuildersRewardPoolDataSet((uint256,uint256,uint128,uint128))"(
+      buildersRewardPoolData?: null
+    ): BuildersRewardPoolDataSetEventFilter;
+    BuildersRewardPoolDataSet(
+      buildersRewardPoolData?: null
+    ): BuildersRewardPoolDataSetEventFilter;
 
-    "Claimed(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256),uint256)"(
+    "Claimed(bytes32,address,(uint256,uint256,uint256,uint256,uint128,uint128),uint256)"(
       subnetId?: BytesLike | null,
       stakerAddress?: null,
       staker?: null,
@@ -1870,16 +1932,14 @@ export interface BuilderSubnets extends BaseContract {
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
 
-    "PendingRewardsCollected(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256))"(
-      subnetId?: BytesLike | null,
-      stakerAddress?: null,
-      staker?: null
-    ): PendingRewardsCollectedEventFilter;
-    PendingRewardsCollected(
-      subnetId?: BytesLike | null,
-      stakerAddress?: null,
-      staker?: null
-    ): PendingRewardsCollectedEventFilter;
+    "PowerFactorReset(bytes32,address)"(
+      subnetId?: null,
+      stakerAddress?: null
+    ): PowerFactorResetEventFilter;
+    PowerFactorReset(
+      subnetId?: null,
+      stakerAddress?: null
+    ): PowerFactorResetEventFilter;
 
     "RewardCalculationStartsAtSet(uint128)"(
       rewardCalculationStartsAt?: null
@@ -1888,7 +1948,15 @@ export interface BuilderSubnets extends BaseContract {
       rewardCalculationStartsAt?: null
     ): RewardCalculationStartsAtSetEventFilter;
 
-    "Staked(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256))"(
+    "RewardsCollected(uint128)"(to?: null): RewardsCollectedEventFilter;
+    RewardsCollected(to?: null): RewardsCollectedEventFilter;
+
+    "RewardsNotDistributed(uint256)"(
+      rewards?: null
+    ): RewardsNotDistributedEventFilter;
+    RewardsNotDistributed(rewards?: null): RewardsNotDistributedEventFilter;
+
+    "Staked(bytes32,address,(uint256,uint256,uint256,uint256,uint128,uint128))"(
       subnetId?: BytesLike | null,
       stakerAddress?: null,
       staker?: null
@@ -1976,7 +2044,7 @@ export interface BuilderSubnets extends BaseContract {
     "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
     Upgraded(implementation?: string | null): UpgradedEventFilter;
 
-    "Withdrawn(bytes32,address,(uint128,uint128,uint128,uint256,uint256,uint256),uint256)"(
+    "Withdrawn(bytes32,address,(uint256,uint256,uint256,uint256,uint128,uint128),uint256)"(
       subnetId?: BytesLike | null,
       stakerAddress?: null,
       staker?: null,
@@ -1996,6 +2064,7 @@ export interface BuilderSubnets extends BaseContract {
       feeConfig_: string,
       treasury_: string,
       minWithdrawLockPeriodAfterStake_: BigNumberish,
+      buildersV3_: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -2003,22 +2072,11 @@ export interface BuilderSubnets extends BaseContract {
 
     FEE_WITHDRAW_OPERATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    buildersPoolData(overrides?: CallOverrides): Promise<BigNumber>;
+    allSubnetsData(overrides?: CallOverrides): Promise<BigNumber>;
 
-    buildersSubnets(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    buildersRewardPoolData(overrides?: CallOverrides): Promise<BigNumber>;
 
-    buildersSubnetsData(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    buildersSubnetsMetadata(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    buildersV3(overrides?: CallOverrides): Promise<BigNumber>;
 
     claim(
       subnetId_: BytesLike,
@@ -2027,21 +2085,19 @@ export interface BuilderSubnets extends BaseContract {
     ): Promise<BigNumber>;
 
     collectPendingRewards(
-      subnetId_: BytesLike,
-      stakerAddress_: string,
       to_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     createSubnet(
-      subnet_: IBuilderSubnets.BuildersSubnetStruct,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      subnet_: IBuilderSubnets.SubnetStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     editSubnetMetadata(
       subnetId_: BytesLike,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -2080,7 +2136,6 @@ export interface BuilderSubnets extends BaseContract {
     getStakerRewards(
       subnetId_: BytesLike,
       stakerAddress_: string,
-      to_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2104,10 +2159,16 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    resetPowerFactor(
+      subnetIds_: BytesLike[],
+      stakerAddresses_: string[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     rewardCalculationStartsAt(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setBuildersPoolData(
-      buildersPoolData_: IBuilderSubnets.BuildersPoolDataStruct,
+    setBuildersRewardPoolData(
+      buildersRewardPoolData_: IBuilderSubnets.BuildersRewardPoolDataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -2189,16 +2250,24 @@ export interface BuilderSubnets extends BaseContract {
 
     subnetCreationFeeTreasury(overrides?: CallOverrides): Promise<BigNumber>;
 
+    subnets(subnetId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+    subnetsData(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    subnetsMetadata(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId_: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalStaked(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalVirtualStaked(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -2233,6 +2302,7 @@ export interface BuilderSubnets extends BaseContract {
       feeConfig_: string,
       treasury_: string,
       minWithdrawLockPeriodAfterStake_: BigNumberish,
+      buildersV3_: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -2244,22 +2314,13 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    buildersPoolData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    allSubnetsData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    buildersSubnets(
-      subnetId: BytesLike,
+    buildersRewardPoolData(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    buildersSubnetsData(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    buildersSubnetsMetadata(
-      subnetId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    buildersV3(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     claim(
       subnetId_: BytesLike,
@@ -2268,21 +2329,19 @@ export interface BuilderSubnets extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     collectPendingRewards(
-      subnetId_: BytesLike,
-      stakerAddress_: string,
       to_: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     createSubnet(
-      subnet_: IBuilderSubnets.BuildersSubnetStruct,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      subnet_: IBuilderSubnets.SubnetStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     editSubnetMetadata(
       subnetId_: BytesLike,
-      metadata_: IBuilderSubnets.BuildersSubnetMetadataStruct,
+      metadata_: IBuilderSubnets.SubnetMetadataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -2321,7 +2380,6 @@ export interface BuilderSubnets extends BaseContract {
     getStakerRewards(
       subnetId_: BytesLike,
       stakerAddress_: string,
-      to_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2348,12 +2406,18 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    resetPowerFactor(
+      subnetIds_: BytesLike[],
+      stakerAddresses_: string[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     rewardCalculationStartsAt(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    setBuildersPoolData(
-      buildersPoolData_: IBuilderSubnets.BuildersPoolDataStruct,
+    setBuildersRewardPoolData(
+      buildersRewardPoolData_: IBuilderSubnets.BuildersRewardPoolDataStruct,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -2439,18 +2503,27 @@ export interface BuilderSubnets extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    subnets(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    subnetsData(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    subnetsMetadata(
+      subnetId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId_: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalStaked(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalVirtualStaked(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

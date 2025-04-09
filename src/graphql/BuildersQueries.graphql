@@ -47,7 +47,7 @@ query getBuilderSubnetUsers(
     skip: $skip
     orderBy: $orderBy
     orderDirection: $orderDirection
-    where: { builderSubnet_: { id: $builderSubnetId } }
+    where: { builderSubnet: { id: $builderSubnetId } }
   ) {
     ...BuilderUserDefault
   }
@@ -58,7 +58,7 @@ query getUserAccountBuilderSubnets(
   $builder_subnet_id: Bytes = ""
 ) {
   builderUsers(
-    where: { address: $address, builderSubnet_: { id: $builder_subnet_id } }
+    where: { address: $address, builderSubnet: { id: $builder_subnet_id } }
   ) {
     ...BuilderUserDefault
     builderSubnet {
@@ -125,7 +125,7 @@ query combinedBuilderSubnetsFilteredByPredefinedBuilders(
   builderUsers(
     orderBy: $usersOrderBy
     orderDirection: $usersDirection
-    where: { address: $address, builderSubnet_: { name_in: $name_in } }
+    where: { address: $address, builderSubnet: { name_in: $name_in } }
   ) {
     ...BuilderUserDefault
     builderSubnet {

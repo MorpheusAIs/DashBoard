@@ -313,7 +313,7 @@ export const perChainDeployedContracts: Record<
     ..._emptyContracts,
     [EthereumChains.Arbitrum]: '0xC0eD68f163d44B6e9985F0041fDf6f67c6BCFF3f',
     [EthereumChains.ArbitrumSepolia]:
-      '0xfc088c5ec4288a3B337C6b93968E521aAf06f346',
+      '0x5271B2FE76303ca7DDCB8Fb6fA77906E2B4f03C7',
     [EthereumChains.Base]: '0x42BB446eAE6dca7723a9eBdb81EA88aFe77eF4B9',
   },
   [ContractIds.feeConfig]: {

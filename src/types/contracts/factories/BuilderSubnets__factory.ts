@@ -74,12 +74,12 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IBuilderSubnets.BuildersPoolData",
-        name: "buildersPoolData",
+        internalType: "struct IBuilderSubnets.BuildersRewardPoolData",
+        name: "buildersRewardPoolData",
         type: "tuple",
       },
     ],
-    name: "BuildersPoolDataSet",
+    name: "BuildersRewardPoolDataSet",
     type: "event",
   },
   {
@@ -100,21 +100,6 @@ const _abi = [
       {
         components: [
           {
-            internalType: "uint128",
-            name: "lastInteraction",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "lastStake",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "claimLockEnd",
-            type: "uint128",
-          },
-          {
             internalType: "uint256",
             name: "staked",
             type: "uint256",
@@ -128,6 +113,21 @@ const _abi = [
             internalType: "uint256",
             name: "pendingRewards",
             type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "rate",
+            type: "uint256",
+          },
+          {
+            internalType: "uint128",
+            name: "lastStake",
+            type: "uint128",
+          },
+          {
+            internalType: "uint128",
+            name: "claimLockEnd",
+            type: "uint128",
           },
         ],
         indexed: false,
@@ -264,7 +264,7 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "bytes32",
         name: "subnetId",
         type: "bytes32",
@@ -275,46 +275,8 @@ const _abi = [
         name: "stakerAddress",
         type: "address",
       },
-      {
-        components: [
-          {
-            internalType: "uint128",
-            name: "lastInteraction",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "lastStake",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "claimLockEnd",
-            type: "uint128",
-          },
-          {
-            internalType: "uint256",
-            name: "staked",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "virtualStaked",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "pendingRewards",
-            type: "uint256",
-          },
-        ],
-        indexed: false,
-        internalType: "struct IBuilderSubnets.Staker",
-        name: "staker",
-        type: "tuple",
-      },
     ],
-    name: "PendingRewardsCollected",
+    name: "PowerFactorReset",
     type: "event",
   },
   {
@@ -334,6 +296,32 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint128",
+        name: "to",
+        type: "uint128",
+      },
+    ],
+    name: "RewardsCollected",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "rewards",
+        type: "uint256",
+      },
+    ],
+    name: "RewardsNotDistributed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "bytes32",
         name: "subnetId",
@@ -348,21 +336,6 @@ const _abi = [
       {
         components: [
           {
-            internalType: "uint128",
-            name: "lastInteraction",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "lastStake",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "claimLockEnd",
-            type: "uint128",
-          },
-          {
             internalType: "uint256",
             name: "staked",
             type: "uint256",
@@ -376,6 +349,21 @@ const _abi = [
             internalType: "uint256",
             name: "pendingRewards",
             type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "rate",
+            type: "uint256",
+          },
+          {
+            internalType: "uint128",
+            name: "lastStake",
+            type: "uint128",
+          },
+          {
+            internalType: "uint128",
+            name: "claimLockEnd",
+            type: "uint128",
           },
         ],
         indexed: false,
@@ -459,7 +447,7 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IBuilderSubnets.BuildersSubnet",
+        internalType: "struct IBuilderSubnets.Subnet",
         name: "subnet",
         type: "tuple",
       },
@@ -550,7 +538,7 @@ const _abi = [
           },
         ],
         indexed: false,
-        internalType: "struct IBuilderSubnets.BuildersSubnetMetadata",
+        internalType: "struct IBuilderSubnets.SubnetMetadata",
         name: "subnetMetadata",
         type: "tuple",
       },
@@ -652,21 +640,6 @@ const _abi = [
       {
         components: [
           {
-            internalType: "uint128",
-            name: "lastInteraction",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "lastStake",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "claimLockEnd",
-            type: "uint128",
-          },
-          {
             internalType: "uint256",
             name: "staked",
             type: "uint256",
@@ -680,6 +653,21 @@ const _abi = [
             internalType: "uint256",
             name: "pendingRewards",
             type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "rate",
+            type: "uint256",
+          },
+          {
+            internalType: "uint128",
+            name: "lastStake",
+            type: "uint128",
+          },
+          {
+            internalType: "uint128",
+            name: "claimLockEnd",
+            type: "uint128",
           },
         ],
         indexed: false,
@@ -719,6 +707,11 @@ const _abi = [
         name: "minWithdrawLockPeriodAfterStake_",
         type: "uint256",
       },
+      {
+        internalType: "address",
+        name: "buildersV3_",
+        type: "address",
+      },
     ],
     name: "BuilderSubnets_init",
     outputs: [],
@@ -753,7 +746,35 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "buildersPoolData",
+    name: "allSubnetsData",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "staked",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "virtualStaked",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "rate",
+        type: "uint256",
+      },
+      {
+        internalType: "uint128",
+        name: "lastCalculatedTimestamp",
+        type: "uint128",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "buildersRewardPoolData",
     outputs: [
       {
         internalType: "uint256",
@@ -780,112 +801,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "subnetId",
-        type: "bytes32",
-      },
-    ],
-    name: "buildersSubnets",
+    inputs: [],
+    name: "buildersV3",
     outputs: [
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
       {
         internalType: "address",
-        name: "owner",
+        name: "",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "minStake",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "feeTreasury",
-        type: "address",
-      },
-      {
-        internalType: "uint128",
-        name: "startsAt",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "withdrawLockPeriodAfterStake",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "maxClaimLockEnd",
-        type: "uint128",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "subnetId",
-        type: "bytes32",
-      },
-    ],
-    name: "buildersSubnetsData",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "staked",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "virtualStaked",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "subnetId",
-        type: "bytes32",
-      },
-    ],
-    name: "buildersSubnetsMetadata",
-    outputs: [
-      {
-        internalType: "string",
-        name: "slug",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "description",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "website",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "image",
-        type: "string",
       },
     ],
     stateMutability: "view",
@@ -911,16 +833,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "bytes32",
-        name: "subnetId_",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "stakerAddress_",
-        type: "address",
-      },
       {
         internalType: "uint128",
         name: "to_",
@@ -977,7 +889,7 @@ const _abi = [
             type: "uint128",
           },
         ],
-        internalType: "struct IBuilderSubnets.BuildersSubnet",
+        internalType: "struct IBuilderSubnets.Subnet",
         name: "subnet_",
         type: "tuple",
       },
@@ -1004,7 +916,7 @@ const _abi = [
             type: "string",
           },
         ],
-        internalType: "struct IBuilderSubnets.BuildersSubnetMetadata",
+        internalType: "struct IBuilderSubnets.SubnetMetadata",
         name: "metadata_",
         type: "tuple",
       },
@@ -1044,7 +956,7 @@ const _abi = [
             type: "string",
           },
         ],
-        internalType: "struct IBuilderSubnets.BuildersSubnetMetadata",
+        internalType: "struct IBuilderSubnets.SubnetMetadata",
         name: "metadata_",
         type: "tuple",
       },
@@ -1199,11 +1111,6 @@ const _abi = [
         name: "stakerAddress_",
         type: "address",
       },
-      {
-        internalType: "uint128",
-        name: "to_",
-        type: "uint128",
-      },
     ],
     name: "getStakerRewards",
     outputs: [
@@ -1308,6 +1215,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "bytes32[]",
+        name: "subnetIds_",
+        type: "bytes32[]",
+      },
+      {
+        internalType: "address[]",
+        name: "stakerAddresses_",
+        type: "address[]",
+      },
+    ],
+    name: "resetPowerFactor",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "rewardCalculationStartsAt",
     outputs: [
@@ -1345,12 +1270,12 @@ const _abi = [
             type: "uint128",
           },
         ],
-        internalType: "struct IBuilderSubnets.BuildersPoolData",
-        name: "buildersPoolData_",
+        internalType: "struct IBuilderSubnets.BuildersRewardPoolData",
+        name: "buildersRewardPoolData_",
         type: "tuple",
       },
     ],
-    name: "setBuildersPoolData",
+    name: "setBuildersRewardPoolData",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1567,21 +1492,6 @@ const _abi = [
     name: "stakers",
     outputs: [
       {
-        internalType: "uint128",
-        name: "lastInteraction",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "lastStake",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "claimLockEnd",
-        type: "uint128",
-      },
-      {
         internalType: "uint256",
         name: "staked",
         type: "uint256",
@@ -1595,6 +1505,21 @@ const _abi = [
         internalType: "uint256",
         name: "pendingRewards",
         type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "rate",
+        type: "uint256",
+      },
+      {
+        internalType: "uint128",
+        name: "lastStake",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "claimLockEnd",
+        type: "uint128",
       },
     ],
     stateMutability: "view",
@@ -1629,6 +1554,118 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "subnetId",
+        type: "bytes32",
+      },
+    ],
+    name: "subnets",
+    outputs: [
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "minStake",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "fee",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "feeTreasury",
+        type: "address",
+      },
+      {
+        internalType: "uint128",
+        name: "startsAt",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "withdrawLockPeriodAfterStake",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "maxClaimLockEnd",
+        type: "uint128",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "subnetId",
+        type: "bytes32",
+      },
+    ],
+    name: "subnetsData",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "staked",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "virtualStaked",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "subnetId",
+        type: "bytes32",
+      },
+    ],
+    name: "subnetsMetadata",
+    outputs: [
+      {
+        internalType: "string",
+        name: "slug",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "website",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "image",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "bytes4",
         name: "interfaceId_",
         type: "bytes4",
@@ -1653,32 +1690,6 @@ const _abi = [
         internalType: "address",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalStaked",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalVirtualStaked",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
