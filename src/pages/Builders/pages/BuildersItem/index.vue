@@ -370,6 +370,12 @@
                         <span class="text-textSecondaryMain">
                           {{ time(+el.lastStake).format(DOT_TIME_FORMAT) }}
                         </span>
+                        <!-- Commented out Claim button as requested -->
+                        <!-- <app-button
+                          size="small"
+                          class="ml-2">
+                          {{ $t('builders-item.claim-btn') }}
+                        </app-button> -->
                       </div>
                     </div>
                   </app-gradient-border-card>
