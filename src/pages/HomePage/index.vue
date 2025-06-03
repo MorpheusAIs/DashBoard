@@ -45,14 +45,7 @@ const tabs = computed<Tab[]>(() => [
   {
     title: t('home-page.builders-tab'),
     id: 'builders',
-    ...{
-      [NetworkTypes.Mainnet]: {
-        route: { name: ROUTE_NAMES.appBuildersList },
-      },
-      [NetworkTypes.Testnet]: {
-        route: { name: ROUTE_NAMES.appBuildersList },
-      },
-    }[web3ProvidersStore.networkType],
+    href: 'https://dashboard-v2-zeta.vercel.app',
   },
 ])
 
