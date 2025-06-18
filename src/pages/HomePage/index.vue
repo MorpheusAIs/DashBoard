@@ -15,15 +15,15 @@
 import { AppTabs } from '@/common'
 import { useI18n } from '@/composables'
 import { ROUTE_NAMES } from '@/enums'
-import { useWeb3ProvidersStore } from '@/store'
+// import { useWeb3ProvidersStore } from '@/store'
 import { type Tab } from '@/types'
-import { config, NetworkTypes } from '@config'
+import { config } from '@config'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { t } = useI18n()
-const web3ProvidersStore = useWeb3ProvidersStore()
+// const web3ProvidersStore = useWeb3ProvidersStore()
 
 const tabs = computed<Tab[]>(() => [
   {
@@ -45,7 +45,7 @@ const tabs = computed<Tab[]>(() => [
   {
     title: t('home-page.builders-tab'),
     id: 'builders',
-    href: 'https://dashboard-v2-zeta.vercel.app',
+    href: 'https://builders.mor.org/',
   },
 ])
 
